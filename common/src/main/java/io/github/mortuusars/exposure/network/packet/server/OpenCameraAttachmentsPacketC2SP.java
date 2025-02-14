@@ -6,6 +6,7 @@ import io.github.mortuusars.exposure.network.PacketDirection;
 import io.github.mortuusars.exposure.network.packet.IPacket;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
@@ -30,12 +31,18 @@ public record OpenCameraAttachmentsPacketC2SP(int cameraSlotIndex) implements IP
 
     @Override
     public boolean handle(PacketDirection direction, @Nullable Player player) {
-        if (player == null)
+        if (player == null) {
             throw new IllegalStateException("Cannot handle the packet: Player was null");
+        }
 
-        ItemStack stack = player.getInventory().getItem(cameraSlotIndex);
-        if (stack.getItem() instanceof CameraItem cameraItem)
-            cameraItem.openCameraAttachmentsMenu(player, cameraSlotIndex);
+        if (player instanceof ServerPlayer serverPlayer) {
+            serverPlayer.server.execute(() -> {
+                ItemStack stack = player.getInventory().getItem(cameraSlotIndex);
+                if (stack.getItem() instanceof CameraItem cameraItem) {
+                    cameraItem.openCameraAttachmentsMenu(player, cameraSlotIndex);
+                }
+            });
+        }
 
         return true;
     }
