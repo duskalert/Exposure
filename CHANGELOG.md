@@ -1,5 +1,8 @@
 # Changelog
 
+## UNRELEASED
+- Added mipmaps for exposures.
+
 ## 1.7.7 - 2024-09-24
 - Added small tooltip clarifications about using Interplanar Projector and Chromatic Sheet.
 - Added Turkish and German translations.

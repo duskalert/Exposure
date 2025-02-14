@@ -1,14 +1,23 @@
 package io.github.mortuusars.exposure.render;
 
+import com.mojang.blaze3d.platform.TextureUtil;
+import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.blaze3d.vertex.VertexFormat;
+import io.github.mortuusars.exposure.Exposure;
 import io.github.mortuusars.exposure.render.image.IImage;
 import io.github.mortuusars.exposure.render.image.RenderedImageProvider;
 import io.github.mortuusars.exposure.render.modifiers.IPixelModifier;
+import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderStateShard;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.DynamicTexture;
+import net.minecraft.client.renderer.texture.SpriteContents;
+import net.minecraft.client.resources.metadata.animation.AnimationMetadataSection;
+import net.minecraft.client.resources.metadata.animation.FrameSize;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Matrix4f;
@@ -16,6 +25,7 @@ import org.joml.Matrix4f;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -85,8 +95,26 @@ public class ExposureRenderer implements AutoCloseable {
         clearData();
     }
 
+    /**
+     * Credits to <a href="https://github.com/Jalvaviel/MapMipMapMod">MapMipMapMod by Jalvaviel</a> for example of mipmap implementation for dynamic images.
+     * And to <a href="https://github.com/bravely-beep">bravely-beep</a> for pointing me to it.
+     */
     static class ExposureInstance implements AutoCloseable {
-        private final RenderType renderType;
+        private static final Function<ResourceLocation, RenderType> TEXT_MIPMAP = Util.memoize(texture -> RenderType.create("exposure_mipmap",
+                DefaultVertexFormat.POSITION_COLOR_TEX_LIGHTMAP,
+                VertexFormat.Mode.QUADS,
+                786432,
+                false,
+                true,
+                RenderType.CompositeState.builder()
+                        .setShaderState(RenderType.RENDERTYPE_TEXT_SHADER)
+                        .setTextureState(new RenderStateShard.TextureStateShard(texture, false, true))
+                        .setTransparencyState(RenderType.TRANSLUCENT_TRANSPARENCY)
+                        .setLightmapState(RenderType.LIGHTMAP)
+                        .createCompositeState(false)));
+
+        protected final ResourceLocation textureLocation;
+        protected final RenderType renderType;
 
         private IImage exposure;
         private DynamicTexture texture;
@@ -98,8 +126,9 @@ public class ExposureRenderer implements AutoCloseable {
             this.texture = new DynamicTexture(exposure.getWidth(), exposure.getHeight(), true);
             this.pixelModifier = modifier;
             String textureId = createTextureId(id);
-            ResourceLocation resourcelocation = Minecraft.getInstance().getTextureManager().register(textureId, this.texture);
-            this.renderType = RenderType.text(resourcelocation);
+            this.textureLocation = Minecraft.getInstance().getTextureManager().register(textureId, this.texture);
+            int mipmapLevel = Minecraft.getInstance().options.mipmapLevels().get();
+            this.renderType = mipmapLevel > 0 ? TEXT_MIPMAP.apply(textureLocation) : RenderType.text(textureLocation);
         }
 
         private static String createTextureId(String exposureId) {
@@ -139,15 +168,39 @@ public class ExposureRenderer implements AutoCloseable {
             if (texture.getPixels() == null)
                 return;
 
-            for (int y = 0; y < this.exposure.getHeight(); y++) {
-                for (int x = 0; x < this.exposure.getWidth(); x++) {
+            int width = this.exposure.getWidth();
+            int height = this.exposure.getHeight();
+
+            for (int y = 0; y < height; y++) {
+                for (int x = 0; x < width; x++) {
                     int ABGR = this.exposure.getPixelABGR(x, y);
                     ABGR = pixelModifier.modifyPixel(ABGR);
                     this.texture.getPixels().setPixelRGBA(x, y, ABGR); // Texture is in BGR format
                 }
             }
 
+            int mipmapLevel = Minecraft.getInstance().options.mipmapLevels().get();
+            if (mipmapLevel > 0 && width > 2 && height > 2) {
+                applyMipMap(mipmapLevel, width, height);
+            }
+
             this.texture.upload();
+        }
+
+        private void applyMipMap(int mipmapLevel, int width, int height) {
+            if (texture.getPixels() == null) return;
+
+            try {
+                texture.setFilter(false, true);
+                TextureUtil.prepareImage(texture.getId(), mipmapLevel, width, height);
+                SpriteContents spriteContents = new SpriteContents(this.textureLocation,
+                        new FrameSize(width, height), texture.getPixels(), AnimationMetadataSection.EMPTY);
+
+                spriteContents.increaseMipLevel(mipmapLevel);
+                spriteContents.uploadFirstFrame(0, 0);
+            } catch (Exception e) {
+                Exposure.LOGGER.error("Failed to generate mipmaps: {}", e.getMessage());
+            }
         }
 
         void draw(PoseStack poseStack, MultiBufferSource bufferSource, float minX, float minY, float maxX, float maxY,
