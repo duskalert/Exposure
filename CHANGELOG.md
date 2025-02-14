@@ -1,6 +1,6 @@
 # Changelog
 
-## UNRELEASED
+## 1.7.8 - 2025-02-14
 - Added mipmaps for exposures.
 
 ## 1.7.7 - 2024-09-24
