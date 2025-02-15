@@ -30,7 +30,7 @@ dependencies {
         exclude group: 'net.fabricmc.fabric-api'
     }
 
-    modCompileOnly("curse.maven:architectury-${architectury_cf_version}")
+//    modCompileOnly("curse.maven:architectury-${architectury_cf_version}")
 
     api "fuzs.forgeconfigapiport:forgeconfigapiport-common:${forge_config_api_version}"
 }

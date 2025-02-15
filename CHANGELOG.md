@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.7.9 - 2025-02-15
+- Fixed crash when rendering exposures if Architectury API is not installed.
+
 ## 1.7.8 - 2025-02-14
 - Added mipmaps for exposures.
 
