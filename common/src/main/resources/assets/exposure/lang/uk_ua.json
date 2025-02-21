@@ -100,6 +100,11 @@
   "exposure.configuration.default_frame_size": "Розмір кадру за замовчуванням",
   "exposure.configuration.different_developing_potions_colors": "Барвисті зілля для проявки плівки",
   "exposure.configuration.direct_capture_delay_frames": "Тіки затримки прямого захоплення",
+  "exposure.configuration.dyes_black_and_white": "Барвники для чорно-білого друку",
+  "exposure.configuration.dyes_chromatic_blue": "Барвники для барвистого друку синього каналу",
+  "exposure.configuration.dyes_chromatic_green": "Барвники для барвистого друку зеленого каналу",
+  "exposure.configuration.dyes_chromatic_red": "Барвники для барвистого друку червоного каналу",
+  "exposure.configuration.dyes_color": "Барвники для кольорового друку",
   "exposure.configuration.experience_black_and_white": "Очки досвіду за чорно-білий друк",
   "exposure.configuration.experience_chromatic": "Очки досвіду за барвистий друк",
   "exposure.configuration.experience_color": "Очки досвіду за кольоровий друк",
@@ -117,6 +122,7 @@
   "exposure.configuration.jei_information": "Додавати інформацію до JEI",
   "exposure.configuration.keep_post_effect": "Зберігати пост-ефект",
   "exposure.configuration.lightroom": "Лайтрум",
+  "exposure.configuration.lightroom_light_requirement": "Необхідний рівень освітлення",
   "exposure.configuration.loot_chests": "Генерувати предмети в лут-скринях",
   "exposure.configuration.middle_click_controls": "Середня кнопка миші відкриває панель керування видошукачем",
   "exposure.configuration.misc": "Різне",
@@ -298,10 +304,5 @@
   "task.exposure.export.status.exporting": "Експорт \"%s\" - [%s/%s]",
   "task.exposure.export.status.requesting": "Запит \"%s\" - [%s/%s]",
   "task.exposure.export.stopped": "Експорт зупинено.",
-  "tooltip.exposure.hold_for_details": "§8Утримуйте [§7Shift§8] для подробиць",
-  "exposure.configuration.dyes_black_and_white": "Барвники для чорно-білого друку",
-  "exposure.configuration.dyes_chromatic_blue": "Барвники для барвистого друку синього каналу",
-  "exposure.configuration.dyes_chromatic_green": "Барвники для барвистого друку зеленого каналу",
-  "exposure.configuration.dyes_chromatic_red": "Барвники для барвистого друку червоного каналу",
-  "exposure.configuration.dyes_color": "Барвники для кольорового друку"
+  "tooltip.exposure.hold_for_details": "§8Утримуйте [§7Shift§8] для подробиць"
 }

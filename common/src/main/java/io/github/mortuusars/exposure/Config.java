@@ -27,6 +27,7 @@ public class Config {
         public static final ModConfigSpec.IntValue PROJECT_TIMEOUT_TICKS;
 
         // Lightroom
+        public static final ModConfigSpec.IntValue LIGHTROOM_LIGHT_REQUIREMENT;
         public static final ModConfigSpec.ConfigValue<List<? extends String>> LIGHTROOM_BW_DYES;
         public static final ModConfigSpec.ConfigValue<List<? extends String>> LIGHTROOM_COLOR_DYES;
         public static final ModConfigSpec.ConfigValue<List<? extends String>> LIGHTROOM_CHROMATIC_RED_DYES;
@@ -88,6 +89,9 @@ public class Config {
 
             {
                 builder.push("lightroom");
+                LIGHTROOM_LIGHT_REQUIREMENT = builder
+                        .comment("Light level that is required for Lightroom to work. Default: 13")
+                        .defineInRange("lightroom_light_requirement", 13, 0, 15);
                 builder.comment("Dyes that are used for particular printing process.",
                                 "Valid dyes are: cyan, magenta, yellow, black.",
                                 "Multiple definitions will make the lightroom consume multiple items per print. [\"black\", \"black\"] -> 2 Black Dye is consumed per print.");

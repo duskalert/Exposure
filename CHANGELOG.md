@@ -1,6 +1,9 @@
 # Changelog
 
-## 1.8.9 - 2025-02-15
+## 1.8.4 - 2025-02-21
+- Added config option for Lightroom light level requirement.
+
+## 1.8.3 - 2025-02-15
 - Moved `different_developing_potions_colors` config option from client to common.
   - Fixes dedicated server crash when trying to read the config value. 
 - Fixed log message appearing on each level save.

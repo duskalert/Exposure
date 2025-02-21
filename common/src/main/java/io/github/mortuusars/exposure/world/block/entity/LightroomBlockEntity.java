@@ -1,6 +1,7 @@
 package io.github.mortuusars.exposure.world.block.entity;
 
 import com.google.common.base.Preconditions;
+import io.github.mortuusars.exposure.Config;
 import io.github.mortuusars.exposure.Exposure;
 import io.github.mortuusars.exposure.ExposureServer;
 import io.github.mortuusars.exposure.world.block.LightroomBlock;
@@ -280,15 +281,16 @@ public class LightroomBlockEntity extends BaseContainerBlockEntity implements Wo
     
     public boolean hasSufficientLightLevel() {
         if (level == null) return false;
+        int requiredLightLevel = Config.Server.LIGHTROOM_LIGHT_REQUIREMENT.get();
         BlockPos above = getBlockPos().above();
         if (isRefracted()) {
-            return LevelUtil.getLightLevelAt(level, above.above()) > 12
-                    || LevelUtil.getLightLevelAt(level, above.relative(Direction.NORTH)) > 12
-                    || LevelUtil.getLightLevelAt(level, above.relative(Direction.EAST)) > 12
-                    || LevelUtil.getLightLevelAt(level, above.relative(Direction.SOUTH)) > 12
-                    || LevelUtil.getLightLevelAt(level, above.relative(Direction.WEST)) > 12;
+            return LevelUtil.getLightLevelAt(level, above.above()) >= requiredLightLevel
+                    || LevelUtil.getLightLevelAt(level, above.relative(Direction.NORTH)) >= requiredLightLevel
+                    || LevelUtil.getLightLevelAt(level, above.relative(Direction.EAST)) >= requiredLightLevel
+                    || LevelUtil.getLightLevelAt(level, above.relative(Direction.SOUTH)) >= requiredLightLevel
+                    || LevelUtil.getLightLevelAt(level, above.relative(Direction.WEST)) >= requiredLightLevel;
         }
-        return LevelUtil.getLightLevelAt(level, above) > 12;
+        return LevelUtil.getLightLevelAt(level, above) >= requiredLightLevel;
     }
 
     public boolean canPrintInCreativeMode() {
