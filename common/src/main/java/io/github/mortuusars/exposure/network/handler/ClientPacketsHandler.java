@@ -24,7 +24,7 @@ import io.github.mortuusars.exposure.world.level.storage.ExposureData;
 import io.github.mortuusars.exposure.client.gui.screen.PhotographScreen;
 import io.github.mortuusars.exposure.data.ColorPalettes;
 import io.github.mortuusars.exposure.world.item.PhotographItem;
-import io.github.mortuusars.exposure.network.packet.client.*;
+import io.github.mortuusars.exposure.network.packet.clientbound.*;
 import io.github.mortuusars.exposure.world.item.util.ItemAndStack;
 import io.github.mortuusars.exposure.util.UnixTimestamp;
 import io.github.mortuusars.exposure.util.cycles.task.Task;
@@ -70,12 +70,7 @@ public class ClientPacketsHandler {
     }
 
     public static void exportExposures(ExportS2CP packet) {
-        if (ExportExposuresTask.isRunning()) {
-            Minecrft.player().displayClientMessage(Component.translatable("task.exposure.export.already_running"), false);
-            return;
-        }
-        ExposureClient.cycles().addParallelTask(
-                new ExportExposuresTask(packet.ids(), packet.size(), packet.look()));
+        ExportExposuresTask.start(packet.ids(), packet.size(), packet.look());
     }
 
     public static void stopExportTask() {

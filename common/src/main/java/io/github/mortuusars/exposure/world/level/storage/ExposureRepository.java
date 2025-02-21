@@ -3,8 +3,8 @@ package io.github.mortuusars.exposure.world.level.storage;
 import com.google.common.base.Preconditions;
 import com.mojang.logging.LogUtils;
 import io.github.mortuusars.exposure.network.Packets;
-import io.github.mortuusars.exposure.network.packet.client.ExposureDataChangedS2CP;
-import io.github.mortuusars.exposure.network.packet.client.ExposureDataResponseS2CP;
+import io.github.mortuusars.exposure.network.packet.clientbound.ExposureDataChangedS2CP;
+import io.github.mortuusars.exposure.network.packet.clientbound.ExposureDataResponseS2CP;
 import io.github.mortuusars.exposure.util.UnixTimestamp;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
@@ -16,6 +16,7 @@ import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
@@ -60,7 +61,7 @@ public class ExposureRepository {
                 .toList();
     }
 
-    public RequestedPalettedExposure loadExposure(@NotNull String id) {
+    public RequestedPalettedExposure load(@NotNull String id) {
         Preconditions.checkNotNull(id, "id");
         Preconditions.checkArgument(!StringUtil.isBlank(id), "Cannot load exposure: id is empty.");
 
@@ -81,7 +82,7 @@ public class ExposureRepository {
         return RequestedPalettedExposure.success(exposureData);
     }
 
-    public void saveExposure(@NotNull String id, ExposureData data) {
+    public void save(@NotNull String id, ExposureData data) {
         Preconditions.checkArgument(!StringUtil.isBlank(id), "Cannot save exposure: id is null or empty.");
 
         if (ensureExposuresDirectoryExists()) {
@@ -92,15 +93,19 @@ public class ExposureRepository {
         }
     }
 
-    public void updateExposure(@NotNull String id, Function<ExposureData, ExposureData> updateFunction) {
+    public void update(@NotNull String id, Function<ExposureData, ExposureData> updateFunction) {
         Preconditions.checkArgument(!StringUtil.isBlank(id), "Cannot update exposure: id is null or empty.");
 
-        loadExposure(id).getData().ifPresent(exposure -> {
+        load(id).getData().ifPresent(exposure -> {
             ExposureData updatedExposure = updateFunction.apply(exposure);
             if (!updatedExposure.equals(exposure)) {
-                saveExposure(id, updatedExposure);
+                save(id, updatedExposure);
             }
         });
+    }
+
+    public boolean delete(String id) throws IOException {
+        return Files.deleteIfExists(exposuresFolderPath.resolve(id + ".dat"));
     }
 
     public void expect(ServerPlayer player, String id, BiConsumer<ServerPlayer, String> onReceived) {
@@ -120,7 +125,7 @@ public class ExposureRepository {
             LOGGER.error("Null or empty id cannot be used to get an exposure data. Player: '{}'", player.getScoreboardName());
             result = RequestedPalettedExposure.INVALID_ID;
         } else {
-            result = loadExposure(id);
+            result = load(id);
         }
 
         Packets.sendToClient(new ExposureDataResponseS2CP(id, result), player);
@@ -131,7 +136,7 @@ public class ExposureRepository {
             return;
         }
 
-        saveExposure(id, exposure);
+        save(id, exposure);
         onExposureReceived(player, id);
 
         LOGGER.debug("Saved exposure '{}' uploaded by '{}'.", id, player.getScoreboardName());

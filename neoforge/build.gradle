@@ -71,6 +71,7 @@ loom {
 }
 
 shadowJar {
+    exclude("architectury.common.json")
     configurations = [project.configurations.shadowBundle]
     archiveClassifier = 'dev-shadow'
 }

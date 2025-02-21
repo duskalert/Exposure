@@ -2,7 +2,7 @@ package io.github.mortuusars.exposure.client.capture.action;
 
 import io.github.mortuusars.exposure.world.camera.CameraId;
 import io.github.mortuusars.exposure.network.Packets;
-import io.github.mortuusars.exposure.network.packet.server.InterplanarProjectionFinishedC2SP;
+import io.github.mortuusars.exposure.network.packet.serverbound.InterplanarProjectionFinishedC2SP;
 import io.github.mortuusars.exposure.util.TranslatableError;
 
 import java.util.Optional;

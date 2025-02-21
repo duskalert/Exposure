@@ -2,8 +2,8 @@ package io.github.mortuusars.exposure.world.sound;
 
 import io.github.mortuusars.exposure.client.sound.UniqueSoundManager;
 import io.github.mortuusars.exposure.network.Packets;
-import io.github.mortuusars.exposure.network.packet.client.UniqueSoundPlayShutterTickingS2CP;
-import io.github.mortuusars.exposure.network.packet.client.UniqueSoundPlayS2CP;
+import io.github.mortuusars.exposure.network.packet.clientbound.UniqueSoundPlayShutterTickingS2CP;
+import io.github.mortuusars.exposure.network.packet.clientbound.UniqueSoundPlayS2CP;
 import io.github.mortuusars.exposure.world.camera.CameraId;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;

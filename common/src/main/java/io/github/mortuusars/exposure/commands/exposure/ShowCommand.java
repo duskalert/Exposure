@@ -9,8 +9,8 @@ import io.github.mortuusars.exposure.world.level.storage.ExposureIdentifier;
 import io.github.mortuusars.exposure.world.level.storage.RequestedPalettedExposure;
 import io.github.mortuusars.exposure.world.camera.frame.Frame;
 import io.github.mortuusars.exposure.network.Packets;
-import io.github.mortuusars.exposure.network.packet.client.ExposureDataResponseS2CP;
-import io.github.mortuusars.exposure.network.packet.client.ShowExposureCommandS2CP;
+import io.github.mortuusars.exposure.network.packet.clientbound.ExposureDataResponseS2CP;
+import io.github.mortuusars.exposure.network.packet.clientbound.ShowExposureCommandS2CP;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.EntityArgument;
@@ -69,7 +69,7 @@ public class ShowCommand {
             return 1;
         }
 
-        RequestedPalettedExposure palettedExposure = ExposureServer.exposureRepository().loadExposure(id);
+        RequestedPalettedExposure palettedExposure = ExposureServer.exposureRepository().load(id);
         if (palettedExposure.getData().isEmpty()) {
             stack.sendFailure(Component.translatable("command.exposure.show.error.not_found", id));
             return 0;

@@ -1,4 +1,4 @@
-package io.github.mortuusars.exposure.network.packet.server;
+package io.github.mortuusars.exposure.network.packet.serverbound;
 
 import io.github.mortuusars.exposure.Exposure;
 import io.github.mortuusars.exposure.world.item.camera.CameraSetting;

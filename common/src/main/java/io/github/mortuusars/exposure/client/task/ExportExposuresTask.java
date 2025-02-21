@@ -44,6 +44,15 @@ public class ExportExposuresTask extends Task<Result<Boolean>> {
         return currentTask != null;
     }
 
+    public static boolean start(List<String> ids, ExportSize size, ExportLook look) {
+        if (ExportExposuresTask.isRunning()) {
+            Minecrft.player().displayClientMessage(Component.translatable("task.exposure.export.already_running"), false);
+            return false;
+        }
+        ExposureClient.cycles().addParallelTask(new ExportExposuresTask(ids, size, look));
+        return true;
+    }
+
     public static boolean stopCurrentTask() {
         if (currentTask != null) {
             currentTask.stop = true;

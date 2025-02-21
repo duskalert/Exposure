@@ -1,4 +1,4 @@
-package io.github.mortuusars.exposure.network.packet.server;
+package io.github.mortuusars.exposure.network.packet.serverbound;
 
 import com.google.common.base.Preconditions;
 import io.github.mortuusars.exposure.Exposure;

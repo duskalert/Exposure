@@ -64,13 +64,6 @@ public class PlatformHelperImpl {
             public @NotNull Component getDisplayName() {
                 return menuProvider.getDisplayName();
             }
-
-
-
-//            @Override
-//            public void writeScreenOpeningData(ServerPlayer player, FriendlyByteBuf buffer) {
-//                extraDataWriter.accept(buffer);
-//            }
         };
 
         serverPlayer.openMenu(extendedScreenHandlerFactory);

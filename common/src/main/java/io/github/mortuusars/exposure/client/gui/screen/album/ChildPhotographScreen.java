@@ -12,10 +12,10 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public class AlbumPhotographScreen extends PhotographScreen {
+public class ChildPhotographScreen extends PhotographScreen {
     private final Screen parentScreen;
 
-    public AlbumPhotographScreen(Screen parentScreen, List<ItemAndStack<PhotographItem>> photographs) {
+    public ChildPhotographScreen(Screen parentScreen, List<ItemAndStack<PhotographItem>> photographs) {
         super(photographs);
         this.parentScreen = parentScreen;
     }
@@ -56,6 +56,6 @@ public class AlbumPhotographScreen extends PhotographScreen {
 
     @Override
     public void onClose() {
-        zoom.setTarget(0f); // AlbumPhotographScreen#render will close screen when zooming out ends.
+        zoom.setTarget(0f); // ChildPhotographScreen#render will close screen when zooming out ends.
     }
 }

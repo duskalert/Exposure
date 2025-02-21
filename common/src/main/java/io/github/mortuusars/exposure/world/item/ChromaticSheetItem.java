@@ -3,12 +3,11 @@ package io.github.mortuusars.exposure.world.item;
 import com.google.common.base.Preconditions;
 import io.github.mortuusars.exposure.Exposure;
 import io.github.mortuusars.exposure.ExposureServer;
-import io.github.mortuusars.exposure.world.level.storage.ExposureData;
 import io.github.mortuusars.exposure.world.level.storage.ExposureIdentifier;
 import io.github.mortuusars.exposure.world.camera.ExposureType;
 import io.github.mortuusars.exposure.world.camera.frame.Frame;
 import io.github.mortuusars.exposure.network.Packets;
-import io.github.mortuusars.exposure.network.packet.client.CreateChromaticExposureS2CP;
+import io.github.mortuusars.exposure.network.packet.clientbound.CreateChromaticExposureS2CP;
 import io.github.mortuusars.exposure.world.camera.ColorChannel;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.component.DataComponents;
@@ -97,7 +96,7 @@ public class ChromaticSheetItem extends Item {
         ItemStack photographStack = createPhotographStack(ExposureIdentifier.id(exposureId), layers);
 
         ExposureServer.exposureRepository().expect(player, exposureId, (pl, id) -> {
-            ExposureServer.exposureRepository().updateExposure(id, exposure ->
+            ExposureServer.exposureRepository().update(id, exposure ->
                     exposure.withTag(tag -> tag.withWasPrintedSetTo(printed)));
         });
         Packets.sendToClient(new CreateChromaticExposureS2CP(exposureId, layersIdentifiers), player);

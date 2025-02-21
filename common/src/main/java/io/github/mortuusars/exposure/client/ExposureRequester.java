@@ -2,7 +2,7 @@ package io.github.mortuusars.exposure.client;
 
 import io.github.mortuusars.exposure.client.util.Minecrft;
 import io.github.mortuusars.exposure.network.Packets;
-import io.github.mortuusars.exposure.network.packet.server.ExposureRequestC2SP;
+import io.github.mortuusars.exposure.network.packet.serverbound.ExposureRequestC2SP;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
@@ -30,16 +30,6 @@ public class ExposureRequester {
     public void refresh(String id) {
         requestedExposures.remove(id);
     }
-
-//    public RequestStatus getStatus(String id) {
-//        @Nullable Long requestedAt = requestedExposures.get(id);
-//
-//        if (requestedAt == null) {
-//            return RequestStatus.NOT_REQUESTED;
-//        }
-//
-//        return isTimedOut(requestedAt) ? RequestStatus.TIMED_OUT : RequestStatus.AWAITING;
-//    }
 
     public boolean isTimedOut(String id) {
         @Nullable Long requestedAt = requestedExposures.get(id);

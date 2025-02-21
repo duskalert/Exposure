@@ -4,7 +4,7 @@ import com.google.common.base.Preconditions;
 import com.mojang.logging.LogUtils;
 import io.github.mortuusars.exposure.world.level.storage.ExposureData;
 import io.github.mortuusars.exposure.network.Packets;
-import io.github.mortuusars.exposure.network.packet.server.ExposureDataC2SP;
+import io.github.mortuusars.exposure.network.packet.serverbound.ExposureDataC2SP;
 import net.minecraft.util.StringUtil;
 import org.slf4j.Logger;
 

@@ -1,8 +1,7 @@
 package io.github.mortuusars.exposure.world.camera;
 
-import io.github.mortuusars.exposure.mixin.PlayerMixin;
 import io.github.mortuusars.exposure.network.packet.Packet;
-import io.github.mortuusars.exposure.network.packet.client.ActiveCameraInHandSetS2CP;
+import io.github.mortuusars.exposure.network.packet.clientbound.ActiveCameraInHandSetS2CP;
 import io.github.mortuusars.exposure.world.entity.CameraHolder;
 import io.github.mortuusars.exposure.world.item.camera.CameraItem;
 import net.minecraft.world.InteractionHand;

@@ -1,4 +1,4 @@
-package io.github.mortuusars.exposure.network.packet.client;
+package io.github.mortuusars.exposure.network.packet.clientbound;
 
 import io.github.mortuusars.exposure.Exposure;
 import io.github.mortuusars.exposure.data.export.ExportLook;
