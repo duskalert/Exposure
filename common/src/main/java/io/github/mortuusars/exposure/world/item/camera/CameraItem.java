@@ -184,8 +184,8 @@ public class CameraItem extends Item {
             return PointOfView.of(holder)
                     .reverseDirection()
                     .limitMaxDistance(holder, getSelfieCameraDistance(stack))
-                    .rotateX(-stack.getOrDefault(Exposure.DataComponents.SELFIE_ROTATION_X, 0.0))
-                    .rotateY(-stack.getOrDefault(Exposure.DataComponents.SELFIE_ROTATION_Y, 0.0));
+                    .rotateX(-CameraSettings.SELFIE_ROTATION_X.getOrDefault(stack))
+                    .rotateY(-CameraSettings.SELFIE_ROTATION_Y.getOrDefault(stack));
         } else {
             return PointOfView.of(holder)
                     .move(0, getYPositionOffset(stack), 0);

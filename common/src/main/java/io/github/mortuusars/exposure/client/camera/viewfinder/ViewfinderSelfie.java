@@ -66,6 +66,8 @@ public class ViewfinderSelfie {
         boolean inSelfieMode = Minecrft.options().getCameraType() == CameraType.THIRD_PERSON_FRONT;
         if (camera.inSelfieMode() != inSelfieMode) {
             CameraSettings.SELFIE_MODE.setAndSync(camera, inSelfieMode);
+            CameraSettings.SELFIE_ROTATION_X.setAndSync(camera, 0.0);
+            CameraSettings.SELFIE_ROTATION_Y.setAndSync(camera, 0.0);
             xRot = 0;
             yRot = 0;
             rawXRot = 0;

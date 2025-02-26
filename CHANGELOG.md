@@ -1,9 +1,10 @@
 # Changelog
 
 ## 1.8.5 - UNRELEASED
-- Moved `waist_level_viewfinder` config option from client to server config.
+- Added camera panning in selfie mode. Hold sprint key (ctrl) and move the mouse.
+- Added `/exposure debug highlight_entities_in_frame` command. 
 - Fixed count number not showing in Stacked Photographs tooltip.
-- Added `/exposure debug highlight_entities_in_frame` command.
+- Moved `waist_level_viewfinder` config option from client to server config.
 - Internal changes for addon compatibility.
 - Added mexican spanish translation.
 
