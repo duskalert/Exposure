@@ -1,7 +1,8 @@
 package io.github.mortuusars.exposure.world.camera.frame;
 
 import io.github.mortuusars.exposure.util.Fov;
-import net.minecraft.util.Mth;
+import io.github.mortuusars.exposure.util.PointOfView;
+import io.github.mortuusars.exposure.world.entity.CameraHolder;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.ClipContext;
@@ -13,31 +14,22 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class EntitiesInFrame {
-    public static List<LivingEntity> get(Entity photographer, double fov, boolean inSelfieMode) {
-        Vec3 cameraPos = photographer.position().add(0, photographer.getEyeHeight(), 0);
-        Vec3 cameraDirection = Vec3.directionFromRotation(photographer.getXRot(), photographer.getYRot());
-
-        if (inSelfieMode) {
-            cameraDirection = cameraDirection.reverse();
-            float maxDistance = 1.75F;  // This is a default value (used in CameraMixin) for client camera when in selfie mode.
-            float maxCameraDistance = getMaxCameraDistance(photographer, cameraPos, cameraDirection, maxDistance);
-            cameraPos = cameraPos.add(cameraDirection.normalize().scale(-maxCameraDistance));
-        }
-
-        return get(photographer, cameraPos, cameraDirection, fov);
+    public static List<LivingEntity> get(CameraHolder cameraHolder, PointOfView pov, double fov) {
+        return get(cameraHolder.asEntity(), pov, fov);
     }
 
-    public static List<LivingEntity> get(Entity photographer, Vec3 cameraPos, Vec3 cameraDirection, double fov) {
+    public static List<LivingEntity> get(Entity cameraHolder, PointOfView pov, double fov) {
+        fov *= 0.9; // 10% margin from edge
         double focalLength = Fov.fovToFocalLength(fov);
 
-        AABB area = new AABB(photographer.blockPosition()).inflate(128);
-        List<Entity> entities = photographer.level().getEntities(null, area);
+        AABB area = new AABB(cameraHolder.blockPosition()).inflate(128);
+        List<Entity> entities = cameraHolder.level().getEntities(null, area);
 
-        FrustumCheck frustum = FrustumCheck.createFromCamera(cameraPos, cameraDirection, ((float) Math.toRadians(fov)));
+        FrustumCheck frustum = FrustumCheck.createFromCamera(pov.pos(), pov.dir(), ((float) Math.toRadians(fov)));
 
         entities.sort((entity, entity2) -> {
-            float dist1 = photographer.distanceTo(entity);
-            float dist2 = photographer.distanceTo(entity2);
+            double dist1 = pov.pos().distanceTo(entity.position());
+            double dist2 = pov.pos().distanceTo(entity2.position());
             if (dist1 == dist2) return 0;
             return dist1 > dist2 ? 1 : -1;
         });
@@ -48,37 +40,13 @@ public class EntitiesInFrame {
             if (!(entity instanceof LivingEntity livingEntity)) continue;
             if (!livingEntity.isAlive()) continue;
             if (!frustum.contains(entity.getEyePosition())) continue; // Not in frame
-            if (calculateVisibleDistance(cameraPos, entity) > focalLength) continue; // Too far to be in frame
-            if (!hasLineOfSight(cameraPos, entity)) continue; // Not visible
+            if (calculateVisibleDistance(pov.pos(), entity) > focalLength) continue; // Too far to be in frame
+            if (!hasLineOfSight(pov.pos(), entity)) continue; // Not visible
 
             entitiesInFrame.add(livingEntity);
         }
 
         return entitiesInFrame;
-    }
-
-    /**
-     * This method is same as {@link net.minecraft.client.Camera}#getMaxZoom.
-     * We need it to calculate proper camera position if camera is in third-person mode, so it does not clip into blocks.
-     */
-    public static float getMaxCameraDistance(Entity photographer, Vec3 position, Vec3 direction, float maxDistance) {
-        for (int i = 0; i < 8; i++) {
-            float xOff = (float) ((i & 1) * 2 - 1);
-            float yOff = (float) ((i >> 1 & 1) * 2 - 1);
-            float zOff = (float) ((i >> 2 & 1) * 2 - 1);
-            Vec3 pos = position.add(xOff * 0.1F, yOff * 0.1F, zOff * 0.1F);
-            Vec3 endPos = pos.add(direction.scale(-maxDistance));
-            HitResult hitResult = photographer.level().clip(
-                    new ClipContext(pos, endPos, ClipContext.Block.VISUAL, ClipContext.Fluid.NONE, photographer));
-            if (hitResult.getType() != HitResult.Type.MISS) {
-                float distanceSqr = (float) hitResult.getLocation().distanceToSqr(position);
-                if (distanceSqr < Mth.square(maxDistance)) {
-                    maxDistance = Mth.sqrt(distanceSqr);
-                }
-            }
-        }
-
-        return maxDistance;
     }
 
     /**

@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.8.5 - UNRELEASED
+- Moved `waist_level_viewfinder` config option from client to server config.
+- Fixed count number not showing in Stacked Photographs tooltip.
+- Added `/exposure debug highlight_entities_in_frame` command.
+- Internal changes for addon compatibility.
+- Added mexican spanish translation.
+
 ## 1.8.4 - 2025-02-21
 - Added config option for Lightroom light level requirement.
 

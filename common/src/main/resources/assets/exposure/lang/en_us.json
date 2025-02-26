@@ -293,6 +293,8 @@
   "subtitle.exposure.photograph_frame.place": "Photograph Frame placed",
   "subtitle.exposure.photograph_frame.remove_item": "Photograph Frame empties",
   "subtitle.exposure.photograph_frame.rotate_item": "Photograph Frame clicks",
+  "system.exposure.debug.highlight_entities_in_frame.off": "Disabled highlighting of entities in frame.",
+  "system.exposure.debug.highlight_entities_in_frame.on": "Enabled highlighting of entities in frame while looking through viewfinder.",
   "task.exposure.export.already_running": "Another export is currently in progress.",
   "task.exposure.export.error": "Exporting '%s' failed: %s",
   "task.exposure.export.error.not_received": "Exposure '%s' was not received.",

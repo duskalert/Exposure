@@ -8,11 +8,13 @@ import org.jetbrains.annotations.Nullable;
 
 public class ExposureServer {
     private static ExposureRepository vault;
-    private static ExposureFrameHistory exposureFrameHistory;
+    private static ExposureFrameHistory frameHistory;
+
+    public static boolean debugHighlightEntitiesInFrame = false;
 
     public static void init(MinecraftServer server) {
         vault = new ExposureRepository(server);
-        exposureFrameHistory = ExposureFrameHistory.loadOrCreate(server);
+        frameHistory = ExposureFrameHistory.loadOrCreate(server);
     }
 
     // --
@@ -22,7 +24,7 @@ public class ExposureServer {
     }
 
     public static ExposureFrameHistory frameHistory() {
-        return ensureInitialized(exposureFrameHistory);
+        return ensureInitialized(frameHistory);
     }
 
     // --

@@ -6,9 +6,13 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import io.github.mortuusars.exposure.Exposure;
 import io.github.mortuusars.exposure.ExposureServer;
+import io.github.mortuusars.exposure.client.util.bugger.Bugger;
+import io.github.mortuusars.exposure.util.PointOfView;
 import io.github.mortuusars.exposure.world.camera.*;
 import io.github.mortuusars.exposure.world.camera.capture.CaptureProperties;
 import io.github.mortuusars.exposure.world.camera.capture.CaptureType;
+import io.github.mortuusars.exposure.world.camera.frame.EntitiesInFrame;
+import io.github.mortuusars.exposure.world.entity.CameraHolder;
 import io.github.mortuusars.exposure.world.item.camera.CameraSettings;
 import io.github.mortuusars.exposure.world.level.storage.ExposureIdentifier;
 import io.github.mortuusars.exposure.data.ColorPalette;
@@ -20,14 +24,17 @@ import io.github.mortuusars.exposure.world.item.camera.Attachment;
 import io.github.mortuusars.exposure.network.Packets;
 import io.github.mortuusars.exposure.network.packet.clientbound.ClearRenderingCacheS2CP;
 import io.github.mortuusars.exposure.network.packet.clientbound.CaptureStartDebugRGBS2CP;
+import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.network.chat.*;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
@@ -40,6 +47,8 @@ public class DebugCommand {
         return Commands.literal("debug")
                 .then(Commands.literal("clear_rendering_cache")
                         .executes(DebugCommand::clearRenderingCache))
+                .then(Commands.literal("highlight_entities_in_frame")
+                        .executes(DebugCommand::highlightEntitiesInFrame))
                 .then(Commands.literal("expose_rgb")
                         .executes(DebugCommand::exposeRGB))
                 .then(Commands.literal("chromatic_from_last_three_exposures")
@@ -54,6 +63,13 @@ public class DebugCommand {
         CommandSourceStack stack = context.getSource();
         ServerPlayer player = stack.getPlayerOrException();
         Packets.sendToClient(ClearRenderingCacheS2CP.INSTANCE, player);
+        return 0;
+    }
+
+    private static int highlightEntitiesInFrame(CommandContext<CommandSourceStack> context) {
+        ExposureServer.debugHighlightEntitiesInFrame = !ExposureServer.debugHighlightEntitiesInFrame;
+        context.getSource().sendSystemMessage(Component.translatable("system.exposure.debug.highlight_entities_in_frame." +
+                (ExposureServer.debugHighlightEntitiesInFrame ? "on" : "off")).withStyle(ChatFormatting.RED));
         return 0;
     }
 
@@ -90,10 +106,13 @@ public class DebugCommand {
             properties.add(captureProperties);
 
             Frame frame = camera
-                    .map((cameraItem, cameraStack) ->
-                            cameraItem.createFrame(player, context.getSource().getLevel(), cameraStack, captureProperties,
-                                    cameraItem.getPositionsInFrame(player, cameraItem.getFov(player.level(), cameraStack)),
-                                    cameraItem.getEntitiesInFrame(player, context.getSource().getLevel(), cameraStack)))
+                    .map((cameraItem, cameraStack) -> {
+                        PointOfView pov = cameraItem.getPointOfView(player, cameraStack);
+                        float fov = cameraItem.getFov(player.level(), cameraStack);
+                        List<BlockPos> positions = cameraItem.getPositionsInFrame(player, pov, fov);
+                        List<LivingEntity> entities = EntitiesInFrame.get((CameraHolder) player, pov, fov);
+                        return cameraItem.createFrame(player, context.getSource().getLevel(), cameraStack, captureProperties, positions,entities);
+                    })
                     .orElse(Frame.create().setIdentifier(ExposureIdentifier.id(exposureId))
                             .setType(ExposureType.BLACK_AND_WHITE)
                             .setPhotographer(new Photographer(player))

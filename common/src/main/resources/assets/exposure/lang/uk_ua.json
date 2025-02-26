@@ -304,5 +304,7 @@
   "task.exposure.export.status.exporting": "Експорт \"%s\" - [%s/%s]",
   "task.exposure.export.status.requesting": "Запит \"%s\" - [%s/%s]",
   "task.exposure.export.stopped": "Експорт зупинено.",
-  "tooltip.exposure.hold_for_details": "§8Утримуйте [§7Shift§8] для подробиць"
+  "tooltip.exposure.hold_for_details": "§8Утримуйте [§7Shift§8] для подробиць",
+  "system.exposure.debug.highlight_entities_in_frame.on": "Увімкнено підсвітку сутностей у кадрі, при погляді через видошукач.",
+  "system.exposure.debug.highlight_entities_in_frame.off": "Вимкнено підсвітку сутностей у кадрі."
 }

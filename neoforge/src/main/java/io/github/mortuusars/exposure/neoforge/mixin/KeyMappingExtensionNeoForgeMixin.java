@@ -13,7 +13,7 @@ public interface KeyMappingExtensionNeoForgeMixin {
     @Inject(method = "isConflictContextAndModifierActive", at = @At("HEAD"), cancellable = true)
     private void modify(CallbackInfoReturnable<Boolean> cir) {
         if (CameraClient.viewfinder() != null
-                && CameraClient.viewfinder().getControlsScreen().map(screen -> screen == Minecrft.get().screen).orElse(false)) {
+                && CameraClient.viewfinder().controlsScreen().map(screen -> screen == Minecrft.get().screen).orElse(false)) {
             cir.setReturnValue(true);
         }
     }

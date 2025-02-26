@@ -1,9 +1,14 @@
 package io.github.mortuusars.exposure.mixin.client;
 
-import io.github.mortuusars.exposure.client.animation.ModelPoses;
+import io.github.mortuusars.exposure.PlatformHelper;
+import io.github.mortuusars.exposure.client.animation.CameraModelPoses;
+import io.github.mortuusars.exposure.client.animation.CameraPoses;
+import io.github.mortuusars.exposure.client.util.Minecrft;
+import io.github.mortuusars.exposure.world.camera.Camera;
 import io.github.mortuusars.exposure.world.camera.CameraInHand;
 import io.github.mortuusars.exposure.world.entity.CameraHolder;
 import io.github.mortuusars.exposure.world.entity.CameraOperator;
+import io.github.mortuusars.exposure.world.item.camera.CameraItem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.AgeableListModel;
 import net.minecraft.client.model.AnimationUtils;
@@ -23,8 +28,12 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(HumanoidModel.class)
 public abstract class HumanoidModelMixin<T extends LivingEntity> extends AgeableListModel<T> {
-    @Shadow @Final public ModelPart leftArm;
-    @Shadow @Final public ModelPart rightArm;
+    @Shadow
+    @Final
+    public ModelPart leftArm;
+    @Shadow
+    @Final
+    public ModelPart rightArm;
 
     // Allows reducing/removing arm bobbing. Doing the bobbing in reverse does not work correctly - arms shiver for some reason.
     @Unique
@@ -40,46 +49,50 @@ public abstract class HumanoidModelMixin<T extends LivingEntity> extends Ageable
             return;
         }
 
-        operator.getActiveExposureCameraOptional().ifPresentOrElse(
-                camera -> {
-                    HumanoidArm arm = camera instanceof CameraInHand cameraInHand && cameraInHand.getHand() == InteractionHand.OFF_HAND
+        if (operator.getActiveExposureCamera() instanceof Camera camera && camera.getItemStack().getItem() instanceof CameraItem item) {
+            CameraPoses poses = CameraModelPoses.get(item);
+            HumanoidArm arm = camera instanceof CameraInHand cameraInHand && cameraInHand.getHand() == InteractionHand.OFF_HAND
+                    ? Minecraft.getInstance().options.mainHand().get().getOpposite()
+                    : Minecraft.getInstance().options.mainHand().get();
+
+            if (item.isInSelfieMode(camera.getItemStack())) {
+                poses.applySelfie((HumanoidModel<?>) (Object) this, entity, arm, false);
+
+                if (arm == HumanoidArm.LEFT) {
+                    exposure$LeftArmBobbingMultiplier = 0F;
+                    exposure$RightArmBobbingMultiplier = 1F;
+                } else {
+                    exposure$LeftArmBobbingMultiplier = 1F;
+                    exposure$RightArmBobbingMultiplier = 0F;
+                }
+
+                return;
+            }
+
+            //noinspection ConstantValue
+            if (Minecrft.player().equals(entity) && PlatformHelper.isModLoaded("realcamera")) {
+                return;
+            }
+
+            poses.applyHolding(((HumanoidModel<?>) (Object) this), entity, arm);
+            exposure$LeftArmBobbingMultiplier = arm == HumanoidArm.LEFT ? 0.1F : 0.5F;
+            exposure$RightArmBobbingMultiplier = arm == HumanoidArm.RIGHT ? 0.1F : 0.5F;
+            return;
+        }
+
+        if (entity instanceof CameraHolder holder && CameraInHand.find(holder) instanceof CameraInHand camera) {
+            camera.ifPresent((item, stack) -> {
+                CameraPoses poses = CameraModelPoses.get(item);
+                if (item.isDisassembled(stack)) {
+                    HumanoidArm arm = camera.getHand() == InteractionHand.OFF_HAND
                             ? Minecraft.getInstance().options.mainHand().get().getOpposite()
                             : Minecraft.getInstance().options.mainHand().get();
-
-                    camera.ifPresent((item, stack) -> {
-                        if (item.isInSelfieMode(stack)) {
-                            ModelPoses.applyCameraSelfiePose((HumanoidModel<?>) (Object) this, entity, arm, false);
-
-                            if (arm == HumanoidArm.LEFT) {
-                                exposure$LeftArmBobbingMultiplier = 0F;
-                                exposure$RightArmBobbingMultiplier = 1F;
-                            } else {
-                                exposure$LeftArmBobbingMultiplier = 1F;
-                                exposure$RightArmBobbingMultiplier = 0F;
-                            }
-                        } else {
-                            ModelPoses.applyCameraPose(((HumanoidModel<?>) (Object) this), entity, arm);
-                            exposure$LeftArmBobbingMultiplier = arm == HumanoidArm.LEFT ? 0.1F : 0.5F;
-                            exposure$RightArmBobbingMultiplier = arm == HumanoidArm.RIGHT ? 0.1F : 0.5F;
-                        }
-                    });
-                },
-                () -> {
-                    if (entity instanceof CameraHolder holder
-                            && CameraInHand.find(holder) instanceof CameraInHand camera) {
-                        camera.ifPresent((item, stack) -> {
-                            if (item.isDisassembled(stack)) {
-                                HumanoidArm arm = camera.getHand() == InteractionHand.OFF_HAND
-                                        ? Minecraft.getInstance().options.mainHand().get().getOpposite()
-                                        : Minecraft.getInstance().options.mainHand().get();
-                                ModelPoses.applyCameraDisassembledPose((HumanoidModel<?>) (Object) this, entity, arm);
-                            }
-                        });
-                    }
-                    exposure$LeftArmBobbingMultiplier = 1F;
-                    exposure$RightArmBobbingMultiplier = 1F;
+                    poses.applyDisassembled((HumanoidModel<?>) (Object) this, entity, arm);
                 }
-        );
+            });
+        }
+        exposure$LeftArmBobbingMultiplier = 1F;
+        exposure$RightArmBobbingMultiplier = 1F;
     }
 
     @Redirect(method = "setupAnim(Lnet/minecraft/world/entity/LivingEntity;FFFFF)V",

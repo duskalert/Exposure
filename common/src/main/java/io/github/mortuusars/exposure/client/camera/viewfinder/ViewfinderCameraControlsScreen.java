@@ -14,6 +14,7 @@ import io.github.mortuusars.exposure.client.input.MouseHandler;
 import io.github.mortuusars.exposure.client.util.Minecrft;
 import io.github.mortuusars.exposure.client.util.ZoomDirection;
 import io.github.mortuusars.exposure.world.camera.Camera;
+import io.github.mortuusars.exposure.world.item.camera.CameraItem;
 import io.github.mortuusars.exposure.world.item.camera.CameraSettings;
 import io.github.mortuusars.exposure.world.camera.component.CompositionGuide;
 import io.github.mortuusars.exposure.world.camera.component.CompositionGuides;
@@ -35,6 +36,7 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -60,17 +62,17 @@ public class ViewfinderCameraControlsScreen extends Screen {
 
     public static final ResourceLocation SEPARATOR_SPRITE = Exposure.resource("camera_controls/button_separator");
 
-    public static final int SEPARATOR_WIDTH = 1;
-    private static final int BUTTON_HEIGHT = 18;
-    private static final int SIDE_BUTTONS_WIDTH = 48;
-    private static final int BUTTON_WIDTH = 15;
+    protected static final int SEPARATOR_WIDTH = 1;
+    protected static final int BUTTON_HEIGHT = 18;
+    protected static final int SIDE_BUTTONS_WIDTH = 48;
+    protected static final int BUTTON_WIDTH = 15;
 
     protected final Camera camera;
     protected final Viewfinder viewfinder;
-    private final long openedAt;
+    protected final long openedAt;
 
-    private int leftPos;
-    private int topPos;
+    protected int leftPos;
+    protected int topPos;
 
     public ViewfinderCameraControlsScreen(Camera camera, Viewfinder viewfinder) {
         super(CommonComponents.EMPTY);
@@ -108,7 +110,7 @@ public class ViewfinderCameraControlsScreen extends Screen {
         leftPos = (width - 256) / 2;
         topPos = Math.round(viewfinder.overlay().getOpening().y + viewfinder.overlay().getOpening().height - 256);
 
-        boolean hasFlash = Attachment.FLASH.isPresent(camera.getItemStack());
+        boolean hasFlash = camera.map(CameraItem::hasFlash).orElse(false);
 
         int elementX = leftPos + 128 - (SIDE_BUTTONS_WIDTH + 1 + BUTTON_WIDTH + 1 + (hasFlash ? BUTTON_WIDTH + 1 : 0) + SIDE_BUTTONS_WIDTH) / 2;
         int elementY = topPos + 238;
@@ -265,8 +267,9 @@ public class ViewfinderCameraControlsScreen extends Screen {
     public boolean mouseReleased(double mouseX, double mouseY, int button) {
         if (KeyboardHandler.getCameraControlsKey().matchesMouse(button)
                 || (Config.Client.VIEWFINDER_MIDDLE_CLICK_CONTROLS.get() && button == InputConstants.MOUSE_BUTTON_MIDDLE)) {
-            if (isToggleTimeReached())
+            if (isToggleTimeReached()) {
                 this.onClose();
+            }
 
             return false;
         }
@@ -299,9 +302,19 @@ public class ViewfinderCameraControlsScreen extends Screen {
             return true;
 
         if (keyCode == InputConstants.KEY_ADD || keyCode == InputConstants.KEY_EQUALS) {
+            if (Screen.hasControlDown() && camera.inSelfieMode()) {
+                viewfinder.selfie().rotateCamera(1, true);
+                return true;
+            }
+
             viewfinder.zoom().zoom(ZoomDirection.IN, true);
             return true;
         } else if (keyCode == 333 /*KEY_SUBTRACT*/ || keyCode == InputConstants.KEY_MINUS) {
+            if (Screen.hasControlDown() && camera.inSelfieMode()) {
+                viewfinder.selfie().rotateCamera(-1, true);
+                return true;
+            }
+
             viewfinder.zoom().zoom(ZoomDirection.OUT, true);
             return true;
         }
@@ -312,6 +325,11 @@ public class ViewfinderCameraControlsScreen extends Screen {
     @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
         if (!super.mouseScrolled(mouseX, mouseY, scrollX, scrollY)) {
+            if (Screen.hasControlDown() && camera.inSelfieMode()) {
+                viewfinder.selfie().rotateCamera(Mth.sign(scrollY), true);
+                return true;
+            }
+
             viewfinder.zoom().zoom(scrollY > 0d ? ZoomDirection.IN : ZoomDirection.OUT, true);
             return true;
         }

@@ -42,11 +42,12 @@ public class ViewfinderOverlay {
     protected final LocalPlayer player;
     protected final Camera camera;
     protected final Viewfinder viewfinder;
-    protected final int backgroundColor;
     protected final Rect2f opening;
 
     protected final Animation scaleAnimation;
     protected final float initialScale;
+
+    protected int backgroundColor;
 
     protected float scale;
     protected float bobX = 0f;
@@ -137,9 +138,7 @@ public class ViewfinderOverlay {
         }
 
         drawShutter(guiGraphics);
-
-        // Opening Texture
-        GuiUtil.blit(VIEWFINDER_TEXTURE, guiGraphics.pose(), opening, 0, 0, (int) opening.width, (int) opening.height, 0);
+        drawViewfinderTexture(guiGraphics);
 
         // Guide
         if (drawGuide) {
@@ -153,6 +152,10 @@ public class ViewfinderOverlay {
 
         guiGraphics.pose().popPose();
         RenderSystem.disableDepthTest();
+    }
+
+    protected void drawViewfinderTexture(GuiGraphics guiGraphics) {
+        GuiUtil.blit(VIEWFINDER_TEXTURE, guiGraphics.pose(), opening, 0, 0, (int) opening.width, (int) opening.height, 0);
     }
 
     /**

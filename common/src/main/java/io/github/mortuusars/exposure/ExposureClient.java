@@ -1,5 +1,7 @@
 package io.github.mortuusars.exposure;
 
+import io.github.mortuusars.exposure.client.animation.CameraModelPoses;
+import io.github.mortuusars.exposure.client.animation.CameraPoses;
 import io.github.mortuusars.exposure.client.capture.template.*;
 import io.github.mortuusars.exposure.client.task.ClearStaleRenderedImagesIndefiniteTask;
 import io.github.mortuusars.exposure.client.RenderedExposures;
@@ -33,8 +35,9 @@ public class ExposureClient {
     private static boolean isIrisOrOculusInstalled;
 
     public static void init() {
-        ViewfinderRegistry.register(Exposure.Items.CAMERA.get(), camera ->
-                new Viewfinder(camera, ViewfinderZoom::new, ViewfinderOverlay::new, ViewfinderShader::new, ViewfinderCameraControlsScreen::new));
+        CameraModelPoses.register(Exposure.Items.CAMERA.get(), new CameraPoses());
+
+        ViewfinderRegistry.register(Exposure.Items.CAMERA.get(), Viewfinder::new);
 
         CaptureTemplates.register(CaptureType.CAMERA, new CameraCaptureTemplate());
         CaptureTemplates.register(CaptureType.EXPOSE_COMMAND, new ExposeCaptureTemplate());

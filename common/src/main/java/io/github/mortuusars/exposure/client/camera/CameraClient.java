@@ -4,11 +4,8 @@ import io.github.mortuusars.exposure.client.camera.viewfinder.Viewfinder;
 import io.github.mortuusars.exposure.client.camera.viewfinder.ViewfinderRegistry;
 import io.github.mortuusars.exposure.client.util.Minecrft;
 import io.github.mortuusars.exposure.world.camera.Camera;
-import io.github.mortuusars.exposure.world.item.camera.CameraSettings;
-import io.github.mortuusars.exposure.world.item.camera.CameraItem;
 import io.github.mortuusars.exposure.network.Packets;
 import io.github.mortuusars.exposure.network.packet.common.ActiveCameraDeactivateCommonPacket;
-import net.minecraft.client.CameraType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -18,8 +15,9 @@ public class CameraClient {
     private static @Nullable Viewfinder activeViewfinder;
 
     public static void tick() {
-        if (activeViewfinder != null) activeViewfinder.tick();
-        updateSelfieMode();
+        if (activeViewfinder != null) {
+            activeViewfinder.tick();
+        }
     }
 
     public static Optional<Camera> getActive() {
@@ -46,26 +44,13 @@ public class CameraClient {
 
     public static void setupViewfinder(@NotNull Camera camera) {
         removeViewfinder();
-
-        if (camera.getItemStack().getItem() instanceof CameraItem item) {
-            activeViewfinder = ViewfinderRegistry.getOrThrow(item).apply(camera);
-        }
+        activeViewfinder = ViewfinderRegistry.get(camera);
     }
 
     public static void removeViewfinder() {
         if (activeViewfinder != null) {
             activeViewfinder.close();
             activeViewfinder = null;
-        }
-    }
-
-    // --
-
-    public static void updateSelfieMode() {
-        Camera camera = Minecrft.player().getActiveExposureCamera();
-        if (camera != null) {
-            boolean inSelfieMode = Minecrft.options().getCameraType() == CameraType.THIRD_PERSON_FRONT;
-            CameraSettings.SELFIE_MODE.setAndSync(camera, inSelfieMode);
         }
     }
 }

@@ -9,8 +9,12 @@ import java.util.function.Supplier;
 public interface Key {
     boolean matches(int keyCode, int scanCode, int action, int modifiers);
 
-    default Key or(Key matcher) {
-        return (key, code, action, mods) -> this.matches(key, code, action, mods) || matcher.matches(key, code, action, mods);
+    default Key or(Key anotherKey) {
+        return (key, code, action, mods) -> this.matches(key, code, action, mods) || anotherKey.matches(key, code, action, mods);
+    }
+
+    default KeyWithPredicate onlyIf(Supplier<Boolean> predicate) {
+        return new KeyWithPredicate(this, predicate);
     }
 
     default KeyBinding executes(Supplier<Boolean> handler) {
@@ -53,11 +57,18 @@ public interface Key {
 
     static Key press(KeyMapping keyMapping) {
         return (key, code, action, mods) -> Key.actionMatches(InputConstants.PRESS, action)
-                && keyMapping.matches(key, code) && mods == 0;
+                && keyMapping.matches(key, code);
     }
 
     static Key release(KeyMapping keyMapping) {
         return (key, code, action, mods) -> Key.actionMatches(InputConstants.RELEASE, action)
-                && keyMapping.matches(key, code) && mods == 0;
+                && keyMapping.matches(key, code);
+    }
+
+    record KeyWithPredicate(Key key, Supplier<Boolean> predicate) implements Key {
+        @Override
+        public boolean matches(int keyCode, int scanCode, int action, int modifiers) {
+            return key.matches(keyCode, scanCode, action, modifiers) && predicate.get();
+        }
     }
 }

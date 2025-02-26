@@ -18,6 +18,8 @@ public class Config {
         // Camera
         public static final ModConfigSpec.ConfigValue<String> CAMERA_DEFAULT_FOCAL_RANGE;
         public static final ModConfigSpec.BooleanValue CAMERA_VIEWFINDER_ATTACK;
+        public static final ModConfigSpec.BooleanValue WAIST_LEVEL_VIEWFINDER;
+        public static final ModConfigSpec.DoubleValue SELFIE_CAMERA_DISTANCE;
         public static final ModConfigSpec.BooleanValue CAMERA_GUI_RIGHT_CLICK_OPEN_ATTACHMENTS;
         public static final ModConfigSpec.BooleanValue CAMERA_GUI_RIGHT_CLICK_HOTSWAP;
 
@@ -61,6 +63,12 @@ public class Config {
                         .comment("Can attack while looking through Viewfinder.",
                                 "Default: true")
                         .define("viewfinder_attacking", true);
+                SELFIE_CAMERA_DISTANCE = builder
+                        .comment("Camera distance in thirdperson-front mode. Default: 1.75")
+                        .defineInRange("selfie_camera_distance", 1.75, 0.1, 4);
+                WAIST_LEVEL_VIEWFINDER = builder
+                        .comment("Shifts viewfinder view down to match waist-level camera position. Default: false.")
+                        .define("waist_level_viewfinder", false);
                 CAMERA_GUI_RIGHT_CLICK_OPEN_ATTACHMENTS = builder
                         .comment("Right-clicking a Camera in GUI will open Camera Attachments screen. Only in player inventory.",
                                 "Default: true")
@@ -213,7 +221,6 @@ public class Config {
 
         // VIEWFINDER
         public static final ModConfigSpec.BooleanValue VIEWFINDER_MIDDLE_CLICK_CONTROLS;
-        public static final ModConfigSpec.BooleanValue WAIST_LEVEL_VIEWFINDER;
         public static final ModConfigSpec.DoubleValue VIEWFINDER_ZOOM_SENSITIVITY_INFLUENCE;
         public static final ModConfigSpec.ConfigValue<String> VIEWFINDER_BACKGROUND_COLOR;
         public static final ModConfigSpec.ConfigValue<String> VIEWFINDER_FONT_MAIN_COLOR;
@@ -300,10 +307,6 @@ public class Config {
                                 "Allows opening camera controls without dismounting from a vehicle - and keeping controls on sneak or other button as well.",
                                 "Default: true")
                         .define("middle_click_controls", true);
-                WAIST_LEVEL_VIEWFINDER = builder
-                        .comment("Shifts view down to match waist-level camera position. Default: false.")
-                        .define("waist_level_viewfinder", false);
-
                 VIEWFINDER_ZOOM_SENSITIVITY_INFLUENCE = builder
                         .comment("How much zooming influences mouse sensitivity.",
                                 "0 - no change to sensitivity. 1 - full effect.",

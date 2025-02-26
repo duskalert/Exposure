@@ -24,7 +24,7 @@ public class KeyboardHandler {
     public static boolean handleKeyPress(long windowId, int key, int scanCode, int action, int modifiers) {
         return Minecrft.get().player != null
                 && CameraClient.viewfinder() != null
-                && CameraClient.viewfinder().keyPressed(key, scanCode, action);
+                && CameraClient.viewfinder().keyPressed(key, scanCode, action, modifiers);
     }
 
     public static KeyMapping getCameraControlsKey() {

@@ -48,6 +48,8 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.MenuProvider;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.SlotAccess;
@@ -154,6 +156,14 @@ public class CameraItem extends Item {
         return CaptureType.CAMERA;
     }
 
+    public double getSelfieCameraDistance(ItemStack stack) {
+        return Config.Server.SELFIE_CAMERA_DISTANCE.get();
+    }
+
+    public double getYPositionOffset(ItemStack stack) {
+        return Config.Server.WAIST_LEVEL_VIEWFINDER.get() ? -0.35 : 0.0;
+    }
+
     public float getCropFactor() {
         return Exposure.CROP_FACTOR;
     }
@@ -167,6 +177,18 @@ public class CameraItem extends Item {
         double zoom = CameraSettings.ZOOM.getOrDefault(stack);
         FocalRange focalRange = getFocalRange(level.registryAccess(), stack);
         return (float) focalRange.fovFromZoom(zoom);
+    }
+
+    public PointOfView getPointOfView(CameraHolder holder, ItemStack stack) {
+        if (isInSelfieMode(stack)) {
+            return PointOfView.of(holder)
+                    .reverseDirection()
+                    .limitMaxDistance(holder, getSelfieCameraDistance(stack))
+                    .rotateY(-stack.getOrDefault(Exposure.DataComponents.SELFIE_ROTATION, 0.0));
+        } else {
+            return PointOfView.of(holder)
+                    .move(0, getYPositionOffset(stack), 0);
+        }
     }
 
     public Holder<ColorPalette> getColorPalette(RegistryAccess registryAccess, ItemStack stack) {
@@ -184,6 +206,10 @@ public class CameraItem extends Item {
                                 ? projectorItem.getProjectingInfo(filterStack)
                                 : Optional.<ProjectionInfo>empty())
                 .orElse(Optional.empty());
+    }
+
+    public boolean hasFlash(ItemStack stack) {
+        return !Attachment.FLASH.isEmpty(stack);
     }
 
     // --
@@ -204,7 +230,11 @@ public class CameraItem extends Item {
     }
 
     public void setActive(ItemStack stack, boolean active) {
-        stack.set(Exposure.DataComponents.CAMERA_ACTIVE, active);
+        if (!active) {
+            stack.remove(Exposure.DataComponents.CAMERA_ACTIVE);
+        } else {
+            stack.set(Exposure.DataComponents.CAMERA_ACTIVE, true);
+        }
     }
 
     public boolean isDisassembled(ItemStack stack) {
@@ -212,7 +242,11 @@ public class CameraItem extends Item {
     }
 
     public void setDisassembled(ItemStack stack, boolean disassembled) {
-        stack.set(Exposure.DataComponents.CAMERA_DISASSEMBLED, disassembled);
+        if (!disassembled) {
+            stack.remove(Exposure.DataComponents.CAMERA_DISASSEMBLED);
+        } else {
+            stack.set(Exposure.DataComponents.CAMERA_DISASSEMBLED, true);
+        }
     }
 
     public long getLastActionTime(ItemStack stack) {
@@ -370,6 +404,10 @@ public class CameraItem extends Item {
                 }
             }
         });
+
+        if (ExposureServer.debugHighlightEntitiesInFrame && isActive(stack)) {
+            testEntitiesInFrame(stack, level, player);
+        }
     }
 
     @Override
@@ -433,6 +471,7 @@ public class CameraItem extends Item {
                     .setShutterSpeed(CameraSettings.SHUTTER_SPEED.getOrDefault(stack))
                     .setFilmType(film.getItem().getType())
                     .setFrameSize(film.getItem().getFrameSize(film.getItemStack()))
+                    .setFovOverride(getFov(level, stack))
                     .setCropFactor(getCropFactor())
                     .setColorPalette(getColorPalette(level.registryAccess(), stack))
                     .setFlash(flashHasFired)
@@ -456,7 +495,7 @@ public class CameraItem extends Item {
                 });
             });
 
-            addNewFrame(serverLevel, captureProperties, holder, stack);
+            addNewFrame(serverLevel, holder, stack, captureProperties);
 
             ExposureServer.exposureRepository().expect(serverPlayer, exposureId);
             Packets.sendToClient(new CaptureStartS2CP(getCaptureType(stack), captureProperties), serverPlayer);
@@ -544,7 +583,7 @@ public class CameraItem extends Item {
     }
 
     protected boolean shouldFlashFire(ItemStack stack, int lightLevel) {
-        if (Attachment.FLASH.isEmpty(stack))
+        if (!hasFlash(stack))
             return false;
 
         return switch (CameraSettings.FLASH_MODE.getOrDefault(stack)) {
@@ -607,13 +646,14 @@ public class CameraItem extends Item {
 
     // --
 
-    public void addNewFrame(ServerLevel level, CaptureProperties captureProperties, CameraHolder holder, ItemStack stack) {
+    public void addNewFrame(ServerLevel level, CameraHolder holder, ItemStack stack, CaptureProperties captureProperties) {
         boolean projecting = captureProperties.projection().isPresent();
 
         float fov = getFov(level, stack);
+        PointOfView pov = getPointOfView(holder, stack);
 
-        List<BlockPos> positionsInFrame = projecting ? Collections.emptyList() : getPositionsInFrame(holder.asEntity(), fov);
-        List<LivingEntity> entitiesInFrame = projecting ? Collections.emptyList() : getEntitiesInFrame(holder, level, stack);
+        List<BlockPos> positionsInFrame = !projecting ? getPositionsInFrame(holder, pov, fov) : Collections.emptyList();
+        List<LivingEntity> entitiesInFrame = !projecting ? EntitiesInFrame.get(holder, pov, fov) : Collections.emptyList();
 
         Frame frame = createFrame(holder, level, stack, captureProperties, positionsInFrame, entitiesInFrame);
         addFrameToFilm(stack, frame);
@@ -725,17 +765,15 @@ public class CameraItem extends Item {
      * Next are: top left, top right, bottom left, bottom right.
      * These 4 are roughly in positions where rule of thirds cross points are.
      */
-    public List<BlockPos> getPositionsInFrame(Entity cameraHolder, float fov) {
-        Vec3 eyePos = cameraHolder.getEyePosition();
-        Vec3 lookDirection = Vec3.directionFromRotation(cameraHolder.getXRot(), cameraHolder.getYRot());
+    public List<BlockPos> getPositionsInFrame(CameraHolder cameraHolder, PointOfView pov, float fov) {
         // offset roughly corresponds to rule of thirds distance
         float offsetDegrees = (float) ((fov * getCropFactor()) / 4.3);
 
-        return Vec3Util.getCrossVectors(lookDirection, offsetDegrees).stream()
+        return Vec3Util.getProbeVectors(pov.dir(), offsetDegrees).stream()
                 .map(direction -> {
-                    Vec3 endPos = eyePos.add(direction.scale(100));
-                    return cameraHolder.level().clip(
-                            new ClipContext(eyePos, endPos, ClipContext.Block.OUTLINE, ClipContext.Fluid.ANY, cameraHolder));
+                    Vec3 endPos = pov.pos().add(direction.scale(100));
+                    return cameraHolder.asEntity().level().clip(
+                            new ClipContext(pov.pos(), endPos, ClipContext.Block.OUTLINE, ClipContext.Fluid.ANY, cameraHolder.asEntity()));
                 })
                 .filter(hit -> hit.getType() != HitResult.Type.MISS)
                 .map(BlockHitResult::getBlockPos)
@@ -766,13 +804,6 @@ public class CameraItem extends Item {
                 });
 
         PlatformHelper.postFrameAddedEvent(holder, stack, frame, positionsInFrame, entitiesInFrame);
-    }
-
-    public List<LivingEntity> getEntitiesInFrame(CameraHolder cameraHolder, ServerLevel level, ItemStack stack) {
-        float zoom = CameraSettings.ZOOM.getOrDefault(stack);
-        double fov = getFocalRange(level.registryAccess(), stack).fovFromZoom(zoom) * getCropFactor();
-
-        return EntitiesInFrame.get(cameraHolder.asEntity(), fov, isInSelfieMode(stack));
     }
 
     protected void entityCaptured(CameraHolder cameraHolder, ItemStack stack, LivingEntity entity) {
@@ -833,5 +864,22 @@ public class CameraItem extends Item {
         }
         return -1;
     }
-}
 
+    protected void testEntitiesInFrame(ItemStack stack, Level level, Player player) {
+        PointOfView pov = getPointOfView(player, stack);
+        float fov = getFov(level, stack);
+        List<LivingEntity> entities = EntitiesInFrame.get(player.asEntity(), pov, fov);
+        for (LivingEntity livingEntity : entities) {
+            livingEntity.addEffect(new MobEffectInstance(MobEffects.GLOWING, 2, 1, true, false, false));
+        }
+    }
+
+    protected void testPositionsInFrame(ItemStack stack, Level level, Player player) {
+        if (level.isClientSide && level.getGameTime() % 2 == 0) {
+            List<BlockPos> positionsInFrame = getPositionsInFrame(player, getPointOfView(player, stack), getFov(level, stack));
+            for (BlockPos pos : positionsInFrame) {
+                level.addAlwaysVisibleParticle(ParticleTypes.EXPLOSION, true, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 0, 0, 0);
+            }
+        }
+    }
+}

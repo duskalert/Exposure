@@ -63,8 +63,8 @@ public class PhotographClientTooltip implements ClientTooltipComponent {
             int fontWidth = Minecraft.getInstance().font.width(count);
             float fontScale = 1.6f;
             guiGraphics.pose().translate(
-                    mouseX * scale - 2 - fontWidth * fontScale,
-                    mouseY * scale - 2 - 8 * fontScale,
+                    mouseX + scale - 2 - fontWidth * fontScale,
+                    mouseY + scale - 2 - 8 * fontScale,
                     10);
             guiGraphics.pose().scale(fontScale, fontScale, fontScale);
             guiGraphics.drawString(font, count, 0, 0, 0xFFFFFFFF);

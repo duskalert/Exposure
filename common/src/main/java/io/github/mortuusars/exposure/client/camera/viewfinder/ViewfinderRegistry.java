@@ -4,6 +4,7 @@ import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import io.github.mortuusars.exposure.world.camera.Camera;
 import io.github.mortuusars.exposure.world.item.camera.CameraItem;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
@@ -17,13 +18,13 @@ public class ViewfinderRegistry {
         VIEWFINDERS.put(item, viewfinder);
     }
 
-    public static @Nullable Function<Camera, Viewfinder> get(CameraItem item) {
-        return VIEWFINDERS.get(item);
-    }
-
-    public static Function<Camera, Viewfinder> getOrThrow(CameraItem item) {
+    public static Function<Camera, Viewfinder> getConstructor(CameraItem item) {
         @Nullable Function<Camera, Viewfinder> viewfinder = VIEWFINDERS.get(item);
         Preconditions.checkNotNull(viewfinder, "No viewfinder for item '%s' is registered.", item);
         return viewfinder;
+    }
+
+    public static Viewfinder get(@NotNull Camera camera) {
+        return getConstructor(((CameraItem) camera.getItemStack().getItem())).apply(camera);
     }
 }

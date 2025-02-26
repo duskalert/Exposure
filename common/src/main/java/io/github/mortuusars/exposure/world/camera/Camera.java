@@ -53,6 +53,10 @@ public abstract class Camera {
         return map(CameraItem::isActive, false);
     }
 
+    public boolean inSelfieMode() {
+        return map(CameraItem::isInSelfieMode).orElse(false);
+    }
+
     public boolean idMatches(CameraId id) {
         return this.id.equals(id);
     }

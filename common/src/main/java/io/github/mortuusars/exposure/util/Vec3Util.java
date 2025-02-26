@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.stream.Stream;
 
 public class Vec3Util {
-    public static List<Vec3> getCrossVectors(Vec3 direction, float offsetDegrees) {
+    public static List<Vec3> getProbeVectors(Vec3 direction, float offsetDegrees) {
         // World up vector
         Vec3 upVector = new Vec3(0, 1, 0);
 

@@ -1,6 +1,5 @@
 package io.github.mortuusars.exposure.client.animation;
 
-import io.github.mortuusars.exposure.PlatformHelper;
 import io.github.mortuusars.exposure.client.util.Minecrft;
 import io.github.mortuusars.exposure.world.entity.CameraOperator;
 import net.minecraft.client.CameraType;
@@ -9,12 +8,8 @@ import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
 
-public class ModelPoses {
-    public static void applyCameraPose(HumanoidModel<?> model, LivingEntity entity, HumanoidArm arm) {
-        if (PlatformHelper.isModLoaded("realcamera")) {
-            return;
-        }
-
+public class CameraPoses {
+    public void applyHolding(HumanoidModel<?> model, LivingEntity entity, HumanoidArm arm) {
         float actionProgress = getCameraActionAnim(entity);
         actionProgress = (float)EasingFunction.EASE_OUT_CUBIC.ease(actionProgress);
         float actionAnim =  actionProgress > 0.3F ? (1F - actionProgress) : actionProgress;
@@ -38,7 +33,7 @@ public class ModelPoses {
         model.hat.copyFrom(model.head);
     }
 
-    public static void applyCameraSelfiePose(HumanoidModel<?> model, LivingEntity entity, HumanoidArm arm, boolean undoArmBobbing) {
+    public void applySelfie(HumanoidModel<?> model, LivingEntity entity, HumanoidArm arm, boolean undoArmBobbing) {
         ModelPart cameraArm = arm == HumanoidArm.RIGHT ? model.rightArm : model.leftArm;
 
         // Arm follows camera:
@@ -51,7 +46,7 @@ public class ModelPoses {
         }
     }
 
-    public static void applyCameraDisassembledPose(HumanoidModel<?> model, LivingEntity entity, HumanoidArm arm) {
+    public void applyDisassembled(HumanoidModel<?> model, LivingEntity entity, HumanoidArm arm) {
         if (Minecrft.player().equals(entity) && Minecrft.options().getCameraType() == CameraType.FIRST_PERSON) {
             return;
         }
@@ -78,7 +73,7 @@ public class ModelPoses {
         model.hat.copyFrom(model.head);
     }
 
-    public static float getCameraActionAnim(LivingEntity entity) {
+    public float getCameraActionAnim(LivingEntity entity) {
         if (entity instanceof CameraOperator operator) {
             float partialTick = Minecrft.get().getTimer().getGameTimeDeltaPartialTick(true);
             return operator.getExposureCameraActionAnim(partialTick);
