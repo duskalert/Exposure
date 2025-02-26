@@ -43,21 +43,7 @@ public class Viewfinder {
                     .executes(() -> {
                         openControlsScreen();
                         return false; // false not handle and keep moving/sneaking
-                    }),
-            Key.press(Modifier.CONTROL, InputConstants.KEY_ADD)
-                    .or(Key.press(Modifier.CONTROL, InputConstants.KEY_EQUALS))
-                    .or(Key.press(Modifier.CONTROL, 333 /*KEY_SUBTRACT*/))
-                    .or(Key.press(Modifier.CONTROL, InputConstants.KEY_MINUS))
-                    .onlyIf(this::isLookingThrough)
-                    .onlyIf(() -> !controlsActive())
-                    .onlyIf(() -> camera().inSelfieMode())
-                    .executes(() -> selfie().rotateCamera(1, false)),
-            Key.press(Modifier.CONTROL, 333 /*KEY_SUBTRACT*/)
-                    .or(Key.press(Modifier.CONTROL, InputConstants.KEY_MINUS))
-                    .onlyIf(this::isLookingThrough)
-                    .onlyIf(() -> !controlsActive())
-                    .onlyIf(() -> camera().inSelfieMode())
-                    .executes(() -> selfie().rotateCamera(-1, false))
+                    })
     );
 
     protected @Nullable ViewfinderCameraControlsScreen controlsScreen;
@@ -119,7 +105,7 @@ public class Viewfinder {
     public void tick() {
         shader().update();
         shader().setActive(isLookingThrough());
-        selfie().updateSelfieMode();
+        selfie().tick();
     }
 
     public boolean isLookingThrough() {
@@ -236,12 +222,7 @@ public class Viewfinder {
 
     public boolean mouseScrolled(double amount) {
         if (isLookingThrough() && !controlsActive()) {
-            if (Screen.hasControlDown() && camera.inSelfieMode()) {
-                selfie().rotateCamera(Mth.sign(amount), false);
-                return true;
-            } else {
-                return zoom.mouseScrolled(amount);
-            }
+            return zoom.mouseScrolled(amount);
         }
         return false;
     }

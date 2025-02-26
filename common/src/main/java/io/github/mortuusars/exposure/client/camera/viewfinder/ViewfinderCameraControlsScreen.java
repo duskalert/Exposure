@@ -1,6 +1,5 @@
 package io.github.mortuusars.exposure.client.camera.viewfinder;
 
-import com.google.common.base.Preconditions;
 import com.mojang.blaze3d.platform.InputConstants;
 import io.github.mortuusars.exposure.Config;
 import io.github.mortuusars.exposure.Exposure;
@@ -20,7 +19,6 @@ import io.github.mortuusars.exposure.world.camera.component.CompositionGuide;
 import io.github.mortuusars.exposure.world.camera.component.CompositionGuides;
 import io.github.mortuusars.exposure.world.camera.component.FlashMode;
 import io.github.mortuusars.exposure.world.camera.component.ShutterSpeed;
-import io.github.mortuusars.exposure.world.item.camera.Attachment;
 import io.github.mortuusars.exposure.network.Packets;
 import io.github.mortuusars.exposure.network.packet.serverbound.ActiveCameraReleaseC2SP;
 import net.minecraft.ChatFormatting;
@@ -36,7 +34,6 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.Mth;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -249,8 +246,7 @@ public class ViewfinderCameraControlsScreen extends Screen {
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        if (super.mouseClicked(mouseX, mouseY, button))
-            return true;
+        if (super.mouseClicked(mouseX, mouseY, button)) return true;
 
         if (button == InputConstants.MOUSE_BUTTON_RIGHT) {
             if (camera.isActive()) {
@@ -278,6 +274,16 @@ public class ViewfinderCameraControlsScreen extends Screen {
     }
 
     @Override
+    public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
+        if (camera.inSelfieMode() && Minecrft.options().keySprint.isDown) {
+            viewfinder.selfie.rotateCamera(dragY, dragX, true);
+            return true;
+        }
+
+        return super.mouseDragged(mouseX, mouseY, button, dragX, dragY);
+    }
+
+    @Override
     public boolean keyReleased(int keyCode, int scanCode, int modifiers) {
         if (KeyboardHandler.getCameraControlsKey().matches(keyCode, scanCode)) {
             if (isToggleTimeReached())
@@ -295,26 +301,12 @@ public class ViewfinderCameraControlsScreen extends Screen {
 
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        Preconditions.checkState(minecraft != null);
-
-        boolean handled = super.keyPressed(keyCode, scanCode, modifiers);
-        if (handled)
-            return true;
+        if (super.keyPressed(keyCode, scanCode, modifiers)) return true;
 
         if (keyCode == InputConstants.KEY_ADD || keyCode == InputConstants.KEY_EQUALS) {
-            if (Screen.hasControlDown() && camera.inSelfieMode()) {
-                viewfinder.selfie().rotateCamera(1, true);
-                return true;
-            }
-
             viewfinder.zoom().zoom(ZoomDirection.IN, true);
             return true;
         } else if (keyCode == 333 /*KEY_SUBTRACT*/ || keyCode == InputConstants.KEY_MINUS) {
-            if (Screen.hasControlDown() && camera.inSelfieMode()) {
-                viewfinder.selfie().rotateCamera(-1, true);
-                return true;
-            }
-
             viewfinder.zoom().zoom(ZoomDirection.OUT, true);
             return true;
         }
@@ -325,11 +317,6 @@ public class ViewfinderCameraControlsScreen extends Screen {
     @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
         if (!super.mouseScrolled(mouseX, mouseY, scrollX, scrollY)) {
-            if (Screen.hasControlDown() && camera.inSelfieMode()) {
-                viewfinder.selfie().rotateCamera(Mth.sign(scrollY), true);
-                return true;
-            }
-
             viewfinder.zoom().zoom(scrollY > 0d ? ZoomDirection.IN : ZoomDirection.OUT, true);
             return true;
         }

@@ -43,8 +43,10 @@ public class CameraSettings {
             new CameraSetting<>(Exposure.DataComponents.SELFIE_MODE, false, new SoundEffect(Exposure.SoundEvents.CAMERA_LENS_RING_CLICK)));
     public static final CameraSetting<Float> ZOOM = register(Exposure.resource("zoom"),
             new CameraSetting<>(Exposure.DataComponents.ZOOM, 0f, new SoundEffect(Exposure.SoundEvents.CAMERA_LENS_RING_CLICK)));
-    public static final CameraSetting<Double> SELFIE_ROTATION = register(Exposure.resource("selfie_rotation"),
-            new CameraSetting<>(Exposure.DataComponents.SELFIE_ROTATION, 0.0, new SoundEffect(Exposure.SoundEvents.CAMERA_LENS_RING_CLICK)));
+    public static final CameraSetting<Double> SELFIE_ROTATION_X = register(Exposure.resource("selfie_rotation_x"),
+            new CameraSetting<>(Exposure.DataComponents.SELFIE_ROTATION_X, 0.0, new SoundEffect(Exposure.SoundEvents.CAMERA_LENS_RING_CLICK)));
+    public static final CameraSetting<Double> SELFIE_ROTATION_Y = register(Exposure.resource("selfie_rotation_y"),
+            new CameraSetting<>(Exposure.DataComponents.SELFIE_ROTATION_Y, 0.0, new SoundEffect(Exposure.SoundEvents.CAMERA_LENS_RING_CLICK)));
     public static final CameraSetting<ShutterSpeed> SHUTTER_SPEED = register(Exposure.resource("shutter_speed"),
             new CameraSetting<>(Exposure.DataComponents.SHUTTER_SPEED, ShutterSpeed.DEFAULT, new SoundEffect(Exposure.SoundEvents.CAMERA_DIAL_CLICK)));
     public static final CameraSetting<CompositionGuide> COMPOSITION_GUIDE = register(Exposure.resource("composition_guide"),

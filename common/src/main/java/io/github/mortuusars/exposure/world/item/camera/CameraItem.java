@@ -184,7 +184,8 @@ public class CameraItem extends Item {
             return PointOfView.of(holder)
                     .reverseDirection()
                     .limitMaxDistance(holder, getSelfieCameraDistance(stack))
-                    .rotateY(-stack.getOrDefault(Exposure.DataComponents.SELFIE_ROTATION, 0.0));
+                    .rotateX(-stack.getOrDefault(Exposure.DataComponents.SELFIE_ROTATION_X, 0.0))
+                    .rotateY(-stack.getOrDefault(Exposure.DataComponents.SELFIE_ROTATION_Y, 0.0));
         } else {
             return PointOfView.of(holder)
                     .move(0, getYPositionOffset(stack), 0);
@@ -867,6 +868,17 @@ public class CameraItem extends Item {
 
     protected void testEntitiesInFrame(ItemStack stack, Level level, Player player) {
         PointOfView pov = getPointOfView(player, stack);
+
+        // Spawns particle at camera pov ray hit
+//        Vec3 dir = pov.dir().scale(100);
+//        Vec3 endPos = pov.pos().add(dir.x, dir.y, dir.z);
+//        BlockHitResult hitResult = level.clip(new ClipContext(pov.pos(), endPos, ClipContext.Block.OUTLINE, ClipContext.Fluid.ANY, player));
+//
+//        if (hitResult.getType() != HitResult.Type.MISS) {
+//            Vec3 l = hitResult.getLocation();
+//            ((ServerLevel) level).sendParticles(((ServerPlayer) player), ParticleTypes.EXPLOSION, true, l.x + 0.5, l.y + 0.5, l.z + 0.5, 1, 0, 0, 0, 0);
+//        }
+
         float fov = getFov(level, stack);
         List<LivingEntity> entities = EntitiesInFrame.get(player.asEntity(), pov, fov);
         for (LivingEntity livingEntity : entities) {

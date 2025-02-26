@@ -22,7 +22,9 @@
     "client.KeyMappingMixin",
     "client.LocalPlayerMixin",
     "client.MinecraftMixin",
-    "client.MultiPlayerGameModeMixin"
+    "client.MultiPlayerGameModeMixin",
+    "client.EntityMixin",
+    "client.MouseHandlerMixin"
   ],
   "mixins": [
     "AnvilMenuMixin",
@@ -35,8 +37,7 @@
     "PlayerMixin",
     "PotionContentsMixin",
     "ServerGamePacketListenerMixin",
-    "ServerPlayerMixin",
-    "client.MouseHandlerMixin"
+    "ServerPlayerMixin"
   ],
   "injectors": {
     "defaultRequire": 1

@@ -204,13 +204,17 @@ public class CameraAttachmentsScreen extends AbstractContainerScreen<CameraAttac
             guiGraphics.renderTooltip(font, font.split(
                     Component.translatable("gui.exposure.camera_attachments.flash.tooltip"), 230), x, y);
         } else if (isMouseOver(viewfinder, x, y)) {
-            Component key = Component.literal(KeyboardHandler.getCameraControlsKey().getTranslatedKeyMessage().getString())
+            Component controlsKey = Component.literal(KeyboardHandler.getCameraControlsKey().getTranslatedKeyMessage().getString())
                     .withStyle(ChatFormatting.GRAY);
             Component middleClick = Config.Client.VIEWFINDER_MIDDLE_CLICK_CONTROLS.get()
                     ? Component.translatable("gui.exposure.camera_attachments.viewfinder.tooltip.or_middle_click")
                     : Component.empty();
+            Component selfieKey = Component.literal(Minecrft.options().keyTogglePerspective.getTranslatedKeyMessage().getString())
+                    .withStyle(ChatFormatting.GRAY);
+            Component sprintKey = Component.literal(Minecrft.options().keySprint.getTranslatedKeyMessage().getString())
+                    .withStyle(ChatFormatting.GRAY);
             guiGraphics.renderTooltip(font, font.split(
-                    Component.translatable("gui.exposure.camera_attachments.viewfinder.tooltip", key, middleClick), 230), x, y);
+                    Component.translatable("gui.exposure.camera_attachments.viewfinder.tooltip", controlsKey, middleClick, selfieKey, sprintKey), 230), x, y);
         } else if (isMouseOver(shutterSpeedKnob, x, y)) {
             guiGraphics.renderTooltip(font, font.split(
                     Component.translatable("gui.exposure.camera_attachments.shutter_speed.tooltip"), 230), x, y);

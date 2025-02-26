@@ -227,7 +227,10 @@ public class Exposure {
         public static final DataComponentType<Float> ZOOM = Register.dataComponentType("camera_zoom",
                 arg -> arg.persistent(Codec.FLOAT).networkSynchronized(ByteBufCodecs.FLOAT));
 
-        public static final DataComponentType<Double> SELFIE_ROTATION = Register.dataComponentType("camera_selfie_rotation",
+        public static final DataComponentType<Double> SELFIE_ROTATION_X = Register.dataComponentType("camera_selfie_rotation_x",
+                arg -> arg.persistent(Codec.DOUBLE).networkSynchronized(ByteBufCodecs.DOUBLE));
+
+        public static final DataComponentType<Double> SELFIE_ROTATION_Y = Register.dataComponentType("camera_selfie_rotation_y",
                 arg -> arg.persistent(Codec.DOUBLE).networkSynchronized(ByteBufCodecs.DOUBLE));
 
         public static final DataComponentType<FlashMode> FLASH_MODE = Register.dataComponentType("camera_flash_mode",

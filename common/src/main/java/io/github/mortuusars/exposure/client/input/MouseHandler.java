@@ -2,6 +2,7 @@ package io.github.mortuusars.exposure.client.input;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import io.github.mortuusars.exposure.client.camera.CameraClient;
+import io.github.mortuusars.exposure.client.camera.viewfinder.Viewfinder;
 
 public class MouseHandler {
     private static final boolean[] heldMouseButtons = new boolean[12];
@@ -23,5 +24,11 @@ public class MouseHandler {
 
     public static double modifySensitivity(double original) {
         return CameraClient.viewfinder() != null ? CameraClient.viewfinder().modifyMouseSensitivity(original) : original;
+    }
+
+    public static boolean onTurnPlayer(double xRot, double yRot) {
+        return CameraClient.viewfinder() != null
+                && CameraClient.viewfinder().isLookingThrough()
+                && CameraClient.viewfinder().selfie().mouseMove(xRot, yRot);
     }
 }

@@ -10,6 +10,7 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 
 /**
  * Some functionality related to camera (player's view) implemented for server side, as client classes are not available.
+ *
  * @param pos position of the camera.
  * @param dir look direction of the camera.
  */
@@ -21,28 +22,25 @@ public record PointOfView(Vec3 pos, Vec3 dir) {
     public static PointOfView of(Entity entity) {
         return new PointOfView(
                 entity.position().add(0, entity.getEyeHeight(), 0),
-                Vec3.directionFromRotation(entity.getXRot(), entity.getYRot()));
+                // Not allowing xRot to reach 90deg because it'll cause problems with rotations down the line.
+                // Precision is not that important here.
+                Vec3.directionFromRotation(Mth.clamp(entity.getXRot(), -89, 89), entity.getYRot()));
     }
 
     // --
 
-    public PointOfView rotate(double xDegrees, double yDegrees, double zDegrees) {
-        return new PointOfView(pos, dir
-                .xRot((float) Math.toRadians(xDegrees))
-                .yRot((float) Math.toRadians(yDegrees))
-                .zRot((float) Math.toRadians(zDegrees)));
-    }
-
     public PointOfView rotateX(double degrees) {
-        return new PointOfView(pos, dir.xRot((float) Math.toRadians(degrees)));
+        Vec3 upVector = new Vec3(0, 1, 0);
+        Vec3 rightVector = dir.cross(upVector).normalize();
+        if (Mth.equal(rightVector.length(), 0)) {
+            rightVector = new Vec3(1, 0, 0).cross(dir).normalize();
+        }
+        Vec3 rotated = Vec3Util.rotateVector(dir(), rightVector, Math.toRadians(degrees));
+        return new PointOfView(pos, rotated);
     }
 
     public PointOfView rotateY(double degrees) {
         return new PointOfView(pos, dir.yRot((float) Math.toRadians(degrees)));
-    }
-
-    public PointOfView rotateZ(double degrees) {
-        return new PointOfView(pos, dir.zRot((float) Math.toRadians(degrees)));
     }
 
     public PointOfView move(double x, double y, double z) {

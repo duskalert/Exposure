@@ -34,7 +34,8 @@ public abstract class CameraMixin {
     private void onSetup(BlockGetter level, Entity entity, boolean detached, boolean thirdPersonReverse, float partialTick, CallbackInfo ci) {
         if (CameraClient.viewfinder() != null && CameraClient.viewfinder().isLookingThrough()) {
             if (detached && thirdPersonReverse && CameraClient.viewfinder().camera().inSelfieMode()) {
-                setRotation((float) (yRot + CameraClient.viewfinder().selfie().getCameraRotationDegrees()), xRot);
+                setRotation((float) (yRot + CameraClient.viewfinder().selfie().getCameraYRot()),
+                        (float) (xRot + CameraClient.viewfinder().selfie().getCameraXRot()));
             }
 
             if (!detached) {
