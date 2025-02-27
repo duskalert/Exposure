@@ -6,7 +6,6 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import io.github.mortuusars.exposure.Exposure;
 import io.github.mortuusars.exposure.ExposureServer;
-import io.github.mortuusars.exposure.client.util.bugger.Bugger;
 import io.github.mortuusars.exposure.util.PointOfView;
 import io.github.mortuusars.exposure.world.camera.*;
 import io.github.mortuusars.exposure.world.camera.capture.CaptureProperties;
@@ -108,7 +107,7 @@ public class DebugCommand {
             Frame frame = camera
                     .map((cameraItem, cameraStack) -> {
                         PointOfView pov = cameraItem.getPointOfView(player, cameraStack);
-                        float fov = cameraItem.getFov(player.level(), cameraStack);
+                        float fov = cameraItem.getViewfinderFov(player.level(), cameraStack);
                         List<BlockPos> positions = cameraItem.getPositionsInFrame(player, pov, fov);
                         List<LivingEntity> entities = EntitiesInFrame.get((CameraHolder) player, pov, fov);
                         return cameraItem.createFrame(player, context.getSource().getLevel(), cameraStack, captureProperties, positions,entities);

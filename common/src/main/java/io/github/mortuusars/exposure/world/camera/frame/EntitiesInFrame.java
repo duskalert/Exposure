@@ -19,7 +19,7 @@ public class EntitiesInFrame {
     }
 
     public static List<LivingEntity> get(Entity cameraHolder, PointOfView pov, double fov) {
-        fov *= 0.9; // 10% margin from edge
+        fov *= 0.95; // 5% margin from edge
         double focalLength = Fov.fovToFocalLength(fov);
 
         AABB area = new AABB(cameraHolder.blockPosition()).inflate(128);

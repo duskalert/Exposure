@@ -165,7 +165,7 @@ public class CameraItem extends Item {
     }
 
     public float getCropFactor() {
-        return Exposure.CROP_FACTOR;
+        return 0.875f; // Crops viewfinder border
     }
 
     public FocalRange getFocalRange(RegistryAccess registryAccess, ItemStack stack) {
@@ -177,6 +177,13 @@ public class CameraItem extends Item {
         double zoom = CameraSettings.ZOOM.getOrDefault(stack);
         FocalRange focalRange = getFocalRange(level.registryAccess(), stack);
         return (float) focalRange.fovFromZoom(zoom);
+    }
+
+    /**
+     * Fov of what's seen when looking through viewfinder.
+     */
+    public float getViewfinderFov(Level level, ItemStack stack) {
+        return getFov(level, stack) * getCropFactor();
     }
 
     public PointOfView getPointOfView(CameraHolder holder, ItemStack stack) {
@@ -650,7 +657,7 @@ public class CameraItem extends Item {
     public void addNewFrame(ServerLevel level, CameraHolder holder, ItemStack stack, CaptureProperties captureProperties) {
         boolean projecting = captureProperties.projection().isPresent();
 
-        float fov = getFov(level, stack);
+        float fov = getViewfinderFov(level, stack);
         PointOfView pov = getPointOfView(holder, stack);
 
         List<BlockPos> positionsInFrame = !projecting ? getPositionsInFrame(holder, pov, fov) : Collections.emptyList();
@@ -879,7 +886,7 @@ public class CameraItem extends Item {
 //            ((ServerLevel) level).sendParticles(((ServerPlayer) player), ParticleTypes.EXPLOSION, true, l.x + 0.5, l.y + 0.5, l.z + 0.5, 1, 0, 0, 0, 0);
 //        }
 
-        float fov = getFov(level, stack);
+        float fov = getViewfinderFov(level, stack);
         List<LivingEntity> entities = EntitiesInFrame.get(player.asEntity(), pov, fov);
         for (LivingEntity livingEntity : entities) {
             livingEntity.addEffect(new MobEffectInstance(MobEffects.GLOWING, 2, 1, true, false, false));
@@ -888,7 +895,7 @@ public class CameraItem extends Item {
 
     protected void testPositionsInFrame(ItemStack stack, Level level, Player player) {
         if (level.isClientSide && level.getGameTime() % 2 == 0) {
-            List<BlockPos> positionsInFrame = getPositionsInFrame(player, getPointOfView(player, stack), getFov(level, stack));
+            List<BlockPos> positionsInFrame = getPositionsInFrame(player, getPointOfView(player, stack), getViewfinderFov(level, stack));
             for (BlockPos pos : positionsInFrame) {
                 level.addAlwaysVisibleParticle(ParticleTypes.EXPLOSION, true, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 0, 0, 0);
             }
