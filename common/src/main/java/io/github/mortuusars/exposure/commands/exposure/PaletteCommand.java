@@ -109,21 +109,21 @@ public class PaletteCommand {
             File file = new File(filePath);
             BufferedImage image = ImageIO.read(file);
 
-            int[] colors = new int[256];
-            Arrays.fill(colors, Color.BLACK.getARGB());
-            colors[255] = Color.TRANSPARENT.getARGB();
-
-            int count = 0;
+            Integer[] colors = new Integer[256];
+            int addedCount = 0;
 
             for (int y = 0; y < image.getHeight(); y++) {
                 for (int x = 0; x < image.getWidth(); x++) {
-                    if (count > 255) break;
+                    if (addedCount > 255) break;
 
                     int color = image.getRGB(x, y);
+                    if (Color.alpha(color) == 0) {
+                        color = Color.TRANSPARENT.getARGB();
+                    }
 
                     boolean alreadyAdded = false;
-                    for (int addedColor : colors) {
-                        if (addedColor == color) {
+                    for (Integer addedColor : colors) {
+                        if (addedColor != null && addedColor.equals(color)) {
                             alreadyAdded = true;
                             break;
                         }
@@ -133,17 +133,25 @@ public class PaletteCommand {
                         continue;
                     }
 
-                    colors[count] = color;
-                    count++;
+                    colors[addedCount] = color;
+                    addedCount++;
                 }
             }
 
-            if (colors[255] != Color.TRANSPARENT.getARGB()) {
+            for (int i = addedCount; i < colors.length - 1; i++) {
+                colors[i] = Color.BLACK.getARGB();
+            }
+
+            if (colors[255] == null) {
+                colors[255] = Color.TRANSPARENT.getARGB();
+            }
+
+            if (!colors[255].equals(Color.TRANSPARENT.getARGB())) {
                 colors[255] = Color.TRANSPARENT.getARGB();
                 source.sendFailure(Component.literal("Corrected last color to be transparent in '" + filePath + "' palette."));
             }
 
-            ColorPalette palette = new ColorPalette(colors);
+            ColorPalette palette = new ColorPalette(Arrays.stream(colors).mapToInt(Integer::intValue).toArray());
 
             try {
                 savePaletteAsJson(palette, replaceExtension(file, "json"));
