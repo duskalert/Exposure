@@ -10,9 +10,7 @@ import io.github.mortuusars.exposure.world.camera.Camera;
 import io.github.mortuusars.exposure.world.item.camera.CameraItem;
 import net.minecraft.client.CameraType;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.util.Mth;
-import net.minecraft.world.entity.player.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -139,59 +137,6 @@ public class Viewfinder {
     }
 
     public boolean keyPressed(int key, int scanCode, int action, int modifiers) {
-//        if (!canAttack() && Minecrft.options().keyAttack.matches(key, scanCode)) {
-//            return true;
-//        }
-
-//        if (Minecrft.options().keyTogglePerspective.matches(key, scanCode)) {
-        //TODO: TEST
-//            if (action == InputConstants.PRESS) {
-//                return true;
-//            }
-//
-//            selfie().toggle();
-//            return true;
-//        }
-
-//        if (key == InputConstants.KEY_ESCAPE || Minecrft.options().keyInventory.matches(key, scanCode)) {
-//            if (action == InputConstants.PRESS) {
-//                if (Minecrft.get().screen instanceof ViewfinderCameraControlsScreen viewfinderControlsScreen) {
-//                    viewfinderControlsScreen.onClose();
-//                } else {
-//                    CameraClient.deactivate();
-//                    close();
-//                }
-//            }
-//            return true;
-//        }
-
-//        if (!isLookingThrough() || controlsActive()) {
-//            return false;
-//        }
-//
-//        if (KeyboardHandler.getCameraControlsKey().matches(key, scanCode)) {
-//            openControlsScreen();
-//            return false; // false not handle and keep moving/sneaking
-//        }
-
-//        if (Screen.hasControlDown() && camera.inSelfieMode()) {
-//            if (key == InputConstants.KEY_ADD || key == InputConstants.KEY_EQUALS) {
-//                rotateSelfieCamera(1, false);
-//                return true;
-//            }
-//
-//            if (key == 333 /*KEY_SUBTRACT*/ || key == InputConstants.KEY_MINUS) {
-//                rotateSelfieCamera(-1, false);
-//                return true;
-//            }
-//        }
-
-//        if (zoom.keyPressed(key, scanCode, action, modifiers)) {
-//            return true;
-//        }
-//
-//        return false;
-
         return (action == InputConstants.PRESS && keyBindings.keyPressed(key, scanCode, modifiers))
                 || (action == InputConstants.RELEASE && keyBindings.keyReleased(key, scanCode, modifiers))
                 || zoom().keyPressed(key, scanCode, action, modifiers);
@@ -240,10 +185,5 @@ public class Viewfinder {
         strength *= strength; // more influence at smaller FOVs
 
         return Mth.lerp(strength, scaledSensitivity, original);
-    }
-
-    @FunctionalInterface
-    public interface ComponentConstructor<T> {
-        T construct(Camera camera, Viewfinder viewfinder);
     }
 }

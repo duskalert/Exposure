@@ -1,8 +1,8 @@
 # Changelog
 
-## 1.8.5 - UNRELEASED
+## 1.8.5 - 2025-02-28
 - Added camera panning in selfie mode. Hold sprint key (ctrl) and move the mouse.
-- Added camera panning when camera controls are showing. Just drag with left click.
+- Added ability to pan the camera when camera controls are showing. Just drag with left click.
 
 
 - Photograph view screen will now update when new photographs are added to the item being viewed.
