@@ -14,6 +14,7 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.SlotAccess;
+import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ClickAction;
 import net.minecraft.world.inventory.Slot;
@@ -216,7 +217,8 @@ public class StackedPhotographsItem extends Item {
         List<ItemAndStack<PhotographItem>> photographs = getPhotographs(itemInHand);
         if (!photographs.isEmpty()) {
             if (level.isClientSide) {
-                ClientGUI.openPhotographScreen(photographs);
+                int slot = hand == InteractionHand.OFF_HAND ? Inventory.SLOT_OFFHAND : player.getInventory().selected;
+                ClientGUI.openPhotographsScreenFromItem(slot);
                 player.playSound(Exposure.SoundEvents.PHOTOGRAPH_RUSTLE.get(), 0.6f, 1.1f);
             }
             return InteractionResultHolder.success(itemInHand);

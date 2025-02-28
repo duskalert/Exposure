@@ -24,6 +24,7 @@ import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.levelgen.carver.CarverDebugSettings;
 
 public class ExposureClient {
     private static final Cycles CYCLES = new Cycles();
@@ -32,7 +33,7 @@ public class ExposureClient {
     private static final ImageRenderer IMAGE_RENDERER = new ImageRenderer();
     private static final PhotographRenderer PHOTOGRAPH_RENDERER = new PhotographRenderer();
 
-    private static boolean isIrisOrOculusInstalled;
+    private static boolean haveModsRequiringDirectCapture;
 
     public static void init() {
         CameraModelPoses.register(Exposure.Items.CAMERA.get(), new CameraPoses());
@@ -55,7 +56,8 @@ public class ExposureClient {
         cycles().addParallelTask(new ClearStaleRenderedImagesIndefiniteTask());
 
         registerItemModelProperties();
-        isIrisOrOculusInstalled = PlatformHelper.isModLoaded("iris") || PlatformHelper.isModLoaded("oculus");
+        //noinspection ConstantValue
+        haveModsRequiringDirectCapture = Exposure.MODS_REQUIRING_DIRECT_CAPTURE.stream().anyMatch(PlatformHelper::isModLoaded);
     }
 
     public static Cycles cycles() {
@@ -81,7 +83,7 @@ public class ExposureClient {
     // --
 
     public static boolean shouldUseDirectCapture() {
-        return isIrisOrOculusInstalled;
+        return Config.Client.FORCE_DIRECT_CAPTURE.isTrue() || haveModsRequiringDirectCapture;
     }
 
     // --

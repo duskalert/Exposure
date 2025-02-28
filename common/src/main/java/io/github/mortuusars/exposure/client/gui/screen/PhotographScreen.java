@@ -16,6 +16,7 @@ import io.github.mortuusars.exposure.client.input.KeyBindings;
 import io.github.mortuusars.exposure.client.input.Modifier;
 import io.github.mortuusars.exposure.client.render.photograph.PhotographStyle;
 import io.github.mortuusars.exposure.client.util.Minecrft;
+import io.github.mortuusars.exposure.world.item.StackedPhotographsItem;
 import io.github.mortuusars.exposure.world.photograph.PhotographType;
 import io.github.mortuusars.exposure.world.camera.frame.Frame;
 import io.github.mortuusars.exposure.world.item.PhotographItem;
@@ -39,6 +40,7 @@ import org.lwjgl.glfw.GLFW;
 import java.io.File;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Supplier;
 
 public class PhotographScreen extends Screen {
     protected final Pager pager = new Pager()
@@ -66,22 +68,41 @@ public class PhotographScreen extends Screen {
             Key.release(InputConstants.KEY_RIGHT).or(Key.press(InputConstants.KEY_D)).executes(pager::resetCooldown)
     );
 
+    protected final PhotographProvider photographProvider;
+
     protected float x;
     protected float y;
 
     protected final Set<String> savedExposureIds = new HashSet<>();
     protected final Map<String, File> savedExposureFiles = new HashMap<>();
 
-    protected List<ItemAndStack<PhotographItem>> photographs = new ArrayList<>();
+    protected ArrayList<ItemAndStack<PhotographItem>> photographs = new ArrayList<>();
 
-    public PhotographScreen(List<ItemAndStack<PhotographItem>> photographs) {
+    public PhotographScreen(PhotographProvider photographProvider) {
         super(Component.empty());
-        Preconditions.checkState(!photographs.isEmpty(), "No photographs to display.");
-        this.photographs.addAll(photographs);
-        this.pager.setPagesCount(photographs.size());
+        this.photographProvider = photographProvider;
+        setPhotographs(photographProvider.get());
 
         if (shouldQueryAllPhotographsImmediately()) {
             queryAllPhotographs(photographs);
+        }
+    }
+
+    public PhotographScreen(List<ItemAndStack<PhotographItem>> photographs) {
+        this(PhotographProvider.fixed(photographs));
+    }
+
+    protected void setPhotographs(List<ItemAndStack<PhotographItem>> photographs) {
+        this.photographs.clear();
+        this.photographs.addAll(photographs);
+        this.pager.setPagesCount(photographs.size());
+        this.pager.setPage(0);
+    }
+
+    @Override
+    public void tick() {
+        if (photographProvider.shouldRefresh()) {
+            setPhotographs(photographProvider.get());
         }
     }
 
@@ -99,9 +120,8 @@ public class PhotographScreen extends Screen {
                 button -> pager.changePage(PagingDirection.NEXT), Component.translatable("gui.exposure.next_page"));
         addRenderableWidget(nextButton);
 
-        pager.setPagesCount(photographs.size())
-                .setPreviousPageButton(previousButton)
-                .setNextPageButton(nextButton);
+        pager.setPreviousPageButton(previousButton)
+             .setNextPageButton(nextButton);
     }
 
     protected boolean shouldQueryAllPhotographsImmediately() {
@@ -319,15 +339,15 @@ public class PhotographScreen extends Screen {
             savedExposureIds.add(filename);
 
             CompletableFuture.runAsync(() -> new ImageExporter(exposure, filename)
-                    .modify(ImageModifier.chain(
-                            photographStyle.modifier(),
-                            ImageModifier.Resize.multiplier(Config.Client.EXPORT_SIZE_MULTIPLIER.get())
-                    ))
-                    .toExposuresFolder()
-                    .organizeByWorld(Config.Client.EXPORT_ORGANIZE_BY_WORLD.get())
-                    .setCreationDate(exposure.getTag().unixTimestamp())
-                    .onExport(file -> savedExposureFiles.put(id, file))
-                    .export())
+                            .modify(ImageModifier.chain(
+                                    photographStyle.modifier(),
+                                    ImageModifier.Resize.multiplier(Config.Client.EXPORT_SIZE_MULTIPLIER.get())
+                            ))
+                            .toExposuresFolder()
+                            .organizeByWorld(Config.Client.EXPORT_ORGANIZE_BY_WORLD.get())
+                            .setCreationDate(exposure.getTag().unixTimestamp())
+                            .onExport(file -> savedExposureFiles.put(id, file))
+                            .export())
                     .handle((unused, throwable) -> {
                         Exposure.LOGGER.error(throwable.getMessage());
                         return null;
@@ -341,5 +361,81 @@ public class PhotographScreen extends Screen {
             return id + "_" + suffix;
         }
         return id;
+    }
+
+    public interface PhotographProvider {
+        boolean shouldRefresh();
+
+        /**
+         * Should have at least one photograph.
+         */
+        List<ItemAndStack<PhotographItem>> get();
+
+        static PhotographProvider fixed(List<ItemAndStack<PhotographItem>> photographs) {
+            Preconditions.checkState(!photographs.isEmpty(), "No photographs to display.");
+            return new PhotographProvider() {
+                private final List<ItemAndStack<PhotographItem>> list = photographs;
+
+                @Override
+                public boolean shouldRefresh() {
+                    return false;
+                }
+
+                @Override
+                public List<ItemAndStack<PhotographItem>> get() {
+                    return list;
+                }
+            };
+        }
+
+        static PhotographProvider fromPhotographItem(int slot) {
+            return new ItemProvider(() -> Minecrft.player().getInventory().getItem(slot));
+        }
+
+        class ItemProvider implements PhotographProvider {
+            protected Supplier<ItemStack> itemSupplier;
+            protected List<ItemAndStack<PhotographItem>> photographs;
+
+            public ItemProvider(Supplier<ItemStack> itemSupplier) {
+                this.itemSupplier = itemSupplier;
+                ItemStack stack = itemSupplier.get();
+                Preconditions.checkState(stack.getItem() instanceof PhotographItem || stack.getItem() instanceof StackedPhotographsItem,
+                        "itemSupplier should supply valid Photograph or Stacked Photographs item stack at the moment of creation.");
+                this.photographs = fromItemStack(stack);
+            }
+
+            protected List<ItemAndStack<PhotographItem>> fromItemStack(ItemStack stack) {
+                if (stack.getItem() instanceof PhotographItem) {
+                    return List.of(new ItemAndStack<>(stack));
+                }
+
+                if (stack.getItem() instanceof StackedPhotographsItem stackedPhotographsItem) {
+                    return stackedPhotographsItem.getPhotographs(stack);
+                }
+
+                return Collections.emptyList();
+            }
+
+            @Override
+            public boolean shouldRefresh() {
+                ItemStack item = itemSupplier.get();
+                List<ItemAndStack<PhotographItem>> newPhotographs = fromItemStack(item);
+
+                if (newPhotographs.isEmpty()) {
+                    return false;
+                }
+
+                boolean shouldRefresh = !get().equals(newPhotographs);
+                if (shouldRefresh) {
+                    photographs = newPhotographs;
+                }
+                return shouldRefresh;
+            }
+
+            @Override
+            public List<ItemAndStack<PhotographItem>> get() {
+                return photographs;
+            }
+        }
     }
 }

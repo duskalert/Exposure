@@ -2,9 +2,15 @@
 
 ## 1.8.5 - UNRELEASED
 - Added camera panning in selfie mode. Hold sprint key (ctrl) and move the mouse.
-- Added `/exposure debug highlight_entities_in_frame` command. 
+- Added camera panning when camera controls are showing. Just drag with left click.
+
+
+- Photograph view screen will now update when new photographs are added to the item being viewed.
 - Fixed count number not showing in Stacked Photographs tooltip.
+- [Fabric] Fixed images showing only the sky with `Effective` installed.
+- Added `/exposure debug highlight_entities_in_frame` command.
 - Moved `waist_level_viewfinder` config option from client to server config.
+- Fixed `/exposure palette convert png_to_json` producing wrong results in some cases. 
 - Internal changes for addon compatibility.
 - Added mexican spanish translation.
 

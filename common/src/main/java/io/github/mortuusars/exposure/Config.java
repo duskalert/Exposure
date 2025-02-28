@@ -335,7 +335,7 @@ public class Config {
                         .defineInRange("flash_capture_delay_ticks", 4, 1, FlashBlock.LIFETIME_TICKS);
                 FORCE_DIRECT_CAPTURE = builder
                         .comment("Force legacy (pre 1.21) capturing method for taking images. Enable if you experiencing issues with resulting images.",
-                                "If Iris or Oculus is installed legacy method will be used regardless of this setting.",
+                                "Direct method will be used regardless of this setting if any of the following mods is installed: [" + String.join(", ", Exposure.MODS_REQUIRING_DIRECT_CAPTURE) + "]",
                                 "Default: false")
                         .define("force_direct_capture", false);
                 DIRECT_CAPTURE_DELAY_FRAMES = builder

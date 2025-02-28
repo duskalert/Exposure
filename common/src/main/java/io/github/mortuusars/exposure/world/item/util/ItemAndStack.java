@@ -3,6 +3,7 @@ package io.github.mortuusars.exposure.world.item.util;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
+import java.util.Objects;
 import java.util.function.*;
 
 public class ItemAndStack<T extends Item> {
@@ -35,5 +36,18 @@ public class ItemAndStack<T extends Item> {
     @Override
     public String toString() {
         return "ItemAndStack{" + stack.toString() + '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ItemAndStack<?> that = (ItemAndStack<?>) o;
+        return Objects.equals(item, that.item) && Objects.equals(stack, that.stack);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(item, stack);
     }
 }
