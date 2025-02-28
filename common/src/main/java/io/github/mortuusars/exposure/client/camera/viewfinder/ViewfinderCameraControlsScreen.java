@@ -275,12 +275,25 @@ public class ViewfinderCameraControlsScreen extends Screen {
 
     @Override
     public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
+        if (super.mouseDragged(mouseX, mouseY, button, dragX, dragY)) return true;
+
+        if (button != InputConstants.MOUSE_BUTTON_LEFT) return false;
+
         if (camera.inSelfieMode() && Minecrft.options().keySprint.isDown) {
+            // Parameters are correct. Stop nagging me, Intellij
             viewfinder.selfie.rotateCamera(dragY, dragX, true);
             return true;
         }
 
-        return super.mouseDragged(mouseX, mouseY, button, dragX, dragY);
+        // Dragging the view with mouse:
+        double fov = viewfinder.zoom().getCurrentFov();
+        int windowWidth = Minecrft.get().getWindow().getHeight();
+        int windowHeight = Minecrft.get().getWindow().getHeight();
+        double xRot = (dragY / windowHeight) * fov;
+        double yRot = (dragX / windowWidth) * (fov * ((double) windowHeight / windowWidth));
+        Minecrft.player().turn(-yRot * 20, -xRot * 20);
+
+        return true;
     }
 
     @Override
