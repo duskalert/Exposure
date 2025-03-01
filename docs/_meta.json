@@ -14,5 +14,13 @@
   "for_developers": {
     "name": "🛠️ For Developers",
     "icon": null
+  },
+  "polaroid": {
+    "name": "🌈 Polaroid",
+    "icon": null
+  },
+  "faq.mdx": {
+    "name": "❔ FAQ",
+    "icon": null
   }
 }
