@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.8.6 - 2025-03-02
+- [NeoForge] Added **Create** `Sequenced Assembly` Film developing recipes. 
+
+*Note:*
+- If you want to change sequenced developing recipes - only `filling` steps can be used, otherwise Film data would be erased.
+
 ## 1.8.5 - 2025-02-28
 - Added camera panning in selfie mode. Hold sprint key (ctrl) and move the mouse.
 - Added ability to pan the camera when camera controls are showing. Just drag with left click.

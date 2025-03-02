@@ -99,25 +99,6 @@ public class FilmRollItem extends Item implements FilmItem {
             tooltipComponents.add(Component.translatable("item.exposure.film_roll.tooltip.renaming"));
         }
 
-//        // Create compat:
-//        int developingStep = stack.getTag() != null ? stack.getTag().getInt("CurrentDevelopingStep") : 0;
-//        if (Config.Common.CREATE_SPOUT_DEVELOPING_ENABLED.get() && developingStep > 0) {
-//            List<? extends String> totalSteps = Config.Common.spoutDevelopingSequence(getType()).get();
-//
-//            MutableComponent stepsComponent = Component.literal("");
-//
-//            for (int i = 0; i < developingStep; i++) {
-//                stepsComponent.append(Component.literal("I").withStyle(ChatFormatting.GOLD));
-//            }
-//
-//            for (int i = developingStep; i < totalSteps.size(); i++) {
-//                stepsComponent.append(Component.literal("I").withStyle(ChatFormatting.DARK_GRAY));
-//            }
-//
-//            tooltipComponents.add(Component.translatable("item.exposure.film_roll.tooltip.developing_step", stepsComponent)
-//                    .withStyle(ChatFormatting.GOLD));
-//        }
-
         //noinspection ConstantValue
         if (exposedFrames > 0 && !PlatformHelper.isModLoaded("jei") && Config.Client.RECIPE_TOOLTIPS_WITHOUT_JEI.get()) {
             ClientGUI.addFilmRollDevelopingTooltip(stack, context, tooltipComponents, tooltipFlag);

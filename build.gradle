@@ -72,6 +72,9 @@ subprojects {
                 includeGroup "com.github.rtyley"
             }
         }
+
+        maven { url = "https://maven.createmod.net" } // Create, Ponder, Flywheel
+        maven { url = "https://mvn.devos.one/snapshots" } // Registrate
     }
 
     loom {
@@ -80,7 +83,7 @@ subprojects {
             client {
                 property 'item_asset_export.render.namespaces', 'exposure'
                 vmArgs '-XX:+AllowEnhancedClassRedefinition', '-XX:HotswapAgent=core'
-//                , '-Dmixin.debug.export=true'
+                //  , '-Dmixin.debug.export=true'
             }
         }
     }
