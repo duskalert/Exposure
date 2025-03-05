@@ -6,7 +6,9 @@
   "loops": 1,
   "results": [
     {
-      "item": "exposure:developed_color_film"
+      "item": {
+        "id": "exposure:developed_color_film"
+      }
     }
   ],
   "sequence": [
@@ -30,7 +32,9 @@
       ],
       "results": [
         {
-          "item": "exposure:color_film"
+          "item": {
+            "id": "exposure:color_film"
+          }
         }
       ]
     },
@@ -54,7 +58,9 @@
       ],
       "results": [
         {
-          "item": "exposure:color_film"
+          "item": {
+            "id": "exposure:color_film"
+          }
         }
       ]
     },
@@ -78,12 +84,16 @@
       ],
       "results": [
         {
-          "item": "exposure:color_film"
+          "item": {
+            "id": "exposure:color_film"
+          }
         }
       ]
     }
   ],
   "transitional_item": {
-    "item": "exposure:color_film"
+    "item": {
+      "id": "exposure:color_film"
+    }
   }
 }

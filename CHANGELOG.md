@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.8.7 - 2025-03-05
+- [NeoForge] Fixed Create Sequenced Assembly film developing not working with Create 6.0.1.
+
 ## 1.8.6 - 2025-03-02
 - [NeoForge] Added **Create** `Sequenced Assembly` Film developing recipes. 
 

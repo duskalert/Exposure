@@ -6,7 +6,9 @@
   "loops": 1,
   "results": [
     {
-      "item": "exposure:developed_black_and_white_film"
+      "item": {
+        "id": "exposure:developed_black_and_white_film"
+      }
     }
   ],
   "sequence": [
@@ -24,12 +26,16 @@
       ],
       "results": [
         {
-          "item": "exposure:black_and_white_film"
+          "item": {
+            "id": "exposure:black_and_white_film"
+          }
         }
       ]
     }
   ],
   "transitional_item": {
-    "item": "exposure:black_and_white_film"
+    "item": {
+      "id": "exposure:black_and_white_film"
+    }
   }
 }
