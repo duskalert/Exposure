@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.8.8 - 2025-03-05
+- Fixed 16th page in Album losing content when album is opened.  
+
 ## 1.8.7 - 2025-03-05
 - [NeoForge] Fixed Create Sequenced Assembly film developing not working with Create 6.0.1.
 

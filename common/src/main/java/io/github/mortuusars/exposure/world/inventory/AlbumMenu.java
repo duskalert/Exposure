@@ -6,6 +6,7 @@ import io.github.mortuusars.exposure.Exposure;
 import io.github.mortuusars.exposure.util.PagingDirection;
 import io.github.mortuusars.exposure.world.item.AlbumItem;
 import io.github.mortuusars.exposure.world.item.PhotographItem;
+import io.github.mortuusars.exposure.world.item.component.album.AlbumContent;
 import io.github.mortuusars.exposure.world.item.component.album.AlbumPage;
 import io.github.mortuusars.exposure.network.Packets;
 import io.github.mortuusars.exposure.network.packet.serverbound.AlbumSignC2SP;
@@ -89,9 +90,9 @@ public class AlbumMenu extends AbstractContainerMenu {
 
         this.albumItem = item;
 
-        if (isAlbumEditable()) {
+        if (isAlbumEditable() && item.getContent(albumStack).pages().size() < AlbumContent.MAX_PAGES) {
             // Sets all pages to empty.
-            item.setContent(albumStack, item.getContent(albumStack).toMutable().setPage(15, AlbumPage.EMPTY).toImmutable());
+            item.setContent(albumStack, item.getContent(albumStack).toMutable().setPage(AlbumContent.MAX_PAGES - 1, AlbumPage.EMPTY).toImmutable());
         }
 
         addPhotographSlots();
