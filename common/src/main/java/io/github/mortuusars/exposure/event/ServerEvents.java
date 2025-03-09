@@ -1,5 +1,6 @@
 package io.github.mortuusars.exposure.event;
 
+import io.github.mortuusars.exposure.Config;
 import io.github.mortuusars.exposure.Exposure;
 import io.github.mortuusars.exposure.ExposureServer;
 import io.github.mortuusars.exposure.world.camera.CameraInHand;
@@ -13,7 +14,9 @@ import java.util.stream.Stream;
 
 public class ServerEvents {
     public static void onServerSave() {
-        ExposureServer.exposureRepository().clearExpectedExposuresTimedOutLongAgo();
+        if (Config.Server.CLEANUP_TIMED_OUT_EXPECTED_EXPOSURES.get()) {
+            ExposureServer.exposureRepository().clearExpectedExposuresTimedOutLongAgo();
+        }
     }
 
     public static void serverStarted(MinecraftServer server) {

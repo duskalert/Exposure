@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.8.9 - 2025-03-09
+- Made small change and added config option that can potentially help to fix occasional server hanging.
+
 ## 1.8.8 - 2025-03-05
 - Fixed 16th page in Album losing content when album is opened.  
 

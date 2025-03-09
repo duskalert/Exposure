@@ -49,6 +49,9 @@ public class Config {
         public static final ModConfigSpec.BooleanValue FILM_ROLL_EASY_RENAMING;
         public static final ModConfigSpec.BooleanValue INTERPLANAR_PROJECTOR_LARGER_RENAMING_LIMIT;
 
+        // Debug
+        public static final ModConfigSpec.BooleanValue CLEANUP_TIMED_OUT_EXPECTED_EXPOSURES;
+
         static {
             ModConfigSpec.Builder builder = new ModConfigSpec.Builder();
 
@@ -157,6 +160,15 @@ public class Config {
                         .comment("Increases item name length limit for Interplanar Projector to 150 characters. Vanilla limit: 50.",
                                 "Default: true")
                         .define("increase_interplanar_projector_name_limit", true);
+            }
+            builder.pop();
+
+            builder.comment("You wouldn't need to touch these settings most likely. They are there to help debug/fix some weird issues.")
+                    .push("debug");
+            {
+                CLEANUP_TIMED_OUT_EXPECTED_EXPOSURES = builder
+                        .comment("Clean up data about timed-out expected exposure uploads on level/server save. Default: true")
+                        .define("cleanup_timed_out_expected_uploads", true);
             }
             builder.pop();
 

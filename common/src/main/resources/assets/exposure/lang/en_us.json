@@ -96,6 +96,8 @@
   "exposure.configuration.capture": "Capture",
   "exposure.configuration.censor_all_photographs_made_by_others": "Censor all foreign Photographs",
   "exposure.configuration.censor_projected_photographs_made_by_others": "Censor foreign projected Photographs",
+  "exposure.configuration.cleanup_timed_out_expected_uploads": "Clean up timed-out upload data",
+  "exposure.configuration.debug": "Debug",
   "exposure.configuration.default_focal_range": "Default Focal Range",
   "exposure.configuration.default_frame_size": "Default Frame Size",
   "exposure.configuration.different_developing_potions_colors": "Colorful developing potions",
