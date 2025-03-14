@@ -895,7 +895,8 @@ public class CameraItem extends Item {
     protected String createExposureId(Player player) {
         // This method is called only server-side and then gets sent to client in a packet
         // because gameTime is different between client/server, and IDs won't match.
-        return player.getName().getString() + "_" + player.level().getGameTime();
+        String playerName = player.getName().getString().replaceAll("[^A-Za-z0-9-_]", "-"); // Filter out problematic chars
+        return playerName + "_" + player.level().getGameTime();
     }
 
     public FocalRange getFocalRange(ItemStack cameraStack) {

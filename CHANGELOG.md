@@ -1,5 +1,8 @@
 # Changelog
 
+## UNRELEASED 1.7.10
+- Fixed slashes (and other invalid chars) in player nicknames causing exposures to not save properly.
+
 ## 1.7.9 - 2025-02-15
 - Fixed crash when rendering exposures if Architectury API is not installed.
 - Fixed blurry icon in mod menu.
