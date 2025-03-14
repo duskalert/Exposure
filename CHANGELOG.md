@@ -1,6 +1,6 @@
 # Changelog
 
-## UNRELEASED 1.7.10
+## 1.7.10 - 2025-03-14
 - Fixed slashes (and other invalid chars) in player nicknames causing exposures to not save properly.
 - Fixed extra row of pixels in Lightroom screen and process toggle button position.
 
