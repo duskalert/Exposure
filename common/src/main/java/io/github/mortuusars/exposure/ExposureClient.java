@@ -33,8 +33,6 @@ public class ExposureClient {
     private static final ImageRenderer IMAGE_RENDERER = new ImageRenderer();
     private static final PhotographRenderer PHOTOGRAPH_RENDERER = new PhotographRenderer();
 
-    private static boolean haveModsRequiringDirectCapture;
-
     public static void init() {
         CameraModelPoses.register(Exposure.Items.CAMERA.get(), new CameraPoses());
 
@@ -56,8 +54,6 @@ public class ExposureClient {
         cycles().addParallelTask(new ClearStaleRenderedImagesIndefiniteTask());
 
         registerItemModelProperties();
-        //noinspection ConstantValue
-        haveModsRequiringDirectCapture = Exposure.MODS_REQUIRING_DIRECT_CAPTURE.stream().anyMatch(PlatformHelper::isModLoaded);
     }
 
     public static Cycles cycles() {
@@ -83,7 +79,8 @@ public class ExposureClient {
     // --
 
     public static boolean shouldUseDirectCapture() {
-        return Config.Client.FORCE_DIRECT_CAPTURE.isTrue() || haveModsRequiringDirectCapture;
+        //noinspection ConstantValue
+        return Config.Client.FORCE_DIRECT_CAPTURE.isTrue() || Config.Client.DIRECT_CAPTURE_MODS.get().stream().anyMatch(PlatformHelper::isModLoaded);
     }
 
     // --

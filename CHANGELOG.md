@@ -1,6 +1,8 @@
 # Changelog
 
 ## UNRELEASED 1.8.10
+- Added `mods_needing_direct_capture` config option. 
+- Added `Distant Horizons` to use direct capture by default.
 - Fixed slashes (and other invalid chars) in player nicknames causing exposures to not save properly.
 
 ## 1.8.9 - 2025-03-09

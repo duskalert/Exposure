@@ -242,6 +242,7 @@ public class Config {
         public static final ModConfigSpec.BooleanValue KEEP_POST_EFFECT;
         public static final ModConfigSpec.IntValue FLASH_CAPTURE_DELAY_TICKS;
         public static final ModConfigSpec.BooleanValue FORCE_DIRECT_CAPTURE;
+        public static final ModConfigSpec.ConfigValue<List<? extends String>> DIRECT_CAPTURE_MODS;
         public static final ModConfigSpec.IntValue DIRECT_CAPTURE_DELAY_FRAMES;
 
         // RENDER
@@ -347,9 +348,13 @@ public class Config {
                         .defineInRange("flash_capture_delay_ticks", 4, 1, FlashBlock.LIFETIME_TICKS);
                 FORCE_DIRECT_CAPTURE = builder
                         .comment("Force legacy (pre 1.21) capturing method for taking images. Enable if you experiencing issues with resulting images.",
-                                "Direct method will be used regardless of this setting if any of the following mods is installed: [" + String.join(", ", Exposure.MODS_REQUIRING_DIRECT_CAPTURE) + "]",
+                                "Direct method will be used regardless of this setting if mods defined in 'mods_needing_direct_capture' is installed.",
                                 "Default: false")
                         .define("force_direct_capture", false);
+                DIRECT_CAPTURE_MODS = builder
+                        .comment("Direct capture will be used if any of these mods is installed.",
+                                "Format: '[\"mod_id\", \"mod_id\"]'. Default: [" + String.join(", ", Exposure.MODS_REQUIRING_DIRECT_CAPTURE) + "]")
+                        .defineList("mods_needing_direct_capture", () -> Exposure.MODS_REQUIRING_DIRECT_CAPTURE, () -> "mod_id", o -> true);
                 DIRECT_CAPTURE_DELAY_FRAMES = builder
                         .comment("Delay in frames before capturing an image if 'direct_capture' method is in use (or if Oculus or Iris is installed).",
                                 "Set to higher value when leftovers of GUI elements (such as nameplates) are visible on the images",

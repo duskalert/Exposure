@@ -75,6 +75,14 @@ subprojects {
 
         maven { url = "https://maven.createmod.net" } // Create, Ponder, Flywheel
         maven { url = "https://mvn.devos.one/snapshots" } // Registrate
+        maven {
+            name = "Modrinth"
+            url = "https://api.modrinth.com/maven"
+            content {
+                includeGroup "maven.modrinth"
+            }
+        }
+
     }
 
     loom {
