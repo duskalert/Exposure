@@ -2,6 +2,7 @@
 
 ## UNRELEASED 1.7.10
 - Fixed slashes (and other invalid chars) in player nicknames causing exposures to not save properly.
+- Fixed extra row of pixels in Lightroom screen and process toggle button position.
 
 ## 1.7.9 - 2025-02-15
 - Fixed crash when rendering exposures if Architectury API is not installed.

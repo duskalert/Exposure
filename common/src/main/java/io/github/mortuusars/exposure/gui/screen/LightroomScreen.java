@@ -92,7 +92,7 @@ public class LightroomScreen extends AbstractContainerScreen<LightroomMenu> {
         printButton.setTooltip(Tooltip.create(tooltip));
         addRenderableWidget(printButton);
 
-        processToggleButton = new ChromaticProcessToggleButton(leftPos - 19, topPos + 91,
+        processToggleButton = new ChromaticProcessToggleButton(leftPos - 17, topPos + 91,
                 this::onProcessToggleButtonPressed, () -> getMenu().getBlockEntity().getProcess());
         processToggleButton.setTooltip(Tooltip.create(Component.translatable("gui.exposure.lightroom.current_frame")));
         addRenderableWidget(processToggleButton);
@@ -138,7 +138,7 @@ public class LightroomScreen extends AbstractContainerScreen<LightroomMenu> {
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
         guiGraphics.blit(MAIN_TEXTURE, leftPos, topPos, 0, 0, imageWidth, imageHeight);
-        guiGraphics.blit(MAIN_TEXTURE, leftPos - 27, topPos + 34, 0, 208, 28, 31);
+        guiGraphics.blit(MAIN_TEXTURE, leftPos - 27, topPos + 35, 0, 209, 28, 31);
 
         renderSlotPlaceholders(guiGraphics, mouseX, mouseY, partialTick);
 
