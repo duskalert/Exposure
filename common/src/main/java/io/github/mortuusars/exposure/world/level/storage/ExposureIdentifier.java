@@ -171,7 +171,7 @@ public class ExposureIdentifier {
 
     public static String createId(Entity entity, String... middleParts) {
         List<String> parts = new ArrayList<>();
-        parts.add(entity.getScoreboardName());
+        parts.add(entity.getName().getString());
         parts.addAll(Arrays.asList(middleParts));
         parts.add(Long.toString(entity.level().getGameTime()));
         return createId(parts.toArray(String[]::new));
@@ -181,7 +181,7 @@ public class ExposureIdentifier {
         Preconditions.checkArgument(parts.length > 0, "Cannot compose ID with 0 parts.");
         List<String> sanitizedParts = Arrays.stream(parts)
                 .filter(s -> !StringUtil.isNullOrEmpty(s))
-                .map(s -> s.replace('_', '-'))
+                .map(s -> s.replaceAll("[^A-Za-z0-9-]", "-"))
                 .toList();
         return String.join("_", sanitizedParts);
     }

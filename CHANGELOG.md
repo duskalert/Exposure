@@ -1,5 +1,8 @@
 # Changelog
 
+## UNRELEASED 1.8.10
+- Fixed slashes (and other invalid chars) in player nicknames causing exposures to not save properly.
+
 ## 1.8.9 - 2025-03-09
 - Made small change and added config option that can potentially help to fix occasional server hanging.
 
