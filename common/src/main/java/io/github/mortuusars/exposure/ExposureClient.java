@@ -24,7 +24,6 @@ import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.level.levelgen.carver.CarverDebugSettings;
 
 public class ExposureClient {
     private static final Cycles CYCLES = new Cycles();
@@ -80,7 +79,7 @@ public class ExposureClient {
 
     public static boolean shouldUseDirectCapture() {
         //noinspection ConstantValue
-        return Config.Client.FORCE_DIRECT_CAPTURE.isTrue() || Config.Client.DIRECT_CAPTURE_MODS.get().stream().anyMatch(PlatformHelper::isModLoaded);
+        return Config.Client.FORCE_DIRECT_CAPTURE.isTrue() || Config.Client.FORCE_DIRECT_CAPTURE_MODS.get().stream().anyMatch(PlatformHelper::isModLoaded);
     }
 
     // --
