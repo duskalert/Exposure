@@ -2,7 +2,6 @@ package io.github.mortuusars.exposure.world.camera.capture;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import io.github.mortuusars.exposure.client.util.Minecrft;
 import io.github.mortuusars.exposure.data.ColorPalettes;
 import io.github.mortuusars.exposure.util.ExtraData;
 import io.github.mortuusars.exposure.data.ColorPalette;
@@ -155,7 +154,7 @@ public record CaptureProperties(String exposureId,
 
         public Builder setCameraHolder(@Nullable CameraHolder holder) {
             if (holder == null) cameraHolderEntityID = null;
-            else cameraHolderEntityID = holder.asEntity().getId();
+            else cameraHolderEntityID = holder.asHolderEntity().getId();
             return this;
         }
 

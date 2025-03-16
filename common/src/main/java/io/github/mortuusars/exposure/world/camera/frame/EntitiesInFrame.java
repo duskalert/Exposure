@@ -15,7 +15,7 @@ import java.util.List;
 
 public class EntitiesInFrame {
     public static List<LivingEntity> get(CameraHolder cameraHolder, PointOfView pov, double fov) {
-        return get(cameraHolder.asEntity(), pov, fov);
+        return get(cameraHolder.asHolderEntity(), pov, fov);
     }
 
     public static List<LivingEntity> get(Entity cameraHolder, PointOfView pov, double fov) {

@@ -33,7 +33,7 @@ public interface CameraOperator {
         return 0F;
     }
 
-    default LivingEntity toEntity() {
+    default LivingEntity asOperatorEntity() {
         return (LivingEntity) this;
     }
 }

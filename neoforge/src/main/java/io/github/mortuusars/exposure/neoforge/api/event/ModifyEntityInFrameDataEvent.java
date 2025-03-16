@@ -32,7 +32,7 @@ public class ModifyEntityInFrameDataEvent extends Event {
     }
 
     public Entity getCameraHolderEntity() {
-        return cameraHolder.asEntity();
+        return cameraHolder.asHolderEntity();
     }
 
     public ItemStack getCamera() {

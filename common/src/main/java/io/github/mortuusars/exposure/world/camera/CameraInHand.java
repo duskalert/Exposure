@@ -19,7 +19,7 @@ public class CameraInHand extends Camera {
         this.hand = hand;
         if (!(holder instanceof LivingEntity)) {
             throw new IllegalStateException("Only LivingEntity can hold camera in hand."
-                    + EntityType.getKey(holder.asEntity().getType()) + " does snot have hands.");
+                    + EntityType.getKey(holder.asHolderEntity().getType()) + " does snot have hands.");
         }
     }
 
@@ -37,14 +37,14 @@ public class CameraInHand extends Camera {
                 : InteractionHand.MAIN_HAND;
         ItemStack itemInHand = ((LivingEntity) getHolder()).getItemInHand(oppositeHand);
         if (getId().matches(itemInHand) && itemInHand.getItem() instanceof CameraItem cameraItem && cameraItem.isActive(itemInHand)) {
-            cameraItem.deactivate(getHolder().asEntity(), itemInHand);
+            cameraItem.deactivate(getHolder().asHolderEntity(), itemInHand);
             return true;
         }
 
         if (getHolder() instanceof Player player) {
             for (ItemStack stack : player.getInventory().items) {
                 if (getId().matches(stack) && stack.getItem() instanceof CameraItem cameraItem && cameraItem.isActive(stack)) {
-                    cameraItem.deactivate(getHolder().asEntity(), stack);
+                    cameraItem.deactivate(getHolder().asHolderEntity(), stack);
                     return true;
                 }
             }
@@ -55,7 +55,7 @@ public class CameraInHand extends Camera {
 
     @Override
     public Packet createSyncPacket() {
-        return new ActiveCameraInHandSetS2CP(getHolder().asEntity().getId(), getId(), getHand());
+        return new ActiveCameraInHandSetS2CP(getHolder().asHolderEntity().getId(), getId(), getHand());
     }
 
     public InteractionHand getHand() {
@@ -65,7 +65,7 @@ public class CameraInHand extends Camera {
     // --
 
     public static @Nullable CameraInHand find(CameraHolder holder) {
-        if (holder.asEntity() instanceof LivingEntity entity) {
+        if (holder.asHolderEntity() instanceof LivingEntity entity) {
             for (InteractionHand hand : InteractionHand.values()) {
                 ItemStack itemInHand = entity.getItemInHand(hand);
                 if (itemInHand.getItem() instanceof CameraItem cameraItem) {

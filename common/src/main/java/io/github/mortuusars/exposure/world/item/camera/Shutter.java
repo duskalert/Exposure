@@ -47,7 +47,7 @@ public class Shutter {
     }
 
     public void tick(CameraHolder holder, ServerLevel level, ItemStack stack) {
-        long gameTime = holder.asEntity().level().getGameTime();
+        long gameTime = holder.asHolderEntity().level().getGameTime();
         if (shouldClose(stack, gameTime)) {
             ShutterState state = getState(stack);
             if (gameTime - state.getCloseTick() > 200) {
@@ -60,25 +60,25 @@ public class Shutter {
 
     public void open(CameraHolder holder, ServerLevel level, ItemStack stack, ShutterSpeed shutterSpeed) {
         setState(stack, ShutterState.open(level.getGameTime(), shutterSpeed));
-        holder.asEntity().gameEvent(GameEvent.ITEM_INTERACT_FINISH);
+        holder.asHolderEntity().gameEvent(GameEvent.ITEM_INTERACT_FINISH);
         playOpenSound(holder);
         onOpen.accept(holder, level, stack);
     }
 
     public void close(CameraHolder holder, ServerLevel level, ItemStack stack) {
         setState(stack, ShutterState.closed());
-        holder.asEntity().gameEvent(GameEvent.ITEM_INTERACT_FINISH);
+        holder.asHolderEntity().gameEvent(GameEvent.ITEM_INTERACT_FINISH);
         playCloseSound(holder);
         onClosed.accept(holder, level, stack);
     }
 
     public void playOpenSound(CameraHolder holder) {
-        Entity entity = holder.asEntity();
+        Entity entity = holder.asHolderEntity();
         Sound.play(entity, Exposure.SoundEvents.SHUTTER_OPEN.get(), entity.getSoundSource(), 0.7f, 1.1f, 0.2f);
     }
 
     public void playCloseSound(CameraHolder holder) {
-        Entity entity = holder.asEntity();
+        Entity entity = holder.asHolderEntity();
         Sound.play(entity, Exposure.SoundEvents.SHUTTER_CLOSE.get(), entity.getSoundSource(), 0.7f, 1.1f, 0.2f);
     }
 }

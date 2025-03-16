@@ -68,7 +68,7 @@ public abstract class Camera {
     public boolean deactivate() {
         ItemStack stack = getItemStack();
         if (getId().matches(stack) && stack.getItem() instanceof CameraItem cameraItem && cameraItem.isActive(stack)) {
-            cameraItem.deactivate(getHolder().asEntity(), stack);
+            cameraItem.deactivate(getHolder().asHolderEntity(), stack);
             return true;
         }
         return false;

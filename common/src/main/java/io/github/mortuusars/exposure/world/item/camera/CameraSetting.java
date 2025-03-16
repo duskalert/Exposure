@@ -86,7 +86,7 @@ public record CameraSetting<T>(DataComponentType<T> component, T defaultValue, O
         if (stack.getItem() instanceof CameraItem cameraItem && set(stack, value)) {
             cameraItem.actionPerformed(stack, holder);
             sound.ifPresent(sound ->
-                    Sound.playSided(holder.asEntity(), sound.sound().get(), SoundSource.PLAYERS,
+                    Sound.playSided(holder.asHolderEntity(), sound.sound().get(), SoundSource.PLAYERS,
                             sound.volume(), sound.pitch(), sound.pitchVariability()));
             return true;
         }
@@ -100,7 +100,7 @@ public record CameraSetting<T>(DataComponentType<T> component, T defaultValue, O
     public boolean setAndSync(Camera camera, T value) {
         return camera.map((item, stack) -> {
             if (set(camera.getHolder(), stack, value)) {
-                byte[] bytes = encodeValue(camera.getHolder().asEntity().registryAccess(), value);
+                byte[] bytes = encodeValue(camera.getHolder().asHolderEntity().registryAccess(), value);
                 Packets.sendToServer(new ActiveCameraSetSettingC2SP(this, bytes));
                 return true;
             }

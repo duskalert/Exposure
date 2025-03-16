@@ -48,7 +48,7 @@ public interface CameraHolder {
 
     // --
 
-    default Entity asEntity() {
+    default Entity asHolderEntity() {
         return ((Entity) this);
     }
 }

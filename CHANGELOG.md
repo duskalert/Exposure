@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.8.11 - 2025-03-16
+- Fixed crash with some mods (Little Tiles is a known one) due to conflicting mixin methods.
+
 ## 1.8.10 - 2025-03-15
 - Added `force_direct_capture_mods` config option. 
 - Added `Distant Horizons` to the list of mods that force direct capture if installed.

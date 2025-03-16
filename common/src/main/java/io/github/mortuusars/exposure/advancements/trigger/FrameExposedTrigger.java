@@ -52,7 +52,7 @@ public class FrameExposedTrigger extends SimpleCriterionTrigger<FrameExposedTrig
                                Frame frame,
                                List<BlockPos> locationsInFrame,
                                List<LivingEntity> entitiesInFrame) {
-            Entity holder = cameraHolder.asEntity();
+            Entity holder = cameraHolder.asHolderEntity();
 
             return (camera.isEmpty() || camera.get().matches(player.serverLevel(), cameraStack, holder.position()))
                     && (this.frame.isEmpty() || this.frame.get().matches(frame))

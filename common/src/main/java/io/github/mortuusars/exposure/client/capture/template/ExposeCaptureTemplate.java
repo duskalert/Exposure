@@ -35,7 +35,7 @@ public class ExposeCaptureTemplate implements CaptureTemplate {
             return new EmptyTask<>();
         }
 
-        Entity entity = cameraHolder.asEntity();
+        Entity entity = cameraHolder.asHolderEntity();
         ExposureType filmType = data.filmType();
         ShutterSpeed shutterSpeed = data.shutterSpeed().orElse(ShutterSpeed.DEFAULT);
         Holder<ColorPalette> palette = data.getColorPalette(Minecrft.registryAccess());

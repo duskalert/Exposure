@@ -266,8 +266,8 @@ public class CameraItem extends Item {
     }
 
     public void actionPerformed(ItemStack stack, CameraHolder holder) {
-        setLastActionTime(stack, holder.asEntity().level().getGameTime());
-        holder.asEntity().gameEvent(GameEvent.ITEM_INTERACT_FINISH);
+        setLastActionTime(stack, holder.asHolderEntity().level().getGameTime());
+        holder.asHolderEntity().gameEvent(GameEvent.ITEM_INTERACT_FINISH);
     }
 
     public @NotNull InteractionResultHolder<ItemStack> activateInHand(Player player, ItemStack stack, @NotNull InteractionHand hand) {
@@ -438,7 +438,7 @@ public class CameraItem extends Item {
     }
 
     public @NotNull InteractionResultHolder<ItemStack> release(CameraHolder holder, ItemStack stack) {
-        Entity entity = holder.asEntity();
+        Entity entity = holder.asHolderEntity();
         Level level = entity.level();
 
         Sound.playSided(entity, getReleaseButtonSound(), entity.getSoundSource(), 0.3f, 1f, 0.1f);
@@ -532,8 +532,8 @@ public class CameraItem extends Item {
                     : Exposure.SoundEvents.FILM_ADVANCE.get();
 
             float fullness = filmItem.getFullness(filmStack);
-            String id = holder.asEntity().getId() + getOrCreateID(stack).uuid().toString();
-            Sound.playUnique(id, holder.asEntity(), sound, SoundSource.PLAYERS, 1f, 0.85f + 0.2f * fullness);
+            String id = holder.asHolderEntity().getId() + getOrCreateID(stack).uuid().toString();
+            Sound.playUnique(id, holder.asHolderEntity(), sound, SoundSource.PLAYERS, 1f, 0.85f + 0.2f * fullness);
         });
     }
 
@@ -676,7 +676,7 @@ public class CameraItem extends Item {
                 .setPhotographer(new Photographer(holder))
                 .setEntitiesInFrame(entitiesInFrame.stream()
                         .limit(Exposure.MAX_ENTITIES_IN_FRAME)
-                        .map(entity -> EntityInFrame.of(holder.asEntity(), entity, data -> {
+                        .map(entity -> EntityInFrame.of(holder.asHolderEntity(), entity, data -> {
                             PlatformHelper.postModifyEntityInFrameExtraDataEvent(holder, stack, entity, data);
                         }))
                         .toList())
@@ -688,7 +688,7 @@ public class CameraItem extends Item {
 
     protected void addFrameExtraData(CameraHolder holder, ServerLevel level, ItemStack camera, CaptureProperties captureProperties,
                                      List<BlockPos> positionsInFrame, List<LivingEntity> entitiesInFrame, ExtraData data) {
-        Entity cameraHolder = holder.asEntity();
+        Entity cameraHolder = holder.asHolderEntity();
         boolean projecting = captureProperties.projection().isPresent();
 
         if (projecting) {
@@ -780,8 +780,8 @@ public class CameraItem extends Item {
         return Vec3Util.getProbeVectors(pov.dir(), offsetDegrees).stream()
                 .map(direction -> {
                     Vec3 endPos = pov.pos().add(direction.scale(100));
-                    return cameraHolder.asEntity().level().clip(
-                            new ClipContext(pov.pos(), endPos, ClipContext.Block.OUTLINE, ClipContext.Fluid.ANY, cameraHolder.asEntity()));
+                    return cameraHolder.asHolderEntity().level().clip(
+                            new ClipContext(pov.pos(), endPos, ClipContext.Block.OUTLINE, ClipContext.Fluid.ANY, cameraHolder.asHolderEntity()));
                 })
                 .filter(hit -> hit.getType() != HitResult.Type.MISS)
                 .map(BlockHitResult::getBlockPos)
@@ -798,7 +798,7 @@ public class CameraItem extends Item {
 
     public void onFrameAdded(CameraHolder holder, ServerLevel level, ItemStack stack, Frame frame,
                              List<BlockPos> positionsInFrame, List<LivingEntity> entitiesInFrame) {
-        ExposureServer.frameHistory().add(holder.asEntity(), frame);
+        ExposureServer.frameHistory().add(holder.asHolderEntity(), frame);
 
         entitiesInFrame.forEach(entity -> entityCaptured(holder, stack, entity));
 
@@ -815,7 +815,7 @@ public class CameraItem extends Item {
     }
 
     protected void entityCaptured(CameraHolder cameraHolder, ItemStack stack, LivingEntity entity) {
-        if (cameraHolder.asEntity() instanceof ServerPlayer player && entity instanceof EnderMan enderMan) {
+        if (cameraHolder.asHolderEntity() instanceof ServerPlayer player && entity instanceof EnderMan enderMan) {
             boolean lookingAtAngryEnderMan = player.equals(enderMan.getTarget()) && enderMan.isLookingAtMe(player);
 
             if (lookingAtAngryEnderMan) {
@@ -834,7 +834,7 @@ public class CameraItem extends Item {
         if (!(filter.getItem() instanceof InterplanarProjectorItem interplanarProjector)) return;
         if (!interplanarProjector.isConsumable(filter.getForReading())) return;
 
-        Entity entity = holder.asEntity();
+        Entity entity = holder.asHolderEntity();
 
         if (projectionState == CameraInstance.ProjectionState.FAILED || projectionState == CameraInstance.ProjectionState.TIMED_OUT) {
             ItemStack filterStack = filter.getCopy().transmuteCopy(Exposure.Items.BROKEN_INTERPLANAR_PROJECTOR.get());
@@ -887,7 +887,7 @@ public class CameraItem extends Item {
 //        }
 
         float fov = getViewfinderFov(level, stack);
-        List<LivingEntity> entities = EntitiesInFrame.get(player.asEntity(), pov, fov);
+        List<LivingEntity> entities = EntitiesInFrame.get(player.asHolderEntity(), pov, fov);
         for (LivingEntity livingEntity : entities) {
             livingEntity.addEffect(new MobEffectInstance(MobEffects.GLOWING, 2, 1, true, false, false));
         }

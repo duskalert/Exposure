@@ -36,7 +36,7 @@ public class CameraCaptureTemplate implements CaptureTemplate {
             return new EmptyTask<>();
         }
 
-        Entity entity = cameraHolder.asEntity();
+        Entity entity = cameraHolder.asHolderEntity();
         ExposureType filmType = data.filmType();
         int frameSize = data.frameSize().orElse(Config.Server.DEFAULT_FRAME_SIZE.getAsInt());
         Holder<ColorPalette> palette = data.getColorPalette(Minecrft.registryAccess());

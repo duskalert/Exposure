@@ -16,7 +16,7 @@ import net.minecraft.world.phys.shapes.CollisionContext;
  */
 public record PointOfView(Vec3 pos, Vec3 dir) {
     public static PointOfView of(CameraHolder holder) {
-        return of(holder.asEntity());
+        return of(holder.asHolderEntity());
     }
 
     public static PointOfView of(Entity entity) {
@@ -52,7 +52,7 @@ public record PointOfView(Vec3 pos, Vec3 dir) {
     }
 
     public PointOfView limitMaxDistance(CameraHolder holder, double distance) {
-        return limitMaxDistance(holder.asEntity(), distance);
+        return limitMaxDistance(holder.asHolderEntity(), distance);
     }
 
     public PointOfView limitMaxDistance(Entity entity, double distance) {
