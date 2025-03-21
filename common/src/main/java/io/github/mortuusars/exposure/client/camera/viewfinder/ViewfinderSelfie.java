@@ -5,6 +5,7 @@ import io.github.mortuusars.exposure.client.animation.Animation;
 import io.github.mortuusars.exposure.client.animation.EasingFunction;
 import io.github.mortuusars.exposure.client.util.Minecrft;
 import io.github.mortuusars.exposure.world.camera.Camera;
+import io.github.mortuusars.exposure.world.camera.CameraOnStand;
 import io.github.mortuusars.exposure.world.item.camera.CameraSettings;
 import net.minecraft.client.CameraType;
 import net.minecraft.util.Mth;
@@ -55,6 +56,11 @@ public class ViewfinderSelfie {
     }
 
     public void toggle() {
+        if (camera instanceof CameraOnStand) {
+            Minecrft.options().setCameraType(CameraType.FIRST_PERSON);
+            return;
+        }
+
         CameraType newCameraType = Minecrft.options().getCameraType() == CameraType.FIRST_PERSON
                 ? CameraType.THIRD_PERSON_FRONT
                 : CameraType.FIRST_PERSON;

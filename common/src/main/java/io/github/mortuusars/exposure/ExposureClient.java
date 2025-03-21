@@ -126,6 +126,8 @@ public class ExposureClient {
                 new ModelResourceLocation(Exposure.resource("glass_photograph_frame_medium"), "standalone");
         public static final ModelResourceLocation CLEAR_PHOTOGRAPH_FRAME_LARGE =
                 new ModelResourceLocation(Exposure.resource("glass_photograph_frame_large"), "standalone");
+        public static final ModelResourceLocation CAMERA_STAND =
+                new ModelResourceLocation(Exposure.resource("camera_stand"), "standalone");
     }
 
     public static class Textures {

@@ -16,6 +16,8 @@ import io.github.mortuusars.exposure.world.camera.frame.*;
 import io.github.mortuusars.exposure.data.ColorPalettes;
 import io.github.mortuusars.exposure.data.Lenses;
 import io.github.mortuusars.exposure.world.entity.CameraHolder;
+import io.github.mortuusars.exposure.world.entity.CameraOperator;
+import io.github.mortuusars.exposure.world.entity.CameraStandEntity;
 import io.github.mortuusars.exposure.world.item.FilmItem;
 import io.github.mortuusars.exposure.world.item.FilmRollItem;
 import io.github.mortuusars.exposure.world.item.InterplanarProjectorItem;
@@ -278,6 +280,14 @@ public class CameraItem extends Item {
         return activate(player, stack);
     }
 
+    public @NotNull InteractionResultHolder<ItemStack> activateOnStand(Player player, ItemStack stack, CameraStandEntity cameraStand) {
+        player.setActiveExposureCamera(new CameraOnStand(player, cameraStand, getOrCreateID(stack)));
+        if (player.level().isClientSide) {
+            Minecrft.releaseUseButton(); // Releasing use key to not take a shot immediately, if right click is still held.
+        }
+        return activate(player, stack);
+    }
+
     public @NotNull InteractionResultHolder<ItemStack> activate(Entity entity, ItemStack stack) {
         setActive(stack, true);
         setDisassembled(stack, false);
@@ -416,6 +426,23 @@ public class CameraItem extends Item {
         if (ExposureServer.debugHighlightEntitiesInFrame && isActive(stack)) {
             testEntitiesInFrame(stack, level, player);
         }
+    }
+
+    public void tick(CameraHolder holder, ItemStack stack) {
+        Level level = holder.asHolderEntity().level();
+        if (!(level instanceof ServerLevel serverLevel)) return;
+
+        getShutter().tick(holder, serverLevel, stack);
+
+        CameraInstances.ifPresent(stack, instance -> {
+            CameraInstance.ProjectionState state = instance.getProjectionState(level);
+            switch (state) {
+                case SUCCESSFUL, FAILED, TIMED_OUT -> {
+                    handleProjectionResult(serverLevel, holder, stack, state, instance.getProjectionError(level));
+                    instance.stopWaitingForProjection();
+                }
+            }
+        });
     }
 
     @Override
@@ -798,7 +825,7 @@ public class CameraItem extends Item {
 
     public void onFrameAdded(CameraHolder holder, ServerLevel level, ItemStack stack, Frame frame,
                              List<BlockPos> positionsInFrame, List<LivingEntity> entitiesInFrame) {
-        ExposureServer.frameHistory().add(holder.asHolderEntity(), frame);
+        ExposureServer.frameHistory().add(holder.getPlayerExecutingExposure(), frame);
 
         entitiesInFrame.forEach(entity -> entityCaptured(holder, stack, entity));
 

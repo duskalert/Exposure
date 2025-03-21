@@ -19,6 +19,7 @@ import io.github.mortuusars.exposure.world.camera.component.ShutterSpeed;
 import io.github.mortuusars.exposure.data.ColorPalette;
 import io.github.mortuusars.exposure.data.Filter;
 import io.github.mortuusars.exposure.data.Lens;
+import io.github.mortuusars.exposure.world.entity.CameraStandEntity;
 import io.github.mortuusars.exposure.world.entity.GlassPhotographFrameEntity;
 import io.github.mortuusars.exposure.world.entity.PhotographFrameEntity;
 import io.github.mortuusars.exposure.world.camera.frame.Frame;
@@ -188,6 +189,9 @@ public class Exposure {
         public static final Supplier<GlassPhotographFrameItem> CLEAR_PHOTOGRAPH_FRAME = Register.item("glass_photograph_frame",
                 () -> new GlassPhotographFrameItem(new Item.Properties()));
 
+        public static final Supplier<CameraStandItem> CAMERA_STAND = Register.item("camera_stand",
+                () -> new CameraStandItem(new Item.Properties()));
+
         public static final Supplier<BlockItem> LIGHTROOM = Register.item("lightroom",
                 () -> new BlockItem(Blocks.LIGHTROOM.get(), new Item.Properties()));
 
@@ -324,6 +328,13 @@ public class Exposure {
                         .clientTrackingRange(128)
                         .updateInterval(Integer.MAX_VALUE)
                         .eyeHeight(0));
+
+        public static final Supplier<EntityType<CameraStandEntity>> CAMERA_STAND = Register.entityType("camera_stand",
+                CameraStandEntity::new, MobCategory.MISC, false, builder -> builder
+                        .sized(0.6f, 1.75f)
+                        .clientTrackingRange(16)
+                        .updateInterval(Integer.MAX_VALUE)
+                        .eyeHeight(1.1f));
 
         static void init() {
         }

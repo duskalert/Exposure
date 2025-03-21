@@ -3,6 +3,9 @@ package io.github.mortuusars.exposure.mixin.client;
 import io.github.mortuusars.exposure.client.camera.CameraClient;
 import io.github.mortuusars.exposure.client.camera.viewfinder.ViewfinderCameraControlsScreen;
 import io.github.mortuusars.exposure.event.ClientEvents;
+import io.github.mortuusars.exposure.network.Packets;
+import io.github.mortuusars.exposure.network.packet.serverbound.ActiveCameraReleaseC2SP;
+import io.github.mortuusars.exposure.world.camera.CameraOnStand;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.ReceivingLevelScreen;
 import net.minecraft.client.gui.screens.Screen;
@@ -18,8 +21,20 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(Minecraft.class)
 public abstract class MinecraftMixin {
     @Shadow @Nullable public LocalPlayer player;
-
     @Shadow @Nullable public ClientLevel level;
+    @Shadow @Nullable public Screen screen;
+
+    @Inject(method = "startUseItem", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/player/LocalPlayer;isHandsBusy()Z"), cancellable = true)
+    void onStartUseItem(CallbackInfo ci) {
+        if (player == null || player.isHandsBusy()) return;
+        if (screen instanceof ViewfinderCameraControlsScreen) return; // Screen handles right click.
+
+        if (player.getActiveExposureCamera() instanceof CameraOnStand cameraOnStand && cameraOnStand.isActive()) {
+            cameraOnStand.release();
+            Packets.sendToServer(ActiveCameraReleaseC2SP.INSTANCE);
+            ci.cancel();
+        }
+    }
 
     @Inject(method = "setScreen", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screens/Screen;added()V"))
     void onSetScreen(Screen screen, CallbackInfo ci) {

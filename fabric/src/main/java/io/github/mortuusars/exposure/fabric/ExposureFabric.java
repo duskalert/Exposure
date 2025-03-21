@@ -82,6 +82,7 @@ public class ExposureFabric implements ModInitializer {
             content.accept(Exposure.Items.STACKED_PHOTOGRAPHS.get());
             content.accept(Exposure.Items.PHOTOGRAPH_FRAME.get());
             content.accept(Exposure.Items.CLEAR_PHOTOGRAPH_FRAME.get());
+            content.accept(Exposure.Items.CAMERA_STAND.get());
             content.accept(Exposure.Items.ALBUM.get());
         });
 

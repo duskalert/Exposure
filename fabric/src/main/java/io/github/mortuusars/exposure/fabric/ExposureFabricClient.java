@@ -3,6 +3,7 @@ package io.github.mortuusars.exposure.fabric;
 import io.github.mortuusars.exposure.Exposure;
 import io.github.mortuusars.exposure.ExposureClient;
 import io.github.mortuusars.exposure.client.input.KeyboardHandler;
+import io.github.mortuusars.exposure.client.render.CameraStandEntityRenderer;
 import io.github.mortuusars.exposure.client.render.GlassPhotographFrameEntityRenderer;
 import io.github.mortuusars.exposure.fabric.resources.ExposureFabricClientReloadListener;
 import io.github.mortuusars.exposure.client.gui.tooltip.PhotographClientTooltip;
@@ -45,12 +46,15 @@ public class ExposureFabricClient implements ClientModInitializer {
                         ExposureClient.Models.PHOTOGRAPH_FRAME_LARGE.id(),
                         ExposureClient.Models.CLEAR_PHOTOGRAPH_FRAME_SMALL.id(),
                         ExposureClient.Models.CLEAR_PHOTOGRAPH_FRAME_MEDIUM.id(),
-                        ExposureClient.Models.CLEAR_PHOTOGRAPH_FRAME_LARGE.id()));
+                        ExposureClient.Models.CLEAR_PHOTOGRAPH_FRAME_LARGE.id(),
+                        ExposureClient.Models.CAMERA_STAND.id()
+                ));
 
         ResourceManagerHelper.get(PackType.CLIENT_RESOURCES).registerReloadListener(new ExposureFabricClientReloadListener());
 
         EntityRendererRegistry.register(Exposure.EntityTypes.PHOTOGRAPH_FRAME.get(), PhotographFrameEntityRenderer::new);
         EntityRendererRegistry.register(Exposure.EntityTypes.CLEAR_PHOTOGRAPH_FRAME.get(), GlassPhotographFrameEntityRenderer::new);
+        EntityRendererRegistry.register(Exposure.EntityTypes.CAMERA_STAND.get(), CameraStandEntityRenderer::new);
 
         TooltipComponentCallback.EVENT.register(data -> data instanceof PhotographTooltip photographTooltip
                 ? new PhotographClientTooltip(photographTooltip) : null);

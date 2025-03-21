@@ -10,6 +10,7 @@ import io.github.mortuusars.exposure.client.gui.screen.album.AlbumScreen;
 import io.github.mortuusars.exposure.client.gui.screen.album.LecternAlbumScreen;
 import io.github.mortuusars.exposure.client.gui.screen.camera.CameraAttachmentsScreen;
 import io.github.mortuusars.exposure.client.gui.screen.LightroomScreen;
+import io.github.mortuusars.exposure.client.render.CameraStandEntityRenderer;
 import io.github.mortuusars.exposure.client.render.GlassPhotographFrameEntityRenderer;
 import io.github.mortuusars.exposure.client.render.PhotographFrameEntityRenderer;
 import io.github.mortuusars.exposure.world.inventory.tooltip.PhotographTooltip;
@@ -41,6 +42,7 @@ public class NeoForgeClientEvents {
         public static void registerEntityRenderers(EntityRenderersEvent.RegisterRenderers event) {
             event.registerEntityRenderer(Exposure.EntityTypes.PHOTOGRAPH_FRAME.get(), PhotographFrameEntityRenderer::new);
             event.registerEntityRenderer(Exposure.EntityTypes.CLEAR_PHOTOGRAPH_FRAME.get(), GlassPhotographFrameEntityRenderer::new);
+            event.registerEntityRenderer(Exposure.EntityTypes.CAMERA_STAND.get(), CameraStandEntityRenderer::new);
         }
 
         @SubscribeEvent
@@ -62,6 +64,7 @@ public class NeoForgeClientEvents {
             event.register(ExposureClient.Models.CLEAR_PHOTOGRAPH_FRAME_SMALL);
             event.register(ExposureClient.Models.CLEAR_PHOTOGRAPH_FRAME_MEDIUM);
             event.register(ExposureClient.Models.CLEAR_PHOTOGRAPH_FRAME_LARGE);
+            event.register(ExposureClient.Models.CAMERA_STAND);
         }
 
         @SubscribeEvent
