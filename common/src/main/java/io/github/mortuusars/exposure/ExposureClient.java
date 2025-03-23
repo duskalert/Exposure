@@ -13,6 +13,10 @@ import io.github.mortuusars.exposure.client.render.photograph.PhotographRenderer
 import io.github.mortuusars.exposure.client.render.photograph.PhotographStyles;
 import io.github.mortuusars.exposure.client.util.Minecrft;
 import io.github.mortuusars.exposure.world.camera.capture.CaptureType;
+import io.github.mortuusars.exposure.world.camera.component.FlashMode;
+import io.github.mortuusars.exposure.world.item.camera.Attachment;
+import io.github.mortuusars.exposure.world.item.camera.CameraSetting;
+import io.github.mortuusars.exposure.world.item.camera.CameraSettings;
 import io.github.mortuusars.exposure.world.photograph.PhotographType;
 import io.github.mortuusars.exposure.util.cycles.Cycles;
 import io.github.mortuusars.exposure.client.ExposureStore;
@@ -85,28 +89,34 @@ public class ExposureClient {
     // --
 
     private static void registerItemModelProperties() {
-        ItemProperties.register(Exposure.Items.CAMERA.get(), Exposure.resource("camera_state"), (stack, level, entity, seed) -> {
-            if (!(stack.getItem() instanceof CameraItem cameraItem) || !cameraItem.isActive(stack)) {
-                return 0f;
-            }
+        ItemProperties.register(Exposure.Items.CAMERA.get(), Exposure.resource("camera_active"), (stack, level, entity, seed) ->
+                stack.getItem() instanceof CameraItem cameraItem && cameraItem.isActive(stack) ? 1 : 0);
 
-            if (cameraItem.isInSelfieMode(stack)) {
-                // Longer selfie stick for current player (to not obscure the view) and regular for everyone else
-                return entity == Minecrft.player() ? 0.2f : 0.3f;
-            }
+        ItemProperties.register(Exposure.Items.CAMERA.get(), Exposure.resource("camera_selfie"), (stack, level, entity, seed) ->
+                stack.getItem() instanceof CameraItem cameraItem && cameraItem.isInSelfieMode(stack)
+                        ? entity == Minecrft.player() ? 0.5f : 1f
+                        : 0);
 
-            return 0.1f;
-        });
+        ItemProperties.register(Exposure.Items.CAMERA.get(), Exposure.resource("camera_has_lens"), (stack, level, entity, seed) ->
+                !Attachment.LENS.get(stack).isEmpty() ? 1 : 0);
+
+        ItemProperties.register(Exposure.Items.CAMERA.get(), Exposure.resource("camera_has_flash"), (stack, level, entity, seed) ->
+                !Attachment.FLASH.get(stack).isEmpty() ? 1 : 0);
+
+
         ItemProperties.register(Exposure.Items.CHROMATIC_SHEET.get(), Exposure.resource("channels"), (stack, clientLevel, livingEntity, seed) ->
                 stack.getItem() instanceof ChromaticSheetItem chromaticSheet ?
                         chromaticSheet.getLayers(stack).size() / 10f : 0f);
+
         ItemProperties.register(Exposure.Items.STACKED_PHOTOGRAPHS.get(), Exposure.resource("count"),
                 (stack, clientLevel, livingEntity, seed) ->
                         stack.getItem() instanceof StackedPhotographsItem stackedPhotographsItem ?
                                 stackedPhotographsItem.getPhotographs(stack).size() / 100f : 0f);
+
         ItemProperties.register(Exposure.Items.ALBUM.get(), Exposure.resource("photos"),
                 (stack, clientLevel, livingEntity, seed) ->
                         stack.getItem() instanceof AlbumItem albumItem ? albumItem.getPhotographsCount(stack) / 100f : 0f);
+
         ItemProperties.register(Exposure.Items.INTERPLANAR_PROJECTOR.get(), Exposure.resource("projector_active"),
                 (stack, clientLevel, livingEntity, seed) -> Config.Server.CAN_PROJECT.get() && stack.has(DataComponents.CUSTOM_NAME) ? 1f : 0f);
     }

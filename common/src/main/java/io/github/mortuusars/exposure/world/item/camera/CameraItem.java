@@ -3,6 +3,7 @@ package io.github.mortuusars.exposure.world.item.camera;
 import com.google.common.base.Preconditions;
 import io.github.mortuusars.exposure.*;
 import io.github.mortuusars.exposure.network.packet.clientbound.ShutterOpenedS2CP;
+import io.github.mortuusars.exposure.util.color.Color;
 import io.github.mortuusars.exposure.world.block.FlashBlock;
 import io.github.mortuusars.exposure.client.util.Minecrft;
 import io.github.mortuusars.exposure.world.camera.*;
@@ -61,14 +62,13 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ClickAction;
 import net.minecraft.world.inventory.Slot;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.*;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.StainedGlassPaneBlock;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.material.Fluids;
@@ -927,5 +927,23 @@ public class CameraItem extends Item {
                 level.addAlwaysVisibleParticle(ParticleTypes.EXPLOSION, true, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 0, 0, 0);
             }
         }
+    }
+
+    public static int getGlassTintColor(ItemStack stack, int tintIndex) {
+        if (tintIndex == 1) {
+            boolean shutterOpen = stack.getItem() instanceof CameraItem cameraItem && cameraItem.getShutter().isOpen(stack);
+
+            StoredItemStack filter = Attachment.FILTER.get(stack);
+            if (filter.isEmpty()) return shutterOpen ? 0xFF333333 : -1;
+            if (filter.getForReading().getItem() instanceof BlockItem item && item.getBlock() instanceof StainedGlassPaneBlock pane) {
+                return shutterOpen
+                        ? Color.argb(pane.getColor().getTextureDiffuseColor()).multiply(0.2f).withAlpha(255).getARGB()
+                        : pane.getColor().getTextureDiffuseColor();
+            }
+            if (filter.getForReading().is(Exposure.Items.INTERPLANAR_PROJECTOR.get())) return shutterOpen ? 0XFF051A0F : 0xFF50B27E;
+            return -1;
+        }
+
+        return -1;
     }
 }

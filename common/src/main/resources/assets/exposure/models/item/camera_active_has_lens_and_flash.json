@@ -5,7 +5,7 @@
 		"particle": "exposure:item/camera/camera",
 		"viewfinder": "exposure:item/camera/camera_viewfinder",
 		"selfie_stick": "exposure:item/camera/empty",
-		"lens": "exposure:item/camera/empty",
-		"flash": "exposure:item/camera/empty"
+		"lens": "exposure:item/camera/camera_lens",
+		"flash": "exposure:item/camera/camera_flash"
 	}
 }

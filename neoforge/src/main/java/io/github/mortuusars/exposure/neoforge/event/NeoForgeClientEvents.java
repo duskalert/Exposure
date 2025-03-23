@@ -14,6 +14,9 @@ import io.github.mortuusars.exposure.client.render.CameraStandEntityRenderer;
 import io.github.mortuusars.exposure.client.render.GlassPhotographFrameEntityRenderer;
 import io.github.mortuusars.exposure.client.render.PhotographFrameEntityRenderer;
 import io.github.mortuusars.exposure.world.inventory.tooltip.PhotographTooltip;
+import io.github.mortuusars.exposure.world.item.camera.CameraItem;
+import net.minecraft.client.renderer.ItemBlockRenderTypes;
+import net.minecraft.client.renderer.RenderType;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -26,7 +29,15 @@ public class NeoForgeClientEvents {
     public static class ModBus {
         @SubscribeEvent
         public static void clientSetup(FMLClientSetupEvent event) {
-            event.enqueueWork(ExposureClient::init);
+            event.enqueueWork(() -> {
+                ExposureClient.init();
+//                ItemBlockRenderTypes.setRenderLayer(Exposure.Items.CAMERA.get(), RenderType.cutout());
+            });
+        }
+
+        @SubscribeEvent
+        public static void registerItemColors(RegisterColorHandlersEvent.Item event) {
+            event.register(CameraItem::getGlassTintColor, Exposure.Items.CAMERA.get());
         }
 
         @SubscribeEvent

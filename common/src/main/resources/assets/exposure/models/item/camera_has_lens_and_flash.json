@@ -4,8 +4,8 @@
 		"texture": "exposure:item/camera/camera",
 		"particle": "exposure:item/camera/camera",
 		"viewfinder": "exposure:item/camera/empty",
-		"selfie_stick": "exposure:item/camera/camera_selfie_stick",
-		"lens": "exposure:item/camera/empty",
-		"flash": "exposure:item/camera/empty"
+		"selfie_stick": "exposure:item/camera/empty",
+		"lens": "exposure:item/camera/camera_lens",
+		"flash": "exposure:item/camera/camera_flash"
 	}
 }

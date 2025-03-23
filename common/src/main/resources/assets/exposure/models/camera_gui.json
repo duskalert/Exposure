@@ -1,15 +1,7 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "exposure:item/camera_gui"
+    "layer0": "exposure:item/camera/camera_gui"
   },
-  "gui_light": "front",
-  "overrides": [
-    {
-      "predicate": {
-        "exposure:camera_state": 0.1
-      },
-      "model": "exposure:item/camera_gui_active"
-    }
-  ]
+  "gui_light": "front"
 }

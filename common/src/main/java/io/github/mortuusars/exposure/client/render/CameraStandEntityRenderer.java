@@ -53,7 +53,8 @@ public class CameraStandEntityRenderer <T extends CameraStandEntity> extends Ent
             poseStack.scale(scale, scale, scale);
             poseStack.mulPose(Axis.YP.rotationDegrees(-entity.getYRot() + 180)); // Yaw first
             poseStack.mulPose(Axis.XP.rotationDegrees(-entity.getXRot()));
-            poseStack.translate(0, 0.1875, 0);
+//            poseStack.mulPose(Axis.XP.rotationDegrees(((Minecrft.level().getGameTime() + partialTick) % 360) * 4));
+            poseStack.translate(0, 0.5, 0);
             Minecrft.get().getItemRenderer().renderStatic(entity.getCamera(), ItemDisplayContext.NONE, packedLight, OverlayTexture.NO_OVERLAY, poseStack, bufferSource, entity.level(), 0);
             poseStack.popPose();
         }
