@@ -334,7 +334,7 @@ public class Exposure {
                         .sized(0.6f, 1.75f)
                         .clientTrackingRange(16)
                         .updateInterval(Integer.MAX_VALUE)
-                        .eyeHeight(1.1f));
+                        .eyeHeight(1.45f));
 
         static void init() {
         }

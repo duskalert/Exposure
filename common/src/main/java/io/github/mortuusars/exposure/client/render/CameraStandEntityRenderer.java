@@ -1,5 +1,6 @@
 package io.github.mortuusars.exposure.client.render;
 
+import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import io.github.mortuusars.exposure.ExposureClient;
@@ -43,7 +44,6 @@ public class CameraStandEntityRenderer <T extends CameraStandEntity> extends Ent
         BakedModel model = PlatformHelperClient.getModel(modelLocation);
         blockRenderer.getModelRenderer().renderModel(poseStack.last(), bufferSource.getBuffer(RenderType.solid()),
                 null, model, 1.0f, 1.0f, 1.0f, packedLight, OverlayTexture.NO_OVERLAY);
-
         poseStack.popPose();
 
         if (!entity.getCamera().isEmpty()) {

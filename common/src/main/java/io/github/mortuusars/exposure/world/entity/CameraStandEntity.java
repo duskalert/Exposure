@@ -77,7 +77,9 @@ public class CameraStandEntity extends Entity implements CameraHolder {
 
     @Override
     protected void addAdditionalSaveData(CompoundTag tag) {
-        tag.put("Camera", getCamera().save(registryAccess()));
+        if (!getCamera().isEmpty()) {
+            tag.put("Camera", getCamera().save(registryAccess()));
+        }
 
         if (!ownerPlayerId.equals(Util.NIL_UUID)) {
             tag.putUUID("Owner", ownerPlayerId);
@@ -243,7 +245,9 @@ public class CameraStandEntity extends Entity implements CameraHolder {
         }
 
         if (!level().isClientSide) {
-            spawnAtLocation(Exposure.Items.CAMERA_STAND.get());
+            if (!source.isCreativePlayer()) {
+                spawnAtLocation(Exposure.Items.CAMERA_STAND.get());
+            }
             remove(RemovalReason.KILLED);
             playSound(SoundEvents.ARMOR_STAND_BREAK);
         }
