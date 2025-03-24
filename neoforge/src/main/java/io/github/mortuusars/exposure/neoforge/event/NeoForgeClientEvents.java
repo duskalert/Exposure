@@ -76,6 +76,7 @@ public class NeoForgeClientEvents {
             event.register(ExposureClient.Models.CLEAR_PHOTOGRAPH_FRAME_MEDIUM);
             event.register(ExposureClient.Models.CLEAR_PHOTOGRAPH_FRAME_LARGE);
             event.register(ExposureClient.Models.CAMERA_STAND);
+            event.register(ExposureClient.Models.CAMERA_STAND_MOUNT);
         }
 
         @SubscribeEvent

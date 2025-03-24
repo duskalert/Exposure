@@ -47,7 +47,8 @@ public class ExposureFabricClient implements ClientModInitializer {
                         ExposureClient.Models.CLEAR_PHOTOGRAPH_FRAME_SMALL.id(),
                         ExposureClient.Models.CLEAR_PHOTOGRAPH_FRAME_MEDIUM.id(),
                         ExposureClient.Models.CLEAR_PHOTOGRAPH_FRAME_LARGE.id(),
-                        ExposureClient.Models.CAMERA_STAND.id()
+                        ExposureClient.Models.CAMERA_STAND.id(),
+                        ExposureClient.Models.CAMERA_STAND_MOUNT.id()
                 ));
 
         ResourceManagerHelper.get(PackType.CLIENT_RESOURCES).registerReloadListener(new ExposureFabricClientReloadListener());

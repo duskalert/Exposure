@@ -1,6 +1,5 @@
 package io.github.mortuusars.exposure.client.render;
 
-import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import io.github.mortuusars.exposure.ExposureClient;
@@ -38,6 +37,14 @@ public class CameraStandEntityRenderer <T extends CameraStandEntity> extends Ent
     public void render(T entity, float entityYaw, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight) {
         super.render(entity, entityYaw, partialTick, poseStack, bufferSource, packedLight);
 
+        renderStand(entity, entityYaw, partialTick, poseStack, bufferSource, packedLight);
+        renderMount(entity, entityYaw, partialTick, poseStack, bufferSource, packedLight);
+        if (!entity.getCamera().isEmpty()) {
+            renderCamera(entity, entityYaw, partialTick, poseStack, bufferSource, packedLight);
+        }
+    }
+
+    private void renderStand(T entity, float entityYaw, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight) {
         poseStack.pushPose();
         poseStack.translate(-0.5f, 0f, -0.5f);
         ModelResourceLocation modelLocation = ExposureClient.Models.CAMERA_STAND;
@@ -45,19 +52,32 @@ public class CameraStandEntityRenderer <T extends CameraStandEntity> extends Ent
         blockRenderer.getModelRenderer().renderModel(poseStack.last(), bufferSource.getBuffer(RenderType.solid()),
                 null, model, 1.0f, 1.0f, 1.0f, packedLight, OverlayTexture.NO_OVERLAY);
         poseStack.popPose();
+    }
 
-        if (!entity.getCamera().isEmpty()) {
-            poseStack.pushPose();
-            poseStack.translate(0, 1.25, 0);
-            float scale = 0.9f;
-            poseStack.scale(scale, scale, scale);
-            poseStack.mulPose(Axis.YP.rotationDegrees(-entity.getYRot() + 180)); // Yaw first
-            poseStack.mulPose(Axis.XP.rotationDegrees(-entity.getXRot()));
-//            poseStack.mulPose(Axis.XP.rotationDegrees(((Minecrft.level().getGameTime() + partialTick) % 360) * 4));
-            poseStack.translate(0, 0.5, 0);
-            Minecrft.get().getItemRenderer().renderStatic(entity.getCamera(), ItemDisplayContext.NONE, packedLight, OverlayTexture.NO_OVERLAY, poseStack, bufferSource, entity.level(), 0);
-            poseStack.popPose();
-        }
+    private void renderMount(T entity, float entityYaw, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight) {
+        poseStack.pushPose();
+        poseStack.translate(0, 1.125, 0);
+        float scale = 0.9f;
+        poseStack.scale(scale, scale, scale);
+        poseStack.mulPose(Axis.YP.rotationDegrees(-entity.getYRot() + 180)); // Yaw first
+        poseStack.mulPose(Axis.XP.rotationDegrees(-entity.getXRot()));
+        poseStack.translate(-0.5f, 0f, -0.5f);
+        ModelResourceLocation mountModelLocation = ExposureClient.Models.CAMERA_STAND_MOUNT;
+        BakedModel mountModel = PlatformHelperClient.getModel(mountModelLocation);
+        blockRenderer.getModelRenderer().renderModel(poseStack.last(), bufferSource.getBuffer(RenderType.solid()),
+                null, mountModel, 1.0f, 1.0f, 1.0f, packedLight, OverlayTexture.NO_OVERLAY);
+        poseStack.popPose();
+    }
 
+    private void renderCamera(T entity, float entityYaw, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight) {
+        poseStack.pushPose();
+        poseStack.translate(0, 1.125, 0);
+        float scale = 0.9f;
+        poseStack.scale(scale, scale, scale);
+        poseStack.mulPose(Axis.YP.rotationDegrees(-entity.getYRot() + 180)); // Yaw first
+        poseStack.mulPose(Axis.XP.rotationDegrees(-entity.getXRot()));
+        poseStack.translate(0, 0.625, 0);
+        Minecrft.get().getItemRenderer().renderStatic(entity.getCamera(), ItemDisplayContext.NONE, packedLight, OverlayTexture.NO_OVERLAY, poseStack, bufferSource, entity.level(), 0);
+        poseStack.popPose();
     }
 }
