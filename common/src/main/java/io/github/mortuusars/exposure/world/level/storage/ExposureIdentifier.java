@@ -169,11 +169,31 @@ public class ExposureIdentifier {
 
     // --
 
+    private static int sameTickCounter = 0;
+    private static long lastTick = -1;
+
+    /**
+     * Creates ids using entity name and current gameTime.<br>
+     * Multiple ids created on the same tick will be differentiated by a count suffix.
+     */
     public static String createId(Entity entity, String... middleParts) {
+        if (entity.level().getGameTime() != lastTick) {
+            lastTick = entity.level().getGameTime();
+            sameTickCounter = 0;
+        }
+
         List<String> parts = new ArrayList<>();
         parts.add(entity.getName().getString());
         parts.addAll(Arrays.asList(middleParts));
         parts.add(Long.toString(entity.level().getGameTime()));
+
+        // Keep ids created in the same tick unique:
+        if (sameTickCounter > 0) {
+            parts.add(Integer.toString(sameTickCounter));
+        }
+
+        sameTickCounter++;
+
         return createId(parts.toArray(String[]::new));
     }
 
