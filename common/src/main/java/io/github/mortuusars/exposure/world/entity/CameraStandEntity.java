@@ -2,15 +2,12 @@ package io.github.mortuusars.exposure.world.entity;
 
 import io.github.mortuusars.exposure.Exposure;
 import io.github.mortuusars.exposure.client.camera.CameraClient;
-import io.github.mortuusars.exposure.client.util.Minecrft;
 import io.github.mortuusars.exposure.world.item.camera.CameraItem;
 import net.minecraft.Util;
-import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -130,7 +127,7 @@ public class CameraStandEntity extends Entity implements CameraHolder {
     @Override
     public @NotNull InteractionResult interact(Player player, InteractionHand hand) {
         ItemStack itemInHand = player.getItemInHand(hand);
-        if (itemInHand.getItem() instanceof CameraItem cameraItem) {
+        if (getCamera().isEmpty() && itemInHand.getItem() instanceof CameraItem cameraItem) {
             setCamera(itemInHand);
             player.setItemInHand(hand, ItemStack.EMPTY);
             return InteractionResult.SUCCESS;
@@ -143,9 +140,8 @@ public class CameraStandEntity extends Entity implements CameraHolder {
         setOperator(player);
         if (player.level().isClientSide) {
             CameraClient.setCameraEntity(this);
-            return InteractionResult.CONSUME; // To not cause arm swing, which causes viewfinder use/attack animation.
         }
-        return InteractionResult.CONSUME;
+        return InteractionResult.CONSUME; // To not cause arm swing, which causes viewfinder use/attack animation.
     }
 
     @Override
