@@ -10,6 +10,7 @@
     "client.BuggerScreenRenderLinesInvoker",
     "client.CameraMixin",
     "client.ClientPacketListenerMixin",
+    "client.EntityMixin",
     "client.ExposureLightTextureMixin",
     "client.GameRendererMixin",
     "client.GuiMixin",
@@ -22,13 +23,13 @@
     "client.KeyMappingMixin",
     "client.LocalPlayerMixin",
     "client.MinecraftMixin",
-    "client.MultiPlayerGameModeMixin",
-    "client.EntityMixin",
-    "client.MouseHandlerMixin"
+    "client.MouseHandlerMixin",
+    "client.MultiPlayerGameModeMixin"
   ],
   "mixins": [
     "AnvilMenuMixin",
     "BookPageCountMixin",
+    "EntityMixin",
     "LecternBlockEntityAccessor",
     "LecternBlockEntityMixin",
     "LecternMixin",

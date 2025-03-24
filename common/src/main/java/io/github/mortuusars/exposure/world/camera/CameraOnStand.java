@@ -16,6 +16,14 @@ public class CameraOnStand extends Camera {
         this.cameraStand = cameraStand;
     }
 
+    public CameraOperator getOperator() {
+        return cameraOperator;
+    }
+
+    public CameraStandEntity getStand() {
+        return cameraStand;
+    }
+
     @Override
     public ItemStack getItemStack() {
         return cameraStand.getCamera();

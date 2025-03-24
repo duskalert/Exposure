@@ -141,8 +141,6 @@ public class CameraStandEntity extends Entity implements CameraHolder {
 
         cameraItem.activateOnStand(player, getCamera(), this);
         setOperator(player);
-        setXRot(player.getXRot());
-        setYRot(player.getYRot());
         if (player.level().isClientSide) {
             CameraClient.setCameraEntity(this);
             return InteractionResult.CONSUME; // To not cause arm swing, which causes viewfinder use/attack animation.
@@ -192,9 +190,6 @@ public class CameraStandEntity extends Entity implements CameraHolder {
         if (operatorEntity.distanceTo(this) > operatorEntity.getAttributeValue(Attributes.ENTITY_INTERACTION_RANGE) + 0.5f) {
             stopControlling(operator);
         }
-
-        setXRot(operator.asOperatorEntity().getXRot());
-        setYRot(operator.asOperatorEntity().getYRot());
     }
 
     public void stopControlling(@NotNull CameraOperator operator) {
