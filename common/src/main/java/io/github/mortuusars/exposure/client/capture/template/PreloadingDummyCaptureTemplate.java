@@ -14,6 +14,8 @@ import io.github.mortuusars.exposure.data.ColorPalettes;
 import net.minecraft.client.CameraType;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Optional;
+
 public class PreloadingDummyCaptureTemplate implements CaptureTemplate {
     @Override
     public Task<?> createTask(@Nullable CaptureProperties data) {
@@ -22,6 +24,7 @@ public class PreloadingDummyCaptureTemplate implements CaptureTemplate {
         return Capture.of(Capture.screenshot(),
                         CaptureAction.hideGui(),
                         CaptureAction.forceCamera(CameraType.FIRST_PERSON),
+                        CaptureAction.setFilter(Optional.empty()),
                         CaptureAction.setFov(50),
                         CaptureAction.forceRegularOrSelfieCamera(),
                         CaptureAction.disablePostEffect(),

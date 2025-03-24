@@ -14,6 +14,7 @@ import net.minecraft.core.*;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -25,6 +26,7 @@ public record CaptureProperties(String exposureId,
                                 Optional<Holder<ColorPalette>> colorPalette,
                                 Optional<Integer> frameSize,
                                 float cropFactor,
+                                Optional<ResourceLocation> filter,
                                 Optional<ShutterSpeed> shutterSpeed,
                                 Optional<Float> fovOverride,
                                 boolean flash,
@@ -44,6 +46,7 @@ public record CaptureProperties(String exposureId,
             ColorPalette.HOLDER_CODEC.optionalFieldOf("color_palette").forGetter(CaptureProperties::colorPalette),
             Codec.INT.optionalFieldOf("frame_size").forGetter(CaptureProperties::frameSize),
             Codec.FLOAT.optionalFieldOf("crop_factor", 1f).forGetter(CaptureProperties::cropFactor),
+            ResourceLocation.CODEC.optionalFieldOf("filter").forGetter(CaptureProperties::filter),
             ShutterSpeed.CODEC.optionalFieldOf("shutter_speed").forGetter(CaptureProperties::shutterSpeed),
             Codec.FLOAT.optionalFieldOf("fov_override").forGetter(CaptureProperties::fovOverride),
             Codec.BOOL.optionalFieldOf("flash", false).forGetter(CaptureProperties::flash),
@@ -62,6 +65,7 @@ public record CaptureProperties(String exposureId,
                     ByteBufCodecs.optional(ColorPalette.STREAM_CODEC).decode(buffer),
                     ByteBufCodecs.optional(ByteBufCodecs.VAR_INT).decode(buffer),
                     ByteBufCodecs.FLOAT.decode(buffer),
+                    ByteBufCodecs.optional(ResourceLocation.STREAM_CODEC).decode(buffer),
                     ByteBufCodecs.optional(ShutterSpeed.STREAM_CODEC).decode(buffer),
                     ByteBufCodecs.optional(ByteBufCodecs.FLOAT).decode(buffer),
                     ByteBufCodecs.BOOL.decode(buffer),
@@ -78,6 +82,7 @@ public record CaptureProperties(String exposureId,
             ByteBufCodecs.optional(ColorPalette.STREAM_CODEC).encode(buffer, data.colorPalette());
             ByteBufCodecs.optional(ByteBufCodecs.VAR_INT).encode(buffer, data.frameSize());
             ByteBufCodecs.FLOAT.encode(buffer, data.cropFactor());
+            ByteBufCodecs.optional(ResourceLocation.STREAM_CODEC).encode(buffer, data.filter());
             ByteBufCodecs.optional(ShutterSpeed.STREAM_CODEC).encode(buffer, data.shutterSpeed());
             ByteBufCodecs.optional(ByteBufCodecs.FLOAT).encode(buffer, data.fovOverride());
             ByteBufCodecs.BOOL.encode(buffer, data.flash());
@@ -104,6 +109,7 @@ public record CaptureProperties(String exposureId,
         private @Nullable Holder<ColorPalette> colorPalette = null;
         private @Nullable Integer frameSize = null;
         private float cropFactor = 1f;
+        private @Nullable ResourceLocation filter = null;
         private @Nullable ShutterSpeed shutterSpeed = null;
         private @Nullable Float fovOverride = null;
         private boolean flash = false;
@@ -134,6 +140,11 @@ public record CaptureProperties(String exposureId,
 
         public Builder setCropFactor(float cropFactor) {
             this.cropFactor = cropFactor;
+            return this;
+        }
+
+        public Builder setFilter(@Nullable ResourceLocation filter) {
+            this.filter = filter;
             return this;
         }
 
@@ -199,6 +210,7 @@ public record CaptureProperties(String exposureId,
                     Optional.ofNullable(this.colorPalette),
                     Optional.ofNullable(this.frameSize),
                     this.cropFactor,
+                    Optional.ofNullable(this.filter),
                     Optional.ofNullable(this.shutterSpeed),
                     Optional.ofNullable(this.fovOverride),
                     this.flash,

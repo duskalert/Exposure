@@ -43,6 +43,7 @@ public class ExposeCaptureTemplate implements CaptureTemplate {
         return Capture.of(Capture.screenshot(),
                         CaptureAction.setCameraEntity(entity),
                         CaptureAction.optional(data.fovOverride(), fov -> CaptureAction.setFov(fov)),
+                        CaptureAction.setFilter(data.filter()),
                         CaptureAction.hideGui(),
                         CaptureAction.forceRegularOrSelfieCamera(),
                         CaptureAction.disablePostEffect(),

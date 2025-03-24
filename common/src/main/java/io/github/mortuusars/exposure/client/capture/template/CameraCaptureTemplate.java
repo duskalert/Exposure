@@ -45,6 +45,7 @@ public class CameraCaptureTemplate implements CaptureTemplate {
                         CaptureAction.setCameraEntity(entity),
                         CaptureAction.hideGui(),
                         CaptureAction.forceRegularOrSelfieCamera(),
+                        CaptureAction.setFilter(data.filter()),
                         CaptureAction.optional(data.fovOverride(), fov -> CaptureAction.setFov(fov)),
                         CaptureAction.optional(Config.Client.KEEP_POST_EFFECT.isFalse(), CaptureAction::disablePostEffect),
                         CaptureAction.modifyGamma(data.getShutterSpeed()),

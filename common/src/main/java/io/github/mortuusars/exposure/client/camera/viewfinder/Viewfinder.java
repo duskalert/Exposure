@@ -102,7 +102,6 @@ public class Viewfinder {
 
     public void tick() {
         shader().update();
-        shader().setActive(isLookingThrough());
         selfie().tick();
     }
 

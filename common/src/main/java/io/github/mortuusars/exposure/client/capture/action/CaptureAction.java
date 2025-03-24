@@ -79,6 +79,10 @@ public interface CaptureAction {
         return new SetFovAction(fov);
     }
 
+    static CaptureAction setFilter(Optional<ResourceLocation> filter) {
+        return new SetFilterAction(filter);
+    }
+
     // --
 
     default CaptureAction orElse(Supplier<CaptureAction> action) {

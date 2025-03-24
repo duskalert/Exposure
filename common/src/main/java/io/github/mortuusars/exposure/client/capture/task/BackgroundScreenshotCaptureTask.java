@@ -4,7 +4,7 @@ import com.mojang.blaze3d.pipeline.RenderTarget;
 import com.mojang.blaze3d.pipeline.TextureTarget;
 import io.github.mortuusars.exposure.Exposure;
 import io.github.mortuusars.exposure.ExposureClient;
-import io.github.mortuusars.exposure.client.camera.CameraClient;
+import io.github.mortuusars.exposure.client.capture.CaptureShader;
 import io.github.mortuusars.exposure.client.util.Minecrft;
 import io.github.mortuusars.exposure.client.util.Shader;
 import io.github.mortuusars.exposure.client.image.WrappedNativeImage;
@@ -74,11 +74,9 @@ public class BackgroundScreenshotCaptureTask extends Task<Result<Image>> {
     private void applyShaderEffects(RenderTarget renderTarget) {
         @Nullable PostChain effect = Minecraft.getInstance().gameRenderer.currentEffect();
         if (effect != null && Minecraft.getInstance().gameRenderer.effectActive) {
-            Shader.apply(effect, renderTarget);
+            Shader.process(effect, renderTarget);
         }
 
-        if (CameraClient.viewfinder() != null) {
-            CameraClient.viewfinder().shader().process(renderTarget);
-        }
+        CaptureShader.process(renderTarget);
     }
 }

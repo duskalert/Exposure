@@ -2,6 +2,7 @@ package io.github.mortuusars.exposure.world.item.camera;
 
 import com.google.common.base.Preconditions;
 import io.github.mortuusars.exposure.*;
+import io.github.mortuusars.exposure.data.*;
 import io.github.mortuusars.exposure.network.packet.clientbound.ShutterOpenedS2CP;
 import io.github.mortuusars.exposure.util.color.Color;
 import io.github.mortuusars.exposure.world.block.FlashBlock;
@@ -12,12 +13,8 @@ import io.github.mortuusars.exposure.world.camera.component.FocalRange;
 import io.github.mortuusars.exposure.world.camera.component.ShutterSpeed;
 import io.github.mortuusars.exposure.world.camera.capture.CaptureProperties;
 import io.github.mortuusars.exposure.world.camera.capture.ProjectionInfo;
-import io.github.mortuusars.exposure.data.ColorPalette;
 import io.github.mortuusars.exposure.world.camera.frame.*;
-import io.github.mortuusars.exposure.data.ColorPalettes;
-import io.github.mortuusars.exposure.data.Lenses;
 import io.github.mortuusars.exposure.world.entity.CameraHolder;
-import io.github.mortuusars.exposure.world.entity.CameraOperator;
 import io.github.mortuusars.exposure.world.entity.CameraStandEntity;
 import io.github.mortuusars.exposure.world.item.FilmItem;
 import io.github.mortuusars.exposure.world.item.FilmRollItem;
@@ -204,6 +201,14 @@ public class CameraItem extends Item {
     public Holder<ColorPalette> getColorPalette(RegistryAccess registryAccess, ItemStack stack) {
         ResourceKey<ColorPalette> key = Attachment.FILM.map(stack, FilmItem::getColorPaletteId).orElse(ColorPalettes.DEFAULT);
         return ColorPalettes.get(registryAccess, key);
+    }
+
+    public Optional<Filter> getFilter(RegistryAccess registryAccess, ItemStack stack) {
+        return Attachment.FILTER.map(stack, filter -> Filters.of(registryAccess, filter)).flatMap(Function.identity());
+    }
+
+    public Optional<ResourceLocation> getFilterShaderLocation(RegistryAccess registryAccess, ItemStack stack) {
+        return getFilter(registryAccess, stack).map(Filter::shader);
     }
 
     protected Optional<ColorChannel> getChromaticChannel(ItemStack stack) {
@@ -506,8 +511,9 @@ public class CameraItem extends Item {
                     .setShutterSpeed(CameraSettings.SHUTTER_SPEED.getOrDefault(stack))
                     .setFilmType(film.getItem().getType())
                     .setFrameSize(film.getItem().getFrameSize(film.getItemStack()))
-                    .setFovOverride(getFov(level, stack))
                     .setCropFactor(getCropFactor())
+                    .setFilter(getFilterShaderLocation(level.registryAccess(), stack).orElse(null))
+                    .setFovOverride(getFov(level, stack))
                     .setColorPalette(getColorPalette(level.registryAccess(), stack))
                     .setFlash(flashHasFired)
                     .setProjectingInfo(getProjectionInfo(stack))
