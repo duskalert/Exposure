@@ -2,6 +2,7 @@ package io.github.mortuusars.exposure.world.entity;
 
 import io.github.mortuusars.exposure.Exposure;
 import io.github.mortuusars.exposure.client.camera.CameraClient;
+import io.github.mortuusars.exposure.client.util.Minecrft;
 import io.github.mortuusars.exposure.world.item.camera.CameraItem;
 import net.minecraft.Util;
 import net.minecraft.nbt.CompoundTag;
@@ -122,7 +123,7 @@ public class CameraStandEntity extends Entity implements CameraHolder {
         return level().players().stream().min(Comparator.comparingDouble(player -> player.distanceTo(this)));
     }
 
-    // --
+    // -- Interact
 
     @Override
     public @NotNull InteractionResult interact(Player player, InteractionHand hand) {
@@ -135,14 +136,20 @@ public class CameraStandEntity extends Entity implements CameraHolder {
 
         if (getCamera().isEmpty()) return InteractionResult.PASS;
         if (!(getCamera().getItem() instanceof CameraItem cameraItem)) return InteractionResult.PASS;
+        activate(player, cameraItem);
+        return InteractionResult.CONSUME; // To not cause arm swing, which causes viewfinder use/attack animation.
+    }
 
+    public void activate(Player player, CameraItem cameraItem) {
         cameraItem.activateOnStand(player, getCamera(), this);
         setOperator(player);
         if (player.level().isClientSide) {
             CameraClient.setCameraEntity(this);
+            Minecrft.stopPlayerMovement();
         }
-        return InteractionResult.CONSUME; // To not cause arm swing, which causes viewfinder use/attack animation.
     }
+
+    // --
 
     @Override
     public void tick() {
