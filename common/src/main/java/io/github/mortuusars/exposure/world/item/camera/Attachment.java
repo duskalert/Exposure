@@ -7,12 +7,11 @@ import io.github.mortuusars.exposure.world.sound.Sound;
 import io.github.mortuusars.exposure.world.sound.SoundEffect;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 import java.util.function.*;
@@ -176,13 +175,21 @@ public record Attachment<T extends Item>(ResourceLocation id,
     }
 
     public void playInsertSoundSided(Player player) {
-        insertedSound().ifPresent(sound ->
-                Sound.playUniqueSided(Integer.toString(player.getId()), player, player, sound, SoundSource.PLAYERS));
+        playInsertSoundSided(player, player);
     }
 
     public void playRemoveSoundSided(Player player) {
+        playRemoveSoundSided(player, player);
+    }
+
+    public void playInsertSoundSided(Player player, Entity entity) {
+        insertedSound().ifPresent(sound ->
+                Sound.playUniqueSided(Integer.toString(entity.getId()), player, entity, sound, SoundSource.PLAYERS));
+    }
+
+    public void playRemoveSoundSided(Player player, Entity entity) {
         removedSound().ifPresent(sound ->
-                Sound.playUniqueSided(Integer.toString(player.getId()), player, player, sound, SoundSource.PLAYERS));
+                Sound.playUniqueSided(Integer.toString(entity.getId()), player, entity, sound, SoundSource.PLAYERS));
     }
 
     @Override

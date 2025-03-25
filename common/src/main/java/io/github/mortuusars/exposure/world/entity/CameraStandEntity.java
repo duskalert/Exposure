@@ -3,9 +3,11 @@ package io.github.mortuusars.exposure.world.entity;
 import io.github.mortuusars.exposure.Exposure;
 import io.github.mortuusars.exposure.client.camera.CameraClient;
 import io.github.mortuusars.exposure.client.util.Minecrft;
+import io.github.mortuusars.exposure.world.item.camera.Attachment;
 import io.github.mortuusars.exposure.world.item.camera.CameraItem;
 import net.minecraft.Util;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -127,17 +129,55 @@ public class CameraStandEntity extends Entity implements CameraHolder {
 
     @Override
     public @NotNull InteractionResult interact(Player player, InteractionHand hand) {
-        ItemStack itemInHand = player.getItemInHand(hand);
-        if (getCamera().isEmpty() && itemInHand.getItem() instanceof CameraItem cameraItem) {
-            setCamera(itemInHand);
+        ItemStack handStack = player.getItemInHand(hand);
+        ItemStack cameraStack = getCamera();
+
+        if (cameraStack.isEmpty() && handStack.getItem() instanceof CameraItem cameraItem) {
+            setCamera(handStack);
             player.setItemInHand(hand, ItemStack.EMPTY);
             return InteractionResult.SUCCESS;
         }
 
-        if (getCamera().isEmpty()) return InteractionResult.PASS;
-        if (!(getCamera().getItem() instanceof CameraItem cameraItem)) return InteractionResult.PASS;
+        if (cameraStack.isEmpty()) return InteractionResult.PASS;
+        if (!(cameraStack.getItem() instanceof CameraItem cameraItem)) return InteractionResult.PASS;
+
+        if (player.isSecondaryUseActive()) {
+            return handleSneakInteraction(player, hand, cameraItem, cameraStack, handStack);
+        }
+
         activate(player, cameraItem);
         return InteractionResult.CONSUME; // To not cause arm swing, which causes viewfinder use/attack animation.
+    }
+
+    protected InteractionResult handleSneakInteraction(Player player, InteractionHand hand, CameraItem cameraItem, ItemStack cameraStack, ItemStack handStack) {
+        if (handStack.isEmpty()) {
+            player.displayClientMessage(Component.literal("This will open attachments when implemented."), false);
+            return InteractionResult.SUCCESS;
+        }
+
+        for (Attachment<?> attachment : cameraItem.getAttachments()) {
+            if (attachment.matches(handStack)) {
+
+                if (attachment.get(cameraStack).isEmpty()) {
+                    attachment.set(cameraStack, handStack.split(1));
+                    attachment.playInsertSoundSided(player, this);
+                    return InteractionResult.SUCCESS;
+                }
+
+                if (handStack.getCount() == 1) {
+                    player.setItemInHand(hand, attachment.get(cameraStack).getCopy());
+                    attachment.set(cameraStack, handStack);
+                    attachment.playInsertSoundSided(player, this);
+                    return InteractionResult.SUCCESS;
+                }
+
+                playSound(Exposure.SoundEvents.CAMERA_GENERIC_CLICK.get());
+                return InteractionResult.FAIL;
+            }
+        }
+
+        player.displayClientMessage(Component.literal("This will open attachments when implemented."), false);
+        return InteractionResult.SUCCESS;
     }
 
     public void activate(Player player, CameraItem cameraItem) {
