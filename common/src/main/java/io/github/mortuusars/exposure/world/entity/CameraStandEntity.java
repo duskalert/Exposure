@@ -1,19 +1,29 @@
 package io.github.mortuusars.exposure.world.entity;
 
 import io.github.mortuusars.exposure.Exposure;
+import io.github.mortuusars.exposure.PlatformHelper;
 import io.github.mortuusars.exposure.client.camera.CameraClient;
 import io.github.mortuusars.exposure.client.util.Minecrft;
+import io.github.mortuusars.exposure.world.inventory.CameraInHandAttachmentsMenu;
+import io.github.mortuusars.exposure.world.inventory.CameraOnStandAttachmentsMenu;
 import io.github.mortuusars.exposure.world.item.camera.Attachment;
 import io.github.mortuusars.exposure.world.item.camera.CameraItem;
+import io.github.mortuusars.exposure.world.sound.Sound;
+import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.MenuProvider;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -21,8 +31,10 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.vehicle.Boat;
+import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
@@ -127,8 +139,19 @@ public class CameraStandEntity extends Entity implements CameraHolder {
 
     // -- Interact
 
+    public boolean isInInteractionRange(LivingEntity entity) {
+        // Slightly smaller than entity's interaction range because it's mismatched
+        // (probably because interactions are counting bounding box, not position, idk)
+        return entity.distanceTo(this) <= entity.getAttributeValue(Attributes.ENTITY_INTERACTION_RANGE) - 0.5f;
+    }
+
     @Override
     public @NotNull InteractionResult interact(Player player, InteractionHand hand) {
+        if (operator() != null) {
+            player.displayClientMessage(Component.translatable("gui.exposure.camera_stand.error.in_use"), true);
+            return InteractionResult.FAIL;
+        }
+
         ItemStack handStack = player.getItemInHand(hand);
         ItemStack cameraStack = getCamera();
 
@@ -150,9 +173,16 @@ public class CameraStandEntity extends Entity implements CameraHolder {
     }
 
     protected InteractionResult handleSneakInteraction(Player player, InteractionHand hand, CameraItem cameraItem, ItemStack cameraStack, ItemStack handStack) {
+        boolean isInUse = player.level().players().stream()
+                .filter(pl -> !pl.equals(player))
+                .anyMatch(pl -> pl.containerMenu instanceof CameraOnStandAttachmentsMenu);
+        if (isInUse) {
+            player.displayClientMessage(Component.translatable("gui.exposure.camera_stand.error.in_use"), true);
+            return InteractionResult.FAIL;
+        }
+
         if (handStack.isEmpty()) {
-            player.displayClientMessage(Component.literal("This will open attachments when implemented."), false);
-            return InteractionResult.SUCCESS;
+            return openAttachmentsMenu(player, hand);
         }
 
         for (Attachment<?> attachment : cameraItem.getAttachments()) {
@@ -176,7 +206,44 @@ public class CameraStandEntity extends Entity implements CameraHolder {
             }
         }
 
-        player.displayClientMessage(Component.literal("This will open attachments when implemented."), false);
+        return openAttachmentsMenu(player, hand);
+    }
+
+    public InteractionResult openAttachmentsMenu(Player player, InteractionHand hand) {
+        ItemStack cameraStack = getCamera();
+
+        if (cameraStack.isEmpty() || !(cameraStack.getItem() instanceof CameraItem cameraItem)) return InteractionResult.FAIL;
+
+        if (cameraItem.getShutter().isOpen(cameraStack)) {
+            player.displayClientMessage(Component.translatable("item.exposure.camera.camera_attachments.fail.shutter_open")
+                    .withStyle(ChatFormatting.RED), true);
+            return InteractionResult.FAIL;
+        }
+
+        cameraItem.getOrCreateID(cameraStack);
+
+        if (player instanceof ServerPlayer serverPlayer) {
+            MenuProvider menuProvider = new MenuProvider() {
+                @Override
+                public @NotNull Component getDisplayName() {
+                    return cameraStack.get(DataComponents.CUSTOM_NAME) != null
+                            ? cameraStack.getHoverName() : Component.translatable("container.exposure.camera");
+                }
+
+                @Override
+                public @NotNull AbstractContainerMenu createMenu(int containerId, @NotNull Inventory playerInventory, @NotNull Player player) {
+                    return new CameraOnStandAttachmentsMenu(containerId, playerInventory, CameraStandEntity.this);
+                }
+            };
+
+            PlatformHelper.openMenu(serverPlayer, menuProvider, buffer -> {
+                buffer.writeInt(getId());
+            });
+        }
+
+        cameraItem.setDisassembled(cameraStack, true);
+        Sound.play(player, Exposure.SoundEvents.CAMERA_GENERIC_CLICK.get(), SoundSource.PLAYERS, 0.9f, 0.9f, 0.2f);
+
         return InteractionResult.SUCCESS;
     }
 
@@ -230,7 +297,7 @@ public class CameraStandEntity extends Entity implements CameraHolder {
         }
 
         LivingEntity operatorEntity = operator.asOperatorEntity();
-        if (operatorEntity.distanceTo(this) > operatorEntity.getAttributeValue(Attributes.ENTITY_INTERACTION_RANGE) + 0.5f) {
+        if (!isInInteractionRange(operatorEntity)) {
             stopControlling(operator);
         }
     }

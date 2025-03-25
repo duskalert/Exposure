@@ -32,7 +32,8 @@ public class ExposureFabricClient implements ClientModInitializer {
 
         KeyboardHandler.registerKeymappings(KeyBindingHelper::registerKeyBinding);
 
-        MenuScreens.register(Exposure.MenuTypes.CAMERA.get(), CameraAttachmentsScreen::new);
+        MenuScreens.register(Exposure.MenuTypes.CAMERA_IN_HAND.get(), CameraAttachmentsScreen::new);
+        MenuScreens.register(Exposure.MenuTypes.CAMERA_ON_STAND.get(), CameraAttachmentsScreen::new);
         MenuScreens.register(Exposure.MenuTypes.ALBUM.get(), AlbumScreen::new);
         MenuScreens.register(Exposure.MenuTypes.LECTERN_ALBUM.get(), LecternAlbumScreen::new);
         MenuScreens.register(Exposure.MenuTypes.LIGHTROOM.get(), LightroomScreen::new);

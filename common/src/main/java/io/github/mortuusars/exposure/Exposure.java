@@ -341,7 +341,8 @@ public class Exposure {
     }
 
     public static class MenuTypes {
-        public static final Supplier<MenuType<CameraAttachmentsMenu>> CAMERA = Register.menuType("camera", CameraAttachmentsMenu::fromBuffer);
+        public static final Supplier<MenuType<CameraInHandAttachmentsMenu>> CAMERA_IN_HAND = Register.menuType("camera_in_hand", CameraInHandAttachmentsMenu::fromBuffer);
+        public static final Supplier<MenuType<CameraOnStandAttachmentsMenu>> CAMERA_ON_STAND = Register.menuType("camera_on_stand", CameraOnStandAttachmentsMenu::fromBuffer);
         public static final Supplier<MenuType<AlbumMenu>> ALBUM = Register.menuType("album", AlbumMenu::fromBuffer);
         public static final Supplier<MenuType<SignedAlbumMenu>> SIGNED_ALBUM = Register.menuType("signed_album", SignedAlbumMenu::fromBuffer);
         public static final Supplier<MenuType<LecternAlbumMenu>> LECTERN_ALBUM = Register.menuType("lectern_album", LecternAlbumMenu::new);

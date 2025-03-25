@@ -1,56 +1,54 @@
 package io.github.mortuusars.exposure.world.inventory;
 
-import com.google.common.base.Preconditions;
-import io.github.mortuusars.exposure.Exposure;
-import io.github.mortuusars.exposure.world.camera.CameraId;
-import io.github.mortuusars.exposure.world.item.camera.CameraItem;
 import io.github.mortuusars.exposure.world.item.camera.Attachment;
-import io.github.mortuusars.exposure.world.item.util.ItemAndStack;
-import net.minecraft.network.RegistryFriendlyByteBuf;
+import io.github.mortuusars.exposure.world.item.camera.CameraItem;
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.joml.Vector2i;
 
 import java.util.List;
 import java.util.Map;
+import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
 
-public class CameraAttachmentsMenu extends AbstractContainerMenu {
+public abstract class AbstractCameraAttachmentsMenu extends AbstractContainerMenu {
     protected final Player player;
-    protected final int cameraSlotIndex;
-    protected final ItemAndStack<CameraItem> camera;
+    protected final CameraAccess cameraAccess;
     protected final List<Attachment<?>> attachments;
-    private final boolean openedFromGui;
 
     protected boolean clientContentsInitialized;
 
-    public CameraAttachmentsMenu(int containerId, Inventory playerInventory, int cameraSlotIndex, boolean openedFromGui) {
-        super(Exposure.MenuTypes.CAMERA.get(), containerId);
-        this.openedFromGui = openedFromGui;
-
-        ItemStack cameraStack = cameraSlotIndex == 40 ? playerInventory.offhand.get(0) : playerInventory.items.get(cameraSlotIndex);
-        Preconditions.checkState(cameraStack.getItem() instanceof CameraItem,
-                "Failed to open Camera Attachments. " + cameraStack + " is not a CameraItem.");
-
+    protected AbstractCameraAttachmentsMenu(@Nullable MenuType<?> menuType, int containerId, Inventory playerInventory, CameraAccess cameraAccess) {
+        super(menuType, containerId);
         this.player = playerInventory.player;
-        this.cameraSlotIndex = cameraSlotIndex;
-        this.camera = new ItemAndStack<>(cameraStack);
-        this.attachments = camera.getItem().getAttachments();
+        this.cameraAccess = cameraAccess;
+        this.attachments = cameraAccess.map((i, s) -> i.getAttachments());
 
-        SimpleContainer container = createAttachmentsContainer(cameraSlotIndex);
+        SimpleContainer container = createAttachmentsContainer();
 
         addAttachmentSlots(container);
         addPlayerSlots(playerInventory);
     }
 
-    protected @NotNull SimpleContainer createAttachmentsContainer(int cameraSlotIndex) {
+    public CameraAccess getCamera() {
+        return cameraAccess;
+    }
+
+    protected ItemStack getCameraStack() {
+        return getCamera().getStack();
+    }
+
+    protected @NotNull SimpleContainer createAttachmentsContainer() {
         ItemStack[] attachmentItems = attachments.stream()
-                .map(attachment -> attachment.get(camera.getItemStack()).getCopy())
+                .map(attachment -> attachment.get(getCamera().getStack()).getCopy())
                 .toArray(ItemStack[]::new);
 
         SimpleContainer container = new SimpleContainer(attachmentItems) {
@@ -60,27 +58,15 @@ public class CameraAttachmentsMenu extends AbstractContainerMenu {
             }
         };
 
-        container.addListener(c -> {
-            for (int slotId = 0; slotId < c.getContainerSize(); slotId++) {
-                Attachment<?> attachment = attachments.get(slotId);
-
-                attachment.set(camera.getItemStack(), c.getItem(slotId));
-
-                if (!player.level().isClientSide() && player.isCreative()) {
-                    // Fixes item not updating properly when not in "Inventory" tab of creative inventory
-                    player.getInventory().setItem(cameraSlotIndex, camera.getItemStack());
-                }
-            }
-        });
+        container.addListener(this::onContainerChanged);
         return container;
     }
 
-    public ItemAndStack<CameraItem> getCamera() {
-        return camera;
-    }
-
-    public boolean isOpenedFromGui() {
-        return openedFromGui;
+    protected void onContainerChanged(Container c) {
+        for (int slotId = 0; slotId < c.getContainerSize(); slotId++) {
+            Attachment<?> attachment = attachments.get(slotId);
+            attachment.set(getCamera().getStack(), c.getItem(slotId));
+        }
     }
 
     /**
@@ -112,44 +98,13 @@ public class CameraAttachmentsMenu extends AbstractContainerMenu {
         //Player Inventory
         for (int row = 0; row < 3; row++) {
             for (int column = 0; column < 9; column++) {
-                addSlot(new Slot(playerInventory, (column + row * 9) + 9, column * 18 + 8, 103 + row * 18){
-                    @Override
-                    public boolean mayPickup(@NotNull Player player) {
-                        return super.mayPickup(player) && getContainerSlot() != cameraSlotIndex;
-                    }
-
-                    @Override
-                    public boolean isActive() {
-                        return getContainerSlot() != cameraSlotIndex;
-                    }
-
-                    @Override
-                    public boolean isHighlightable() {
-                        return getContainerSlot() != cameraSlotIndex;
-                    }
-                });
+                addSlot(new Slot(playerInventory, (column + row * 9) + 9, column * 18 + 8, 103 + row * 18));
             }
         }
 
         //Hotbar
         for (int slot = 0; slot < 9; slot++) {
-            int finalSlot = slot;
-            addSlot(new Slot(playerInventory, finalSlot, slot * 18 + 8, 161) {
-                @Override
-                public boolean mayPickup(@NotNull Player player) {
-                    return super.mayPickup(player) && getContainerSlot() != cameraSlotIndex;
-                }
-
-                @Override
-                public boolean isActive() {
-                    return getContainerSlot() != cameraSlotIndex;
-                }
-
-                @Override
-                public boolean isHighlightable() {
-                    return getContainerSlot() != cameraSlotIndex;
-                }
-            });
+            addSlot(new Slot(playerInventory, slot, slot * 18 + 8, 161));
         }
     }
 
@@ -158,21 +113,16 @@ public class CameraAttachmentsMenu extends AbstractContainerMenu {
         ItemStack newStack = args.newStack();
 
         Attachment<?> attachment = attachments.get(slotId);
-        attachment.set(camera.getItemStack(), newStack);
+        attachment.set(getCamera().getStack(), newStack);
 
-        if (!player.level().isClientSide() || clientContentsInitialized) {
+        if (clientContentsInitialized) {
             if (!newStack.isEmpty()) {
                 attachment.playInsertSoundSided(player);
             } else {
                 attachment.playRemoveSoundSided(player);
             }
 
-            camera.apply((item, stack) -> item.actionPerformed(stack, player));
-        }
-
-        if (!player.level().isClientSide() && player.isCreative()) {
-            // Fixes item not updating properly when not in "Inventory" tab of creative inventory
-            player.getInventory().setItem(cameraSlotIndex, camera.getItemStack());
+            getCamera().apply((item, stack) -> item.actionPerformed(stack, player));
         }
     }
 
@@ -201,7 +151,7 @@ public class CameraAttachmentsMenu extends AbstractContainerMenu {
     }
 
     /**
-     * Fixed method to respect slot photo limit.
+     * Fixed method to respect slot limit.
      */
     @Override
     protected boolean moveItemStackTo(ItemStack movedStack, int startIndex, int endIndex, boolean reverseDirection) {
@@ -264,18 +214,20 @@ public class CameraAttachmentsMenu extends AbstractContainerMenu {
     @Override
     public void removed(Player player) {
         super.removed(player);
-        camera.apply((item, stack) -> item.setDisassembled(stack, false));
-
-        // Without this, client inventory is not syncing properly when menu is closed. (only when opened by r-click in GUI)
-        player.inventoryMenu.resumeRemoteUpdates();
+        getCamera().apply((item, stack) -> item.setDisassembled(stack, false));
     }
 
-    @Override
-    public boolean stillValid(@NotNull Player player) {
-        return CameraId.ofStack(camera.getItemStack()).matches(player.getInventory().getItem(cameraSlotIndex));
-    }
+    public interface CameraAccess {
+        ItemStack getStack();
 
-    public static CameraAttachmentsMenu fromBuffer(int containerId, Inventory playerInventory, RegistryFriendlyByteBuf buffer) {
-        return new CameraAttachmentsMenu(containerId, playerInventory, buffer.readInt(), buffer.readBoolean());
+        default void apply(BiConsumer<CameraItem, ItemStack> consumer) {
+            ItemStack camera = getStack();
+            consumer.accept(((CameraItem) camera.getItem()), camera);
+        }
+
+        default <T> T map(BiFunction<CameraItem, ItemStack, T> func) {
+            ItemStack camera = getStack();
+            return func.apply(((CameraItem) camera.getItem()), camera);
+        }
     }
 }

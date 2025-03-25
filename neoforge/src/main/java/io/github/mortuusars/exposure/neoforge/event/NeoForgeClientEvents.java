@@ -42,7 +42,8 @@ public class NeoForgeClientEvents {
 
         @SubscribeEvent
         public static void registerMenuScreens(RegisterMenuScreensEvent event) {
-            event.register(Exposure.MenuTypes.CAMERA.get(), CameraAttachmentsScreen::new);
+            event.register(Exposure.MenuTypes.CAMERA_IN_HAND.get(), CameraAttachmentsScreen::new);
+            event.register(Exposure.MenuTypes.CAMERA_ON_STAND.get(), CameraAttachmentsScreen::new);
             event.register(Exposure.MenuTypes.ALBUM.get(), AlbumScreen::new);
             event.register(Exposure.MenuTypes.LECTERN_ALBUM.get(), LecternAlbumScreen::new);
             event.register(Exposure.MenuTypes.LIGHTROOM.get(), LightroomScreen::new);

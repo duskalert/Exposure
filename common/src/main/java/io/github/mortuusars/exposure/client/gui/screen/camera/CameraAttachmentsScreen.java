@@ -10,7 +10,8 @@ import io.github.mortuusars.exposure.util.color.Color;
 import io.github.mortuusars.exposure.data.Lenses;
 import io.github.mortuusars.exposure.data.Filter;
 import io.github.mortuusars.exposure.data.Filters;
-import io.github.mortuusars.exposure.world.inventory.CameraAttachmentsMenu;
+import io.github.mortuusars.exposure.world.inventory.AbstractCameraAttachmentsMenu;
+import io.github.mortuusars.exposure.world.inventory.CameraInHandAttachmentsMenu;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -32,7 +33,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 import java.util.function.Supplier;
 
-public class CameraAttachmentsScreen extends AbstractContainerScreen<CameraAttachmentsMenu> {
+public class CameraAttachmentsScreen extends AbstractContainerScreen<AbstractCameraAttachmentsMenu> {
     public static final ResourceLocation TEXTURE = Exposure.resource("textures/gui/camera_attachments.png");
 
     protected final Player player;
@@ -53,7 +54,7 @@ public class CameraAttachmentsScreen extends AbstractContainerScreen<CameraAttac
             new Rect2i(72, 31, 39, 11), new Rect2i(80, 42, 24, 5)), () -> true);
     protected final HoveredElement shutterSpeedKnob = new HoveredElement(List.of(new Rect2i(68, 49, 21, 26)), () -> true);
 
-    public CameraAttachmentsScreen(CameraAttachmentsMenu menu, Inventory playerInventory, Component title) {
+    public CameraAttachmentsScreen(AbstractCameraAttachmentsMenu menu, Inventory playerInventory, Component title) {
         super(menu, playerInventory, title);
         this.player = playerInventory.player;
     }
@@ -277,7 +278,7 @@ public class CameraAttachmentsScreen extends AbstractContainerScreen<CameraAttac
     @Override
     public void onClose() {
         super.onClose();
-        if (getMenu().isOpenedFromGui()) {
+        if (getMenu() instanceof CameraInHandAttachmentsMenu attachmentsMenu && attachmentsMenu.isOpenedFromGui()) {
             Minecrft.get().setScreen(new InventoryScreen(player));
         }
     }

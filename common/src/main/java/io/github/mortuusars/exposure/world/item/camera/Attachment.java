@@ -53,7 +53,7 @@ public record Attachment<T extends Item>(ResourceLocation id,
             stack -> stack.is(Exposure.Tags.Items.FILTERS),
             Item.class,
             new SoundEffect(Exposure.SoundEvents.FILTER_INSERT),
-            new SoundEffect(Exposure.SoundEvents.FILTER_INSERT, 0.5F));
+            new SoundEffect(Exposure.SoundEvents.FILTER_REMOVE, 0.5F));
 
     public Attachment(ResourceLocation id,
                       DataComponentType<StoredItemStack> component,

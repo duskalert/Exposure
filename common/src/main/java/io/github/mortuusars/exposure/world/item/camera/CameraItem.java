@@ -20,7 +20,7 @@ import io.github.mortuusars.exposure.world.item.FilmItem;
 import io.github.mortuusars.exposure.world.item.FilmRollItem;
 import io.github.mortuusars.exposure.world.item.InterplanarProjectorItem;
 import io.github.mortuusars.exposure.world.item.component.StoredItemStack;
-import io.github.mortuusars.exposure.world.inventory.CameraAttachmentsMenu;
+import io.github.mortuusars.exposure.world.inventory.CameraInHandAttachmentsMenu;
 import io.github.mortuusars.exposure.network.Packets;
 import io.github.mortuusars.exposure.network.packet.clientbound.CaptureStartS2CP;
 import io.github.mortuusars.exposure.network.packet.serverbound.OpenCameraAttachmentsInCreativePacketC2SP;
@@ -607,7 +607,7 @@ public class CameraItem extends Item {
 
                 @Override
                 public @NotNull AbstractContainerMenu createMenu(int containerId, @NotNull Inventory playerInventory, @NotNull Player player) {
-                    return new CameraAttachmentsMenu(containerId, playerInventory, slotIndex, openedFromGUI);
+                    return new CameraInHandAttachmentsMenu(containerId, playerInventory, slotIndex, openedFromGUI);
                 }
             };
 
