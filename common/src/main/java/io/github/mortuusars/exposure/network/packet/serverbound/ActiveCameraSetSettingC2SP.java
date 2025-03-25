@@ -1,6 +1,7 @@
 package io.github.mortuusars.exposure.network.packet.serverbound;
 
 import io.github.mortuusars.exposure.Exposure;
+import io.github.mortuusars.exposure.world.camera.Camera;
 import io.github.mortuusars.exposure.world.item.camera.CameraSetting;
 import io.github.mortuusars.exposure.network.packet.Packet;
 import net.minecraft.network.FriendlyByteBuf;
@@ -11,6 +12,7 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public record ActiveCameraSetSettingC2SP(CameraSetting<?> setting, byte[] encodedValue) implements Packet {
     public static final ResourceLocation ID = Exposure.resource("active_camera_set_setting");
@@ -29,9 +31,10 @@ public record ActiveCameraSetSettingC2SP(CameraSetting<?> setting, byte[] encode
 
     @Override
     public boolean handle(PacketFlow direction, Player player) {
-        if (player.getActiveExposureCamera() == null) return false;
-        player.getActiveExposureCamera().ifPresent((item, stack) ->
-                setting.decodeAndSet(player, stack, player.level().registryAccess(), encodedValue));
+        @Nullable Camera camera = player.getActiveExposureCamera();
+        if (camera == null || camera.isEmpty()) return false;
+
+        setting.decodeAndSet(camera.getHolder(), camera.getItemStack(), player.registryAccess(), encodedValue);
         return true;
     }
 }
