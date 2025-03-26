@@ -202,6 +202,16 @@ public class CameraStandEntity extends Entity implements CameraHolder {
         if (cameraStack.isEmpty() && handStack.getItem() instanceof CameraItem cameraItem) {
             setCamera(handStack);
             player.setItemInHand(hand, ItemStack.EMPTY);
+
+            if (!level().isClientSide) {
+                playSound(SoundEvents.ITEM_FRAME_ADD_ITEM);
+            }
+
+            // Set initial camera direction.
+            if (getYRot() == 0 && getXRot() == 0) { // If rotations are at 0 - player likely hasn't chosen a direction yet.
+                setYRot(player.getYRot());
+            }
+
             return InteractionResult.SUCCESS;
         }
 
