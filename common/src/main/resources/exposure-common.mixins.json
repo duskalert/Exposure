@@ -28,6 +28,7 @@
   ],
   "mixins": [
     "AnvilMenuMixin",
+    "BoatMixin",
     "BookPageCountMixin",
     "EntityMixin",
     "LecternBlockEntityAccessor",

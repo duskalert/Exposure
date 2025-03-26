@@ -11,22 +11,22 @@ import io.github.mortuusars.exposure.world.sound.Sound;
 import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.particles.BlockParticleOption;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.tags.FluidTags;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.MoverType;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Inventory;
@@ -37,12 +37,14 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Comparator;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -173,7 +175,7 @@ public class CameraStandEntity extends Entity implements CameraHolder {
 
     @Override
     public @NotNull Entity getExposureAuthorEntity() {
-        return getOwnerPlayer().or(this::getClosestPlayer).map(pl -> (Entity)pl).orElse(this);
+        return getOwnerPlayer().or(this::getClosestPlayer).map(pl -> (Entity) pl).orElse(this);
     }
 
     @Override
@@ -192,19 +194,20 @@ public class CameraStandEntity extends Entity implements CameraHolder {
     @Override
     public @NotNull InteractionResult interact(Player player, InteractionHand hand) {
         if (!canUse(player)) {
-            player.displayClientMessage(Component.translatable("gui.exposure.camera_stand.error.in_use"), true);
+            player.displayClientMessage(Component.translatable("gui.exposure.camera_stand.error.in_use")
+                    .withStyle(ChatFormatting.RED), true);
             return InteractionResult.FAIL;
         }
 
         ItemStack handStack = player.getItemInHand(hand);
         ItemStack cameraStack = getCamera();
 
-        if (cameraStack.isEmpty() && handStack.getItem() instanceof CameraItem cameraItem) {
+        if (cameraStack.isEmpty() && handStack.getItem() instanceof CameraItem) {
             setCamera(handStack);
             player.setItemInHand(hand, ItemStack.EMPTY);
 
             if (!level().isClientSide) {
-                playSound(SoundEvents.ITEM_FRAME_ADD_ITEM);
+                playCameraSetSound();
             }
 
             // Set initial camera direction.
@@ -261,13 +264,15 @@ public class CameraStandEntity extends Entity implements CameraHolder {
 
     public InteractionResult openAttachmentsMenu(Player player, InteractionHand hand) {
         if (!canUse(player)) {
-            player.displayClientMessage(Component.translatable("gui.exposure.camera_stand.error.in_use"), true);
+            player.displayClientMessage(Component.translatable("gui.exposure.camera_stand.error.in_use")
+                    .withStyle(ChatFormatting.RED), true);
             return InteractionResult.FAIL;
         }
 
         ItemStack cameraStack = getCamera();
 
-        if (cameraStack.isEmpty() || !(cameraStack.getItem() instanceof CameraItem cameraItem)) return InteractionResult.FAIL;
+        if (cameraStack.isEmpty() || !(cameraStack.getItem() instanceof CameraItem cameraItem))
+            return InteractionResult.FAIL;
 
         if (cameraItem.getShutter().isOpen(cameraStack)) {
             player.displayClientMessage(Component.translatable("item.exposure.camera.camera_attachments.fail.shutter_open")
@@ -291,9 +296,8 @@ public class CameraStandEntity extends Entity implements CameraHolder {
                 }
             };
 
-            PlatformHelper.openMenu(serverPlayer, menuProvider, buffer -> {
-                buffer.writeInt(getId());
-            });
+            PlatformHelper.openMenu(serverPlayer, menuProvider,
+                    buffer -> buffer.writeInt(getId()));
         }
 
         cameraItem.setDisassembled(cameraStack, true);
@@ -305,6 +309,11 @@ public class CameraStandEntity extends Entity implements CameraHolder {
     public void startControlling(Player player, CameraItem cameraItem) {
         cameraItem.activateOnStand(player, getCamera(), this);
         setOperator(player);
+
+        if (getOwnerPlayerId().equals(Util.NIL_UUID)) {
+            setOwnerPlayer(player);
+        }
+
         if (player.level().isClientSide) {
             CameraClient.setCameraEntity(this);
             Minecrft.stopPlayerMovement();
@@ -332,8 +341,17 @@ public class CameraStandEntity extends Entity implements CameraHolder {
     @Override
     public void tick() {
         super.tick();
+        travel();
 
-        move();
+        if (!level().isClientSide && !isPassenger()) {
+            List<Entity> boats = level().getEntities(this, getBoundingBox().inflate(0.4F, 0.2F, 0.4F), e -> e instanceof Boat);
+            for (Entity entity : boats) {
+                Boat boat = ((Boat) entity);
+                if (boat.getPassengers().size() < 2 && boat.hasEnoughSpaceFor(this)) {
+                    this.startRiding(boat);
+                }
+            }
+        }
 
         if (getHurtTime() > 0) {
             setHurtTime(getHurtTime() - 1);
@@ -373,24 +391,56 @@ public class CameraStandEntity extends Entity implements CameraHolder {
         }
     }
 
-    protected void move() {
-        // Apply gravity
-        if (!this.onGround()) {
-            this.setDeltaMovement(this.getDeltaMovement().add(0, -0.08, 0)); // Simulate gravity
+    protected void travel() {
+        this.xo = this.getX();
+        this.yo = this.getY();
+        this.zo = this.getZ();
+        this.applyGravity();
+        if (this.isInWater() && this.getFluidHeight(FluidTags.WATER) > 0.1F) {
+            this.setUnderwaterMovement();
+        } else if (this.isInLava() && this.getFluidHeight(FluidTags.LAVA) > 0.1F) {
+            this.setUnderLavaMovement();
+        }
+
+        if (this.level().isClientSide) {
+            this.noPhysics = false;
         } else {
-            this.setDeltaMovement(this.getDeltaMovement().multiply(0.9, 0, 0.9)); // Apply friction on ground
+            this.noPhysics = !this.level().noCollision(this, this.getBoundingBox().deflate(1.0E-7));
+            if (this.noPhysics) {
+                this.moveTowardsClosestSpace(this.getX(), (this.getBoundingBox().minY + this.getBoundingBox().maxY) / 2.0, this.getZ());
+            }
         }
 
-        // Apply velocity (movement)
-        this.move(MoverType.SELF, this.getDeltaMovement());
+        if (!this.onGround() || this.getDeltaMovement().horizontalDistanceSqr() > 1.0E-5F || (this.tickCount + this.getId()) % 4 == 0) {
+            this.move(MoverType.SELF, this.getDeltaMovement());
+            float f = 0.98F;
+            if (this.onGround()) {
+                f = this.level().getBlockState(this.getBlockPosBelowThatAffectsMyMovement()).getBlock().getFriction() * 0.98F;
+            }
 
-        // Slow down over time like armor stand
-        this.setDeltaMovement(this.getDeltaMovement().scale(0.98));
-
-        // If speed is very low, stop movement completely
-        if (this.getDeltaMovement().lengthSqr() < 0.0001) {
-            this.setDeltaMovement(Vec3.ZERO);
+            this.setDeltaMovement(this.getDeltaMovement().multiply(f, 0.98, f));
+            if (this.onGround()) {
+                Vec3 vec32 = this.getDeltaMovement();
+                if (vec32.y < 0.0) {
+                    this.setDeltaMovement(vec32.multiply(1.0, -0.5, 1.0));
+                }
+            }
         }
+    }
+
+    protected void setUnderwaterMovement() {
+        Vec3 vec3 = this.getDeltaMovement();
+        this.setDeltaMovement(vec3.x * 0.9F, vec3.y * 0.23F, vec3.z * 0.9F);
+    }
+
+    protected void setUnderLavaMovement() {
+        Vec3 vec3 = this.getDeltaMovement();
+        this.setDeltaMovement(vec3.x * 0.5F, vec3.y * 0.1F, vec3.z * 0.5F);
+    }
+
+    @Override
+    protected double getDefaultGravity() {
+        return 0.08;
     }
 
     @Override
@@ -415,13 +465,15 @@ public class CameraStandEntity extends Entity implements CameraHolder {
                 if (itemEntity != null) {
                     itemEntity.setPickUpDelay(5);
                 }
-                playSound(SoundEvents.ITEM_FRAME_REMOVE_ITEM);
+                playCameraRemoveSound();
             }
             setCamera(ItemStack.EMPTY);
 
             if (source.isCreativePlayer()) {
-                return true; // Prevent discard at the same time as removing the camera.
+                return true; // Prevent discard at the same hit as removing the camera.
             }
+
+            amount = 1.0f; // Prevent one-hit harvesting.
         }
 
         if (!level().isClientSide) {
@@ -430,12 +482,18 @@ public class CameraStandEntity extends Entity implements CameraHolder {
             markHurt();
             setDamage(getDamage() + amount * 10.0F);
             gameEvent(GameEvent.ENTITY_DAMAGE, source.getEntity());
+            playHitSound();
 
             if (source.isCreativePlayer()) {
                 discard();
+                showBreakingParticles();
+                playBreakSound();
             } else if (getDamage() > 10.0F) {
                 destroy(source);
+                showBreakingParticles();
+                playBreakSound();
             }
+
         }
 
         return true;
@@ -474,7 +532,24 @@ public class CameraStandEntity extends Entity implements CameraHolder {
         if (this.level().getGameRules().getBoolean(GameRules.RULE_DOENTITYDROPS)) {
             ItemStack itemStack = new ItemStack(dropItem);
             itemStack.set(DataComponents.CUSTOM_NAME, this.getCustomName());
-            this.spawnAtLocation(itemStack);
+            this.spawnAtLocation(itemStack, 0.5f);
+        }
+    }
+
+    protected void showBreakingParticles() {
+        if (this.level() instanceof ServerLevel) {
+            ((ServerLevel)this.level())
+                    .sendParticles(
+                            new BlockParticleOption(ParticleTypes.BLOCK, Blocks.OAK_PLANKS.defaultBlockState()),
+                            this.getX(),
+                            this.getY(0.25f),
+                            this.getZ(),
+                            6,
+                            (this.getBbWidth() / 6.0F),
+                            (this.getBbHeight() / 6.0F),
+                            (this.getBbWidth() / 6.0F),
+                            0.05
+                    );
         }
     }
 
@@ -489,8 +564,34 @@ public class CameraStandEntity extends Entity implements CameraHolder {
         return true;
     }
 
+    @Nullable
     @Override
-    public boolean isPushable() {
-        return true;
+    public ItemStack getPickResult() {
+        return new ItemStack(getDropItem());
+    }
+
+    public void playPlaceSound() {
+        this.level().playSound(null, this.getX(), this.getY(), this.getZ(),
+                Exposure.SoundEvents.CAMERA_STAND_PLACE.get(), this.getSoundSource(), 0.8F, 1.0F);
+    }
+
+    public void playHitSound() {
+        this.level().playSound(null, this.getX(), this.getY(), this.getZ(),
+                Exposure.SoundEvents.CAMERA_STAND_HIT.get(), this.getSoundSource(), 0.8F, 1.0F);
+    }
+
+    public void playBreakSound() {
+        this.level().playSound(null, this.getX(), this.getY(), this.getZ(),
+                Exposure.SoundEvents.CAMERA_STAND_BREAK.get(), this.getSoundSource(), 1.0F, 1.0F);
+    }
+
+    public void playCameraSetSound() {
+        this.level().playSound(null, this.getX(), this.getY(), this.getZ(),
+                Exposure.SoundEvents.CAMERA_STAND_SET_CAMERA.get(), this.getSoundSource(), 0.8F, 1.0F);
+    }
+
+    public void playCameraRemoveSound() {
+        this.level().playSound(null, this.getX(), this.getY(), this.getZ(),
+                Exposure.SoundEvents.CAMERA_STAND_REMOVE_CAMERA.get(), this.getSoundSource(), 0.8F, 1.0F);
     }
 }

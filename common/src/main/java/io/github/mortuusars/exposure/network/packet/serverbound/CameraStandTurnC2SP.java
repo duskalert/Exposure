@@ -31,7 +31,7 @@ public record CameraStandTurnC2SP(int entityId, double yRot, double xRot) implem
     @Override
     public boolean handle(PacketFlow direction, Player player) {
         if (!(player.level().getEntity(entityId) instanceof CameraStandEntity stand)) return false;
-        if (player.equals(stand.operator())) {
+        if (player.equals(stand.operator()) || stand.getOwnerPlayer().map(pl -> pl.equals(player)).orElse(false)) {
             stand.turn(yRot, xRot);
         }
         return true;

@@ -331,7 +331,7 @@ public class Exposure {
 
         public static final Supplier<EntityType<CameraStandEntity>> CAMERA_STAND = Register.entityType("camera_stand",
                 CameraStandEntity::new, MobCategory.MISC, false, builder -> builder
-                        .sized(0.75f, 1.6f)
+                        .sized(0.7f, 1.6f)
                         .clientTrackingRange(16)
                         .updateInterval(Integer.MAX_VALUE)
                         .eyeHeight(1.40625f));
@@ -402,6 +402,12 @@ public class Exposure {
         public static final Supplier<SoundEvent> PHOTOGRAPH_FRAME_ADD_ITEM = register("item", "photograph_frame.add_item");
         public static final Supplier<SoundEvent> PHOTOGRAPH_FRAME_REMOVE_ITEM = register("item", "photograph_frame.remove_item");
         public static final Supplier<SoundEvent> PHOTOGRAPH_FRAME_ROTATE_ITEM = register("item", "photograph_frame.rotate_item");
+
+        public static final Supplier<SoundEvent> CAMERA_STAND_PLACE = register("entity", "camera_stand.place");
+        public static final Supplier<SoundEvent> CAMERA_STAND_HIT = register("entity", "camera_stand.hit");
+        public static final Supplier<SoundEvent> CAMERA_STAND_BREAK = register("entity", "camera_stand.break");
+        public static final Supplier<SoundEvent> CAMERA_STAND_SET_CAMERA = register("entity", "camera_stand.set_camera");
+        public static final Supplier<SoundEvent> CAMERA_STAND_REMOVE_CAMERA = register("entity", "camera_stand.remove_camera");
 
         public static final Supplier<SoundEvent> LIGHTROOM_PRINT = register("block", "lightroom.print");
 

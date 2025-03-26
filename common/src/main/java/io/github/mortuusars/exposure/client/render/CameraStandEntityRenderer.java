@@ -18,7 +18,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemDisplayContext;
 import org.jetbrains.annotations.NotNull;
-import org.joml.Quaternionf;
 
 public class CameraStandEntityRenderer <T extends CameraStandEntity> extends EntityRenderer<T> {
     public static final ResourceLocation TEXTURE_LOCATION = ResourceLocation.withDefaultNamespace("textures/item/camera.png");
@@ -47,19 +46,25 @@ public class CameraStandEntityRenderer <T extends CameraStandEntity> extends Ent
             poseStack.mulPose(Axis.XP.rotationDegrees(rotation));
         }
 
-        renderStand(entity, entityYaw, partialTick, poseStack, bufferSource, packedLight);
-        renderMount(entity, entityYaw, partialTick, poseStack, bufferSource, packedLight);
+        float entityPitch = Mth.lerp(partialTick, entity.xRotO, entity.getXRot());
+
+        renderStand(entity, entityYaw, entityPitch, partialTick, poseStack, bufferSource, packedLight);
+        renderMount(entity, entityYaw, entityPitch, partialTick, poseStack, bufferSource, packedLight);
         if (!entity.getCamera().isEmpty()) {
-            renderCamera(entity, entityYaw, partialTick, poseStack, bufferSource, packedLight);
+            renderCamera(entity, entityYaw, entityPitch, partialTick, poseStack, bufferSource, packedLight);
         }
     }
 
-    private void renderStand(T entity, float entityYaw, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight) {
+    private void renderStand(T entity, float entityYaw, float entityPitch, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight) {
         poseStack.pushPose();
 
-
+        if (entity.getVehicle() != null) {
+            float vehicleRot = Mth.lerp(partialTick, entity.getVehicle().yRotO, entity.getVehicle().getYRot());
+            poseStack.mulPose(Axis.YP.rotationDegrees(-vehicleRot + 45));
+        }
 
         poseStack.translate(-0.5f, 0f, -0.5f);
+
         ModelResourceLocation modelLocation = ExposureClient.Models.CAMERA_STAND;
         BakedModel model = PlatformHelperClient.getModel(modelLocation);
         blockRenderer.getModelRenderer().renderModel(poseStack.last(), bufferSource.getBuffer(RenderType.solid()),
@@ -67,13 +72,13 @@ public class CameraStandEntityRenderer <T extends CameraStandEntity> extends Ent
         poseStack.popPose();
     }
 
-    private void renderMount(T entity, float entityYaw, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight) {
+    private void renderMount(T entity, float entityYaw, float entityPitch, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight) {
         poseStack.pushPose();
         poseStack.translate(0, 1.125, 0);
         float scale = 0.9f;
         poseStack.scale(scale, scale, scale);
-        poseStack.mulPose(Axis.YP.rotationDegrees(-entity.getYRot() + 180)); // Yaw first
-        poseStack.mulPose(Axis.XP.rotationDegrees(-entity.getXRot()));
+        poseStack.mulPose(Axis.YP.rotationDegrees(-entityYaw + 180));
+        poseStack.mulPose(Axis.XP.rotationDegrees(-entityPitch));
         poseStack.translate(-0.5f, 0f, -0.5f);
         ModelResourceLocation mountModelLocation = ExposureClient.Models.CAMERA_STAND_MOUNT;
         BakedModel mountModel = PlatformHelperClient.getModel(mountModelLocation);
@@ -82,13 +87,13 @@ public class CameraStandEntityRenderer <T extends CameraStandEntity> extends Ent
         poseStack.popPose();
     }
 
-    private void renderCamera(T entity, float entityYaw, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight) {
+    private void renderCamera(T entity, float entityYaw, float entityPitch, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight) {
         poseStack.pushPose();
         poseStack.translate(0, 1.125, 0);
         float scale = 0.9f;
         poseStack.scale(scale, scale, scale);
-        poseStack.mulPose(Axis.YP.rotationDegrees(-entity.getYRot() + 180)); // Yaw first
-        poseStack.mulPose(Axis.XP.rotationDegrees(-entity.getXRot()));
+        poseStack.mulPose(Axis.YP.rotationDegrees(-entityYaw + 180));
+        poseStack.mulPose(Axis.XP.rotationDegrees(-entityPitch));
         poseStack.translate(0, 0.625, 0);
         Minecrft.get().getItemRenderer().renderStatic(entity.getCamera(), ItemDisplayContext.NONE, packedLight, OverlayTexture.NO_OVERLAY, poseStack, bufferSource, entity.level(), 0);
         poseStack.popPose();

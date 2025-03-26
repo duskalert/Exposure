@@ -308,5 +308,11 @@
   "task.exposure.export.status.exporting": "Exporting  '%s' - [%s/%s]",
   "task.exposure.export.status.requesting": "Requesting '%s' - [%s/%s]",
   "task.exposure.export.stopped": "Export stopped.",
-  "tooltip.exposure.hold_for_details": "§8Hold [§7Shift§8] for Details"
+  "tooltip.exposure.hold_for_details": "§8Hold [§7Shift§8] for Details",
+
+  "item.exposure.camera_stand": "Camera Stand",
+  "entity.exposure.camera_stand": "Camera Stand",
+  "subtitle.exposure.camera_stand.set_camera": "Camera Stand fills",
+  "subtitle.exposure.camera_stand.remove_camera": "Camera Stand empties",
+  "gui.exposure.camera_stand.error.in_use": "Camera is already in use"
 }

@@ -9,10 +9,15 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.decoration.ArmorStand;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.vehicle.Boat;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -21,6 +26,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;
 
@@ -30,7 +36,7 @@ public class CameraStandItem extends Item {
     }
 
     @Override
-    public InteractionResult useOn(UseOnContext context) {
+    public @NotNull InteractionResult useOn(UseOnContext context) {
         Direction direction = context.getClickedFace();
         if (direction == Direction.DOWN) return InteractionResult.FAIL;
 
@@ -44,18 +50,53 @@ public class CameraStandItem extends Item {
 
         if (level instanceof ServerLevel serverLevel) {
             Consumer<CameraStandEntity> consumer = EntityType.createDefaultStackConfig(serverLevel, itemStack, context.getPlayer());
-            CameraStandEntity cameraStand = Exposure.EntityTypes.CAMERA_STAND.get().create(serverLevel, consumer, blockPos, MobSpawnType.SPAWN_EGG, true, true);
+            CameraStandEntity cameraStand = Exposure.EntityTypes.CAMERA_STAND.get()
+                    .create(serverLevel, consumer, blockPos, MobSpawnType.SPAWN_EGG, true, true);
             if (cameraStand == null) {
                 return InteractionResult.FAIL;
             }
 
+            if (context.getPlayer() != null) {
+                cameraStand.setOwnerPlayer(context.getPlayer());
+            }
             cameraStand.moveTo(cameraStand.getX(), cameraStand.getY(), cameraStand.getZ(), 0.0F, 0.0F);
             serverLevel.addFreshEntityWithPassengers(cameraStand);
-            level.playSound(null, cameraStand.getX(), cameraStand.getY(), cameraStand.getZ(), SoundEvents.ARMOR_STAND_PLACE, SoundSource.BLOCKS, 0.75F, 0.8F);
+            cameraStand.playPlaceSound();
             cameraStand.gameEvent(GameEvent.ENTITY_PLACE, context.getPlayer());
         }
 
         itemStack.shrink(1);
         return InteractionResult.sidedSuccess(level.isClientSide);
+    }
+
+    public InteractionResult interactWithBoat(Player player, InteractionHand hand, Boat boat) {
+        if (!player.isSecondaryUseActive()) return InteractionResult.PASS;
+        ItemStack itemStack = player.getItemInHand(hand);
+        if (!(itemStack.getItem() instanceof CameraStandItem)) return InteractionResult.PASS;
+        if (boat.getPassengers().size() >= 2) return InteractionResult.PASS;
+
+        if (player.level() instanceof ServerLevel serverLevel) {
+            Consumer<CameraStandEntity> consumer = EntityType.createDefaultStackConfig(serverLevel, itemStack, player);
+            CameraStandEntity cameraStand = Exposure.EntityTypes.CAMERA_STAND.get()
+                    .create(serverLevel, consumer, boat.blockPosition(), MobSpawnType.SPAWN_EGG, true, true);
+            if (cameraStand == null) {
+                return InteractionResult.FAIL;
+            }
+
+            cameraStand.setOwnerPlayer(player);
+
+            cameraStand.startRiding(boat);
+            boat.positionRider(cameraStand);
+
+            serverLevel.addFreshEntityWithPassengers(cameraStand);
+            cameraStand.playPlaceSound();
+            cameraStand.gameEvent(GameEvent.ENTITY_PLACE, player);
+
+            itemStack.shrink(1);
+            player.setItemInHand(hand, itemStack);
+            return InteractionResult.SUCCESS;
+        }
+
+        return InteractionResult.CONSUME;
     }
 }
