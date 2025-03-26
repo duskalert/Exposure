@@ -397,6 +397,10 @@ public class CameraStandEntity extends Entity implements CameraHolder {
                 playSound(SoundEvents.ITEM_FRAME_REMOVE_ITEM);
             }
             setCamera(ItemStack.EMPTY);
+
+            if (source.isCreativePlayer()) {
+                return true; // Prevent discard at the same time as removing the camera.
+            }
         }
 
         if (!level().isClientSide) {

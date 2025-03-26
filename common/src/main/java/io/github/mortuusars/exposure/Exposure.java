@@ -331,7 +331,7 @@ public class Exposure {
 
         public static final Supplier<EntityType<CameraStandEntity>> CAMERA_STAND = Register.entityType("camera_stand",
                 CameraStandEntity::new, MobCategory.MISC, false, builder -> builder
-                        .sized(0.6f, 1.75f)
+                        .sized(0.75f, 1.6f)
                         .clientTrackingRange(16)
                         .updateInterval(Integer.MAX_VALUE)
                         .eyeHeight(1.40625f));
