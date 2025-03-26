@@ -205,7 +205,6 @@ public class CameraStandEntity extends Entity implements CameraHolder {
 
         for (Attachment<?> attachment : cameraItem.getAttachments()) {
             if (attachment.matches(handStack)) {
-
                 if (attachment.get(cameraStack).isEmpty()) {
                     attachment.set(cameraStack, handStack.split(1));
                     attachment.playInsertSoundSided(player, this);
@@ -219,7 +218,6 @@ public class CameraStandEntity extends Entity implements CameraHolder {
                     return InteractionResult.SUCCESS;
                 }
 
-                playSound(Exposure.SoundEvents.CAMERA_GENERIC_CLICK.get());
                 return InteractionResult.FAIL;
             }
         }
@@ -343,6 +341,15 @@ public class CameraStandEntity extends Entity implements CameraHolder {
         if (!isInInteractionRange(operatorEntity)) {
             stopControlling(operator);
         }
+    }
+
+    protected void updateRedstone() {
+        if (redstoneReleaseDelay > 0) {
+            redstoneReleaseDelay--;
+        }
+        int signalStrength = level().getBestNeighborSignal(blockPosition());
+        boolean newPulse = !receivedRedstonePulse && signalStrength > 0;
+        receivedRedstonePulse = signalStrength > 0;
     }
 
     protected void move() {
