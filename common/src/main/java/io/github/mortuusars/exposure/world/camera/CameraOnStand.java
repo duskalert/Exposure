@@ -30,6 +30,11 @@ public class CameraOnStand extends Camera {
     }
 
     @Override
+    public void release() {
+        getStand().release();
+    }
+
+    @Override
     public Packet createSyncPacket() {
         return new ActiveCameraOnStandSetS2CP(cameraOperator.asOperatorEntity().getId(), cameraStand.getId(), id);
     }

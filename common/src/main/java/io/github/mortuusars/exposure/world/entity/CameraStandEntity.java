@@ -55,13 +55,14 @@ public class CameraStandEntity extends Entity implements CameraHolder {
             SynchedEntityData.defineId(CameraStandEntity.class, EntityDataSerializers.FLOAT);
     protected static final EntityDataAccessor<ItemStack> DATA_ID_CAMERA =
             SynchedEntityData.defineId(CameraStandEntity.class, EntityDataSerializers.ITEM_STACK);
+    protected static final EntityDataAccessor<Integer> DATA_ID_COOLDOWN =
+            SynchedEntityData.defineId(CameraStandEntity.class, EntityDataSerializers.INT);
 
+    protected CameraStandRedstoneControl redstoneControl = new CameraStandRedstoneControl(this);
     protected UUID ownerPlayerId = Util.NIL_UUID;
 
     @Nullable
     protected CameraOperator operator;
-    protected boolean receivedRedstonePulse = false;
-    protected int redstoneReleaseDelay = 0;
 
     public CameraStandEntity(EntityType<? extends CameraStandEntity> entityType, Level level) {
         super(entityType, level);
@@ -73,6 +74,7 @@ public class CameraStandEntity extends Entity implements CameraHolder {
         builder.define(DATA_ID_HURTDIR, 1);
         builder.define(DATA_ID_DAMAGE, 0.0F);
         builder.define(DATA_ID_CAMERA, ItemStack.EMPTY);
+        builder.define(DATA_ID_COOLDOWN, 0);
     }
 
     @Override
@@ -80,6 +82,8 @@ public class CameraStandEntity extends Entity implements CameraHolder {
         if (!getCamera().isEmpty()) {
             tag.put("Camera", getCamera().save(registryAccess()));
         }
+
+        redstoneControl.save(tag);
 
         if (!ownerPlayerId.equals(Util.NIL_UUID)) {
             tag.putUUID("Owner", ownerPlayerId);
@@ -89,6 +93,8 @@ public class CameraStandEntity extends Entity implements CameraHolder {
     @Override
     protected void readAdditionalSaveData(CompoundTag tag) {
         setCamera(ItemStack.parseOptional(registryAccess(), tag.getCompound("Camera")));
+
+        redstoneControl.load(tag);
 
         if (tag.contains("Owner", CompoundTag.TAG_INT_ARRAY)) {
             ownerPlayerId = tag.getUUID("Owner");
@@ -123,6 +129,18 @@ public class CameraStandEntity extends Entity implements CameraHolder {
 
     public Optional<? extends Player> getClosestPlayer() {
         return level().players().stream().min(Comparator.comparingDouble(player -> player.distanceTo(this)));
+    }
+
+    public int getCooldown() {
+        return getEntityData().get(DATA_ID_COOLDOWN);
+    }
+
+    public void setCooldown(int cooldown) {
+        getEntityData().set(DATA_ID_COOLDOWN, cooldown);
+    }
+
+    public boolean isOnCooldown() {
+        return getCooldown() > 0;
     }
 
     // -- Operator
@@ -293,6 +311,12 @@ public class CameraStandEntity extends Entity implements CameraHolder {
         setOperator(null);
     }
 
+    public void release() {
+        if (!isOnCooldown() && getCamera().getItem() instanceof CameraItem cameraItem) {
+            cameraItem.release(this, getCamera());
+        }
+    }
+
     // --
 
     @Override
@@ -309,19 +333,15 @@ public class CameraStandEntity extends Entity implements CameraHolder {
             setDamage(getDamage() - 1.0F);
         }
 
-        if (redstoneReleaseDelay > 0) {
-            redstoneReleaseDelay--;
+        int cooldown = getCooldown();
+        if (cooldown > 0) {
+            setCooldown(cooldown - 1);
         }
-        int signalStrength = level().getBestNeighborSignal(blockPosition());
-        boolean newPulse = !receivedRedstonePulse && signalStrength > 0;
-        receivedRedstonePulse = signalStrength > 0;
+
+        redstoneControl.tick();
 
         if (getCamera().getItem() instanceof CameraItem cameraItem) {
             cameraItem.tick(this, getCamera());
-
-            if (newPulse && redstoneReleaseDelay <= 0) {
-                cameraItem.release(this, getCamera());
-            }
         }
 
         if (!isCameraActive() && operator() != null) {
@@ -341,15 +361,6 @@ public class CameraStandEntity extends Entity implements CameraHolder {
         if (!isInInteractionRange(operatorEntity)) {
             stopControlling(operator);
         }
-    }
-
-    protected void updateRedstone() {
-        if (redstoneReleaseDelay > 0) {
-            redstoneReleaseDelay--;
-        }
-        int signalStrength = level().getBestNeighborSignal(blockPosition());
-        boolean newPulse = !receivedRedstonePulse && signalStrength > 0;
-        receivedRedstonePulse = signalStrength > 0;
     }
 
     protected void move() {

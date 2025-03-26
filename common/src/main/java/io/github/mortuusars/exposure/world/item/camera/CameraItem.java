@@ -557,6 +557,9 @@ public class CameraItem extends Item {
         if (holder instanceof Player player) {
             int cooldown = CameraInstances.getOptional(stack).map(CameraInstance::getDeferredCooldown).orElse(BASE_COOLDOWN);
             player.getCooldowns().addCooldown(this, cooldown);
+        } else if (holder instanceof CameraStandEntity stand) {
+            int cooldown = CameraInstances.getOptional(stack).map(CameraInstance::getDeferredCooldown).orElse(BASE_COOLDOWN);
+            stand.setCooldown(cooldown);
         }
 
         Attachment.FILM.ifPresent(stack, (filmItem, filmStack) -> {
