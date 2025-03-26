@@ -15,8 +15,10 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemDisplayContext;
 import org.jetbrains.annotations.NotNull;
+import org.joml.Quaternionf;
 
 public class CameraStandEntityRenderer <T extends CameraStandEntity> extends EntityRenderer<T> {
     public static final ResourceLocation TEXTURE_LOCATION = ResourceLocation.withDefaultNamespace("textures/item/camera.png");
@@ -37,6 +39,14 @@ public class CameraStandEntityRenderer <T extends CameraStandEntity> extends Ent
     public void render(T entity, float entityYaw, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight) {
         super.render(entity, entityYaw, partialTick, poseStack, bufferSource, packedLight);
 
+        float hurtTime = (float)entity.getHurtTime() - partialTick;
+        float damage = Math.max(0, entity.getDamage() - partialTick);
+        if (hurtTime > 0.0F) {
+            float rotation = Mth.sin(hurtTime) * hurtTime * damage / 10.0F * (float) entity.getHurtDir();
+            poseStack.mulPose(Axis.YP.rotationDegrees(rotation));
+            poseStack.mulPose(Axis.XP.rotationDegrees(rotation));
+        }
+
         renderStand(entity, entityYaw, partialTick, poseStack, bufferSource, packedLight);
         renderMount(entity, entityYaw, partialTick, poseStack, bufferSource, packedLight);
         if (!entity.getCamera().isEmpty()) {
@@ -46,6 +56,9 @@ public class CameraStandEntityRenderer <T extends CameraStandEntity> extends Ent
 
     private void renderStand(T entity, float entityYaw, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight) {
         poseStack.pushPose();
+
+
+
         poseStack.translate(-0.5f, 0f, -0.5f);
         ModelResourceLocation modelLocation = ExposureClient.Models.CAMERA_STAND;
         BakedModel model = PlatformHelperClient.getModel(modelLocation);

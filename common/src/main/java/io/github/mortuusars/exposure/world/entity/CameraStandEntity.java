@@ -4,7 +4,6 @@ import io.github.mortuusars.exposure.Exposure;
 import io.github.mortuusars.exposure.PlatformHelper;
 import io.github.mortuusars.exposure.client.camera.CameraClient;
 import io.github.mortuusars.exposure.client.util.Minecrft;
-import io.github.mortuusars.exposure.world.inventory.CameraInHandAttachmentsMenu;
 import io.github.mortuusars.exposure.world.inventory.CameraOnStandAttachmentsMenu;
 import io.github.mortuusars.exposure.world.item.camera.Attachment;
 import io.github.mortuusars.exposure.world.item.camera.CameraItem;
@@ -22,7 +21,6 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
@@ -35,8 +33,11 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.vehicle.Boat;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -46,7 +47,13 @@ import java.util.Optional;
 import java.util.UUID;
 
 public class CameraStandEntity extends Entity implements CameraHolder {
-    protected static final EntityDataAccessor<ItemStack> DATA_CAMERA =
+    protected static final EntityDataAccessor<Integer> DATA_ID_HURT =
+            SynchedEntityData.defineId(CameraStandEntity.class, EntityDataSerializers.INT);
+    protected static final EntityDataAccessor<Integer> DATA_ID_HURTDIR =
+            SynchedEntityData.defineId(CameraStandEntity.class, EntityDataSerializers.INT);
+    protected static final EntityDataAccessor<Float> DATA_ID_DAMAGE =
+            SynchedEntityData.defineId(CameraStandEntity.class, EntityDataSerializers.FLOAT);
+    protected static final EntityDataAccessor<ItemStack> DATA_ID_CAMERA =
             SynchedEntityData.defineId(CameraStandEntity.class, EntityDataSerializers.ITEM_STACK);
 
     protected UUID ownerPlayerId = Util.NIL_UUID;
@@ -61,30 +68,11 @@ public class CameraStandEntity extends Entity implements CameraHolder {
     }
 
     @Override
-    public boolean isPickable() {
-        return true;
-    }
-
-    @Override
-    protected boolean canRide(Entity vehicle) {
-        return super.canRide(vehicle);
-    }
-
-    @Override
-    public boolean isPushable() {
-        return true;
-    }
-
-    @Override
-    public void push(Entity entity) {
-        if (entity instanceof Boat) {
-            this.startRiding(entity);
-        }
-    }
-
-    @Override
     protected void defineSynchedData(SynchedEntityData.Builder builder) {
-        builder.define(DATA_CAMERA, ItemStack.EMPTY);
+        builder.define(DATA_ID_HURT, 0);
+        builder.define(DATA_ID_HURTDIR, 1);
+        builder.define(DATA_ID_DAMAGE, 0.0F);
+        builder.define(DATA_ID_CAMERA, ItemStack.EMPTY);
     }
 
     @Override
@@ -107,14 +95,14 @@ public class CameraStandEntity extends Entity implements CameraHolder {
         }
     }
 
-    // --
+    // -- Camera
 
     public ItemStack getCamera() {
-        return getEntityData().get(DATA_CAMERA);
+        return getEntityData().get(DATA_ID_CAMERA);
     }
 
     public void setCamera(ItemStack cameraStack) {
-        getEntityData().set(DATA_CAMERA, cameraStack);
+        getEntityData().set(DATA_ID_CAMERA, cameraStack);
     }
 
     public boolean isCameraActive() {
@@ -137,6 +125,44 @@ public class CameraStandEntity extends Entity implements CameraHolder {
         return level().players().stream().min(Comparator.comparingDouble(player -> player.distanceTo(this)));
     }
 
+    // -- Operator
+
+    public @Nullable CameraOperator operator() {
+        return operator;
+    }
+
+    public Optional<CameraOperator> getOperator() {
+        return Optional.ofNullable(operator);
+    }
+
+    public void setOperator(@Nullable CameraOperator operator) {
+        this.operator = operator;
+    }
+
+    // -- Holder
+
+    @Override
+    public @NotNull Player getPlayerExecutingExposure() {
+        //TODO: Disable closest player.
+        //TODO: Check for players before calling this method.
+        return getOwnerPlayer().or(this::getClosestPlayer).orElseThrow();
+    }
+
+    @Override
+    public Optional<Player> getPlayerAwardedForExposure() {
+        return getOwnerPlayer();
+    }
+
+    @Override
+    public @NotNull Entity getExposureAuthorEntity() {
+        return getOwnerPlayer().or(this::getClosestPlayer).map(pl -> (Entity)pl).orElse(this);
+    }
+
+    @Override
+    public Optional<CameraOperator> getExposureCameraOperator() {
+        return getOperator();
+    }
+
     // -- Interact
 
     public boolean isInInteractionRange(LivingEntity entity) {
@@ -147,7 +173,7 @@ public class CameraStandEntity extends Entity implements CameraHolder {
 
     @Override
     public @NotNull InteractionResult interact(Player player, InteractionHand hand) {
-        if (operator() != null) {
+        if (!canUse(player)) {
             player.displayClientMessage(Component.translatable("gui.exposure.camera_stand.error.in_use"), true);
             return InteractionResult.FAIL;
         }
@@ -168,19 +194,11 @@ public class CameraStandEntity extends Entity implements CameraHolder {
             return handleSneakInteraction(player, hand, cameraItem, cameraStack, handStack);
         }
 
-        activate(player, cameraItem);
+        startControlling(player, cameraItem);
         return InteractionResult.CONSUME; // To not cause arm swing, which causes viewfinder use/attack animation.
     }
 
     protected InteractionResult handleSneakInteraction(Player player, InteractionHand hand, CameraItem cameraItem, ItemStack cameraStack, ItemStack handStack) {
-        boolean isInUse = player.level().players().stream()
-                .filter(pl -> !pl.equals(player))
-                .anyMatch(pl -> pl.containerMenu instanceof CameraOnStandAttachmentsMenu);
-        if (isInUse) {
-            player.displayClientMessage(Component.translatable("gui.exposure.camera_stand.error.in_use"), true);
-            return InteractionResult.FAIL;
-        }
-
         if (handStack.isEmpty()) {
             return openAttachmentsMenu(player, hand);
         }
@@ -209,7 +227,18 @@ public class CameraStandEntity extends Entity implements CameraHolder {
         return openAttachmentsMenu(player, hand);
     }
 
+    public boolean canUse(Player player) {
+        return (operator() == null || player.equals(operator())) || level().players().stream()
+                .filter(pl -> !pl.equals(player))
+                .noneMatch(pl -> pl.containerMenu instanceof CameraOnStandAttachmentsMenu);
+    }
+
     public InteractionResult openAttachmentsMenu(Player player, InteractionHand hand) {
+        if (!canUse(player)) {
+            player.displayClientMessage(Component.translatable("gui.exposure.camera_stand.error.in_use"), true);
+            return InteractionResult.FAIL;
+        }
+
         ItemStack cameraStack = getCamera();
 
         if (cameraStack.isEmpty() || !(cameraStack.getItem() instanceof CameraItem cameraItem)) return InteractionResult.FAIL;
@@ -247,13 +276,23 @@ public class CameraStandEntity extends Entity implements CameraHolder {
         return InteractionResult.SUCCESS;
     }
 
-    public void activate(Player player, CameraItem cameraItem) {
+    public void startControlling(Player player, CameraItem cameraItem) {
         cameraItem.activateOnStand(player, getCamera(), this);
         setOperator(player);
         if (player.level().isClientSide) {
             CameraClient.setCameraEntity(this);
             Minecrft.stopPlayerMovement();
         }
+    }
+
+    public void stopControlling(@Nullable CameraOperator operator) {
+        if (getCamera().getItem() instanceof CameraItem cameraItem && cameraItem.isActive(getCamera())) {
+            cameraItem.deactivate(this, getCamera());
+        }
+        if (operator instanceof Player player && level().isClientSide) {
+            CameraClient.setCameraEntity(player);
+        }
+        setOperator(null);
     }
 
     // --
@@ -263,6 +302,14 @@ public class CameraStandEntity extends Entity implements CameraHolder {
         super.tick();
 
         move();
+
+        if (getHurtTime() > 0) {
+            setHurtTime(getHurtTime() - 1);
+        }
+
+        if (getDamage() > 0.0F) {
+            setDamage(getDamage() - 1.0F);
+        }
 
         if (redstoneReleaseDelay > 0) {
             redstoneReleaseDelay--;
@@ -280,11 +327,7 @@ public class CameraStandEntity extends Entity implements CameraHolder {
         }
 
         if (!isCameraActive() && operator() != null) {
-            if (operator() instanceof Player player && level().isClientSide) {
-                CameraClient.setCameraEntity(player);
-            }
-
-            setOperator(null);
+            stopControlling(operator());
             return;
         }
 
@@ -302,17 +345,7 @@ public class CameraStandEntity extends Entity implements CameraHolder {
         }
     }
 
-    public void stopControlling(@NotNull CameraOperator operator) {
-        if (getCamera().getItem() instanceof CameraItem cameraItem && cameraItem.isActive(getCamera())) {
-            cameraItem.deactivate(this, getCamera());
-        }
-        if (operator instanceof Player player && level().isClientSide) {
-            CameraClient.setCameraEntity(player);
-        }
-        setOperator(null);
-    }
-
-    private void move() {
+    protected void move() {
         // Apply gravity
         if (!this.onGround()) {
             this.setDeltaMovement(this.getDeltaMovement().add(0, -0.08, 0)); // Simulate gravity
@@ -333,8 +366,19 @@ public class CameraStandEntity extends Entity implements CameraHolder {
     }
 
     @Override
+    public void push(Entity entity) {
+        if (entity instanceof Boat) {
+            this.startRiding(entity);
+        }
+    }
+
+    // -- Hurt
+
+    @Override
     public boolean hurt(DamageSource source, float amount) {
+        if (isRemoved()) return true;
         if (isInvulnerableTo(source)) return false;
+
         markHurt();
 
         if (!getCamera().isEmpty()) {
@@ -346,55 +390,75 @@ public class CameraStandEntity extends Entity implements CameraHolder {
                 playSound(SoundEvents.ITEM_FRAME_REMOVE_ITEM);
             }
             setCamera(ItemStack.EMPTY);
-            return true;
         }
 
         if (!level().isClientSide) {
-            if (!source.isCreativePlayer()) {
-                spawnAtLocation(Exposure.Items.CAMERA_STAND.get());
+            setHurtDir(-getHurtDir());
+            setHurtTime(10);
+            markHurt();
+            setDamage(getDamage() + amount * 10.0F);
+            gameEvent(GameEvent.ENTITY_DAMAGE, source.getEntity());
+
+            if (source.isCreativePlayer()) {
+                discard();
+            } else if (getDamage() > 10.0F) {
+                destroy(source);
             }
-            remove(RemovalReason.KILLED);
-            playSound(SoundEvents.ARMOR_STAND_BREAK);
         }
 
         return true;
     }
 
+    public void setHurtTime(int hurtTime) {
+        this.entityData.set(DATA_ID_HURT, hurtTime);
+    }
+
+    public void setHurtDir(int hurtDir) {
+        this.entityData.set(DATA_ID_HURTDIR, hurtDir);
+    }
+
+    public void setDamage(float damage) {
+        this.entityData.set(DATA_ID_DAMAGE, damage);
+    }
+
+    public float getDamage() {
+        return this.entityData.get(DATA_ID_DAMAGE);
+    }
+
+    public int getHurtTime() {
+        return this.entityData.get(DATA_ID_HURT);
+    }
+
+    public int getHurtDir() {
+        return this.entityData.get(DATA_ID_HURTDIR);
+    }
+
+    protected void destroy(DamageSource source) {
+        this.destroy(this.getDropItem());
+    }
+
+    public void destroy(Item dropItem) {
+        this.kill();
+        if (this.level().getGameRules().getBoolean(GameRules.RULE_DOENTITYDROPS)) {
+            ItemStack itemStack = new ItemStack(dropItem);
+            itemStack.set(DataComponents.CUSTOM_NAME, this.getCustomName());
+            this.spawnAtLocation(itemStack);
+        }
+    }
+
+    protected Item getDropItem() {
+        return Exposure.Items.CAMERA_STAND.get();
+    }
+
     // --
 
-    public @Nullable CameraOperator operator() {
-        return operator;
-    }
-
-    public Optional<CameraOperator> getOperator() {
-        return Optional.ofNullable(operator);
-    }
-
-    public void setOperator(@Nullable CameraOperator operator) {
-        this.operator = operator;
-    }
-
-    // -- Holder
-
     @Override
-    public @NotNull Player getPlayerExecutingExposure() {
-        //TODO: Disable closest player.
-        //TODO: Check for players before calling this method.
-        return getOwnerPlayer().or(this::getClosestPlayer).orElseThrow();
+    public boolean isPickable() {
+        return true;
     }
 
     @Override
-    public Optional<Player> getPlayerAwardedForExposure() {
-        return getOwnerPlayer();
-    }
-
-    @Override
-    public @NotNull Entity getExposureAuthorEntity() {
-        return getOwnerPlayer().or(this::getClosestPlayer).map(pl -> (Entity)pl).orElse(this);
-    }
-
-    @Override
-    public Optional<CameraOperator> getExposureCameraOperator() {
-        return getOperator();
+    public boolean isPushable() {
+        return true;
     }
 }
