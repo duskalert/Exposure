@@ -216,9 +216,8 @@ public class CameraStandEntity extends Entity implements CameraHolder {
     // -- Interact
 
     public boolean isInInteractionRange(LivingEntity entity) {
-        // Slightly smaller than entity's interaction range because it's mismatched
-        // (probably because interactions are counting bounding box, not position, idk)
-        return entity.distanceTo(this) <= entity.getAttributeValue(Attributes.ENTITY_INTERACTION_RANGE) - 0.5f;
+        double range = entity.getAttributeValue(Attributes.ENTITY_INTERACTION_RANGE);
+        return this.getBoundingBox().distanceToSqr(entity.getEyePosition()) < range * range;
     }
 
     @Override
