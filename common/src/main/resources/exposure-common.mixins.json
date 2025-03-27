@@ -38,6 +38,7 @@
     "MinecraftServerMixin",
     "PlayerMixin",
     "PotionContentsMixin",
+    "ServerEntityMixin",
     "ServerGamePacketListenerMixin",
     "ServerPlayerMixin"
   ],

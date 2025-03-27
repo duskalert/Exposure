@@ -3,6 +3,7 @@ package io.github.mortuusars.exposure.neoforge.event;
 import io.github.mortuusars.exposure.Exposure;
 import io.github.mortuusars.exposure.ExposureClient;
 import io.github.mortuusars.exposure.client.ExposureClientReloadListener;
+import io.github.mortuusars.exposure.client.gui.tooltip.CameraStandTooltip;
 import io.github.mortuusars.exposure.client.input.KeyboardHandler;
 import io.github.mortuusars.exposure.client.gui.tooltip.PhotographClientTooltip;
 import io.github.mortuusars.exposure.client.gui.screen.ItemRenameScreen;
@@ -29,10 +30,7 @@ public class NeoForgeClientEvents {
     public static class ModBus {
         @SubscribeEvent
         public static void clientSetup(FMLClientSetupEvent event) {
-            event.enqueueWork(() -> {
-                ExposureClient.init();
-//                ItemBlockRenderTypes.setRenderLayer(Exposure.Items.CAMERA.get(), RenderType.cutout());
-            });
+            event.enqueueWork(ExposureClient::init);
         }
 
         @SubscribeEvent
@@ -86,6 +84,14 @@ public class NeoForgeClientEvents {
                 event.register(key);
                 return key;
             });
+        }
+    }
+
+    @EventBusSubscriber(modid = Exposure.ID, bus = EventBusSubscriber.Bus.GAME, value = Dist.CLIENT)
+    public static class GameBus {
+        @SubscribeEvent
+        public static void onRenderGuiPost(RenderGuiEvent.Post event) {
+            CameraStandTooltip.render(event.getGuiGraphics(), event.getPartialTick());
         }
     }
 }

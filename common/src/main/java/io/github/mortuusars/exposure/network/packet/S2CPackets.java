@@ -12,6 +12,7 @@ public class S2CPackets {
                 new CustomPacketPayload.TypeAndCodec<>(ActiveCameraRemoveS2CP.TYPE, ActiveCameraRemoveS2CP.STREAM_CODEC),
                 new CustomPacketPayload.TypeAndCodec<>(ActiveCameraInHandSetS2CP.TYPE, ActiveCameraInHandSetS2CP.STREAM_CODEC),
                 new CustomPacketPayload.TypeAndCodec<>(ActiveCameraOnStandSetS2CP.TYPE, ActiveCameraOnStandSetS2CP.STREAM_CODEC),
+                new CustomPacketPayload.TypeAndCodec<>(CameraStandSetRotationsS2CP.TYPE, CameraStandSetRotationsS2CP.STREAM_CODEC),
                 new CustomPacketPayload.TypeAndCodec<>(CameraStandStopControllingS2CP.TYPE, CameraStandStopControllingS2CP.STREAM_CODEC),
                 new CustomPacketPayload.TypeAndCodec<>(ShaderApplyS2CP.TYPE, ShaderApplyS2CP.STREAM_CODEC),
                 new CustomPacketPayload.TypeAndCodec<>(ClearRenderingCacheS2CP.TYPE, ClearRenderingCacheS2CP.STREAM_CODEC),

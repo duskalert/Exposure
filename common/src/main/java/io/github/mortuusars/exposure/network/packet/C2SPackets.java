@@ -1,5 +1,6 @@
 package io.github.mortuusars.exposure.network.packet;
 
+import io.github.mortuusars.exposure.network.packet.clientbound.CameraStandSetRotationsS2CP;
 import io.github.mortuusars.exposure.network.packet.serverbound.*;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;

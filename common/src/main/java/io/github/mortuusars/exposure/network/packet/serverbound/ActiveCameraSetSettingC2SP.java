@@ -2,6 +2,7 @@ package io.github.mortuusars.exposure.network.packet.serverbound;
 
 import io.github.mortuusars.exposure.Exposure;
 import io.github.mortuusars.exposure.world.camera.Camera;
+import io.github.mortuusars.exposure.world.camera.CameraOnStand;
 import io.github.mortuusars.exposure.world.item.camera.CameraSetting;
 import io.github.mortuusars.exposure.network.packet.Packet;
 import net.minecraft.network.FriendlyByteBuf;
@@ -35,6 +36,9 @@ public record ActiveCameraSetSettingC2SP(CameraSetting<?> setting, byte[] encode
         if (camera == null || camera.isEmpty()) return false;
 
         setting.decodeAndSet(camera.getHolder(), camera.getItemStack(), player.registryAccess(), encodedValue);
+        if (camera instanceof CameraOnStand cameraOnStand) {
+            cameraOnStand.getStand().forceUpdate();
+        }
         return true;
     }
 }

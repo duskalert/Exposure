@@ -409,7 +409,7 @@ public class CameraItem extends Item {
     public void inventoryTick(ItemStack stack, Level level, Entity entity, int slotId, boolean isSelected) {
         if (!(entity instanceof Player player) || !(level instanceof ServerLevel serverLevel)) return;
 
-        getShutter().tick(player, serverLevel, stack);
+        tick(player, stack);
 
         boolean matchesActive = player.getActiveExposureCameraOptional()
                 .map(camera -> camera.idMatches(getOrCreateID(stack)))
@@ -418,36 +418,30 @@ public class CameraItem extends Item {
             setActive(stack, false);
         }
 
-        CameraInstances.ifPresent(stack, instance -> {
-            CameraInstance.ProjectionState state = instance.getProjectionState(level);
-            switch (state) {
-                case SUCCESSFUL, FAILED, TIMED_OUT -> {
-                    handleProjectionResult(serverLevel, player, stack, state, instance.getProjectionError(level));
-                    instance.stopWaitingForProjection();
-                }
-            }
-        });
-
         if (ExposureServer.debugHighlightEntitiesInFrame && isActive(stack)) {
             testEntitiesInFrame(stack, level, player);
         }
     }
 
-    public void tick(CameraHolder holder, ItemStack stack) {
+    public boolean tick(CameraHolder holder, ItemStack stack) {
         Level level = holder.asHolderEntity().level();
-        if (!(level instanceof ServerLevel serverLevel)) return;
+        if (!(level instanceof ServerLevel serverLevel)) return false;
 
-        getShutter().tick(holder, serverLevel, stack);
+        boolean shutterStateChanged = getShutter().tick(holder, serverLevel, stack);
 
-        CameraInstances.ifPresent(stack, instance -> {
+        boolean projectionChanged = CameraInstances.getOptional(stack).map(instance -> {
             CameraInstance.ProjectionState state = instance.getProjectionState(level);
             switch (state) {
                 case SUCCESSFUL, FAILED, TIMED_OUT -> {
                     handleProjectionResult(serverLevel, holder, stack, state, instance.getProjectionError(level));
                     instance.stopWaitingForProjection();
+                    return true;
                 }
             }
-        });
+            return false;
+        }).orElse(false);
+
+        return shutterStateChanged || projectionChanged;
     }
 
     @Override
@@ -949,7 +943,8 @@ public class CameraItem extends Item {
                         ? Color.argb(pane.getColor().getTextureDiffuseColor()).multiply(0.2f).withAlpha(255).getARGB()
                         : pane.getColor().getTextureDiffuseColor();
             }
-            if (filter.getForReading().is(Exposure.Items.INTERPLANAR_PROJECTOR.get())) return shutterOpen ? 0XFF051A0F : 0xFF50B27E;
+            if (filter.getForReading().is(Exposure.Items.INTERPLANAR_PROJECTOR.get())) return shutterOpen ? 0xFF051A0F : 0xFF50B27E;
+            if (filter.getForReading().is(Exposure.Items.BROKEN_INTERPLANAR_PROJECTOR.get())) return shutterOpen ? 0xFF003D76 : 0xFF54ADFF;
             return -1;
         }
 

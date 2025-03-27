@@ -315,5 +315,11 @@
   "subtitle.exposure.camera_stand.set_camera": "Camera Stand fills",
   "subtitle.exposure.camera_stand.remove_camera": "Camera Stand empties",
   "gui.exposure.camera_stand.error.in_use": "Camera is already in use",
-  "gui.exposure.camera_stand.malfunction_fixed": "Camera has been fixed"
+  "gui.exposure.camera_stand.malfunction_fixed": "Camera has been fixed",
+  "gui.exposure.camera_stand.tooltip.malfunctioned": "Camera malfunctioned while taking a shot,\nand no one was nearby to fix it.",
+
+  "exposure.configuration.camera_stand_tooltip": "Camera Stand Tooltip",
+  "exposure.configuration.working_range": "Working Range",
+  "exposure.configuration.out_of_working_range_malfunction": "Malfunction",
+  "exposure.configuration.fallback_to_other_players": "Fallback to other players"
 }

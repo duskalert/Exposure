@@ -2,6 +2,7 @@ package io.github.mortuusars.exposure.fabric;
 
 import io.github.mortuusars.exposure.Exposure;
 import io.github.mortuusars.exposure.ExposureClient;
+import io.github.mortuusars.exposure.client.gui.tooltip.CameraStandTooltip;
 import io.github.mortuusars.exposure.client.input.KeyboardHandler;
 import io.github.mortuusars.exposure.client.render.CameraStandEntityRenderer;
 import io.github.mortuusars.exposure.client.render.GlassPhotographFrameEntityRenderer;
@@ -20,6 +21,7 @@ import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.model.loading.v1.ModelLoadingPlugin;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
+import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.fabricmc.fabric.api.client.rendering.v1.TooltipComponentCallback;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.minecraft.client.gui.screens.MenuScreens;
@@ -60,6 +62,8 @@ public class ExposureFabricClient implements ClientModInitializer {
 
         TooltipComponentCallback.EVENT.register(data -> data instanceof PhotographTooltip photographTooltip
                 ? new PhotographClientTooltip(photographTooltip) : null);
+
+        HudRenderCallback.EVENT.register(CameraStandTooltip::render);
 
         FabricS2CPacketHandler.register();
 

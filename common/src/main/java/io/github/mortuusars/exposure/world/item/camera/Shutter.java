@@ -46,7 +46,10 @@ public class Shutter {
         return state.isOpen() && !projecting && gameTime >= state.getCloseTick();
     }
 
-    public void tick(CameraHolder holder, ServerLevel level, ItemStack stack) {
+    /**
+     * @return true if shutter state has changed.
+     */
+    public boolean tick(CameraHolder holder, ServerLevel level, ItemStack stack) {
         long gameTime = holder.asHolderEntity().level().getGameTime();
         if (shouldClose(stack, gameTime)) {
             ShutterState state = getState(stack);
@@ -55,7 +58,9 @@ public class Shutter {
             } else {
                 close(holder, level, stack);
             }
+            return true;
         }
+        return false;
     }
 
     public void open(CameraHolder holder, ServerLevel level, ItemStack stack, ShutterSpeed shutterSpeed) {

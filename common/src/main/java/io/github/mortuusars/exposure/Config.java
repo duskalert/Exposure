@@ -245,6 +245,7 @@ public class Config {
         public static final ModConfigSpec.BooleanValue CAMERA_SHOW_FILM_BAR_ON_ITEM;
         public static final ModConfigSpec.BooleanValue PHOTOGRAPH_SHOW_PHOTOGRAPHER_IN_TOOLTIP;
         public static final ModConfigSpec.BooleanValue PHOTOGRAPH_IN_HAND_HIDE_CROSSHAIR;
+        public static final ModConfigSpec.BooleanValue CAMERA_STAND_TOOLTIP;
 
         public static final ModConfigSpec.BooleanValue ALBUM_PHOTOS_COUNT_TOOLTIP;
         public static final ModConfigSpec.ConfigValue<String> ALBUM_FONT_MAIN_COLOR;
@@ -313,6 +314,10 @@ public class Config {
                 PHOTOGRAPH_IN_HAND_HIDE_CROSSHAIR = builder
                         .comment("Crosshair will not get in the way when holding a photograph.")
                         .define("photograph_in_hand_hide_crosshair", true);
+
+                CAMERA_STAND_TOOLTIP = builder
+                        .comment("When looking at the Camera Stand, in-world tooltip will show information about the camera on it. Default: true")
+                        .define("camera_stand_tooltip", true);
 
                 ALBUM_PHOTOS_COUNT_TOOLTIP = builder
                         .comment("Album will show how many photographs it contains in a tooltip.")

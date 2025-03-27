@@ -6,6 +6,7 @@ import io.github.mortuusars.exposure.PlatformHelper;
 import io.github.mortuusars.exposure.client.camera.CameraClient;
 import io.github.mortuusars.exposure.client.util.Minecrft;
 import io.github.mortuusars.exposure.network.Packets;
+import io.github.mortuusars.exposure.network.packet.clientbound.CameraStandSetRotationsS2CP;
 import io.github.mortuusars.exposure.network.packet.clientbound.CameraStandStopControllingS2CP;
 import io.github.mortuusars.exposure.world.inventory.CameraOnStandAttachmentsMenu;
 import io.github.mortuusars.exposure.world.item.camera.Attachment;
@@ -231,7 +232,7 @@ public class CameraStandEntity extends Entity implements CameraHolder {
         }
 
         if (isMalfunctioned()) {
-            if (!level().isClientSide) {
+            if (!isClientSide()) {
                 setMalfunctioned(false);
                 player.displayClientMessage(Component.translatable("gui.exposure.camera_stand.malfunction_fixed"), true);
                 playSound(SoundEvents.SMITHING_TABLE_USE, 0.9f, 1.3f);
@@ -253,7 +254,7 @@ public class CameraStandEntity extends Entity implements CameraHolder {
             setCamera(handStack);
             player.setItemInHand(hand, ItemStack.EMPTY);
 
-            if (!level().isClientSide) {
+            if (!isClientSide()) {
                 playCameraSetSound();
             }
 
@@ -361,9 +362,11 @@ public class CameraStandEntity extends Entity implements CameraHolder {
             setOwnerPlayer(player);
         }
 
-        if (player.level().isClientSide) {
+        if (isClientSide()) {
             CameraClient.setCameraEntity(this);
             Minecrft.stopPlayerMovement();
+        } else {
+            forceUpdate();
         }
     }
 
@@ -372,7 +375,7 @@ public class CameraStandEntity extends Entity implements CameraHolder {
             cameraItem.deactivate(this, getCamera());
         }
         if (operator() instanceof Player player) {
-            if (level().isClientSide) {
+            if (isClientSide()) {
                 CameraClient.setCameraEntity(player);
             } else if (player instanceof ServerPlayer serverPlayer) {
                 // This method is usually called on both sides, but in the case of client/server desync,
@@ -382,6 +385,10 @@ public class CameraStandEntity extends Entity implements CameraHolder {
             }
         }
         setOperator(null);
+
+        if (!isClientSide()) {
+            forceUpdate();
+        }
     }
 
     public void release() {
@@ -389,6 +396,7 @@ public class CameraStandEntity extends Entity implements CameraHolder {
             getPlayerToMakePhoto().ifPresentOrElse(
                     player -> cameraItem.release(this, getCamera()),
                     this::malfunction);
+            forceUpdate();
         }
     }
 
@@ -423,8 +431,8 @@ public class CameraStandEntity extends Entity implements CameraHolder {
 
         redstoneControl.tick();
 
-        if (getCamera().getItem() instanceof CameraItem cameraItem) {
-            cameraItem.tick(this, getCamera());
+        if (!isClientSide() && getCamera().getItem() instanceof CameraItem cameraItem && cameraItem.tick(this, getCamera())) {
+            forceUpdate();
         }
 
         if (!isCameraActive() && operator() != null) {
@@ -434,7 +442,7 @@ public class CameraStandEntity extends Entity implements CameraHolder {
 
         @Nullable CameraOperator operator = operator();
         if (operator == null) {
-            if (!level().isClientSide && getCamera().getItem() instanceof CameraItem cameraItem && cameraItem.isActive(getCamera())) {
+            if (!isClientSide() && getCamera().getItem() instanceof CameraItem cameraItem && cameraItem.isActive(getCamera())) {
                 cameraItem.deactivate(this, getCamera());
             }
             return;
@@ -493,7 +501,7 @@ public class CameraStandEntity extends Entity implements CameraHolder {
     }
 
     protected void checkForBoats() {
-        if (!level().isClientSide && !isPassenger()) {
+        if (!isClientSide() && !isPassenger()) {
             List<Entity> boats = level().getEntities(this, getBoundingBox().inflate(0.4F, 0.2F, 0.4F), e -> e instanceof Boat);
             for (Entity entity : boats) {
                 Boat boat = ((Boat) entity);
@@ -514,7 +522,7 @@ public class CameraStandEntity extends Entity implements CameraHolder {
         markHurt();
 
         if (!getCamera().isEmpty()) {
-            if (!level().isClientSide) {
+            if (!isClientSide()) {
                 @Nullable ItemEntity itemEntity = spawnAtLocation(getCamera(), getEyeHeight());
                 if (itemEntity != null) {
                     itemEntity.setPickUpDelay(5);
@@ -530,7 +538,7 @@ public class CameraStandEntity extends Entity implements CameraHolder {
             amount = 1.0f; // Prevent one-hit harvesting.
         }
 
-        if (!level().isClientSide) {
+        if (!isClientSide()) {
             setHurtDir(-getHurtDir());
             setHurtTime(10);
             markHurt();
@@ -669,5 +677,34 @@ public class CameraStandEntity extends Entity implements CameraHolder {
     public void playCameraRemoveSound() {
         this.level().playSound(null, this.getX(), this.getY(), this.getZ(),
                 Exposure.SoundEvents.CAMERA_STAND_REMOVE_CAMERA.get(), this.getSoundSource(), 0.8F, 1.0F);
+    }
+
+    /**
+     * Forces data sync to the client.
+     */
+    public void forceUpdate() {
+        getEntityData().set(DATA_ID_CAMERA, getCamera(), true);
+    }
+
+    protected boolean isClientSide() {
+        return level().isClientSide;
+    }
+
+    @Override
+    public boolean isControlledByLocalInstance() {
+        return operator() instanceof Player player && player.isLocalPlayer() || super.isControlledByLocalInstance();
+    }
+
+    // --
+
+    public void syncToClientsIfNeeded() {
+        if (isClientSide()) return;
+        if (operator() != null || (tickCount % 10 == 0)) {
+            syncToClients();
+        }
+    }
+
+    public void syncToClients() {
+        Packets.sendToClients(new CameraStandSetRotationsS2CP(this.getId(), getYRot(), getXRot()), pl -> !pl.equals(operator()));
     }
 }
