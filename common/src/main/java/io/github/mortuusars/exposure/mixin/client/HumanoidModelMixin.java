@@ -6,6 +6,7 @@ import io.github.mortuusars.exposure.client.animation.CameraPoses;
 import io.github.mortuusars.exposure.client.util.Minecrft;
 import io.github.mortuusars.exposure.world.camera.Camera;
 import io.github.mortuusars.exposure.world.camera.CameraInHand;
+import io.github.mortuusars.exposure.world.camera.CameraOnStand;
 import io.github.mortuusars.exposure.world.entity.CameraHolder;
 import io.github.mortuusars.exposure.world.entity.CameraOperator;
 import io.github.mortuusars.exposure.world.item.camera.CameraItem;
@@ -54,6 +55,13 @@ public abstract class HumanoidModelMixin<T extends LivingEntity> extends Ageable
             HumanoidArm arm = camera instanceof CameraInHand cameraInHand && cameraInHand.getHand() == InteractionHand.OFF_HAND
                     ? Minecraft.getInstance().options.mainHand().get().getOpposite()
                     : Minecraft.getInstance().options.mainHand().get();
+
+            if (camera instanceof CameraOnStand cameraOnStand) {
+                poses.applyStand((HumanoidModel<?>) (Object) this, entity, arm, cameraOnStand.getStand());
+                exposure$LeftArmBobbingMultiplier = 1F;
+                exposure$RightArmBobbingMultiplier = 1F;
+                return;
+            }
 
             if (item.isInSelfieMode(camera.getItemStack())) {
                 poses.applySelfie((HumanoidModel<?>) (Object) this, entity, arm, false);

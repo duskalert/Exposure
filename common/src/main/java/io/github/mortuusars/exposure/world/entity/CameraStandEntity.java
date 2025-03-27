@@ -5,6 +5,8 @@ import io.github.mortuusars.exposure.Exposure;
 import io.github.mortuusars.exposure.PlatformHelper;
 import io.github.mortuusars.exposure.client.camera.CameraClient;
 import io.github.mortuusars.exposure.client.util.Minecrft;
+import io.github.mortuusars.exposure.network.Packets;
+import io.github.mortuusars.exposure.network.packet.clientbound.CameraStandStopControllingS2CP;
 import io.github.mortuusars.exposure.world.inventory.CameraOnStandAttachmentsMenu;
 import io.github.mortuusars.exposure.world.item.camera.Attachment;
 import io.github.mortuusars.exposure.world.item.camera.CameraItem;
@@ -369,8 +371,15 @@ public class CameraStandEntity extends Entity implements CameraHolder {
         if (getCamera().getItem() instanceof CameraItem cameraItem && cameraItem.isActive(getCamera())) {
             cameraItem.deactivate(this, getCamera());
         }
-        if (operator() instanceof Player player && level().isClientSide) {
-            CameraClient.setCameraEntity(player);
+        if (operator() instanceof Player player) {
+            if (level().isClientSide) {
+                CameraClient.setCameraEntity(player);
+            } else if (player instanceof ServerPlayer serverPlayer) {
+                // This method is usually called on both sides, but in the case of client/server desync,
+                // (which is sometimes happening on contraptions)
+                // this will ensure that client will be updated properly, otherwise cameraEntity will not be set back to player.
+                Packets.sendToClient(new CameraStandStopControllingS2CP(this.getId()), serverPlayer);
+            }
         }
         setOperator(null);
     }

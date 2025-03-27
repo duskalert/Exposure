@@ -17,6 +17,7 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(Minecraft.class)
 public abstract class MinecraftMixin {
@@ -33,6 +34,13 @@ public abstract class MinecraftMixin {
             cameraOnStand.release();
             Packets.sendToServer(ActiveCameraReleaseC2SP.INSTANCE);
             ci.cancel();
+        }
+    }
+
+    @Inject(method = "startAttack", at = @At(value = "HEAD"), cancellable = true)
+    void onStartAttack(CallbackInfoReturnable<Boolean> cir) {
+        if (player != null && player.getActiveExposureCamera() instanceof CameraOnStand) {
+            cir.setReturnValue(false);
         }
     }
 

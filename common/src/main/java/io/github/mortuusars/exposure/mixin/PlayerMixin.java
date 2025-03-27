@@ -1,14 +1,17 @@
 package io.github.mortuusars.exposure.mixin;
 
 import io.github.mortuusars.exposure.world.camera.Camera;
+import io.github.mortuusars.exposure.world.camera.CameraOnStand;
 import io.github.mortuusars.exposure.world.entity.CameraHolder;
 import io.github.mortuusars.exposure.world.entity.CameraOperator;
 import io.github.mortuusars.exposure.world.item.camera.CameraItem;
+import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -18,6 +21,7 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.Optional;
 
@@ -115,5 +119,12 @@ public abstract class PlayerMixin extends LivingEntity implements CameraHolder, 
 
         int actionTime = (int) (level().getGameTime() - lastActionTime);
         exposureCameraActionAnim = Math.clamp(actionTime / 10F, 0F, 1F);
+    }
+
+    @Inject(method = "blockActionRestricted", at = @At("HEAD"), cancellable = true)
+    private void onBlockActionRestricted(Level level, BlockPos pos, GameType gameMode, CallbackInfoReturnable<Boolean> cir) {
+        if (getActiveExposureCamera() instanceof CameraOnStand) {
+            cir.setReturnValue(true);
+        }
     }
 }
