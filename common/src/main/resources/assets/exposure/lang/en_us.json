@@ -314,5 +314,6 @@
   "entity.exposure.camera_stand": "Camera Stand",
   "subtitle.exposure.camera_stand.set_camera": "Camera Stand fills",
   "subtitle.exposure.camera_stand.remove_camera": "Camera Stand empties",
-  "gui.exposure.camera_stand.error.in_use": "Camera is already in use"
+  "gui.exposure.camera_stand.error.in_use": "Camera is already in use",
+  "gui.exposure.camera_stand.malfunction_fixed": "Camera has been fixed"
 }

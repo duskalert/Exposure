@@ -23,6 +23,11 @@ public class Config {
         public static final ModConfigSpec.BooleanValue CAMERA_GUI_RIGHT_CLICK_OPEN_ATTACHMENTS;
         public static final ModConfigSpec.BooleanValue CAMERA_GUI_RIGHT_CLICK_HOTSWAP;
 
+        // Camera Stand
+        public static final ModConfigSpec.IntValue CAMERA_STAND_WORKING_RANGE;
+        public static final ModConfigSpec.BooleanValue CAMERA_STAND_RANGE_MALFUNCTION;
+        public static final ModConfigSpec.BooleanValue CAMERA_STAND_FALLBACK_TO_OTHER_PLAYERS;
+
         // Capture
         public static final ModConfigSpec.IntValue DEFAULT_FRAME_SIZE;
         public static final ModConfigSpec.BooleanValue CAN_PROJECT;
@@ -80,6 +85,22 @@ public class Config {
                         .comment("Right-clicking Camera in GUI with attachment item will insert/swap it.",
                                 "Default: true")
                         .define("right_click_hotswap", true);
+                builder.pop();
+            }
+
+            {
+                builder.push("camera_stand");
+                CAMERA_STAND_WORKING_RANGE = builder
+                        .comment("Maximum allowed distance between Camera Stand and a player for the stand to function.",
+                                "Camera on stand will capture the chunks that player is currently seeing, this may result is some parts of the world missing when camera on stand is taking photos while a player far away. Short render distances can be a problem as well.",
+                                "Default: 100")
+                        .defineInRange("working_range", 100, 1, Integer.MAX_VALUE);
+                CAMERA_STAND_RANGE_MALFUNCTION = builder
+                        .comment("Attempting to take a photo outside the working range will cause the Camera on stand to 'malfunction' and it would need to be repaired (by simply using it). Default: true")
+                        .define("out_of_working_range_malfunction", true);
+                CAMERA_STAND_FALLBACK_TO_OTHER_PLAYERS = builder
+                        .comment("If owner of the Camera Stand is not in range, closest player will be chosen to create and render a photo. Default: true")
+                        .define("fallback_to_other_players", true);
                 builder.pop();
             }
 

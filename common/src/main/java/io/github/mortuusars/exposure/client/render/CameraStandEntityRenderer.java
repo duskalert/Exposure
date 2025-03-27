@@ -77,8 +77,15 @@ public class CameraStandEntityRenderer <T extends CameraStandEntity> extends Ent
         poseStack.translate(0, 1.125, 0);
         float scale = 0.9f;
         poseStack.scale(scale, scale, scale);
+
         poseStack.mulPose(Axis.YP.rotationDegrees(-entityYaw + 180));
         poseStack.mulPose(Axis.XP.rotationDegrees(-entityPitch));
+
+        if (entity.isMalfunctioned()) {
+            poseStack.mulPose(Axis.ZP.rotationDegrees(-50));
+            poseStack.mulPose(Axis.XP.rotationDegrees(-10));
+        }
+
         poseStack.translate(-0.5f, 0f, -0.5f);
         ModelResourceLocation mountModelLocation = ExposureClient.Models.CAMERA_STAND_MOUNT;
         BakedModel mountModel = PlatformHelperClient.getModel(mountModelLocation);
@@ -92,8 +99,15 @@ public class CameraStandEntityRenderer <T extends CameraStandEntity> extends Ent
         poseStack.translate(0, 1.125, 0);
         float scale = 0.9f;
         poseStack.scale(scale, scale, scale);
+
         poseStack.mulPose(Axis.YP.rotationDegrees(-entityYaw + 180));
         poseStack.mulPose(Axis.XP.rotationDegrees(-entityPitch));
+
+        if (entity.isMalfunctioned()) {
+            poseStack.mulPose(Axis.ZP.rotationDegrees(-50));
+            poseStack.mulPose(Axis.XP.rotationDegrees(-15));
+        }
+
         poseStack.translate(0, 0.625, 0);
         Minecrft.get().getItemRenderer().renderStatic(entity.getCamera(), ItemDisplayContext.NONE, packedLight, OverlayTexture.NO_OVERLAY, poseStack, bufferSource, entity.level(), 0);
         poseStack.popPose();

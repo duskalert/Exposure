@@ -5,6 +5,7 @@ import io.github.mortuusars.exposure.client.util.Minecrft;
 import io.github.mortuusars.exposure.data.ColorPalette;
 import io.github.mortuusars.exposure.world.camera.capture.CaptureProperties;
 import io.github.mortuusars.exposure.util.cycles.task.Task;
+import io.github.mortuusars.exposure.world.entity.CameraHolder;
 import io.github.mortuusars.exposure.world.level.storage.ExposureData;
 import io.github.mortuusars.exposure.util.TranslatableError;
 import io.github.mortuusars.exposure.util.UnixTimestamp;
@@ -25,8 +26,8 @@ public interface CaptureTemplate {
         return image -> new ExposureData(image.width(), image.height(), image.pixels(), paletteId, tag);
     }
 
-    default ExposureData.Tag createExposureTag(Player executingPlayer, CaptureProperties data, boolean isLoaded) {
-        return new ExposureData.Tag(data.filmType(), executingPlayer.getScoreboardName(),
+    default ExposureData.Tag createExposureTag(CaptureProperties data, boolean isLoaded) {
+        return new ExposureData.Tag(data.filmType(), Minecrft.player().getScoreboardName(),
                 UnixTimestamp.Seconds.now(), isLoaded, false);
     }
 

@@ -57,7 +57,7 @@ public class PathCaptureTemplate implements CaptureTemplate {
                                         .map(ImageModifier::singleChannelBlackAndWhite)
                                         .orElse(ImageModifier.BLACK_AND_WHITE))))
                 .thenAsync(Palettizer.fromProjectionMode(projectionInfo.mode()).palettizeAndClose(palette.value()))
-                .thenAsync(convertToExposureData(palette, createExposureTag(cameraHolder.getPlayerExecutingExposure(), data, true)))
+                .thenAsync(convertToExposureData(palette, createExposureTag(data, true)))
                 .acceptAsync(image -> ExposureUploader.upload(data.exposureId(), image))
                 .onError(err -> LOGGER.error(err.technical().getString()));
     }

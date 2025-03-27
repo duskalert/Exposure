@@ -60,7 +60,7 @@ public class ExposeCaptureTemplate implements CaptureTemplate {
                                         .map(ImageModifier::singleChannelBlackAndWhite)
                                         .orElse(ImageModifier.BLACK_AND_WHITE))))
                 .thenAsync(Palettizer.DITHERED.palettizeAndClose(palette.value()))
-                .thenAsync(convertToExposureData(palette, createExposureTag(cameraHolder.getPlayerExecutingExposure(), data, false)))
+                .thenAsync(convertToExposureData(palette, createExposureTag(data, false)))
                 .acceptAsync(image -> ExposureUploader.upload(data.exposureId(), image))
                 .onError(err -> LOGGER.error(err.technical().getString()));
     }

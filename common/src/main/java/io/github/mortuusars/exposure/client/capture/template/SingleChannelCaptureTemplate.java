@@ -58,7 +58,7 @@ public class SingleChannelCaptureTemplate implements CaptureTemplate {
                                         .map(ImageModifier::singleChannelBlackAndWhite)
                                         .orElse(ImageModifier.BLACK_AND_WHITE))))
                 .thenAsync(Palettizer.DITHERED.palettizeAndClose(palette.value()))
-                .then(convertToExposureData(palette, createExposureTag(cameraHolder.getPlayerExecutingExposure(), data, false)))
+                .then(convertToExposureData(palette, createExposureTag(data, false)))
                 .accept(image -> ExposureUploader.upload(data.exposureId(), image))
                 .onError(printCasualErrorInChat());
     }
