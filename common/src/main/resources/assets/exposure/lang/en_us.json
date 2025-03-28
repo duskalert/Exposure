@@ -321,5 +321,8 @@
   "exposure.configuration.camera_stand_tooltip": "Camera Stand Tooltip",
   "exposure.configuration.working_range": "Working Range",
   "exposure.configuration.out_of_working_range_malfunction": "Malfunction",
-  "exposure.configuration.fallback_to_other_players": "Fallback to other players"
+  "exposure.configuration.fallback_to_other_players": "Fallback to other players",
+
+  "item.exposure.camera.tooltip.details_attachments_screen_on_stand": "§8[§7Sneak + Use§8] to configure",
+  "item.exposure.camera.tooltip.details_hotswap_on_stand": "§8[§7Sneak + Use§8] with item to install/swap attachment"
 }

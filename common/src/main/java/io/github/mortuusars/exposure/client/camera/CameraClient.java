@@ -6,6 +6,8 @@ import io.github.mortuusars.exposure.client.util.Minecrft;
 import io.github.mortuusars.exposure.world.camera.Camera;
 import io.github.mortuusars.exposure.network.Packets;
 import io.github.mortuusars.exposure.network.packet.common.ActiveCameraDeactivateCommonPacket;
+import io.github.mortuusars.exposure.world.camera.CameraOnStand;
+import net.minecraft.client.CameraType;
 import net.minecraft.world.entity.Entity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -56,6 +58,10 @@ public class CameraClient {
     public static void setupViewfinder(@NotNull Camera camera) {
         removeViewfinder();
         activeViewfinder = ViewfinderRegistry.get(camera);
+
+        if (camera instanceof CameraOnStand) {
+            Minecrft.options().setCameraType(CameraType.FIRST_PERSON);
+        }
     }
 
     public static void removeViewfinder() {

@@ -89,6 +89,16 @@ public class CameraStandEntity extends Entity implements CameraHolder {
     }
 
     @Override
+    public void onSyncedDataUpdated(EntityDataAccessor<?> dataAccessor) {
+        if (dataAccessor.equals(DATA_ID_CAMERA)) {
+            ItemStack camera = getCamera();
+            if (!camera.isEmpty()) {
+                camera.setEntityRepresentation(this);
+            }
+        }
+    }
+
+    @Override
     protected void addAdditionalSaveData(CompoundTag tag) {
         tag.putInt("Cooldown", getCooldown());
         tag.putBoolean("Malfunctioned", isMalfunctioned());
@@ -124,6 +134,7 @@ public class CameraStandEntity extends Entity implements CameraHolder {
 
     public void setCamera(ItemStack cameraStack) {
         getEntityData().set(DATA_ID_CAMERA, cameraStack);
+        cameraStack.setEntityRepresentation(this);
     }
 
     public boolean isCameraActive() {

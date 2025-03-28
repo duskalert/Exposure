@@ -341,6 +341,15 @@ public class CameraItem extends Item {
         }
 
         if (Config.Client.CAMERA_SHOW_TOOLTIP_DETAILS.get()) {
+            if (stack.getEntityRepresentation() instanceof CameraStandEntity) {
+                if (Screen.hasShiftDown()) {
+                    components.add(Component.translatable("item.exposure.camera.tooltip.details_attachments_screen_on_stand"));
+                    components.add(Component.translatable("item.exposure.camera.tooltip.details_hotswap_on_stand"));
+                } else
+                    components.add(Component.translatable("tooltip.exposure.hold_for_details"));
+                return;
+            }
+
             boolean rClickAttachments = Config.Server.CAMERA_GUI_RIGHT_CLICK_OPEN_ATTACHMENTS.get();
             boolean rClickHotswap = Config.Server.CAMERA_GUI_RIGHT_CLICK_HOTSWAP.get();
 
