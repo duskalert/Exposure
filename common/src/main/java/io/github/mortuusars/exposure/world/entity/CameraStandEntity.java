@@ -8,6 +8,7 @@ import io.github.mortuusars.exposure.client.util.Minecrft;
 import io.github.mortuusars.exposure.network.Packets;
 import io.github.mortuusars.exposure.network.packet.clientbound.CameraStandSetRotationsS2CP;
 import io.github.mortuusars.exposure.network.packet.clientbound.CameraStandStopControllingS2CP;
+import io.github.mortuusars.exposure.world.camera.CameraId;
 import io.github.mortuusars.exposure.world.inventory.CameraOnStandAttachmentsMenu;
 import io.github.mortuusars.exposure.world.item.camera.Attachment;
 import io.github.mortuusars.exposure.world.item.camera.CameraItem;
@@ -65,14 +66,13 @@ public class CameraStandEntity extends Entity implements CameraHolder {
             SynchedEntityData.defineId(CameraStandEntity.class, EntityDataSerializers.ITEM_STACK);
     protected static final EntityDataAccessor<Integer> DATA_ID_COOLDOWN =
             SynchedEntityData.defineId(CameraStandEntity.class, EntityDataSerializers.INT);
+    protected static final EntityDataAccessor<Integer> DATA_ID_OPERATOR_ID =
+            SynchedEntityData.defineId(CameraStandEntity.class, EntityDataSerializers.INT);
     protected static final EntityDataAccessor<Boolean> DATA_ID_MALFUNCTIONED =
             SynchedEntityData.defineId(CameraStandEntity.class, EntityDataSerializers.BOOLEAN);
 
     protected CameraStandRedstoneControl redstoneControl = new CameraStandRedstoneControl(this);
     protected UUID ownerPlayerId = Util.NIL_UUID;
-
-    @Nullable
-    protected CameraOperator operator;
 
     public CameraStandEntity(EntityType<? extends CameraStandEntity> entityType, Level level) {
         super(entityType, level);
@@ -84,6 +84,7 @@ public class CameraStandEntity extends Entity implements CameraHolder {
         builder.define(DATA_ID_HURTDIR, 1);
         builder.define(DATA_ID_DAMAGE, 0.0F);
         builder.define(DATA_ID_CAMERA, ItemStack.EMPTY);
+        builder.define(DATA_ID_OPERATOR_ID, -1);
         builder.define(DATA_ID_COOLDOWN, 0);
         builder.define(DATA_ID_MALFUNCTIONED, false);
     }
@@ -133,8 +134,13 @@ public class CameraStandEntity extends Entity implements CameraHolder {
     }
 
     public void setCamera(ItemStack cameraStack) {
+        if (!isClientSide() && (cameraStack.isEmpty() || !CameraId.ofStack(getCamera()).matches(cameraStack))) {
+            level().players().stream()
+                    .filter(pl -> pl instanceof ServerPlayer && pl.containerMenu instanceof CameraOnStandAttachmentsMenu)
+                    .forEach(pl -> ((ServerPlayer) pl).closeContainer());
+        }
+
         getEntityData().set(DATA_ID_CAMERA, cameraStack);
-        cameraStack.setEntityRepresentation(this);
     }
 
     public boolean isCameraActive() {
@@ -181,16 +187,17 @@ public class CameraStandEntity extends Entity implements CameraHolder {
 
     // -- Operator
 
-    public @Nullable CameraOperator operator() {
-        return operator;
+    public int getOperatorId() {
+        return getEntityData().get(DATA_ID_OPERATOR_ID);
     }
 
-    public Optional<CameraOperator> getOperator() {
-        return Optional.ofNullable(operator);
+    public @Nullable CameraOperator operator() {
+        int id = getOperatorId();
+        return id >= 0 && level().getEntity(id) instanceof CameraOperator operator ? operator : null;
     }
 
     public void setOperator(@Nullable CameraOperator operator) {
-        this.operator = operator;
+        getEntityData().set(DATA_ID_OPERATOR_ID, operator != null ? operator.asOperatorEntity().getId() : -1);
     }
 
     // -- Holder
@@ -224,7 +231,7 @@ public class CameraStandEntity extends Entity implements CameraHolder {
 
     @Override
     public Optional<CameraOperator> getExposureCameraOperator() {
-        return getOperator();
+        return Optional.ofNullable(operator());
     }
 
     // -- Interact
@@ -298,6 +305,7 @@ public class CameraStandEntity extends Entity implements CameraHolder {
                 if (attachment.get(cameraStack).isEmpty()) {
                     attachment.set(cameraStack, handStack.split(1));
                     attachment.playInsertSoundSided(player, this);
+                    forceUpdate();
                     return InteractionResult.SUCCESS;
                 }
 
@@ -305,6 +313,7 @@ public class CameraStandEntity extends Entity implements CameraHolder {
                     player.setItemInHand(hand, attachment.get(cameraStack).getCopy());
                     attachment.set(cameraStack, handStack);
                     attachment.playInsertSoundSided(player, this);
+                    forceUpdate();
                     return InteractionResult.SUCCESS;
                 }
 
@@ -316,7 +325,7 @@ public class CameraStandEntity extends Entity implements CameraHolder {
     }
 
     public boolean canUse(Player player) {
-        return (operator() == null || player.equals(operator())) || level().players().stream()
+        return (operator() == null || player.equals(operator())) && level().players().stream()
                 .filter(pl -> !pl.equals(player))
                 .noneMatch(pl -> pl.containerMenu instanceof CameraOnStandAttachmentsMenu);
     }
@@ -342,6 +351,8 @@ public class CameraStandEntity extends Entity implements CameraHolder {
         cameraItem.getOrCreateID(cameraStack);
 
         if (player instanceof ServerPlayer serverPlayer) {
+            setOperator(serverPlayer);
+
             MenuProvider menuProvider = new MenuProvider() {
                 @Override
                 public @NotNull Component getDisplayName() {
@@ -354,6 +365,8 @@ public class CameraStandEntity extends Entity implements CameraHolder {
                     return new CameraOnStandAttachmentsMenu(containerId, playerInventory, CameraStandEntity.this);
                 }
             };
+
+            forceUpdate();
 
             PlatformHelper.openMenu(serverPlayer, menuProvider,
                     buffer -> buffer.writeInt(getId()));
@@ -385,10 +398,10 @@ public class CameraStandEntity extends Entity implements CameraHolder {
         if (getCamera().getItem() instanceof CameraItem cameraItem && cameraItem.isActive(getCamera())) {
             cameraItem.deactivate(this, getCamera());
         }
-        if (operator() instanceof Player player) {
+        if (operator() != null) {
             if (isClientSide()) {
-                CameraClient.setCameraEntity(player);
-            } else if (player instanceof ServerPlayer serverPlayer) {
+                CameraClient.resetCameraEntity();
+            } else if (operator() instanceof ServerPlayer serverPlayer) {
                 // This method is usually called on both sides, but in the case of client/server desync,
                 // (which is sometimes happening on contraptions)
                 // this will ensure that client will be updated properly, otherwise cameraEntity will not be set back to player.
@@ -446,21 +459,20 @@ public class CameraStandEntity extends Entity implements CameraHolder {
             forceUpdate();
         }
 
-        if (!isCameraActive() && operator() != null) {
-            stopControlling();
-            return;
-        }
-
-        @Nullable CameraOperator operator = operator();
-        if (operator == null) {
-            if (!isClientSide() && getCamera().getItem() instanceof CameraItem cameraItem && cameraItem.isActive(getCamera())) {
-                cameraItem.deactivate(this, getCamera());
+        if (!isClientSide()) {
+            @Nullable CameraOperator operator = operator();
+            if (operator == null) {
+                if (getCamera().getItem() instanceof CameraItem cameraItem && cameraItem.isActive(getCamera())) {
+                    cameraItem.deactivate(this, getCamera());
+                }
+            } else {
+                if (!isInInteractionRange(operator.asOperatorEntity())) {
+                    stopControlling();
+                } else if (!isCameraActive() && !(operator instanceof Player player
+                        && player.containerMenu instanceof CameraOnStandAttachmentsMenu)) {
+                    stopControlling();
+                }
             }
-            return;
-        }
-
-        if (!isInInteractionRange(operator.asOperatorEntity())) {
-            stopControlling();
         }
     }
 
@@ -468,7 +480,9 @@ public class CameraStandEntity extends Entity implements CameraHolder {
         this.xo = this.getX();
         this.yo = this.getY();
         this.zo = this.getZ();
+
         this.applyGravity();
+
         if (this.isInWater() && this.getFluidHeight(FluidTags.WATER) > 0.1F) {
             this.setUnderwaterMovement();
         } else if (this.isInLava() && this.getFluidHeight(FluidTags.LAVA) > 0.1F) {
@@ -697,7 +711,7 @@ public class CameraStandEntity extends Entity implements CameraHolder {
         getEntityData().set(DATA_ID_CAMERA, getCamera(), true);
     }
 
-    protected boolean isClientSide() {
+    public boolean isClientSide() {
         return level().isClientSide;
     }
 
@@ -708,14 +722,23 @@ public class CameraStandEntity extends Entity implements CameraHolder {
 
     // --
 
-    public void syncToClientsIfNeeded() {
+    @Override
+    public void lerpTo(double x, double y, double z, float yRot, float xRot, int steps) {
+        this.setPos(x, y, z);
+        // this method is called when client receives packet from server,
+        // and it makes camera rotation jump around and be janky.
+        // we sync rotations manually instead
+        // this.setRot(yRot, xRot);
+    }
+
+    public void syncRotationToClientsIfNeeded() {
         if (isClientSide()) return;
         if (operator() != null || (tickCount % 10 == 0)) {
-            syncToClients();
+            syncRotationToClients();
         }
     }
 
-    public void syncToClients() {
+    public void syncRotationToClients() {
         Packets.sendToClients(new CameraStandSetRotationsS2CP(this.getId(), getYRot(), getXRot()), pl -> !pl.equals(operator()));
     }
 }

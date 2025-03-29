@@ -318,14 +318,12 @@ public class Exposure {
         public static final Supplier<EntityType<PhotographFrameEntity>> PHOTOGRAPH_FRAME = Register.entityType("photograph_frame",
                 PhotographFrameEntity::new, MobCategory.MISC, false, builder -> builder
                         .sized(0.5f, 0.5f)
-                        .clientTrackingRange(128)
                         .updateInterval(Integer.MAX_VALUE)
                         .eyeHeight(0));
 
         public static final Supplier<EntityType<GlassPhotographFrameEntity>> CLEAR_PHOTOGRAPH_FRAME = Register.entityType("glass_photograph_frame",
                 GlassPhotographFrameEntity::new, MobCategory.MISC, false, builder -> builder
                         .sized(0.5f, 0.5f)
-                        .clientTrackingRange(128)
                         .updateInterval(Integer.MAX_VALUE)
                         .eyeHeight(0));
 

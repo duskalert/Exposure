@@ -31,7 +31,7 @@ public class ServerEntityMixin {
     @Inject(method = "sendChanges", at = @At("RETURN"))
     private void onSendChanges(CallbackInfo ci) {
         if (this.entity instanceof CameraStandEntity stand) {
-            stand.syncToClientsIfNeeded();
+            stand.syncRotationToClientsIfNeeded();
         }
     }
 }

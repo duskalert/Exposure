@@ -268,6 +268,9 @@ public class PhotographScreen extends Screen {
     // --
 
     protected boolean dropAsItem() {
+        if (!Minecrft.player().isCreative()) {
+            return false;
+        }
         ItemStack droppedStack = getCurrentPhotograph().getItemStack().copy();
         Minecrft.gameMode().handleCreativeModeItemDrop(droppedStack);
         Minecrft.player().displayClientMessage(Component.translatable("gui.exposure.photograph_screen.item_dropped_message",

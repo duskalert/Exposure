@@ -113,7 +113,6 @@ public abstract class AbstractCameraAttachmentsMenu extends AbstractContainerMen
         ItemStack newStack = args.newStack();
 
         Attachment<?> attachment = attachments.get(slotId);
-        attachment.set(getCamera().getStack(), newStack);
 
         if (clientContentsInitialized) {
             if (!newStack.isEmpty()) {

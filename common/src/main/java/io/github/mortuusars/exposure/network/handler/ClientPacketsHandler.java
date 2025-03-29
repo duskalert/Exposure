@@ -151,6 +151,7 @@ public class ClientPacketsHandler {
     public static void stopControllingCameraStand(CameraStandStopControllingS2CP packet) {
         if (Minecrft.get().cameraEntity != Minecrft.player() && Minecrft.level().getEntity(packet.standId()) instanceof CameraStandEntity stand) {
             stand.stopControlling();
+            CameraClient.setCameraEntity(Minecrft.player());
         }
     }
 }

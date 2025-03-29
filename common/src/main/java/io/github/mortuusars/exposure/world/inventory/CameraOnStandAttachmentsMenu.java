@@ -5,6 +5,7 @@ import io.github.mortuusars.exposure.Exposure;
 import io.github.mortuusars.exposure.world.entity.CameraStandEntity;
 import io.github.mortuusars.exposure.world.item.camera.CameraItem;
 import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -15,6 +16,14 @@ public class CameraOnStandAttachmentsMenu extends AbstractCameraAttachmentsMenu 
     public CameraOnStandAttachmentsMenu(int containerId, Inventory playerInventory, CameraStandEntity stand) {
         super(Exposure.MenuTypes.CAMERA_ON_STAND.get(), containerId, playerInventory, new StandCameraAccess(stand));
         this.stand = stand;
+    }
+
+    @Override
+    protected void onContainerChanged(Container c) {
+        super.onContainerChanged(c);
+        if (!stand.isClientSide()) {
+            stand.forceUpdate();
+        }
     }
 
     @Override

@@ -426,10 +426,6 @@ public class CameraItem extends Item {
         if (isActive(stack) && !matchesActive) {
             setActive(stack, false);
         }
-
-        if (ExposureServer.debugHighlightEntitiesInFrame && isActive(stack)) {
-            testEntitiesInFrame(stack, level, player);
-        }
     }
 
     public boolean tick(CameraHolder holder, ItemStack stack) {
@@ -449,6 +445,10 @@ public class CameraItem extends Item {
             }
             return false;
         }).orElse(false);
+
+        if (ExposureServer.debugHighlightEntitiesInFrame && isActive(stack)) {
+            testEntitiesInFrame(stack, level, holder);
+        }
 
         return shutterStateChanged || projectionChanged;
     }
@@ -735,11 +735,14 @@ public class CameraItem extends Item {
             return;
         }
 
+        if (captureProperties.flash()) {
+            data.put(Frame.FLASH, true);
+        }
         if (isInSelfieMode(camera)) {
             data.put(Frame.SELFIE, true);
         }
-        if (captureProperties.flash()) {
-            data.put(Frame.FLASH, true);
+        if (holder instanceof CameraStandEntity) {
+            data.put(Frame.ON_STAND, true);
         }
 
         double zoom = CameraSettings.ZOOM.getOrDefault(camera);
@@ -912,21 +915,11 @@ public class CameraItem extends Item {
         return -1;
     }
 
-    protected void testEntitiesInFrame(ItemStack stack, Level level, Player player) {
-        PointOfView pov = getPointOfView(player, stack);
-
-        // Spawns particle at camera pov ray hit
-//        Vec3 dir = pov.dir().scale(100);
-//        Vec3 endPos = pov.pos().add(dir.x, dir.y, dir.z);
-//        BlockHitResult hitResult = level.clip(new ClipContext(pov.pos(), endPos, ClipContext.Block.OUTLINE, ClipContext.Fluid.ANY, player));
-//
-//        if (hitResult.getType() != HitResult.Type.MISS) {
-//            Vec3 l = hitResult.getLocation();
-//            ((ServerLevel) level).sendParticles(((ServerPlayer) player), ParticleTypes.EXPLOSION, true, l.x + 0.5, l.y + 0.5, l.z + 0.5, 1, 0, 0, 0, 0);
-//        }
+    protected void testEntitiesInFrame(ItemStack stack, Level level, CameraHolder holder) {
+        PointOfView pov = getPointOfView(holder, stack);
 
         float fov = getViewfinderFov(level, stack);
-        List<LivingEntity> entities = EntitiesInFrame.get(player.asHolderEntity(), pov, fov);
+        List<LivingEntity> entities = EntitiesInFrame.get(holder.asHolderEntity(), pov, fov);
         for (LivingEntity livingEntity : entities) {
             livingEntity.addEffect(new MobEffectInstance(MobEffects.GLOWING, 2, 1, true, false, false));
         }

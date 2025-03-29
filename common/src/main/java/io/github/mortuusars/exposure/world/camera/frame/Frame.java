@@ -36,6 +36,7 @@ public record Frame(ExposureIdentifier identifier,
     public static final ExtraData.Entry<Integer> FOCAL_LENGTH = ExtraData.Entry.intVal("focal_length");
     public static final ExtraData.Entry<Boolean> FLASH = ExtraData.Entry.bool("flash");
     public static final ExtraData.Entry<Boolean> SELFIE = ExtraData.Entry.bool("selfie");
+    public static final ExtraData.Entry<Boolean> ON_STAND = ExtraData.Entry.bool("on_stand");
 
     public static final ExtraData.Entry<Vec3> POSITION = ExtraData.Entry.vec3("pos");
     public static final ExtraData.Entry<Float> PITCH = ExtraData.Entry.floatVal("pitch");

@@ -49,6 +49,10 @@ public class CameraClient {
         Minecrft.get().gameRenderer.getMainCamera().reset();
     }
 
+    public static void resetCameraEntity() {
+        setCameraEntity(Minecrft.player());
+    }
+
     // --
 
     public static @Nullable Viewfinder viewfinder() {
