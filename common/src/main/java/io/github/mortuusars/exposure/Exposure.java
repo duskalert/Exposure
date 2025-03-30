@@ -3,7 +3,9 @@ package io.github.mortuusars.exposure;
 import com.google.common.base.Preconditions;
 import com.mojang.logging.LogUtils;
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import io.github.mortuusars.exposure.advancements.predicate.FramePredicate;
+import io.github.mortuusars.exposure.advancements.predicate.TamedPredicate;
 import io.github.mortuusars.exposure.advancements.trigger.FrameExposedTrigger;
 import io.github.mortuusars.exposure.advancements.trigger.FramePrintedTrigger;
 import io.github.mortuusars.exposure.world.block.FlashBlock;
@@ -37,11 +39,14 @@ import io.github.mortuusars.exposure.world.item.crafting.recipe.PhotographAgingR
 import io.github.mortuusars.exposure.world.item.crafting.recipe.PhotographCopyingRecipe;
 import io.github.mortuusars.exposure.world.item.crafting.recipe.serializer.ComponentTransferringRecipeSerializer;
 import io.github.mortuusars.exposure.world.item.util.ItemAndStack;
+import net.minecraft.advancements.critereon.EntitySubPredicate;
+import net.minecraft.advancements.critereon.EntitySubPredicates;
 import net.minecraft.advancements.critereon.ItemSubPredicate;
 import net.minecraft.advancements.critereon.PlayerTrigger;
 import net.minecraft.commands.synchronization.ArgumentTypeInfo;
 import net.minecraft.commands.synchronization.SingletonArgumentInfo;
 import net.minecraft.core.Registry;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.codec.ByteBufCodecs;
@@ -88,6 +93,7 @@ public class Exposure {
         DataComponents.init();
         CriteriaTriggers.init();
         ItemSubPredicates.init();
+        EntitySubPredicates.init();
         MenuTypes.init();
         RecipeSerializers.init();
         SoundEvents.init();
@@ -459,6 +465,14 @@ public class Exposure {
     public static class ItemSubPredicates {
         public static Supplier<ItemSubPredicate.Type<FramePredicate>> FRAME = Register.itemSubPredicate("frame",
                 () -> new ItemSubPredicate.Type<>(FramePredicate.CODEC));
+
+        public static void init() {
+        }
+    }
+
+    public static class EntitySubPredicates {
+        public static final Supplier<MapCodec<TamedPredicate>> TAMED = Register.entitySubPredicate("tamed", () -> TamedPredicate.CODEC);
+
         public static void init() {
         }
     }

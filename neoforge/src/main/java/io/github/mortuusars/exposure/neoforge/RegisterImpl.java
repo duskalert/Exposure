@@ -1,9 +1,11 @@
 package io.github.mortuusars.exposure.neoforge;
 
 import com.mojang.brigadier.arguments.ArgumentType;
+import com.mojang.serialization.MapCodec;
 import io.github.mortuusars.exposure.Exposure;
 import io.github.mortuusars.exposure.Register;
 import net.minecraft.advancements.CriterionTrigger;
+import net.minecraft.advancements.critereon.EntitySubPredicate;
 import net.minecraft.advancements.critereon.ItemSubPredicate;
 import net.minecraft.commands.synchronization.ArgumentTypeInfo;
 import net.minecraft.commands.synchronization.ArgumentTypeInfos;
@@ -43,6 +45,7 @@ public class RegisterImpl {
     public static final DeferredRegister<RecipeSerializer<?>> RECIPE_SERIALIZERS = DeferredRegister.create(Registries.RECIPE_SERIALIZER, Exposure.ID);
     public static final DeferredRegister<CriterionTrigger<?>> CRITERION_TRIGGERS = DeferredRegister.create(Registries.TRIGGER_TYPE, Exposure.ID);
     public static final DeferredRegister<ItemSubPredicate.Type<?>> ITEM_SUB_PREDICATES = DeferredRegister.create(Registries.ITEM_SUB_PREDICATE_TYPE, Exposure.ID);
+    public static final DeferredRegister<MapCodec<? extends EntitySubPredicate>> ENTITY_SUB_PREDICATES = DeferredRegister.create(Registries.ENTITY_SUB_PREDICATE_TYPE, Exposure.ID);
     public static final DeferredRegister<ArgumentTypeInfo<?, ?>> COMMAND_ARGUMENT_TYPES = DeferredRegister.create(Registries.COMMAND_ARGUMENT_TYPE, Exposure.ID);
     public static final DeferredRegister<Feature<?>> WORLD_GEN_FEATURES = DeferredRegister.create(Registries.FEATURE, Exposure.ID);
     public static final DeferredRegister.DataComponents DATA_COMPONENT_TYPES = DeferredRegister.createDataComponents(Registries.DATA_COMPONENT_TYPE, Exposure.ID);
@@ -106,6 +109,10 @@ public class RegisterImpl {
 
     public static <T extends ItemSubPredicate.Type<?>> Supplier<T> itemSubPredicate(String name, Supplier<T> supplier) {
         return ITEM_SUB_PREDICATES.register(name, supplier);
+    }
+
+    public static <T extends MapCodec<EntitySubPredicate>> Supplier<T> entitySubPredicate(String name, Supplier<T> supplier) {
+        return ENTITY_SUB_PREDICATES.register(name, supplier);
     }
 
     public static <A extends ArgumentType<?>, T extends ArgumentTypeInfo.Template<A>, I extends ArgumentTypeInfo<A, T>>

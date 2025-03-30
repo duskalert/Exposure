@@ -1,8 +1,10 @@
 package io.github.mortuusars.exposure;
 
 import com.mojang.brigadier.arguments.ArgumentType;
+import com.mojang.serialization.MapCodec;
 import dev.architectury.injectables.annotations.ExpectPlatform;
 import net.minecraft.advancements.CriterionTrigger;
+import net.minecraft.advancements.critereon.EntitySubPredicate;
 import net.minecraft.advancements.critereon.ItemSubPredicate;
 import net.minecraft.commands.synchronization.ArgumentTypeInfo;
 import net.minecraft.core.BlockPos;
@@ -106,6 +108,11 @@ public class Register {
 
     @ExpectPlatform
     public static <T extends ItemSubPredicate.Type<?>> Supplier<T> itemSubPredicate(String name, Supplier<T> supplier) {
+        throw new AssertionError();
+    }
+
+    @ExpectPlatform
+    public static <T extends EntitySubPredicate> Supplier<MapCodec<T>> entitySubPredicate(String name, Supplier<MapCodec<T>> supplier) {
         throw new AssertionError();
     }
 

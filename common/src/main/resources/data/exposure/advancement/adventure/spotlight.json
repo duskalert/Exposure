@@ -6,9 +6,11 @@
         "frame": {
           "extra_data": "{selfie:1b}",
           "entities_in_frame_count": 1,
-          "entity_in_frame": {
-            "type": "minecraft:player"
-          }
+          "entities_in_frame": [
+            {
+              "type": "minecraft:player"
+            }
+          ]
         }
       },
       "trigger": "exposure:frame_exposed"

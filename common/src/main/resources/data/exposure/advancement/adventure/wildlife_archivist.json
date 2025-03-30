@@ -4,9 +4,11 @@
     "minecraft:axolotl": {
       "conditions": {
         "frame": {
-          "entity_in_frame": {
-            "type": "minecraft:axolotl"
-          }
+          "entities_in_frame": [
+            {
+              "type": "minecraft:axolotl"
+            }
+          ]
         }
       },
       "trigger": "exposure:frame_exposed"
@@ -14,9 +16,11 @@
     "minecraft:bat": {
       "conditions": {
         "frame": {
-          "entity_in_frame": {
-            "type": "minecraft:bat"
-          }
+          "entities_in_frame": [
+            {
+              "type": "minecraft:bat"
+            }
+          ]
         }
       },
       "trigger": "exposure:frame_exposed"
@@ -24,9 +28,11 @@
     "minecraft:camel": {
       "conditions": {
         "frame": {
-          "entity_in_frame": {
-            "type": "minecraft:camel"
-          }
+          "entities_in_frame": [
+            {
+              "type": "minecraft:camel"
+            }
+          ]
         }
       },
       "trigger": "exposure:frame_exposed"
@@ -34,9 +40,11 @@
     "minecraft:frog": {
       "conditions": {
         "frame": {
-          "entity_in_frame": {
-            "type": "minecraft:frog"
-          }
+          "entities_in_frame": [
+            {
+              "type": "minecraft:frog"
+            }
+          ]
         }
       },
       "trigger": "exposure:frame_exposed"
@@ -44,9 +52,11 @@
     "minecraft:glow_squid": {
       "conditions": {
         "frame": {
-          "entity_in_frame": {
-            "type": "minecraft:glow_squid"
-          }
+          "entities_in_frame": [
+            {
+              "type": "minecraft:glow_squid"
+            }
+          ]
         }
       },
       "trigger": "exposure:frame_exposed"
@@ -54,9 +64,11 @@
     "minecraft:squid": {
       "conditions": {
         "frame": {
-          "entity_in_frame": {
-            "type": "minecraft:squid"
-          }
+          "entities_in_frame": [
+            {
+              "type": "minecraft:squid"
+            }
+          ]
         }
       },
       "trigger": "exposure:frame_exposed"
@@ -64,9 +76,11 @@
     "minecraft:ocelot": {
       "conditions": {
         "frame": {
-          "entity_in_frame": {
-            "type": "minecraft:ocelot"
-          }
+          "entities_in_frame": [
+            {
+              "type": "minecraft:ocelot"
+            }
+          ]
         }
       },
       "trigger": "exposure:frame_exposed"
@@ -74,9 +88,11 @@
     "minecraft:parrot": {
       "conditions": {
         "frame": {
-          "entity_in_frame": {
-            "type": "minecraft:parrot"
-          }
+          "entities_in_frame": [
+            {
+              "type": "minecraft:parrot"
+            }
+          ]
         }
       },
       "trigger": "exposure:frame_exposed"
@@ -84,9 +100,11 @@
     "minecraft:rabbit": {
       "conditions": {
         "frame": {
-          "entity_in_frame": {
-            "type": "minecraft:rabbit"
-          }
+          "entities_in_frame": [
+            {
+              "type": "minecraft:rabbit"
+            }
+          ]
         }
       },
       "trigger": "exposure:frame_exposed"
@@ -94,9 +112,11 @@
     "minecraft:sniffer": {
       "conditions": {
         "frame": {
-          "entity_in_frame": {
-            "type": "minecraft:sniffer"
-          }
+          "entities_in_frame": [
+            {
+              "type": "minecraft:sniffer"
+            }
+          ]
         }
       },
       "trigger": "exposure:frame_exposed"
@@ -104,9 +124,11 @@
     "minecraft:turtle": {
       "conditions": {
         "frame": {
-          "entity_in_frame": {
-            "type": "minecraft:turtle"
-          }
+          "entities_in_frame": [
+            {
+              "type": "minecraft:turtle"
+            }
+          ]
         }
       },
       "trigger": "exposure:frame_exposed"
@@ -114,9 +136,11 @@
     "minecraft:bee": {
       "conditions": {
         "frame": {
-          "entity_in_frame": {
-            "type": "minecraft:bee"
-          }
+          "entities_in_frame": [
+            {
+              "type": "minecraft:bee"
+            }
+          ]
         }
       },
       "trigger": "exposure:frame_exposed"
@@ -124,9 +148,11 @@
     "minecraft:dolphin": {
       "conditions": {
         "frame": {
-          "entity_in_frame": {
-            "type": "minecraft:dolphin"
-          }
+          "entities_in_frame": [
+            {
+              "type": "minecraft:dolphin"
+            }
+          ]
         }
       },
       "trigger": "exposure:frame_exposed"
@@ -134,9 +160,11 @@
     "minecraft:fox": {
       "conditions": {
         "frame": {
-          "entity_in_frame": {
-            "type": "minecraft:fox"
-          }
+          "entities_in_frame": [
+            {
+              "type": "minecraft:fox"
+            }
+          ]
         }
       },
       "trigger": "exposure:frame_exposed"
@@ -144,9 +172,11 @@
     "minecraft:goat": {
       "conditions": {
         "frame": {
-          "entity_in_frame": {
-            "type": "minecraft:goat"
-          }
+          "entities_in_frame": [
+            {
+              "type": "minecraft:goat"
+            }
+          ]
         }
       },
       "trigger": "exposure:frame_exposed"
@@ -154,9 +184,11 @@
     "minecraft:llama": {
       "conditions": {
         "frame": {
-          "entity_in_frame": {
-            "type": "minecraft:llama"
-          }
+          "entities_in_frame": [
+            {
+              "type": "minecraft:llama"
+            }
+          ]
         }
       },
       "trigger": "exposure:frame_exposed"
@@ -164,9 +196,11 @@
     "minecraft:panda": {
       "conditions": {
         "frame": {
-          "entity_in_frame": {
-            "type": "minecraft:panda"
-          }
+          "entities_in_frame": [
+            {
+              "type": "minecraft:panda"
+            }
+          ]
         }
       },
       "trigger": "exposure:frame_exposed"
@@ -174,9 +208,11 @@
     "minecraft:polar_bear": {
       "conditions": {
         "frame": {
-          "entity_in_frame": {
-            "type": "minecraft:polar_bear"
-          }
+          "entities_in_frame": [
+            {
+              "type": "minecraft:polar_bear"
+            }
+          ]
         }
       },
       "trigger": "exposure:frame_exposed"
@@ -184,9 +220,11 @@
     "minecraft:wolf": {
       "conditions": {
         "frame": {
-          "entity_in_frame": {
-            "type": "minecraft:wolf"
-          }
+          "entities_in_frame": [
+            {
+              "type": "minecraft:wolf"
+            }
+          ]
         }
       },
       "trigger": "exposure:frame_exposed"

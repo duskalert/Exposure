@@ -8,12 +8,14 @@
             "min": 13000,
             "max": 23000
           },
-          "entity_in_frame": {
-            "type": "minecraft:villager",
-            "distance": {
-              "min": 6
+          "entities_in_frame": [
+            {
+              "type": "minecraft:villager",
+              "distance": {
+                "min": 6
+              }
             }
-          },
+          ],
           "extra_data": "{flash:1b}"
         }
       },

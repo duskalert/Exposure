@@ -1,12 +1,14 @@
 package io.github.mortuusars.exposure.fabric;
 
 import com.mojang.brigadier.arguments.ArgumentType;
+import com.mojang.serialization.MapCodec;
 import io.github.mortuusars.exposure.Exposure;
 import io.github.mortuusars.exposure.Register;
 import io.netty.buffer.Unpooled;
 import net.fabricmc.fabric.api.command.v2.ArgumentTypeRegistry;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerType;
 import net.minecraft.advancements.CriterionTrigger;
+import net.minecraft.advancements.critereon.EntitySubPredicate;
 import net.minecraft.advancements.critereon.ItemSubPredicate;
 import net.minecraft.commands.synchronization.ArgumentTypeInfo;
 import net.minecraft.core.Registry;
@@ -115,6 +117,11 @@ public class RegisterImpl {
 
     public static <T extends ItemSubPredicate.Type<?>> Supplier<T> itemSubPredicate(String name, Supplier<T> supplier) {
         T obj = Registry.register(BuiltInRegistries.ITEM_SUB_PREDICATE_TYPE, Exposure.resource(name), supplier.get());
+        return () -> obj;
+    }
+
+    public static <T extends MapCodec<EntitySubPredicate>> Supplier<T> entitySubPredicate(String name, Supplier<T> supplier) {
+        T obj = Registry.register(BuiltInRegistries.ENTITY_SUB_PREDICATE_TYPE, Exposure.resource(name), supplier.get());
         return () -> obj;
     }
 
