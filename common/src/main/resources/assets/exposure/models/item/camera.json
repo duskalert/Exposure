@@ -111,7 +111,6 @@
 	],
 	"gui_light": "front",
 	"overrides": [
-
 		{
 			"predicate": {
 				"exposure:camera_has_lens": 1
@@ -131,7 +130,6 @@
 			},
 			"model": "exposure:item/camera_has_lens_and_flash"
 		},
-
 
 		{
 			"predicate": {
@@ -161,7 +159,6 @@
 			},
 			"model": "exposure:item/camera_active_has_lens_and_flash"
 		},
-
 
 		{
 			"predicate": {
