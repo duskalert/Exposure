@@ -141,6 +141,15 @@
       "exposure:item/camera/lens_ring3"
     ]
   },
+  "item.camera.timer_tick": {
+    "sounds": [
+      "exposure:item/camera/timer1",
+      "exposure:item/camera/timer2",
+      "exposure:item/camera/timer3",
+      "exposure:item/camera/timer4"
+    ],
+    "subtitle": "subtitle.exposure.camera.timer"
+  },
   "item.camera.release_button_click": {
     "sounds": [
       "exposure:item/camera/release_button_click"

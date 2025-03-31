@@ -332,5 +332,15 @@
   "item.exposure.camera.tooltip.details_hotswap_on_stand": "§8[§7Sneak + Use§8] with item to install/swap attachment",
 
   "advancement.exposure.family_portrait.title": "Family Portrait",
-  "advancement.exposure.family_portrait.description": "Use Camera Stand to take a photo of a player with tamed cat and wolf"
+  "advancement.exposure.family_portrait.description": "Use Camera Stand to take a photo of a player with tamed cat and wolf",
+
+  "gui.exposure.camera_controls.self_timer.tooltip": "Self Timer",
+  "gui.exposure.self_timer.off": "Off",
+  "gui.exposure.self_timer.one": "1",
+  "gui.exposure.self_timer.two": "2",
+  "gui.exposure.self_timer.five": "5",
+  "gui.exposure.self_timer.ten": "10",
+  "gui.exposure.camera_controls.self_timer.cancel.tooltip": "Cancel Self Timer",
+
+  "subtitle.exposure.camera.timer": "Camera timer ticking"
 }

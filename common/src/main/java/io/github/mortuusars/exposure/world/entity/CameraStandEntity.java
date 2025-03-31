@@ -352,6 +352,7 @@ public class CameraStandEntity extends Entity implements CameraHolder {
 
         if (player instanceof ServerPlayer serverPlayer) {
             setOperator(serverPlayer);
+            cameraItem.getTimer().setReleaseTick(cameraStack, -1L);
 
             MenuProvider menuProvider = new MenuProvider() {
                 @Override

@@ -10,6 +10,7 @@ import io.github.mortuusars.exposure.client.util.Minecrft;
 import io.github.mortuusars.exposure.world.camera.*;
 import io.github.mortuusars.exposure.world.camera.capture.CaptureType;
 import io.github.mortuusars.exposure.world.camera.component.FocalRange;
+import io.github.mortuusars.exposure.world.camera.component.SelfTimer;
 import io.github.mortuusars.exposure.world.camera.component.ShutterSpeed;
 import io.github.mortuusars.exposure.world.camera.capture.CaptureProperties;
 import io.github.mortuusars.exposure.world.camera.capture.ProjectionInfo;
@@ -44,6 +45,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
@@ -85,17 +87,23 @@ public class CameraItem extends Item {
     public static final int PROJECT_COOLDOWN = 20;
 
     protected final Shutter shutter;
+    protected final Timer timer;
     protected final List<Attachment<?>> attachments;
     protected final List<ShutterSpeed> availableShutterSpeeds;
 
     public CameraItem(Shutter shutter, Properties properties) {
         super(properties);
         this.shutter = shutter;
+        this.timer = createTimer();
         this.attachments = defineAttachments();
         this.availableShutterSpeeds = defineShutterSpeeds();
 
         shutter.onOpen(this::onShutterOpen);
         shutter.onClosed(this::onShutterClosed);
+    }
+
+    protected Timer createTimer() {
+        return new Timer();
     }
 
     protected @NotNull List<Attachment<?>> defineAttachments() {
@@ -125,6 +133,10 @@ public class CameraItem extends Item {
 
     public Shutter getShutter() {
         return shutter;
+    }
+
+    public Timer getTimer() {
+        return timer;
     }
 
     public List<ShutterSpeed> getAvailableShutterSpeeds() {
@@ -433,6 +445,7 @@ public class CameraItem extends Item {
         if (!(level instanceof ServerLevel serverLevel)) return false;
 
         boolean shutterStateChanged = getShutter().tick(holder, serverLevel, stack);
+        boolean timerChanged = getTimer().tick(holder, serverLevel, stack);
 
         boolean projectionChanged = CameraInstances.getOptional(stack).map(instance -> {
             CameraInstance.ProjectionState state = instance.getProjectionState(level);
@@ -450,7 +463,7 @@ public class CameraItem extends Item {
             testEntitiesInFrame(stack, level, holder);
         }
 
-        return shutterStateChanged || projectionChanged;
+        return shutterStateChanged || timerChanged || projectionChanged;
     }
 
     @Override
@@ -483,6 +496,18 @@ public class CameraItem extends Item {
                 || Attachment.FILM.isEmpty(stack)
                 || !CameraInstances.canReleaseShutter(CameraId.ofStack(stack))) {
             return InteractionResultHolder.consume(stack);
+        }
+
+        if (getTimer().getReleaseTick(stack) != level.getGameTime()) {
+            if (getTimer().isTicking(holder, stack)) {
+                return InteractionResultHolder.consume(stack);
+            }
+
+            SelfTimer selfTimer = CameraSettings.SELF_TIMER.getOrDefault(stack);
+            if (selfTimer != SelfTimer.OFF) {
+                getTimer().set(holder, stack, selfTimer.getSeconds());
+                return InteractionResultHolder.consume(stack);
+            }
         }
 
         ItemAndStack<FilmRollItem> film = Attachment.FILM.get(stack).getItemAndStackCopy();
@@ -604,6 +629,8 @@ public class CameraItem extends Item {
         getOrCreateID(stack);
 
         if (player instanceof ServerPlayer serverPlayer) {
+            getTimer().setReleaseTick(stack, -1L);
+
             MenuProvider menuProvider = new MenuProvider() {
                 @Override
                 public @NotNull Component getDisplayName() {
