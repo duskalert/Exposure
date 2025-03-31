@@ -1,7 +1,10 @@
 # Changelog
 
 ## UNRELEASED
-- Camera model now changes depending on attachments. 
+- Added Camera Stand.
+- Added Self-Timer to the Camera.
+- Camera model now changes depending on attachments.
+- Changed selfie stick texture.
 - Changed `entities_in_frame` for `exposure:frame_exposed` advancement trigger and `exposure:frame` predicate. It is now a list instead of singular entity.
 
 ## 1.8.11 - 2025-03-16
