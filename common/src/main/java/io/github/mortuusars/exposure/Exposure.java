@@ -47,6 +47,7 @@ import net.minecraft.commands.synchronization.SingletonArgumentInfo;
 import net.minecraft.core.Registry;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -59,8 +60,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.inventory.MenuType;
-import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.Item;
+import net.minecraft.world.item.*;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
@@ -88,6 +88,7 @@ public class Exposure {
         BlockEntityTypes.init();
         EntityTypes.init();
         Items.init();
+        CreativeTabs.init();
         DataComponents.init();
         CriteriaTriggers.init();
         ItemSubPredicates.init();
@@ -198,6 +199,33 @@ public class Exposure {
 
         public static final Supplier<BlockItem> LIGHTROOM = Register.item("lightroom",
                 () -> new BlockItem(Blocks.LIGHTROOM.get(), new Item.Properties()));
+
+        static void init() {
+        }
+    }
+
+    public static class CreativeTabs {
+        public static final Supplier<CreativeModeTab> EXPOSURE = Register.creativeTab("exposure", () ->
+                CreativeModeTab.builder(CreativeModeTab.Row.TOP, 0)
+                        .title(Component.translatable("itemGroup.exposure.exposure"))
+                        .icon(() -> new ItemStack(Items.CAMERA.get()))
+                        .displayItems((params, output) -> {
+                            output.accept(Exposure.Items.CAMERA.get());
+                            output.accept(Exposure.Items.CAMERA_STAND.get());
+                            output.accept(Exposure.Items.BLACK_AND_WHITE_FILM.get());
+                            output.accept(Exposure.Items.COLOR_FILM.get());
+                            output.accept(Exposure.Items.DEVELOPED_BLACK_AND_WHITE_FILM.get());
+                            output.accept(Exposure.Items.DEVELOPED_COLOR_FILM.get());
+                            output.accept(Exposure.Items.PHOTOGRAPH.get());
+                            output.accept(Exposure.Items.AGED_PHOTOGRAPH.get());
+                            output.accept(Exposure.Items.STACKED_PHOTOGRAPHS.get());
+                            output.accept(Exposure.Items.ALBUM.get());
+                            output.accept(Exposure.Items.PHOTOGRAPH_FRAME.get());
+                            output.accept(Exposure.Items.CLEAR_PHOTOGRAPH_FRAME.get());
+                            output.accept(Exposure.Items.INTERPLANAR_PROJECTOR.get());
+                            output.accept(Exposure.Items.LIGHTROOM.get());
+                        })
+                        .build());
 
         static void init() {
         }
@@ -488,7 +516,7 @@ public class Exposure {
         public static final ResourceKey<LootTable> ABANDONED_MINESHAFT_INJECT =
                 ResourceKey.create(net.minecraft.core.registries.Registries.LOOT_TABLE, Exposure.resource("chests/abandoned_mineshaft"));
         public static final ResourceKey<LootTable> STRONGHOLD_CROSSING_INJECT =
-                ResourceKey.create(net.minecraft.core.registries.Registries.LOOT_TABLE, Exposure.resource("chests/stronghold"));
+                ResourceKey.create(net.minecraft.core.registries.Registries.LOOT_TABLE, Exposure.resource("chests/stronghold_crossing"));
         public static final ResourceKey<LootTable> VILLAGE_PLAINS_HOUSE_INJECT =
                 ResourceKey.create(net.minecraft.core.registries.Registries.LOOT_TABLE, Exposure.resource("chests/village_plains_house"));
         public static final ResourceKey<LootTable> SHIPWRECK_MAP_INJECT =

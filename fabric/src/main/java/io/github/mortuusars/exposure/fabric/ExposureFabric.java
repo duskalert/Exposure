@@ -48,8 +48,6 @@ public class ExposureFabric implements ModInitializer {
 
         CommandRegistrationCallback.EVENT.register(CommonEvents::registerCommands);
 
-        addItemsToCreativeTabs();
-
         Exposure.Stats.register();
 
         ServerLifecycleEvents.SERVER_STARTED.register(server -> {
@@ -67,28 +65,6 @@ public class ExposureFabric implements ModInitializer {
 
         FabricC2SPackets.register();
         FabricS2CPackets.register();
-    }
-
-    private static void addItemsToCreativeTabs() {
-        ItemGroupEvents.modifyEntriesEvent(CreativeModeTabs.TOOLS_AND_UTILITIES).register(content -> {
-            content.accept(Exposure.Items.CAMERA.get());
-            content.accept(Exposure.Items.BLACK_AND_WHITE_FILM.get());
-            content.accept(Exposure.Items.COLOR_FILM.get());
-            content.accept(Exposure.Items.DEVELOPED_BLACK_AND_WHITE_FILM.get());
-            content.accept(Exposure.Items.DEVELOPED_COLOR_FILM.get());
-            content.accept(Exposure.Items.PHOTOGRAPH.get());
-            content.accept(Exposure.Items.AGED_PHOTOGRAPH.get());
-            content.accept(Exposure.Items.INTERPLANAR_PROJECTOR.get());
-            content.accept(Exposure.Items.STACKED_PHOTOGRAPHS.get());
-            content.accept(Exposure.Items.PHOTOGRAPH_FRAME.get());
-            content.accept(Exposure.Items.CLEAR_PHOTOGRAPH_FRAME.get());
-            content.accept(Exposure.Items.CAMERA_STAND.get());
-            content.accept(Exposure.Items.ALBUM.get());
-        });
-
-        ItemGroupEvents.modifyEntriesEvent(CreativeModeTabs.FUNCTIONAL_BLOCKS).register(content -> {
-            content.accept(Exposure.Items.LIGHTROOM.get());
-        });
     }
 
     private static void modifyLoot(ResourceKey<LootTable> tableKey, LootTable.Builder builder,

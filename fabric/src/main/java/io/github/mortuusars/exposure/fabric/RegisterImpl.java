@@ -26,6 +26,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
@@ -56,6 +57,11 @@ public class RegisterImpl {
 
     public static <T extends Item> Supplier<T> item(String id, Supplier<T> supplier) {
         T obj = Registry.register(BuiltInRegistries.ITEM, Exposure.resource(id), supplier.get());
+        return () -> obj;
+    }
+
+    public static <T extends CreativeModeTab> Supplier<T> creativeTab(String id, Supplier<T> supplier) {
+        T obj = Registry.register(BuiltInRegistries.CREATIVE_MODE_TAB, Exposure.resource(id), supplier.get());
         return () -> obj;
     }
 

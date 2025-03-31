@@ -5,6 +5,7 @@ import com.mojang.serialization.MapCodec;
 import io.github.mortuusars.exposure.Config;
 import io.github.mortuusars.exposure.Exposure;
 import io.github.mortuusars.exposure.neoforge.loot.ConfigurableAddTableLootModifier;
+import net.minecraft.world.item.CreativeModeTab;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
@@ -37,6 +38,7 @@ public class ExposureNeoForge {
         RegisterImpl.BLOCK_ENTITY_TYPES.register(modEventBus);
         RegisterImpl.ENTITY_TYPES.register(modEventBus);
         RegisterImpl.ITEMS.register(modEventBus);
+        RegisterImpl.CREATIVE_MODE_TAB.register(modEventBus);
         RegisterImpl.MENU_TYPES.register(modEventBus);
         RegisterImpl.RECIPE_TYPES.register(modEventBus);
         RegisterImpl.RECIPE_SERIALIZERS.register(modEventBus);

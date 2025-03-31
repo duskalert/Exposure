@@ -20,6 +20,7 @@ import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeInput;
@@ -60,6 +61,11 @@ public class Register {
 
     @ExpectPlatform
     public static <T extends Item> Supplier<T> item(String id, Supplier<T> supplier) {
+        throw new AssertionError();
+    }
+
+    @ExpectPlatform
+    public static <T extends CreativeModeTab> Supplier<T> creativeTab(String id, Supplier<T> supplier) {
         throw new AssertionError();
     }
 

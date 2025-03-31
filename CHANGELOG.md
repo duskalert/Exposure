@@ -3,6 +3,7 @@
 ## UNRELEASED
 - Added Camera Stand.
 - Added Self-Timer to the Camera.
+- Added dedicated creative tab
 - Camera model now changes depending on attachments.
 - Changed selfie stick texture.
 - Changed `entities_in_frame` for `exposure:frame_exposed` advancement trigger and `exposure:frame` predicate. It is now a list instead of singular entity.

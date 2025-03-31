@@ -1,12 +1,12 @@
 {
   "parent": "minecraft:recipes/root",
   "criteria": {
-    "has_color_film": {
+    "has_camera": {
       "conditions": {
         "items": [
           {
             "items": [
-              "exposure:color_film"
+              "exposure:camera"
             ]
           }
         ]
@@ -15,7 +15,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "exposure:developing_color_film"
+        "recipe": "exposure:camera_stand"
       },
       "trigger": "minecraft:recipe_unlocked"
     }
@@ -23,13 +23,12 @@
   "requirements": [
     [
       "has_the_recipe",
-      "has_color_film"
+      "has_camera"
     ]
   ],
   "rewards": {
     "recipes": [
-      "exposure:developing_color_film"
+      "exposure:camera_stand"
     ]
-  },
-  "sends_telemetry_event": true
+  }
 }

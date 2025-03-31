@@ -342,5 +342,7 @@
   "gui.exposure.self_timer.ten": "10",
   "gui.exposure.camera_controls.self_timer.cancel.tooltip": "Cancel Self Timer",
 
-  "subtitle.exposure.camera.timer": "Camera timer ticking"
+  "subtitle.exposure.camera.timer": "Camera timer ticking",
+
+  "itemGroup.exposure.exposure": "Exposure"
 }
