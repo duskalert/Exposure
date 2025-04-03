@@ -122,7 +122,10 @@ public class CameraItem extends Item {
                 new ShutterSpeed("1/4"),
                 new ShutterSpeed("1/2"),
                 new ShutterSpeed("1\""),
-                new ShutterSpeed("2\"")
+                new ShutterSpeed("2\""),
+                new ShutterSpeed("4\""),
+                new ShutterSpeed("8\""),
+                new ShutterSpeed("15\"")
         );
     }
 
@@ -205,11 +208,6 @@ public class CameraItem extends Item {
             return PointOfView.of(holder)
                     .move(0, getYPositionOffset(stack), 0);
         }
-    }
-
-    public Holder<ColorPalette> getColorPalette(RegistryAccess registryAccess, ItemStack stack) {
-        ResourceKey<ColorPalette> key = Attachment.FILM.map(stack, FilmItem::getColorPaletteId).orElse(ColorPalettes.DEFAULT);
-        return ColorPalettes.get(registryAccess, key);
     }
 
     public Optional<Filter> getFilter(RegistryAccess registryAccess, ItemStack stack) {
