@@ -1,10 +1,10 @@
 {
-  "type": "exposure:loot_table_addition",
+  "type": "exposure:add_table",
   "conditions": [
     {
       "condition": "neoforge:loot_table_id",
       "loot_table_id": "minecraft:chests/simple_dungeon"
     }
   ],
-  "lootTable": "exposure:chests/simple_dungeon"
+  "table": "exposure:chests/simple_dungeon"
 }

@@ -51,6 +51,7 @@ public class ExposureNeoForge {
         RegisterImpl.DATA_COMPONENT_TYPES.register(modEventBus);
         RegisterImpl.PARTICLE_TYPES.register(modEventBus);
         RegisterImpl.CUSTOM_STATS.register(modEventBus);
+        LootModifiers.LOOT_MODIFIERS.register(modEventBus);
 
         if (FMLEnvironment.dist == Dist.CLIENT) {
             ExposureNeoForgeClient.init(container);

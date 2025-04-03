@@ -1,10 +1,10 @@
 {
-  "type": "exposure:loot_table_addition",
+  "type": "exposure:add_table",
   "conditions": [
     {
       "condition": "neoforge:loot_table_id",
       "loot_table_id": "minecraft:chests/shipwreck_map"
     }
   ],
-  "lootTable": "exposure:chests/shipwreck_map"
+  "table": "exposure:chests/shipwreck_map"
 }
