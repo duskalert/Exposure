@@ -11,8 +11,9 @@
 - Changed `entities_in_frame` for `exposure:frame_exposed` advancement trigger and `exposure:frame` predicate. It is now a list instead of singular entity.
 <br><br>
 
-- Fixed Exposure's loot not generating in chests.
+- Fixed projecting image from URL always timing-out.
 - Fixed extra row of pixels in Lightroom screen and process toggle button position.
+- [NeoForge] Fixed Exposure's loot not generating in chests.
 
 ## 1.8.11 - 2025-03-16
 - Fixed crash with some mods (Little Tiles is a known one) due to conflicting mixin methods.

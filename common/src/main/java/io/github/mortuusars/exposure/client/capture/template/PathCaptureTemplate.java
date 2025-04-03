@@ -43,7 +43,7 @@ public class PathCaptureTemplate implements CaptureTemplate {
 
         return Capture.of(Capture.path(path),
                         CaptureAction.optional(params.cameraId(), CaptureAction::interplanarProjection))
-                .handleErrorAndGetResult(printCasualErrorInChat())
+                .logErrorAndGetResult(LOGGER)
                 .thenAsync(applyEffectsToImage(params))
                 .thenAsync(Palettizer.fromProjectionMode(projectionInfo.mode()).palettizeAndClose(palette.value()))
                 .thenAsync(convertToExposureData(palette, createExposureTag(params, true)))
