@@ -4,19 +4,15 @@ import com.google.common.base.Preconditions;
 import net.minecraft.util.FastColor;
 import net.minecraft.util.Mth;
 
-public class ContrastModifier implements PixelModifier {
+public class ContrastEffect implements PixelEffect {
     protected final float contrast;
 
     /**
-     * @param contrast 1 means no change.
+     * @param contrast 0 means no change.
      */
-    public ContrastModifier(float contrast) {
-        Preconditions.checkArgument(contrast > 0f, "Contrast should be larger than 0.");
+    public ContrastEffect(float contrast) {
+        Preconditions.checkArgument(contrast >= -1 && contrast <= 1, "contrast must be in -1 to 1 range.");
         this.contrast = contrast;
-    }
-
-    public ContrastModifier() {
-        this(1f);
     }
 
     @Override
@@ -25,14 +21,14 @@ public class ContrastModifier implements PixelModifier {
     }
 
     public int modify(int colorARGB) {
-        if (contrast == 1f) return colorARGB;
+        if (contrast == 0f) return colorARGB;
 
         int alpha = FastColor.ARGB32.alpha(colorARGB);
         int red = FastColor.ARGB32.red(colorARGB);
         int green = FastColor.ARGB32.green(colorARGB);
         int blue = FastColor.ARGB32.blue(colorARGB);
 
-        int contrastValue = Math.round(127 * contrast);
+        int contrastValue = Math.round(127 * (1f + contrast));
         red = Mth.clamp((red - 127) * contrastValue / 127 + 127, 0, 255);
         green = Mth.clamp((green - 127) * contrastValue / 127 + 127, 0, 255);
         blue = Mth.clamp((blue - 127) * contrastValue / 127 + 127, 0, 255);

@@ -8,15 +8,15 @@ import io.github.mortuusars.exposure.Exposure;
 import io.github.mortuusars.exposure.ExposureServer;
 import io.github.mortuusars.exposure.util.PointOfView;
 import io.github.mortuusars.exposure.world.camera.*;
-import io.github.mortuusars.exposure.world.camera.capture.CaptureProperties;
+import io.github.mortuusars.exposure.world.camera.capture.CaptureParameters;
 import io.github.mortuusars.exposure.world.camera.capture.CaptureType;
+import io.github.mortuusars.exposure.world.camera.component.ShutterSpeed;
+import io.github.mortuusars.exposure.world.camera.film.properties.FilmProperties;
 import io.github.mortuusars.exposure.world.camera.frame.EntitiesInFrame;
 import io.github.mortuusars.exposure.world.entity.CameraHolder;
 import io.github.mortuusars.exposure.world.item.camera.CameraSettings;
 import io.github.mortuusars.exposure.world.level.storage.ExposureIdentifier;
-import io.github.mortuusars.exposure.data.ColorPalette;
 import io.github.mortuusars.exposure.world.camera.frame.Photographer;
-import io.github.mortuusars.exposure.data.ColorPalettes;
 import io.github.mortuusars.exposure.world.camera.frame.Frame;
 import io.github.mortuusars.exposure.world.item.*;
 import io.github.mortuusars.exposure.world.item.camera.Attachment;
@@ -28,9 +28,7 @@ import net.minecraft.Util;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Holder;
 import net.minecraft.network.chat.*;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
@@ -73,44 +71,40 @@ public class DebugCommand {
     }
 
     private static int exposeRGB(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
-        CommandSourceStack stack = context.getSource();
-        ServerPlayer player = stack.getPlayerOrException();
+        ServerPlayer player = context.getSource().getPlayerOrException();
 
         @Nullable Camera camera = CameraInHand.find(player);
         if (camera == null) {
             camera = new CameraInHand(player, new CameraId(Util.NIL_UUID), InteractionHand.MAIN_HAND);
         }
 
-
-        List<CaptureProperties> properties = new ArrayList<>();
+        List<CaptureParameters> properties = new ArrayList<>();
 
         for (int i = 0; i < 3; i++) {
             ColorChannel channel = ColorChannel.values()[i];
             String exposureId = ExposureIdentifier.createId(player, channel.getSerializedName());
+            FilmProperties filmProperties = Attachment.FILM.get(camera.getItemStack()).mapIf(SensitiveFilmItem.class, SensitiveFilmItem::getFilmProperties).orElse(FilmProperties.EMPTY);
 
-            ResourceKey<ColorPalette> paletteKey = camera.mapAttachment(Attachment.FILM, FilmItem::getColorPaletteId).orElse(ColorPalettes.DEFAULT);
-            Holder<ColorPalette> colorPalette = ColorPalettes.get(context.getSource().registryAccess(), paletteKey);
-
-            CaptureProperties captureProperties = new CaptureProperties.Builder(exposureId)
-                    .setCameraHolder(player)
+            CaptureParameters captureParameters = new CaptureParameters.Builder(exposureId)
                     .setCameraID(camera.getId().uuid().equals(Util.NIL_UUID) ? null : camera.getId())
-                    .setShutterSpeed(CameraSettings.SHUTTER_SPEED.getOrElse(camera, null))
+                    .setCameraHolder(player)
+                    .setFov(camera.map((item, stack) -> item.getFov(player.level(), stack)).orElse(null))
+                    .setCropFactor(camera.map((item, stack) -> item.getCropFactor()).orElse(1f))
+                    .extraData(CaptureParameters.SHUTTER_SPEED, CameraSettings.SHUTTER_SPEED.getOrElse(camera, ShutterSpeed.DEFAULT))
                     .setFilmType(ExposureType.BLACK_AND_WHITE)
-                    .setFrameSize(camera.mapAttachment(Attachment.FILM, FilmItem::getFrameSize).orElse(null))
-                    .setCropFactor(camera.map((cameraItem, cameraStack) -> cameraItem.getCropFactor()).orElse(1f))
-                    .setColorPalette(colorPalette)
+                    .setFilmProperties(filmProperties)
                     .setChromaticChannel(channel)
                     .build();
 
-            properties.add(captureProperties);
+            properties.add(captureParameters);
 
             Frame frame = camera
                     .map((cameraItem, cameraStack) -> {
                         PointOfView pov = cameraItem.getPointOfView(player, cameraStack);
-                        float fov = cameraItem.getViewfinderFov(player.level(), cameraStack);
+                        double fov = cameraItem.getViewfinderFov(player.level(), cameraStack);
                         List<BlockPos> positions = cameraItem.getPositionsInFrame(player, pov, fov);
                         List<LivingEntity> entities = EntitiesInFrame.get((CameraHolder) player, pov, fov);
-                        return cameraItem.createFrame(player, context.getSource().getLevel(), cameraStack, captureProperties, positions,entities);
+                        return cameraItem.createFrame(player, context.getSource().getLevel(), cameraStack, captureParameters, positions,entities);
                     })
                     .orElse(Frame.create().setIdentifier(ExposureIdentifier.id(exposureId))
                             .setType(ExposureType.BLACK_AND_WHITE)

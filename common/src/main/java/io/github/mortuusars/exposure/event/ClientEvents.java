@@ -15,6 +15,7 @@ import io.github.mortuusars.exposure.client.util.Minecrft;
 import io.github.mortuusars.exposure.network.packet.Packet;
 import io.github.mortuusars.exposure.world.camera.Camera;
 import io.github.mortuusars.exposure.world.camera.CameraId;
+import io.github.mortuusars.exposure.world.camera.capture.CaptureParameters;
 import io.github.mortuusars.exposure.world.item.PhotographItem;
 import io.github.mortuusars.exposure.network.handler.ClientPacketsHandler;
 import io.github.mortuusars.exposure.client.sound.UniqueSoundManager;
@@ -49,7 +50,8 @@ public class ClientEvents {
 
         CaptureTemplates.get(Exposure.resource("dummy"));
         CameraCaptureTemplate cameraCaptureTemplate = new CameraCaptureTemplate();
-        ExposureClient.cycles().enqueueTask(new PreloadingDummyCaptureTemplate().createTask(null));
+        ExposureClient.cycles().enqueueTask(new PreloadingDummyCaptureTemplate()
+                .createTask(new CaptureParameters.Builder("dummy").build()));
         UniqueSoundManager.stop(Minecrft.player().getScoreboardName(), Exposure.SoundEvents.CAMERA_BUTTON_CLICK.get());
     }
 

@@ -3,13 +3,13 @@ package io.github.mortuusars.exposure.client.image.modifier.pixel;
 import net.minecraft.util.FastColor;
 import net.minecraft.util.Mth;
 
-public class BlackAndWhiteModifier implements PixelModifier {
+public class BlackAndWhiteEffect implements PixelEffect {
     protected final float rWeight;
     protected final float gWeight;
     protected final float bWeight;
     protected String identifier;
 
-    public BlackAndWhiteModifier(float rWeight, float gWeight, float bWeight) {
+    public BlackAndWhiteEffect(float rWeight, float gWeight, float bWeight) {
         this.rWeight = rWeight;
         this.gWeight = gWeight;
         this.bWeight = bWeight;

@@ -12,7 +12,7 @@ import io.github.mortuusars.exposure.client.util.Minecrft;
 import io.github.mortuusars.exposure.world.block.entity.Lightroom;
 import io.github.mortuusars.exposure.world.block.entity.LightroomBlockEntity;
 import io.github.mortuusars.exposure.client.gui.component.CycleButton;
-import io.github.mortuusars.exposure.client.image.modifier.ImageModifier;
+import io.github.mortuusars.exposure.client.image.modifier.ImageEffect;
 import io.github.mortuusars.exposure.client.image.renderable.RenderableImage;
 import io.github.mortuusars.exposure.client.render.image.RenderCoordinates;
 import io.github.mortuusars.exposure.world.camera.FilmColor;
@@ -344,7 +344,7 @@ public class LightroomScreen extends AbstractContainerScreen<LightroomMenu> {
 
     public void renderFrame(@NotNull Frame frame, PoseStack poseStack,
                             float x, float y, float size, float alpha, ExposureType exposureType) {
-        RenderableImage image = ExposureClient.renderedExposures().getOrCreate(frame).modifyWith(ImageModifier.NEGATIVE_FILM);
+        RenderableImage image = ExposureClient.renderedExposures().getOrCreate(frame).modifyWith(ImageEffect.NEGATIVE_FILM);
 
         MultiBufferSource.BufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
         ExposureClient.imageRenderer().render(image, poseStack, bufferSource, new RenderCoordinates(x, y, size, size),

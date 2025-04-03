@@ -4,7 +4,7 @@ import io.github.mortuusars.exposure.fabric.api.event.ModifyEntityInFrameExtraDa
 import io.github.mortuusars.exposure.fabric.api.event.FrameAddedCallback;
 import io.github.mortuusars.exposure.fabric.api.event.ModifyFrameExtraDataCallback;
 import io.github.mortuusars.exposure.util.ExtraData;
-import io.github.mortuusars.exposure.world.camera.capture.CaptureProperties;
+import io.github.mortuusars.exposure.world.camera.capture.CaptureParameters;
 import io.github.mortuusars.exposure.world.camera.frame.Frame;
 import io.github.mortuusars.exposure.world.entity.CameraHolder;
 import io.netty.buffer.ByteBufUtil;
@@ -95,9 +95,9 @@ public class PlatformHelperImpl {
         ModifyEntityInFrameExtraDataCallback.EVENT.invoker().modifyEntityInFrameData(cameraHolder, camera, entityInFrame, data);
     }
 
-    public static void postModifyFrameExtraDataEvent(CameraHolder cameraHolder, ItemStack camera, CaptureProperties captureProperties,
+    public static void postModifyFrameExtraDataEvent(CameraHolder cameraHolder, ItemStack camera, CaptureParameters captureParameters,
                                                 List<BlockPos> positionsInFrame, List<LivingEntity> entitiesInFrame, ExtraData data) {
-        ModifyFrameExtraDataCallback.EVENT.invoker().modifyFrameExtraData(cameraHolder, camera, captureProperties, positionsInFrame, entitiesInFrame, data);
+        ModifyFrameExtraDataCallback.EVENT.invoker().modifyFrameExtraData(cameraHolder, camera, captureParameters, positionsInFrame, entitiesInFrame, data);
     }
 
     public static void postFrameAddedEvent(CameraHolder cameraHolder, ItemStack camera, Frame frame,

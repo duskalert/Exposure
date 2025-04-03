@@ -17,18 +17,14 @@ import java.util.List;
 public interface FilmItem {
     ExposureType getType();
 
+    // -- Frames
+
     default int getDefaultMaxFrameCount(ItemStack stack) {
         return 16;
     }
 
     default int getDefaultFrameSize(ItemStack stack) {
         return Config.Server.DEFAULT_FRAME_SIZE.get();
-    }
-
-    default ResourceKey<ColorPalette> getColorPaletteId(ItemStack stack) {
-        @Nullable ResourceLocation location = stack.get(Exposure.DataComponents.FILM_COLOR_PALETTE);
-        if (location != null) return ResourceKey.create(Exposure.Registries.COLOR_PALETTE, location);
-        return ColorPalettes.DEFAULT;
     }
 
     default int getMaxFrameCount(ItemStack stack) {
@@ -51,7 +47,6 @@ public interface FilmItem {
         return !getStoredFrames(stack).isEmpty();
     }
 
-    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     default boolean hasFrameAt(ItemStack stack, int index) {
         return getStoredFrames(stack).size() > index;
     }
@@ -62,5 +57,13 @@ public interface FilmItem {
 
     default boolean isFull(ItemStack stack) {
         return getStoredFramesCount(stack) == getMaxFrameCount(stack);
+    }
+
+    // --
+
+    default ResourceKey<ColorPalette> getColorPaletteId(ItemStack stack) {
+        @Nullable ResourceLocation location = stack.get(Exposure.DataComponents.FILM_COLOR_PALETTE);
+        if (location != null) return ResourceKey.create(Exposure.Registries.COLOR_PALETTE, location);
+        return ColorPalettes.DEFAULT;
     }
 }

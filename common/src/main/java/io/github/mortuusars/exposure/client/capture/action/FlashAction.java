@@ -19,7 +19,7 @@ public class FlashAction implements CaptureAction {
 
     @Override
     public int requiredDelayTicks() {
-        return Config.Client.FLASH_CAPTURE_DELAY_TICKS.get();
+        return Config.Client.FLASH_CAPTURE_DELAY_TICKS.get(); // This is important. Without a delay flash effect might not apply in time.
     }
 
     @Override

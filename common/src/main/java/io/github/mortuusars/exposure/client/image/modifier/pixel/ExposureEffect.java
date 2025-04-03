@@ -4,21 +4,21 @@ import io.github.mortuusars.exposure.world.camera.component.ShutterSpeed;
 import net.minecraft.util.FastColor;
 import net.minecraft.util.Mth;
 
-public class BrightnessModifier implements PixelModifier {
+public class ExposureEffect implements PixelEffect {
     protected final float brightness;
 
     /**
      * @param brightness 1 means no change.
      */
-    public BrightnessModifier(float brightness) {
+    public ExposureEffect(float brightness) {
         this.brightness = brightness;
     }
 
-    public BrightnessModifier(float brightnessStops, float brightnessPerStop) {
+    public ExposureEffect(float brightnessStops, float brightnessPerStop) {
         this(1f + brightnessStops * brightnessPerStop);
     }
 
-    public BrightnessModifier(ShutterSpeed shutterSpeed) {
+    public ExposureEffect(ShutterSpeed shutterSpeed) {
         this(shutterSpeed.getStops(), 0.2f);
     }
 

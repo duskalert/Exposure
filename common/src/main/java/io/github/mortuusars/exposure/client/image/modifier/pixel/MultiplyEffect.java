@@ -2,10 +2,10 @@ package io.github.mortuusars.exposure.client.image.modifier.pixel;
 
 import net.minecraft.util.FastColor;
 
-public class MultiplyModifier implements PixelModifier {
+public class MultiplyEffect implements PixelEffect {
     protected final int multiplyColor;
 
-    public MultiplyModifier(int multiplyColor) {
+    public MultiplyEffect(int multiplyColor) {
         this.multiplyColor = multiplyColor;
     }
 

@@ -13,6 +13,7 @@ import io.github.mortuusars.exposure.world.block.LightroomBlock;
 import io.github.mortuusars.exposure.world.block.entity.LightroomBlockEntity;
 import io.github.mortuusars.exposure.commands.argument.*;
 import io.github.mortuusars.exposure.world.camera.CameraId;
+import io.github.mortuusars.exposure.world.camera.film.properties.FilmProperties;
 import io.github.mortuusars.exposure.world.camera.component.CompositionGuide;
 import io.github.mortuusars.exposure.world.camera.component.FlashMode;
 import io.github.mortuusars.exposure.world.camera.ExposureType;
@@ -56,7 +57,6 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.stats.StatFormatter;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.ExtraCodecs;
-import net.minecraft.util.Mth;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.inventory.MenuType;
@@ -145,13 +145,30 @@ public class Exposure {
                         .component(DataComponents.CAMERA_ACTIVE, false)));
 
         public static final Supplier<FilmRollItem> BLACK_AND_WHITE_FILM = Register.item("black_and_white_film",
-                () -> new FilmRollItem(ExposureType.BLACK_AND_WHITE, Mth.color(0.8F, 0.8F, 0.9F),
+                () -> new FilmRollItem(ExposureType.BLACK_AND_WHITE, FilmRollItem.BAR_BLACK_AND_WHITE,
                         new Item.Properties()
                                 .stacksTo(16)));
 
         public static final Supplier<FilmRollItem> COLOR_FILM = Register.item("color_film",
-                () -> new FilmRollItem(ExposureType.COLOR, Mth.color(0.4F, 0.4F, 1.0F), new Item.Properties()
-                        .stacksTo(16)));
+                () -> new FilmRollItem(ExposureType.COLOR, FilmRollItem.BAR_COLOR,
+                        new Item.Properties()
+                                .stacksTo(16)));
+
+        public static final Supplier<FilmRollItem> HIGH_SENSITIVITY_BLACK_AND_WHITE_FILM = Register.item("high_sensitivity_black_and_white_film",
+                () -> new FilmRollItem(ExposureType.BLACK_AND_WHITE, FilmRollItem.BAR_BLACK_AND_WHITE,
+                        new Item.Properties()
+                                .component(DataComponents.FILM_PROPERTIES, FilmProperties.create()
+                                        .withSensitivity(2f)
+                                        .withNoise(0.05f))
+                                .stacksTo(16)));
+
+        public static final Supplier<FilmRollItem> HIGH_SENSITIVITY_COLOR_FILM = Register.item("high_sensitivity_color_film",
+                () -> new FilmRollItem(ExposureType.COLOR, FilmRollItem.BAR_COLOR,
+                        new Item.Properties()
+                                .component(DataComponents.FILM_PROPERTIES, FilmProperties.create()
+                                        .withSensitivity(2f)
+                                        .withNoise(0.05f))
+                                .stacksTo(16)));
 
         public static final Supplier<DevelopedFilmItem> DEVELOPED_BLACK_AND_WHITE_FILM = Register.item("developed_black_and_white_film",
                 () -> new DevelopedFilmItem(ExposureType.BLACK_AND_WHITE, new Item.Properties()
@@ -210,20 +227,22 @@ public class Exposure {
                         .title(Component.translatable("itemGroup.exposure.exposure"))
                         .icon(() -> new ItemStack(Items.CAMERA.get()))
                         .displayItems((params, output) -> {
-                            output.accept(Exposure.Items.CAMERA.get());
-                            output.accept(Exposure.Items.CAMERA_STAND.get());
-                            output.accept(Exposure.Items.BLACK_AND_WHITE_FILM.get());
-                            output.accept(Exposure.Items.COLOR_FILM.get());
-                            output.accept(Exposure.Items.DEVELOPED_BLACK_AND_WHITE_FILM.get());
-                            output.accept(Exposure.Items.DEVELOPED_COLOR_FILM.get());
-                            output.accept(Exposure.Items.PHOTOGRAPH.get());
-                            output.accept(Exposure.Items.AGED_PHOTOGRAPH.get());
-                            output.accept(Exposure.Items.STACKED_PHOTOGRAPHS.get());
-                            output.accept(Exposure.Items.ALBUM.get());
-                            output.accept(Exposure.Items.PHOTOGRAPH_FRAME.get());
-                            output.accept(Exposure.Items.CLEAR_PHOTOGRAPH_FRAME.get());
-                            output.accept(Exposure.Items.INTERPLANAR_PROJECTOR.get());
-                            output.accept(Exposure.Items.LIGHTROOM.get());
+                            output.accept(Items.CAMERA.get());
+                            output.accept(Items.CAMERA_STAND.get());
+                            output.accept(Items.BLACK_AND_WHITE_FILM.get());
+                            output.accept(Items.COLOR_FILM.get());
+                            output.accept(Items.HIGH_SENSITIVITY_BLACK_AND_WHITE_FILM.get());
+                            output.accept(Items.HIGH_SENSITIVITY_COLOR_FILM.get());
+                            output.accept(Items.DEVELOPED_BLACK_AND_WHITE_FILM.get());
+                            output.accept(Items.DEVELOPED_COLOR_FILM.get());
+                            output.accept(Items.PHOTOGRAPH.get());
+                            output.accept(Items.AGED_PHOTOGRAPH.get());
+                            output.accept(Items.STACKED_PHOTOGRAPHS.get());
+                            output.accept(Items.ALBUM.get());
+                            output.accept(Items.PHOTOGRAPH_FRAME.get());
+                            output.accept(Items.CLEAR_PHOTOGRAPH_FRAME.get());
+                            output.accept(Items.INTERPLANAR_PROJECTOR.get());
+                            output.accept(Items.LIGHTROOM.get());
                         })
                         .build());
 
@@ -302,6 +321,9 @@ public class Exposure {
 
         public static final DataComponentType<Integer> FILM_FRAME_SIZE = Register.dataComponentType("film_frame_size",
                 arg -> arg.persistent(ExtraCodecs.intRange(1, 2048)).networkSynchronized(ByteBufCodecs.VAR_INT));
+
+        public static final DataComponentType<FilmProperties> FILM_PROPERTIES = Register.dataComponentType("film_properties",
+                arg -> arg.persistent(FilmProperties.CODEC).networkSynchronized(FilmProperties.STREAM_CODEC));
 
         public static final DataComponentType<List<Frame>> FILM_FRAMES =
                 Register.dataComponentType("film_frames",

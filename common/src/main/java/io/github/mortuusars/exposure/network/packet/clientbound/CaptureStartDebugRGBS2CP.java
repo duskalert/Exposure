@@ -1,7 +1,7 @@
 package io.github.mortuusars.exposure.network.packet.clientbound;
 
 import io.github.mortuusars.exposure.Exposure;
-import io.github.mortuusars.exposure.world.camera.capture.CaptureProperties;
+import io.github.mortuusars.exposure.world.camera.capture.CaptureParameters;
 import io.github.mortuusars.exposure.network.handler.ClientPacketsHandler;
 import io.github.mortuusars.exposure.network.packet.Packet;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -15,13 +15,13 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public record CaptureStartDebugRGBS2CP(ResourceLocation templateId, List<CaptureProperties> captureProperties) implements Packet {
+public record CaptureStartDebugRGBS2CP(ResourceLocation templateId, List<CaptureParameters> captureProperties) implements Packet {
     public static final ResourceLocation ID = Exposure.resource("capture_start_debug_rgb");
     public static final Type<CaptureStartDebugRGBS2CP> TYPE = new Type<>(ID);
 
     public static final StreamCodec<RegistryFriendlyByteBuf, CaptureStartDebugRGBS2CP> STREAM_CODEC = StreamCodec.composite(
             ResourceLocation.STREAM_CODEC, CaptureStartDebugRGBS2CP::templateId,
-            CaptureProperties.STREAM_CODEC.apply(ByteBufCodecs.list(3)), CaptureStartDebugRGBS2CP::captureProperties,
+            CaptureParameters.STREAM_CODEC.apply(ByteBufCodecs.list(3)), CaptureStartDebugRGBS2CP::captureProperties,
             CaptureStartDebugRGBS2CP::new
     );
 

@@ -74,6 +74,10 @@ public class ShutterSpeed implements StringRepresentable {
         return getStopsDifference(DEFAULT);
     }
 
+    public float getBrightness() {
+        return 1f + getStops() * 0.2f;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

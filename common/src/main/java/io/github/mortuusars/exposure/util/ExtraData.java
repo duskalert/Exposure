@@ -15,22 +15,19 @@ import org.apache.commons.lang3.function.TriConsumer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
 /**
  * Extension of CompoundTag to allow better type safety. <br>
- * {@link Entry} is meant to be stored in a static final field in appropriate places.
+ * {@link Type} is meant to be stored in a static final field in appropriate places.
  */
 public class ExtraData extends CompoundTag {
     public static final Codec<ExtraData> CODEC = CompoundTag.CODEC.xmap(ExtraData::new, data -> data);
     public static final StreamCodec<ByteBuf, ExtraData> STREAM_CODEC = ByteBufCodecs.COMPOUND_TAG.map(ExtraData::new, data -> data);
 
-    public static final ExtraData EMPTY = new ExtraData();
+    public static final ExtraData EMPTY = new ExtraData(Collections.emptyMap());
     private final Map<String, Tag> tags;
 
     protected ExtraData(Map<String, Tag> tags) {
@@ -47,20 +44,20 @@ public class ExtraData extends CompoundTag {
         merge(tag);
     }
 
-    public <T> Optional<T> get(@NotNull Entry<T> entry) {
-        if (!contains(entry.key())) return Optional.empty();
+    public <T> Optional<T> get(@NotNull ExtraData.Type<T> type) {
+        if (!contains(type.key())) return Optional.empty();
         try {
-            return Optional.ofNullable(entry.getter().apply(this, entry.key()));
+            return Optional.ofNullable(type.getter().apply(this, type.key()));
         } catch (Exception e) {
             Exposure.LOGGER.error("Cannot get ExtraData entry: {}", e.getMessage());
             return Optional.empty();
         }
     }
 
-    public <T> T getOrDefault(@NotNull Entry<T> entry, T defaultValue) {
-        if (!contains(entry.key())) return defaultValue;
+    public <T> T getOrDefault(@NotNull ExtraData.Type<T> type, T defaultValue) {
+        if (!contains(type.key())) return defaultValue;
         try {
-            @Nullable T value = entry.getter().apply(this, entry.key());
+            @Nullable T value = type.getter().apply(this, type.key());
             return value != null ? value : defaultValue;
         } catch (Exception e) {
             Exposure.LOGGER.error("Cannot get ExtraData entry: {}", e.getMessage());
@@ -68,13 +65,13 @@ public class ExtraData extends CompoundTag {
         }
     }
 
-    public <T> void put(Entry<T> entry, @NotNull T value) {
+    public <T> void put(Type<T> type, @NotNull T value) {
         Preconditions.checkNotNull(value, "value");
-        entry.setter().accept(this, entry.key(), value);
+        type.setter().accept(this, type.key(), value);
     }
 
-    public <T> void remove(Entry<T> entry) {
-        remove(entry.key());
+    public <T> void remove(Type<T> type) {
+        remove(type.key());
     }
 
     // --
@@ -107,40 +104,40 @@ public class ExtraData extends CompoundTag {
 
     // --
 
-    public record Entry<T>(String key, BiFunction<ExtraData, String, @Nullable T> getter,
-                           TriConsumer<ExtraData, String, T> setter) {
-        public static Entry<String> string(String key) {
-            return new Entry<>(key, ExtraData::getString, ExtraData::putString);
+    public record Type<T>(String key, BiFunction<ExtraData, String, @Nullable T> getter,
+                          TriConsumer<ExtraData, String, T> setter) {
+        public static Type<String> string(String key) {
+            return new Type<>(key, ExtraData::getString, ExtraData::putString);
         }
 
-        public static Entry<Boolean> bool(String key) {
-            return new Entry<>(key, ExtraData::getBoolean, ExtraData::putBoolean);
+        public static Type<Boolean> bool(String key) {
+            return new Type<>(key, ExtraData::getBoolean, ExtraData::putBoolean);
         }
 
-        public static Entry<Integer> intVal(String key) {
-            return new Entry<>(key, ExtraData::getInt, ExtraData::putInt);
+        public static Type<Integer> intVal(String key) {
+            return new Type<>(key, ExtraData::getInt, ExtraData::putInt);
         }
 
-        public static Entry<Long> longVal(String key) {
-            return new Entry<>(key, ExtraData::getLong, ExtraData::putLong);
+        public static Type<Long> longVal(String key) {
+            return new Type<>(key, ExtraData::getLong, ExtraData::putLong);
         }
 
-        public static Entry<Float> floatVal(String key) {
-            return new Entry<>(key, ExtraData::getFloat, ExtraData::putFloat);
+        public static Type<Float> floatVal(String key) {
+            return new Type<>(key, ExtraData::getFloat, ExtraData::putFloat);
         }
 
-        public static Entry<Double> doubleVal(String key) {
-            return new Entry<>(key, ExtraData::getDouble, ExtraData::putDouble);
+        public static Type<Double> doubleVal(String key) {
+            return new Type<>(key, ExtraData::getDouble, ExtraData::putDouble);
         }
 
-        public static <T extends StringRepresentable> Entry<T> stringRepresentable(String key, Function<String, @Nullable T> deserializeFunction) {
-            return new Entry<>(key,
+        public static <T extends StringRepresentable> Type<T> stringRepresentable(String key, Function<String, @Nullable T> deserializeFunction) {
+            return new Type<>(key,
                     (data, k) -> deserializeFunction.apply(data.getString(k)),
                     (data, k, value) -> data.putString(k, value.getSerializedName()));
         }
 
-        public static Entry<Vec3> vec3(String key) {
-            return new Entry<>(key,
+        public static Type<Vec3> vec3(String key) {
+            return new Type<>(key,
                     (data, k) -> {
                         ListTag pos = data.getList(k, DoubleTag.TAG_DOUBLE);
                         return new Vec3(pos.getDouble(0), pos.getDouble(1), pos.getDouble(2));
@@ -154,14 +151,14 @@ public class ExtraData extends CompoundTag {
                     });
         }
 
-        public static Entry<ResourceLocation> resourceLocation(String key) {
-            return new Entry<>(key,
+        public static Type<ResourceLocation> resourceLocation(String key) {
+            return new Type<>(key,
                     (data, k) -> ResourceLocation.parse(data.getString(k)),
                     (data, k, value) -> data.putString(k, value.toString()));
         }
 
-        public static <T> Entry<List<T>> list(String key, int tagType, Function<Tag, T> extractFunc, Function<T, Tag> packFunc) {
-            return new Entry<>(key,
+        public static <T> Type<List<T>> list(String key, int tagType, Function<Tag, T> extractFunc, Function<T, Tag> packFunc) {
+            return new Type<>(key,
                     (data, k) -> data.getList(k, tagType).stream()
                             .map(extractFunc)
                             .toList(),
@@ -174,7 +171,7 @@ public class ExtraData extends CompoundTag {
                     });
         }
 
-        public static <T> Entry<List<T>> stringBasedList(String key, Function<String, T> extractFunc, Function<T, String> packFunc) {
+        public static <T> Type<List<T>> stringBasedList(String key, Function<String, T> extractFunc, Function<T, String> packFunc) {
             return list(key, Tag.TAG_STRING, tag -> extractFunc.apply(tag.getAsString()), value -> StringTag.valueOf(packFunc.apply(value)));
         }
     }

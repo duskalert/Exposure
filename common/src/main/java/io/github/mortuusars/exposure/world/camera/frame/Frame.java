@@ -24,31 +24,31 @@ public record Frame(ExposureIdentifier identifier,
                     Photographer photographer,
                     List<EntityInFrame> entitiesInFrame,
                     ExtraData extraData) {
-    public static final ExtraData.Entry<Boolean> PROJECTED = ExtraData.Entry.bool("projected");
-    public static final ExtraData.Entry<Boolean> CHROMATIC = ExtraData.Entry.bool("chromatic");
+    public static final ExtraData.Type<Boolean> PROJECTED = ExtraData.Type.bool("projected");
+    public static final ExtraData.Type<Boolean> CHROMATIC = ExtraData.Type.bool("chromatic");
 
-    public static final ExtraData.Entry<ColorChannel> COLOR_CHANNEL =
-            ExtraData.Entry.stringRepresentable("color_channel", ColorChannel::fromStringOrThrow);
-    public static final ExtraData.Entry<ShutterSpeed> SHUTTER_SPEED =
-            ExtraData.Entry.stringRepresentable("shutter_speed", ShutterSpeed::new);
+    public static final ExtraData.Type<ColorChannel> COLOR_CHANNEL =
+            ExtraData.Type.stringRepresentable("color_channel", ColorChannel::fromStringOrThrow);
+    public static final ExtraData.Type<ShutterSpeed> SHUTTER_SPEED =
+            ExtraData.Type.stringRepresentable("shutter_speed", ShutterSpeed::new);
 
-    public static final ExtraData.Entry<Long> TIMESTAMP = ExtraData.Entry.longVal("timestamp");
-    public static final ExtraData.Entry<Integer> FOCAL_LENGTH = ExtraData.Entry.intVal("focal_length");
-    public static final ExtraData.Entry<Boolean> FLASH = ExtraData.Entry.bool("flash");
-    public static final ExtraData.Entry<Boolean> SELFIE = ExtraData.Entry.bool("selfie");
-    public static final ExtraData.Entry<Boolean> ON_STAND = ExtraData.Entry.bool("on_stand");
+    public static final ExtraData.Type<Long> TIMESTAMP = ExtraData.Type.longVal("timestamp");
+    public static final ExtraData.Type<Integer> FOCAL_LENGTH = ExtraData.Type.intVal("focal_length");
+    public static final ExtraData.Type<Boolean> FLASH = ExtraData.Type.bool("flash");
+    public static final ExtraData.Type<Boolean> SELFIE = ExtraData.Type.bool("selfie");
+    public static final ExtraData.Type<Boolean> ON_STAND = ExtraData.Type.bool("on_stand");
 
-    public static final ExtraData.Entry<Vec3> POSITION = ExtraData.Entry.vec3("pos");
-    public static final ExtraData.Entry<Float> PITCH = ExtraData.Entry.floatVal("pitch");
-    public static final ExtraData.Entry<Float> YAW = ExtraData.Entry.floatVal("yaw");
-    public static final ExtraData.Entry<Integer> LIGHT_LEVEL = ExtraData.Entry.intVal("light_level");
-    public static final ExtraData.Entry<Integer> DAY_TIME = ExtraData.Entry.intVal("day_time");
-    public static final ExtraData.Entry<ResourceLocation> DIMENSION = ExtraData.Entry.resourceLocation("dimension");
-    public static final ExtraData.Entry<ResourceLocation> BIOME = ExtraData.Entry.resourceLocation("biome");
-    public static final ExtraData.Entry<String> WEATHER = ExtraData.Entry.string("weather");
-    public static final ExtraData.Entry<Boolean> IN_CAVE = ExtraData.Entry.bool("in_cave");
-    public static final ExtraData.Entry<Boolean> UNDERWATER = ExtraData.Entry.bool("underwater");
-    public static final ExtraData.Entry<List<ResourceLocation>> STRUCTURES = ExtraData.Entry.stringBasedList("structures",
+    public static final ExtraData.Type<Vec3> POSITION = ExtraData.Type.vec3("pos");
+    public static final ExtraData.Type<Float> PITCH = ExtraData.Type.floatVal("pitch");
+    public static final ExtraData.Type<Float> YAW = ExtraData.Type.floatVal("yaw");
+    public static final ExtraData.Type<Integer> LIGHT_LEVEL = ExtraData.Type.intVal("light_level");
+    public static final ExtraData.Type<Integer> DAY_TIME = ExtraData.Type.intVal("day_time");
+    public static final ExtraData.Type<ResourceLocation> DIMENSION = ExtraData.Type.resourceLocation("dimension");
+    public static final ExtraData.Type<ResourceLocation> BIOME = ExtraData.Type.resourceLocation("biome");
+    public static final ExtraData.Type<String> WEATHER = ExtraData.Type.string("weather");
+    public static final ExtraData.Type<Boolean> IN_CAVE = ExtraData.Type.bool("in_cave");
+    public static final ExtraData.Type<Boolean> UNDERWATER = ExtraData.Type.bool("underwater");
+    public static final ExtraData.Type<List<ResourceLocation>> STRUCTURES = ExtraData.Type.stringBasedList("structures",
             ResourceLocation::parse, ResourceLocation::toString);
     // --
 
@@ -230,8 +230,8 @@ public record Frame(ExposureIdentifier identifier,
             return this;
         }
 
-        public <T> Mutable addExtraData(ExtraData.Entry<T> entry, T value) {
-            tag.put(entry, value);
+        public <T> Mutable addExtraData(ExtraData.Type<T> type, T value) {
+            tag.put(type, value);
             return this;
         }
 

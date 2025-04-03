@@ -1,20 +1,20 @@
 package io.github.mortuusars.exposure.data.export;
 
-import io.github.mortuusars.exposure.client.image.modifier.ImageModifier;
+import io.github.mortuusars.exposure.client.image.modifier.ImageEffect;
 import net.minecraft.util.StringRepresentable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public enum ExportLook implements StringRepresentable {
-    REGULAR("regular", ImageModifier.EMPTY),
-    AGED("aged", ImageModifier.AGED),
-    NEGATIVE("negative", ImageModifier.NEGATIVE),
-    NEGATIVE_FILM("negative_film", ImageModifier.NEGATIVE_FILM);
+    REGULAR("regular", ImageEffect.EMPTY),
+    AGED("aged", ImageEffect.AGED),
+    NEGATIVE("negative", ImageEffect.NEGATIVE),
+    NEGATIVE_FILM("negative_film", ImageEffect.NEGATIVE_FILM);
 
     private final String name;
-    private final ImageModifier modifier;
+    private final ImageEffect modifier;
 
-    ExportLook(String name, ImageModifier modifier) {
+    ExportLook(String name, ImageEffect modifier) {
         this.name = name;
         this.modifier = modifier;
     }
@@ -33,7 +33,7 @@ public enum ExportLook implements StringRepresentable {
         return name;
     }
 
-    public ImageModifier getModifier() {
+    public ImageEffect getModifier() {
         return modifier;
     }
 

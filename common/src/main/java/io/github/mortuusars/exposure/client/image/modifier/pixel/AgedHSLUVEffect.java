@@ -6,7 +6,7 @@ import net.minecraft.util.Mth;
 import org.apache.commons.lang3.StringUtils;
 
 // HSB is faster while giving only slightly worse result. HSLUV is slower and creates noticeable freezes when exposure is loaded.
-public class AgedHSLUVModifier implements PixelModifier {
+public class AgedHSLUVEffect implements PixelEffect {
     protected final int tintColor;
     protected final double[] tintColorHsluv;
     protected final float tintOpacity;
@@ -19,7 +19,7 @@ public class AgedHSLUVModifier implements PixelModifier {
      * @param blackPoint Like in a Levels adjustment. 0-255.
      * @param whitePoint Like in a Levels adjustment. 0-255.
      */
-    public AgedHSLUVModifier(int tintColor, float tintOpacity, int blackPoint, int whitePoint) {
+    public AgedHSLUVEffect(int tintColor, float tintOpacity, int blackPoint, int whitePoint) {
         this.tintColor = tintColor;
         String hexStr = StringUtils.leftPad(Integer.toHexString(tintColor & 0xFFFFFF), 6, "0");
         this.tintColorHsluv = HUSLColorConverter.hexToHsluv("#" + hexStr);

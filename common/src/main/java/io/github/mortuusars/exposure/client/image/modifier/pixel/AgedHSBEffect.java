@@ -4,7 +4,7 @@ import io.github.mortuusars.exposure.util.color.Color;
 import net.minecraft.util.FastColor;
 import net.minecraft.util.Mth;
 
-public class AgedHSBModifier implements PixelModifier {
+public class AgedHSBEffect implements PixelEffect {
     protected final int tintColor;
     protected final float tintOpacity;
     protected final int blackPoint;
@@ -16,7 +16,7 @@ public class AgedHSBModifier implements PixelModifier {
      * @param blackPoint Like in a Levels adjustment. 0-255.
      * @param whitePoint Like in a Levels adjustment. 0-255.
      */
-    public AgedHSBModifier(int tintColor, float tintOpacity, int blackPoint, int whitePoint) {
+    public AgedHSBEffect(int tintColor, float tintOpacity, int blackPoint, int whitePoint) {
         this.tintColor = tintColor;
         this.tintOpacity = tintOpacity;
         this.blackPoint = blackPoint & 0xFF; // 0-255

@@ -1,5 +1,6 @@
 package io.github.mortuusars.exposure.util.color;
 
+import com.google.common.base.Preconditions;
 import com.mojang.serialization.Codec;
 import net.minecraft.util.Mth;
 
@@ -260,6 +261,11 @@ public record Color(int a, int r, int g, int b) {
     }
 
     public static class HSB {
+        public static int HSBtoRGB(float[] hsb) {
+            Preconditions.checkArgument(hsb.length == 3, "hsb is not correct. Must have 3 float values.");
+            return HSBtoRGB(hsb[0], hsb[1], hsb[2]);
+        }
+
         public static int HSBtoRGB(float hue, float saturation, float brightness) {
             int r = 0, g = 0, b = 0;
             if (saturation == 0) {

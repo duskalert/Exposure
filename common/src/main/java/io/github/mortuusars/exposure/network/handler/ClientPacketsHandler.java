@@ -16,9 +16,8 @@ import io.github.mortuusars.exposure.client.util.Minecrft;
 import io.github.mortuusars.exposure.client.capture.template.CaptureTemplates;
 import io.github.mortuusars.exposure.client.capture.palettizer.Palettizer;
 import io.github.mortuusars.exposure.client.capture.saving.ExposureUploader;
-import io.github.mortuusars.exposure.world.camera.CameraInHand;
 import io.github.mortuusars.exposure.world.camera.ExposureType;
-import io.github.mortuusars.exposure.world.camera.capture.CaptureProperties;
+import io.github.mortuusars.exposure.world.camera.capture.CaptureParameters;
 import io.github.mortuusars.exposure.data.ColorPalette;
 import io.github.mortuusars.exposure.util.cycles.task.Result;
 import io.github.mortuusars.exposure.world.entity.CameraStandEntity;
@@ -119,15 +118,15 @@ public class ClientPacketsHandler {
     }
 
     public static void startCapture(CaptureStartS2CP packet) {
-        Task<?> captureTask = CaptureTemplates.getOrThrow(packet.templateId()).createTask(packet.captureProperties());
+        Task<?> captureTask = CaptureTemplates.getOrThrow(packet.templateId()).createTask(packet.captureParameters());
         ExposureClient.cycles().enqueueTask(captureTask);
     }
 
     public static void startDebugRGBCapture(CaptureStartDebugRGBS2CP packet) {
         CaptureTemplate template = CaptureTemplates.getOrThrow(packet.templateId());
 
-        for (CaptureProperties captureProperties : packet.captureProperties()) {
-            Task<?> captureTask = template.createTask(captureProperties);
+        for (CaptureParameters captureParameters : packet.captureProperties()) {
+            Task<?> captureTask = template.createTask(captureParameters);
             ExposureClient.cycles().enqueueTask(captureTask);
         }
     }

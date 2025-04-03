@@ -12,7 +12,7 @@ import io.github.mortuusars.exposure.world.camera.capture.CaptureType;
 import io.github.mortuusars.exposure.world.camera.component.FocalRange;
 import io.github.mortuusars.exposure.world.camera.component.SelfTimer;
 import io.github.mortuusars.exposure.world.camera.component.ShutterSpeed;
-import io.github.mortuusars.exposure.world.camera.capture.CaptureProperties;
+import io.github.mortuusars.exposure.world.camera.capture.CaptureParameters;
 import io.github.mortuusars.exposure.world.camera.capture.ProjectionInfo;
 import io.github.mortuusars.exposure.world.camera.frame.*;
 import io.github.mortuusars.exposure.world.entity.CameraHolder;
@@ -20,6 +20,7 @@ import io.github.mortuusars.exposure.world.entity.CameraStandEntity;
 import io.github.mortuusars.exposure.world.item.FilmItem;
 import io.github.mortuusars.exposure.world.item.FilmRollItem;
 import io.github.mortuusars.exposure.world.item.InterplanarProjectorItem;
+import io.github.mortuusars.exposure.world.item.SensitiveFilmItem;
 import io.github.mortuusars.exposure.world.item.component.StoredItemStack;
 import io.github.mortuusars.exposure.world.inventory.CameraInHandAttachmentsMenu;
 import io.github.mortuusars.exposure.network.Packets;
@@ -45,7 +46,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
@@ -122,10 +122,7 @@ public class CameraItem extends Item {
                 new ShutterSpeed("1/4"),
                 new ShutterSpeed("1/2"),
                 new ShutterSpeed("1\""),
-                new ShutterSpeed("2\""),
-                new ShutterSpeed("4\""),
-                new ShutterSpeed("8\""),
-                new ShutterSpeed("15\"")
+                new ShutterSpeed("2\"")
         );
     }
 
@@ -184,16 +181,16 @@ public class CameraItem extends Item {
                 .orElse(FocalRange.getDefault());
     }
 
-    public float getFov(Level level, ItemStack stack) {
+    public double getFov(Level level, ItemStack stack) {
         double zoom = CameraSettings.ZOOM.getOrDefault(stack);
         FocalRange focalRange = getFocalRange(level.registryAccess(), stack);
-        return (float) focalRange.fovFromZoom(zoom);
+        return focalRange.fovFromZoom(zoom);
     }
 
     /**
      * Fov of what's seen when looking through viewfinder.
      */
-    public float getViewfinderFov(Level level, ItemStack stack) {
+    public double getViewfinderFov(Level level, ItemStack stack) {
         return getFov(level, stack) * getCropFactor();
     }
 
@@ -321,9 +318,9 @@ public class CameraItem extends Item {
         return InteractionResultHolder.consume(stack);
     }
 
-    public int calculateCooldownAfterShot(ItemStack stack, CaptureProperties captureProperties) {
-        if (captureProperties.projection().isPresent()) return PROJECT_COOLDOWN;
-        if (captureProperties.flash()) return FLASH_COOLDOWN;
+    public int calculateCooldownAfterShot(ItemStack stack, CaptureParameters captureParameters) {
+        if (captureParameters.projection().isPresent()) return PROJECT_COOLDOWN;
+        if (captureParameters.getFlash()) return FLASH_COOLDOWN;
         return BASE_COOLDOWN;
     }
 
@@ -533,41 +530,40 @@ public class CameraItem extends Item {
             CameraId cameraId = getOrCreateID(stack);
             String exposureId = ExposureIdentifier.createId(serverPlayer);
 
-            CaptureProperties captureProperties = new CaptureProperties.Builder(exposureId)
-                    .setCameraHolder(holder)
+            CaptureParameters captureParameters = new CaptureParameters.Builder(exposureId)
                     .setCameraID(cameraId)
-                    .setShutterSpeed(CameraSettings.SHUTTER_SPEED.getOrDefault(stack))
-                    .setFilmType(film.getItem().getType())
-                    .setFrameSize(film.getItem().getFrameSize(film.getItemStack()))
+                    .setCameraHolder(holder)
+                    .setFov(getFov(level, stack))
                     .setCropFactor(getCropFactor())
                     .setFilter(getFilterShaderLocation(level.registryAccess(), stack).orElse(null))
-                    .setFovOverride(getFov(level, stack))
-                    .setColorPalette(getColorPalette(level.registryAccess(), stack))
-                    .setFlash(flashHasFired)
                     .setProjectingInfo(getProjectionInfo(stack))
                     .setChromaticChannel(getChromaticChannel(stack))
-                    .extraData(tag -> tag.putInt("light_level", lightLevel))
+                    .setFilmType(film.getItem().getType())
+                    .setFilmProperties(film.map(SensitiveFilmItem::getFilmProperties))
+                    .extraData(CaptureParameters.SHUTTER_SPEED, CameraSettings.SHUTTER_SPEED.getOrDefault(stack))
+                    .extraData(CaptureParameters.FLASH, flashHasFired)
+                    .extraData(CaptureParameters.LIGHT_LEVEL, lightLevel)
                     .build();
 
-            if (shutterSpeed.shouldCauseTickingSound() || captureProperties.projection().isPresent()) {
-                int duration = Math.max(shutterSpeed.getDurationTicks(), captureProperties.projection()
+            if (shutterSpeed.shouldCauseTickingSound() || captureParameters.projection().isPresent()) {
+                int duration = Math.max(shutterSpeed.getDurationTicks(), captureParameters.projection()
                         .map(l -> Config.Server.PROJECT_TIMEOUT_TICKS.get()).orElse(0));
                 Sound.playShutterTicking(entity, cameraId, duration);
             }
 
             CameraInstances.createOrUpdate(cameraId, instance -> {
-                int cooldown = calculateCooldownAfterShot(stack, captureProperties);
+                int cooldown = calculateCooldownAfterShot(stack, captureParameters);
                 instance.setDeferredCooldown(cooldown);
 
-                captureProperties.projection().ifPresent(fileLoading -> {
+                captureParameters.projection().ifPresent(fileLoading -> {
                     instance.waitForProjection(level.getGameTime() + Config.Server.PROJECT_TIMEOUT_TICKS.get());
                 });
             });
 
-            addNewFrame(serverLevel, holder, stack, captureProperties);
+            addNewFrame(serverLevel, holder, stack, captureParameters);
 
             ExposureServer.exposureRepository().expect(serverPlayer, exposureId);
-            Packets.sendToClient(new CaptureStartS2CP(getCaptureType(stack), captureProperties), serverPlayer);
+            Packets.sendToClient(new CaptureStartS2CP(getCaptureType(stack), captureParameters), serverPlayer);
         }
 
         return InteractionResultHolder.consume(stack);
@@ -720,25 +716,25 @@ public class CameraItem extends Item {
 
     // --
 
-    public void addNewFrame(ServerLevel level, CameraHolder holder, ItemStack stack, CaptureProperties captureProperties) {
-        boolean projecting = captureProperties.projection().isPresent();
+    public void addNewFrame(ServerLevel level, CameraHolder holder, ItemStack stack, CaptureParameters captureParameters) {
+        boolean projecting = captureParameters.projection().isPresent();
 
-        float fov = getViewfinderFov(level, stack);
         PointOfView pov = getPointOfView(holder, stack);
+        double fov = getViewfinderFov(level, stack);
 
         List<BlockPos> positionsInFrame = !projecting ? getPositionsInFrame(holder, pov, fov) : Collections.emptyList();
         List<LivingEntity> entitiesInFrame = !projecting ? EntitiesInFrame.get(holder, pov, fov) : Collections.emptyList();
 
-        Frame frame = createFrame(holder, level, stack, captureProperties, positionsInFrame, entitiesInFrame);
+        Frame frame = createFrame(holder, level, stack, captureParameters, positionsInFrame, entitiesInFrame);
         addFrameToFilm(stack, frame);
         onFrameAdded(holder, level, stack, frame, positionsInFrame, entitiesInFrame);
     }
 
-    public Frame createFrame(CameraHolder holder, ServerLevel level, ItemStack stack, CaptureProperties captureProperties,
+    public Frame createFrame(CameraHolder holder, ServerLevel level, ItemStack stack, CaptureParameters captureParameters,
                              List<BlockPos> positionsInFrame, List<LivingEntity> entitiesInFrame) {
         return Frame.create()
-                .setIdentifier(ExposureIdentifier.id(captureProperties.exposureId()))
-                .setType(captureProperties.filmType())
+                .setIdentifier(ExposureIdentifier.id(captureParameters.exposureId()))
+                .setType(captureParameters.filmType())
                 .setPhotographer(new Photographer(holder))
                 .setEntitiesInFrame(entitiesInFrame.stream()
                         .limit(Exposure.MAX_ENTITIES_IN_FRAME)
@@ -748,21 +744,21 @@ public class CameraItem extends Item {
                         .toList())
                 .addExtraData(Frame.SHUTTER_SPEED, CameraSettings.SHUTTER_SPEED.getOrDefault(stack))
                 .addExtraData(Frame.TIMESTAMP, UnixTimestamp.Seconds.now())
-                .updateExtraData(data -> addFrameExtraData(holder, level, stack, captureProperties, positionsInFrame, entitiesInFrame, data))
+                .updateExtraData(data -> addFrameExtraData(holder, level, stack, captureParameters, positionsInFrame, entitiesInFrame, data))
                 .toImmutable();
     }
 
-    protected void addFrameExtraData(CameraHolder holder, ServerLevel level, ItemStack camera, CaptureProperties captureProperties,
+    protected void addFrameExtraData(CameraHolder holder, ServerLevel level, ItemStack camera, CaptureParameters captureParameters,
                                      List<BlockPos> positionsInFrame, List<LivingEntity> entitiesInFrame, ExtraData data) {
         Entity cameraHolder = holder.asHolderEntity();
-        boolean projecting = captureProperties.projection().isPresent();
+        boolean projecting = captureParameters.projection().isPresent();
 
         if (projecting) {
             data.put(Frame.PROJECTED, true);
             return;
         }
 
-        if (captureProperties.flash()) {
+        if (captureParameters.getFlash()) {
             data.put(Frame.FLASH, true);
         }
         if (isInSelfieMode(camera)) {
@@ -777,11 +773,11 @@ public class CameraItem extends Item {
         int focalLength = (int) focalRange.focalLengthFromZoom(zoom);
         data.put(Frame.FOCAL_LENGTH, focalLength);
 
-        captureProperties.extraData().get(CaptureProperties.LIGHT_LEVEL)
+        captureParameters.extraData().get(CaptureParameters.LIGHT_LEVEL)
                 .ifPresent(lightLevel -> data.put(Frame.LIGHT_LEVEL, lightLevel));
 
-        if (captureProperties.filmType() == ExposureType.BLACK_AND_WHITE) {
-            captureProperties.singleChannel().ifPresent(channel ->
+        if (captureParameters.filmType() == ExposureType.BLACK_AND_WHITE) {
+            captureParameters.singleChannel().ifPresent(channel ->
                     data.put(Frame.COLOR_CHANNEL, channel));
         }
 
@@ -833,7 +829,7 @@ public class CameraItem extends Item {
             data.put(Frame.STRUCTURES, structures);
         }
 
-        PlatformHelper.postModifyFrameExtraDataEvent(holder, camera, captureProperties, positionsInFrame, entitiesInFrame, data);
+        PlatformHelper.postModifyFrameExtraDataEvent(holder, camera, captureParameters, positionsInFrame, entitiesInFrame, data);
     }
 
     /**
@@ -842,7 +838,7 @@ public class CameraItem extends Item {
      * Next are: top left, top right, bottom left, bottom right.
      * These 4 are roughly in positions where rule of thirds cross points are.
      */
-    public List<BlockPos> getPositionsInFrame(CameraHolder cameraHolder, PointOfView pov, float fov) {
+    public List<BlockPos> getPositionsInFrame(CameraHolder cameraHolder, PointOfView pov, double fov) {
         // offset roughly corresponds to rule of thirds distance
         float offsetDegrees = (float) ((fov * getCropFactor()) / 4.3);
 
@@ -945,7 +941,7 @@ public class CameraItem extends Item {
     protected void testEntitiesInFrame(ItemStack stack, Level level, CameraHolder holder) {
         PointOfView pov = getPointOfView(holder, stack);
 
-        float fov = getViewfinderFov(level, stack);
+        double fov = getViewfinderFov(level, stack);
         List<LivingEntity> entities = EntitiesInFrame.get(holder.asHolderEntity(), pov, fov);
         for (LivingEntity livingEntity : entities) {
             livingEntity.addEffect(new MobEffectInstance(MobEffects.GLOWING, 2, 1, true, false, false));

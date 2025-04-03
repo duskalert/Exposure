@@ -1,0 +1,198 @@
+package io.github.mortuusars.exposure.world.camera.capture;
+
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+import io.github.mortuusars.exposure.util.Codecs;
+import io.github.mortuusars.exposure.util.ExtraData;
+import io.github.mortuusars.exposure.world.camera.CameraId;
+import io.github.mortuusars.exposure.world.camera.ColorChannel;
+import io.github.mortuusars.exposure.world.camera.ExposureType;
+import io.github.mortuusars.exposure.world.camera.component.ShutterSpeed;
+import io.github.mortuusars.exposure.world.entity.CameraHolder;
+import io.github.mortuusars.exposure.world.camera.film.properties.FilmProperties;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.resources.ResourceLocation;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.Optional;
+import java.util.function.Consumer;
+
+public record CaptureParameters(String exposureId,
+                                Optional<CameraId> cameraId,
+                                Optional<Integer> cameraHolderId,
+                                Optional<Double> fov,
+                                float cropFactor,
+                                Optional<ResourceLocation> filter,
+                                Optional<ProjectionInfo> projection,
+                                Optional<ColorChannel> singleChannel,
+                                ExposureType filmType,
+                                FilmProperties filmProperties,
+                                ExtraData extraData) {
+
+    public static final ExtraData.Type<ShutterSpeed> SHUTTER_SPEED =
+            ExtraData.Type.stringRepresentable("shutter_speed", ShutterSpeed::new);
+    public static final ExtraData.Type<Boolean> FLASH =
+            new ExtraData.Type<>("flash", ExtraData::getBoolean, ExtraData::putBoolean);
+    public static final ExtraData.Type<Integer> LIGHT_LEVEL =
+            new ExtraData.Type<>("light_level", ExtraData::getInt, ExtraData::putInt);
+
+    // --
+
+    public static final Codec<CaptureParameters> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+            Codec.STRING.fieldOf("id").forGetter(CaptureParameters::exposureId),
+            CameraId.CODEC.optionalFieldOf("camera_id").forGetter(CaptureParameters::cameraId),
+            Codec.INT.optionalFieldOf("camera_holder_id").forGetter(CaptureParameters::cameraHolderId),
+            Codecs.POSITIVE_DOUBLE.optionalFieldOf("fov").forGetter(CaptureParameters::fov),
+            Codecs.floatRange(0.001f, 1f).optionalFieldOf("crop_factor", 1f).forGetter(CaptureParameters::cropFactor),
+            ResourceLocation.CODEC.optionalFieldOf("filter").forGetter(CaptureParameters::filter),
+            ProjectionInfo.CODEC.optionalFieldOf("projection").forGetter(CaptureParameters::projection),
+            ColorChannel.CODEC.optionalFieldOf("single_channel").forGetter(CaptureParameters::singleChannel),
+            ExposureType.CODEC.optionalFieldOf("film_type", ExposureType.COLOR).forGetter(CaptureParameters::filmType),
+            FilmProperties.CODEC.optionalFieldOf("film_properties", FilmProperties.EMPTY).forGetter(CaptureParameters::filmProperties),
+            ExtraData.CODEC.optionalFieldOf("extra_data", ExtraData.EMPTY).forGetter(CaptureParameters::extraData)
+    ).apply(instance, CaptureParameters::new));
+
+    public static final StreamCodec<RegistryFriendlyByteBuf, CaptureParameters> STREAM_CODEC = new StreamCodec<>() {
+        public @NotNull CaptureParameters decode(RegistryFriendlyByteBuf buffer) {
+            return new CaptureParameters(
+                    ByteBufCodecs.STRING_UTF8.decode(buffer),
+                    ByteBufCodecs.optional(CameraId.STREAM_CODEC).decode(buffer),
+                    ByteBufCodecs.optional(ByteBufCodecs.VAR_INT).decode(buffer),
+                    ByteBufCodecs.optional(ByteBufCodecs.DOUBLE).decode(buffer),
+                    ByteBufCodecs.FLOAT.decode(buffer),
+                    ByteBufCodecs.optional(ResourceLocation.STREAM_CODEC).decode(buffer),
+                    ByteBufCodecs.optional(ProjectionInfo.STREAM_CODEC).decode(buffer),
+                    ByteBufCodecs.optional(ColorChannel.STREAM_CODEC).decode(buffer),
+                    ExposureType.STREAM_CODEC.decode(buffer),
+                    FilmProperties.STREAM_CODEC.decode(buffer),
+                    ExtraData.STREAM_CODEC.decode(buffer));
+        }
+
+        public void encode(RegistryFriendlyByteBuf buffer, CaptureParameters data) {
+            ByteBufCodecs.STRING_UTF8.encode(buffer, data.exposureId());
+            ByteBufCodecs.optional(CameraId.STREAM_CODEC).encode(buffer, data.cameraId());
+            ByteBufCodecs.optional(ByteBufCodecs.VAR_INT).encode(buffer, data.cameraHolderId());
+            ByteBufCodecs.optional(ByteBufCodecs.DOUBLE).encode(buffer, data.fov());
+            ByteBufCodecs.FLOAT.encode(buffer, data.cropFactor());
+            ByteBufCodecs.optional(ResourceLocation.STREAM_CODEC).encode(buffer, data.filter());
+            ByteBufCodecs.optional(ProjectionInfo.STREAM_CODEC).encode(buffer, data.projection());
+            ByteBufCodecs.optional(ColorChannel.STREAM_CODEC).encode(buffer, data.singleChannel());
+            ExposureType.STREAM_CODEC.encode(buffer, data.filmType());
+            FilmProperties.STREAM_CODEC.encode(buffer, data.filmProperties());
+            ExtraData.STREAM_CODEC.encode(buffer, data.extraData());
+        }
+    };
+
+    public ShutterSpeed getShutterSpeed() {
+        return extraData.get(SHUTTER_SPEED).orElse(ShutterSpeed.DEFAULT);
+    }
+
+    public boolean getFlash() {
+        return extraData.get(FLASH).orElse(false);
+    }
+
+    public Optional<Integer> getLightLevel() {
+        return extraData.get(LIGHT_LEVEL);
+    }
+
+    public static final class Builder {
+        private final String exposureId;
+        private @Nullable CameraId cameraId;
+        private @Nullable Integer cameraHolderEntityID;
+        private @Nullable Double fov;
+        private float cropFactor = 1f;
+        private @Nullable ResourceLocation filter = null;
+        private @Nullable ProjectionInfo projectionInfo;
+        private @Nullable ColorChannel chromaticChannel;
+        private ExposureType filmType = ExposureType.COLOR;
+        private FilmProperties filmProperties = FilmProperties.EMPTY;
+        private final ExtraData extraData = new ExtraData();
+
+        public Builder(String exposureId) {
+            this.exposureId = exposureId;
+        }
+
+        public Builder setCameraID(@Nullable CameraId cameraId) {
+            this.cameraId = cameraId;
+            return this;
+        }
+
+        public Builder setCameraHolder(@Nullable CameraHolder holder) {
+            if (holder == null) cameraHolderEntityID = null;
+            else cameraHolderEntityID = holder.asHolderEntity().getId();
+            return this;
+        }
+
+        public Builder setFilter(@Nullable ResourceLocation filter) {
+            this.filter = filter;
+            return this;
+        }
+
+        public Builder setFov(@Nullable Double fov) {
+            this.fov = fov;
+            return this;
+        }
+
+        public Builder setCropFactor(float cropFactor) {
+            this.cropFactor = cropFactor;
+            return this;
+        }
+
+        public Builder setProjectionInfo(@Nullable ProjectionInfo projectionInfo) {
+            this.projectionInfo = projectionInfo;
+            return this;
+        }
+
+        public Builder setProjectingInfo(Optional<ProjectionInfo> projectingInfo) {
+            this.projectionInfo = projectingInfo.orElse(null);
+            return this;
+        }
+
+        public Builder setChromaticChannel(@Nullable ColorChannel chromaticChannel) {
+            this.chromaticChannel = chromaticChannel;
+            return this;
+        }
+
+        public Builder setChromaticChannel(Optional<ColorChannel> chromaticChannel) {
+            this.chromaticChannel = chromaticChannel.orElse(null);
+            return this;
+        }
+
+        public Builder setFilmType(@Nullable ExposureType filmType) {
+            this.filmType = filmType;
+            return this;
+        }
+
+        public Builder setFilmProperties(FilmProperties filmProperties) {
+            this.filmProperties = filmProperties;
+            return this;
+        }
+
+        public Builder extraData(Consumer<ExtraData> extraDataUpdater) {
+            extraDataUpdater.accept(extraData);
+            return this;
+        }
+
+        public <T> Builder extraData(ExtraData.Type<T> type, T value) {
+            extraData.put(type, value);
+            return this;
+        }
+
+        public CaptureParameters build() {
+            return new CaptureParameters(exposureId,
+                    Optional.ofNullable(this.cameraId),
+                    Optional.ofNullable(this.cameraHolderEntityID),
+                    Optional.ofNullable(this.fov),
+                    this.cropFactor,
+                    Optional.ofNullable(this.filter),
+                    Optional.ofNullable(this.projectionInfo),
+                    Optional.ofNullable(this.chromaticChannel),
+                    this.filmType,
+                    this.filmProperties,
+                    this.extraData);
+        }
+    }
+}

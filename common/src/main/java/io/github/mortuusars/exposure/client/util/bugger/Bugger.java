@@ -5,6 +5,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.serialization.JsonOps;
+import io.github.mortuusars.exposure.client.gui.screen.test.TestImageScreen;
 import io.github.mortuusars.exposure.client.util.Minecrft;
 import io.github.mortuusars.exposure.mixin.client.BuggerScreenRenderLinesInvoker;
 import net.minecraft.client.Minecraft;
@@ -57,7 +58,7 @@ public class Bugger {
     }
 
     private static void test() {
-
+        Minecrft.get().setScreen(new TestImageScreen());
     }
 
     // --

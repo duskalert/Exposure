@@ -1,38 +1,67 @@
 package io.github.mortuusars.exposure.client.capture.template;
 
+import io.github.mortuusars.exposure.Config;
+import io.github.mortuusars.exposure.Exposure;
+import io.github.mortuusars.exposure.client.image.Image;
 import io.github.mortuusars.exposure.client.image.PalettedImage;
+import io.github.mortuusars.exposure.client.image.modifier.ImageEffect;
 import io.github.mortuusars.exposure.client.util.Minecrft;
 import io.github.mortuusars.exposure.data.ColorPalette;
-import io.github.mortuusars.exposure.world.camera.capture.CaptureProperties;
+import io.github.mortuusars.exposure.data.ColorPalettes;
+import io.github.mortuusars.exposure.world.camera.ExposureType;
+import io.github.mortuusars.exposure.world.camera.capture.CaptureParameters;
 import io.github.mortuusars.exposure.util.cycles.task.Task;
-import io.github.mortuusars.exposure.world.entity.CameraHolder;
+import io.github.mortuusars.exposure.world.camera.film.properties.FilmProperties;
 import io.github.mortuusars.exposure.world.level.storage.ExposureData;
 import io.github.mortuusars.exposure.util.TranslatableError;
 import io.github.mortuusars.exposure.util.UnixTimestamp;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.player.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;
 import java.util.function.Function;
 
 public interface CaptureTemplate {
-    Task<?> createTask(CaptureProperties captureProperties);
+    Task<?> createTask(CaptureParameters params);
+
+    default Holder<ColorPalette> getColorPalette(CaptureParameters params) {
+        return params.filmProperties().colorPalette().orElse(ColorPalettes.getDefault(Minecrft.registryAccess()));
+    }
+
+    default Function<Image, Image> applyEffectsToImage(CaptureParameters params) {
+        FilmProperties filmProperties = params.filmProperties();
+        return ImageEffect.chain(
+                ImageEffect.Crop.SQUARE_CENTER,
+                ImageEffect.Crop.factor(params.cropFactor()),
+                ImageEffect.Resize.to(filmProperties.size().orElse(Config.Server.DEFAULT_FRAME_SIZE.get())),
+                ImageEffect.exposure(params.getShutterSpeed().getBrightness() * (filmProperties.sensitivity() + 1)),
+                ImageEffect.contrast(filmProperties.contrast()),
+                ImageEffect.levels(filmProperties.levels()),
+                ImageEffect.hsb(filmProperties.hsb()),
+                ImageEffect.noise(filmProperties.noise()),
+                ImageEffect.optional(params.filmType() == ExposureType.BLACK_AND_WHITE,
+                        params.singleChannel()
+                                .map(ImageEffect::singleChannelBlackAndWhite)
+                                .orElse(ImageEffect.BLACK_AND_WHITE)));
+    }
 
     default Function<PalettedImage, ExposureData> convertToExposureData(Holder<ColorPalette> palette, ExposureData.Tag tag) {
         ResourceLocation paletteId = palette.unwrapKey().orElseThrow().location();
         return image -> new ExposureData(image.width(), image.height(), image.pixels(), paletteId, tag);
     }
 
-    default ExposureData.Tag createExposureTag(CaptureProperties data, boolean isLoaded) {
+    default ExposureData.Tag createExposureTag(CaptureParameters data, boolean isLoaded) {
         return new ExposureData.Tag(data.filmType(), Minecrft.player().getScoreboardName(),
                 UnixTimestamp.Seconds.now(), isLoaded, false);
     }
 
     default @NotNull Consumer<TranslatableError> printCasualErrorInChat() {
-        return err -> Minecrft.execute(() ->
-                Minecrft.player().displayClientMessage(err.casual().withStyle(ChatFormatting.RED), false));
+        return err -> {
+            Minecrft.execute(() -> Minecrft.player().displayClientMessage(
+                    err.casual().withStyle(ChatFormatting.RED), false));
+            Exposure.LOGGER.error(err.technical().getString());
+        };
     }
 }

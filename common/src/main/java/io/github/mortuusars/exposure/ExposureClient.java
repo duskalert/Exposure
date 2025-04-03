@@ -6,17 +6,14 @@ import io.github.mortuusars.exposure.client.capture.template.*;
 import io.github.mortuusars.exposure.client.task.ClearStaleRenderedImagesIndefiniteTask;
 import io.github.mortuusars.exposure.client.RenderedExposures;
 import io.github.mortuusars.exposure.client.camera.viewfinder.*;
-import io.github.mortuusars.exposure.client.image.modifier.ImageModifier;
+import io.github.mortuusars.exposure.client.image.modifier.ImageEffect;
 import io.github.mortuusars.exposure.client.render.image.ImageRenderer;
 import io.github.mortuusars.exposure.client.render.photograph.PhotographStyle;
 import io.github.mortuusars.exposure.client.render.photograph.PhotographRenderer;
 import io.github.mortuusars.exposure.client.render.photograph.PhotographStyles;
 import io.github.mortuusars.exposure.client.util.Minecrft;
 import io.github.mortuusars.exposure.world.camera.capture.CaptureType;
-import io.github.mortuusars.exposure.world.camera.component.FlashMode;
 import io.github.mortuusars.exposure.world.item.camera.Attachment;
-import io.github.mortuusars.exposure.world.item.camera.CameraSetting;
-import io.github.mortuusars.exposure.world.item.camera.CameraSettings;
 import io.github.mortuusars.exposure.world.photograph.PhotographType;
 import io.github.mortuusars.exposure.util.cycles.Cycles;
 import io.github.mortuusars.exposure.client.ExposureStore;
@@ -52,7 +49,7 @@ public class ExposureClient {
                 ExposureClient.Textures.Photograph.AGED_OVERLAY,
                 ExposureClient.Textures.Photograph.AGED_ALBUM_PAPER,
                 ExposureClient.Textures.Photograph.AGED_ALBUM_OVERLAY,
-                ImageModifier.AGED));
+                ImageEffect.AGED));
 
         cycles().addParallelTask(new ClearStaleRenderedImagesIndefiniteTask());
 
