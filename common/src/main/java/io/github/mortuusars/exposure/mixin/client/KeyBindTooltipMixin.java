@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(value = KeyBindsList.KeyEntry.class)
-public abstract class KeyBindTooltip {
+public abstract class KeyBindTooltipMixin {
     @Shadow
     @Final
     private Button changeButton;

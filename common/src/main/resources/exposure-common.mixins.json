@@ -18,7 +18,7 @@
     "client.ItemFrameRendererMixin",
     "client.ItemInHandRendererMixin",
     "client.ItemRendererMixin",
-    "client.KeyBindTooltip",
+    "client.KeyBindTooltipMixin",
     "client.KeyboardHandlerMixin",
     "client.KeyMappingMixin",
     "client.LocalPlayerMixin",
@@ -29,7 +29,6 @@
   "mixins": [
     "AnvilMenuMixin",
     "BoatMixin",
-    "BookPageCountMixin",
     "EntityMixin",
     "LecternBlockEntityAccessor",
     "LecternBlockEntityMixin",

@@ -17,10 +17,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class ServerEntityMixin {
     @Shadow @Final private Entity entity;
 
-    /**
-     * We need to send full rotation values on entity creation, because vanilla packets have limited data (bytes as rotations, for example).
-     * Second piece of the proper rotation puzzle is {@link CameraStandEntity#isControlledByLocalInstance()}.
-     */
+    // We need to send stand's full rotation values, because vanilla packets have limited data (bytes as rotations, for example).
+
     @Inject(method = "addPairing", at = @At("RETURN"))
     private void onAddPairing(ServerPlayer player, CallbackInfo ci) {
         if (this.entity instanceof CameraStandEntity stand) {
