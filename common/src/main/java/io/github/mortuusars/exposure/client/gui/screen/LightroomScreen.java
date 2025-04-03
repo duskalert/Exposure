@@ -146,7 +146,7 @@ public class LightroomScreen extends AbstractContainerScreen<LightroomMenu> {
                 PrintingMode.CHROMATIC, Tooltip.create(Component.translatable("gui.exposure.lightroom.printing_mode.chromatic")
                         .append(CommonComponents.NEW_LINE)
                         .append(Component.translatable("gui.exposure.lightroom.printing_mode.chromatic.info").withStyle(ChatFormatting.GRAY))));
-        return new CycleButton<>(leftPos - 19, topPos + 91, 18, 18,
+        return new CycleButton<>(leftPos - 17, topPos + 91, 18, 18,
                 Arrays.asList(PrintingMode.values()), getMenu().getBlockEntity().getActualPrintingMode(),
                 spritesMap, (button, newMode) -> clickButton(LightroomMenu.TOGGLE_PROCESS_BUTTON_ID))
                 .setClickSound(SoundEvents.UI_BUTTON_CLICK.value())
@@ -189,7 +189,7 @@ public class LightroomScreen extends AbstractContainerScreen<LightroomMenu> {
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
         guiGraphics.blit(MAIN_TEXTURE, leftPos, topPos, 0, 0, imageWidth, imageHeight);
-        guiGraphics.blit(MAIN_TEXTURE, leftPos - 27, topPos + 34, 0, 208, 28, 31);
+        guiGraphics.blit(MAIN_TEXTURE, leftPos - 27, topPos + 35, 0, 209, 28, 31);
 
         renderSlotPlaceholders(guiGraphics, mouseX, mouseY, partialTick);
 

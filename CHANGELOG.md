@@ -5,8 +5,13 @@
 - Added Self-Timer to the Camera.
 - Added dedicated creative tab for Exposure items
 - Camera model now changes depending on attachments.
+<br><br>
+
 - Changed selfie stick texture.
 - Changed `entities_in_frame` for `exposure:frame_exposed` advancement trigger and `exposure:frame` predicate. It is now a list instead of singular entity.
+<br><br>
+
+- Fixed extra row of pixels in Lightroom screen and process toggle button position.
 
 ## 1.8.11 - 2025-03-16
 - Fixed crash with some mods (Little Tiles is a known one) due to conflicting mixin methods.
