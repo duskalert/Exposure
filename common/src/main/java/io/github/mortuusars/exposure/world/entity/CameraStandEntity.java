@@ -28,6 +28,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.FluidTags;
+import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.MenuProvider;
@@ -278,7 +279,10 @@ public class CameraStandEntity extends Entity implements CameraHolder {
 
             // Set initial camera direction.
             if (getYRot() == 0 && getXRot() == 0) { // If rotations are at 0 - player likely hasn't chosen a direction yet.
-                setYRot(player.getYRot());
+                setYRot(Mth.wrapDegrees(player.getYRot()));
+                if (!isClientSide()) {
+                    syncRotationToClients();
+                }
             }
 
             return InteractionResult.SUCCESS;
