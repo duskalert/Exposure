@@ -17,7 +17,6 @@ import io.github.mortuusars.exposure.world.camera.capture.ProjectionInfo;
 import io.github.mortuusars.exposure.world.camera.frame.*;
 import io.github.mortuusars.exposure.world.entity.CameraHolder;
 import io.github.mortuusars.exposure.world.entity.CameraStandEntity;
-import io.github.mortuusars.exposure.world.item.FilmItem;
 import io.github.mortuusars.exposure.world.item.FilmRollItem;
 import io.github.mortuusars.exposure.world.item.InterplanarProjectorItem;
 import io.github.mortuusars.exposure.world.item.SensitiveFilmItem;
