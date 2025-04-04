@@ -7,12 +7,15 @@
     },
     "I": {
       "tag": "c:ingots/iron"
+    },
+    "B": {
+      "item": "minecraft:smooth_stone_slab"
     }
   },
   "pattern": [
     " I ",
-    " S ",
-    "SSS"
+    "SSS",
+    "BSB"
   ],
   "result": {
     "id": "exposure:camera_stand"
