@@ -47,8 +47,8 @@ public abstract class PlayerMixin extends LivingEntity implements CameraHolder, 
     // --
 
     @Override
-    public @NotNull Player getPlayerExecutingExposure() {
-        return (Player) (Object) this;
+    public Optional<Player> getPlayerExecutingExposure() {
+        return Optional.of((Player) (Object) this);
     }
 
     @Override

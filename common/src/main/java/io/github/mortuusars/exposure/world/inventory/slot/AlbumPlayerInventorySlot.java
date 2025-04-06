@@ -1,11 +1,10 @@
-package io.github.mortuusars.exposure.world.inventory;
+package io.github.mortuusars.exposure.world.inventory.slot;
 
 import net.minecraft.world.Container;
 import net.minecraft.world.inventory.Slot;
 
 public class AlbumPlayerInventorySlot extends Slot {
-
-    private boolean isActive;
+    protected boolean isActive;
 
     public AlbumPlayerInventorySlot(Container container, int slot, int x, int y) {
         super(container, slot, x, y);

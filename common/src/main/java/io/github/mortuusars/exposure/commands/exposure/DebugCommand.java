@@ -11,20 +11,17 @@ import io.github.mortuusars.exposure.world.camera.*;
 import io.github.mortuusars.exposure.world.camera.capture.CaptureParameters;
 import io.github.mortuusars.exposure.world.camera.capture.CaptureType;
 import io.github.mortuusars.exposure.world.camera.component.ShutterSpeed;
-import io.github.mortuusars.exposure.world.camera.film.properties.FilmProperties;
 import io.github.mortuusars.exposure.world.camera.frame.EntitiesInFrame;
 import io.github.mortuusars.exposure.world.entity.CameraHolder;
+import io.github.mortuusars.exposure.world.item.camera.CameraItem;
 import io.github.mortuusars.exposure.world.item.camera.CameraSettings;
 import io.github.mortuusars.exposure.world.level.storage.ExposureIdentifier;
-import io.github.mortuusars.exposure.world.camera.frame.Photographer;
 import io.github.mortuusars.exposure.world.camera.frame.Frame;
 import io.github.mortuusars.exposure.world.item.*;
-import io.github.mortuusars.exposure.world.item.camera.Attachment;
 import io.github.mortuusars.exposure.network.Packets;
 import io.github.mortuusars.exposure.network.packet.clientbound.ClearRenderingCacheS2CP;
 import io.github.mortuusars.exposure.network.packet.clientbound.CaptureStartDebugRGBS2CP;
 import net.minecraft.ChatFormatting;
-import net.minecraft.Util;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.core.BlockPos;
@@ -73,48 +70,42 @@ public class DebugCommand {
     private static int exposeRGB(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         ServerPlayer player = context.getSource().getPlayerOrException();
 
-        @Nullable Camera camera = CameraInHand.find(player);
-        if (camera == null) {
-            camera = new CameraInHand(player, new CameraId(Util.NIL_UUID), InteractionHand.MAIN_HAND);
+        @Nullable Camera cameraInHand = CameraInHand.find(player);
+        if (cameraInHand == null || cameraInHand.isEmpty() || !(cameraInHand.getItemStack().getItem() instanceof CameraItem cameraItem)) {
+            context.getSource().sendFailure(Component.translatable("command.exposure.debug.expose_rgb.fail.wrong_item"));
+            return 0;
         }
+
+        ItemStack cameraStack = cameraInHand.getItemStack();
 
         List<CaptureParameters> properties = new ArrayList<>();
 
         for (int i = 0; i < 3; i++) {
             ColorChannel channel = ColorChannel.values()[i];
             String exposureId = ExposureIdentifier.createId(player, channel.getSerializedName());
-            FilmProperties filmProperties = Attachment.FILM.get(camera.getItemStack()).mapIf(SensitiveFilmItem.class, SensitiveFilmItem::getFilmProperties).orElse(FilmProperties.EMPTY);
 
-            CaptureParameters captureParameters = new CaptureParameters.Builder(exposureId)
-                    .setCameraID(camera.getId().uuid().equals(Util.NIL_UUID) ? null : camera.getId())
+            CaptureParameters params = new CaptureParameters.Builder(exposureId)
+                    .setCameraID(cameraInHand.getId())
                     .setCameraHolder(player)
-                    .setFov(camera.map((item, stack) -> item.getFov(player.level(), stack)).orElse(null))
-                    .setCropFactor(camera.map((item, stack) -> item.getCropFactor()).orElse(1f))
-                    .extraData(CaptureParameters.SHUTTER_SPEED, CameraSettings.SHUTTER_SPEED.getOrElse(camera, ShutterSpeed.DEFAULT))
-                    .setFilmType(ExposureType.BLACK_AND_WHITE)
-                    .setFilmProperties(filmProperties)
+                    .setFov(cameraItem.getFov(player.level(), cameraStack))
+                    .setCropFactor(cameraItem.getCropFactor())
+                    .setFilmProperties(cameraItem.getFilmProperties(cameraStack).withType(ExposureType.BLACK_AND_WHITE))
                     .setChromaticChannel(channel)
+                    .extraData(CaptureParameters.SHUTTER_SPEED, CameraSettings.SHUTTER_SPEED.getOrElse(cameraStack, ShutterSpeed.DEFAULT))
                     .build();
 
-            properties.add(captureParameters);
+            properties.add(params);
 
-            Frame frame = camera
-                    .map((cameraItem, cameraStack) -> {
-                        PointOfView pov = cameraItem.getPointOfView(player, cameraStack);
-                        double fov = cameraItem.getViewfinderFov(player.level(), cameraStack);
-                        List<BlockPos> positions = cameraItem.getPositionsInFrame(player, pov, fov);
-                        List<LivingEntity> entities = EntitiesInFrame.get((CameraHolder) player, pov, fov);
-                        return cameraItem.createFrame(player, context.getSource().getLevel(), cameraStack, captureParameters, positions,entities);
-                    })
-                    .orElse(Frame.create().setIdentifier(ExposureIdentifier.id(exposureId))
-                            .setType(ExposureType.BLACK_AND_WHITE)
-                            .setPhotographer(new Photographer(player))
-                            .toImmutable());
+            PointOfView pov = cameraItem.getPointOfView(player, cameraStack);
+            double fov = cameraItem.getViewfinderFov(player.level(), cameraStack);
+            List<BlockPos> positions = cameraItem.getPositionsInFrame(player, pov, fov);
+            List<LivingEntity> entities = EntitiesInFrame.get((CameraHolder) player, pov, fov);
+            Frame frame = cameraItem.createFrame(player, player.serverLevel(), cameraStack, params, positions, entities);
 
             Supplier<Component> msg = () -> {
                 ItemStack photograph = new ItemStack(Exposure.Items.PHOTOGRAPH.get());
                 photograph.set(Exposure.DataComponents.PHOTOGRAPH_FRAME, frame);
-                return Component.literal("Captured " + channel.getSerializedName() + " channel exposure: ")
+                return Component.translatable("command.exposure.debug.expose_rgb.success.captured", channel.getSerializedName())
                         .append(Component.literal(exposureId)
                                 .withStyle(Style.EMPTY
                                         .withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND,
@@ -129,7 +120,7 @@ public class DebugCommand {
 
         Packets.sendToClient(new CaptureStartDebugRGBS2CP(CaptureType.DEBUG_RGB, properties), player);
 
-        context.getSource().sendSuccess(() -> Component.literal("Capturing RGB channels..."), true);
+        context.getSource().sendSuccess(() -> Component.translatable("command.exposure.debug.expose_rgb.success.capturing"), true);
 
         return 0;
     }
@@ -145,7 +136,7 @@ public class DebugCommand {
         List<Frame> frames = new ArrayList<>(allFrames.subList(Math.max(allFrames.size() - 3, 0), allFrames.size()));
 
         if (frames.size() < 3) {
-            stack.sendFailure(Component.literal("Not enough frames captured. 3 is required."));
+            stack.sendFailure(Component.translatable("command.exposure.debug.chromatic_from_last_three.fail.not_enough_frames"));
             return 1;
         }
 
@@ -165,7 +156,7 @@ public class DebugCommand {
 
             Supplier<Component> msg = () -> {
                 String exposureId = frame.identifier().getId().orElseThrow();
-                return Component.literal("Created chromatic exposure: ")
+                return Component.translatable("command.exposure.debug.chromatic_from_last_three.success.created")
                         .append(Component.literal(exposureId)
                                 .withStyle(Style.EMPTY
                                         .withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND,
@@ -176,7 +167,8 @@ public class DebugCommand {
 
             stack.sendSuccess(msg, true);
         } catch (Exception e) {
-            stack.sendFailure(Component.literal("Failed to create chromatic exposure: " + e));
+            stack.sendFailure(Component.translatable("command.exposure.debug.chromatic_from_last_three.fail.error", e.getMessage()));
+            Exposure.LOGGER.error("Failed to create chromatic exposure: ", e);
             return 1;
         }
 

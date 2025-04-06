@@ -38,4 +38,9 @@ public record Levels(int shadows, int midtones, int highlights, int black, int w
             ByteBufCodecs.VAR_INT, Levels::white,
             Levels::new
     );
+
+    @Override
+    public String toString() {
+        return "%s, %s, %s | %s, %s".formatted(shadows, midtones, highlights, black, white);
+    }
 }

@@ -10,6 +10,7 @@ import io.github.mortuusars.exposure.world.camera.capture.CaptureParameters;
 import io.github.mortuusars.exposure.data.ColorPalette;
 import io.github.mortuusars.exposure.util.cycles.task.EmptyTask;
 import io.github.mortuusars.exposure.util.cycles.task.Task;
+import io.github.mortuusars.exposure.world.entity.CameraHolder;
 import net.minecraft.core.Holder;
 import net.minecraft.world.entity.Entity;
 import org.jetbrains.annotations.Nullable;
@@ -31,11 +32,13 @@ public class SingleChannelCaptureTemplate implements CaptureTemplate {
             return new EmptyTask<>();
         }
 
+        @Nullable CameraHolder holder = entity instanceof CameraHolder cameraHolder ? cameraHolder : null;
+
         Holder<ColorPalette> palette = getColorPalette(params);
 
         return Capture.of(Capture.screenshot(),
                         CaptureAction.setCameraEntity(entity),
-                        CaptureAction.forceRegularOrSelfieCamera(),
+                        CaptureAction.forceRegularOrSelfieCamera(holder),
                         CaptureAction.optional(params.fov(), CaptureAction::setFov),
                         CaptureAction.hideGui(),
                         CaptureAction.optional(params.singleChannel(), channel -> CaptureAction.setPostEffect(channel.getShader())),

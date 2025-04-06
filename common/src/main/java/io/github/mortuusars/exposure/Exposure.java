@@ -13,7 +13,7 @@ import io.github.mortuusars.exposure.world.block.LightroomBlock;
 import io.github.mortuusars.exposure.world.block.entity.LightroomBlockEntity;
 import io.github.mortuusars.exposure.commands.argument.*;
 import io.github.mortuusars.exposure.world.camera.CameraId;
-import io.github.mortuusars.exposure.world.camera.film.properties.FilmProperties;
+import io.github.mortuusars.exposure.world.camera.film.properties.FilmStyle;
 import io.github.mortuusars.exposure.world.camera.component.CompositionGuide;
 import io.github.mortuusars.exposure.world.camera.component.FlashMode;
 import io.github.mortuusars.exposure.world.camera.ExposureType;
@@ -140,7 +140,7 @@ public class Exposure {
 
     public static class Items {
         public static final Supplier<CameraItem> CAMERA = Register.item("camera",
-                () -> new CameraItem(new Shutter(), new Item.Properties()
+                () -> new CameraItem(new Item.Properties()
                         .stacksTo(1)
                         .component(DataComponents.CAMERA_ACTIVE, false)));
 
@@ -313,22 +313,22 @@ public class Exposure {
 
         // Film
 
-        public static final DataComponentType<ResourceLocation> FILM_COLOR_PALETTE = Register.dataComponentType("film_color_palette",
-                arg -> arg.persistent(ResourceLocation.CODEC).networkSynchronized(ResourceLocation.STREAM_CODEC));
-
         public static final DataComponentType<Integer> FILM_FRAME_COUNT = Register.dataComponentType("film_frame_count",
                 arg -> arg.persistent(ExtraCodecs.intRange(1, 256)).networkSynchronized(ByteBufCodecs.VAR_INT));
 
         public static final DataComponentType<Integer> FILM_FRAME_SIZE = Register.dataComponentType("film_frame_size",
                 arg -> arg.persistent(ExtraCodecs.intRange(1, 2048)).networkSynchronized(ByteBufCodecs.VAR_INT));
 
-        public static final DataComponentType<FilmProperties> FILM_PROPERTIES = Register.dataComponentType("film_properties",
-                arg -> arg.persistent(FilmProperties.CODEC).networkSynchronized(FilmProperties.STREAM_CODEC));
+        public static final DataComponentType<FilmStyle> FILM_STYLE = Register.dataComponentType("film_style",
+                arg -> arg.persistent(FilmStyle.CODEC).networkSynchronized(FilmStyle.STREAM_CODEC));
+
+        public static final DataComponentType<ResourceLocation> FILM_COLOR_PALETTE = Register.dataComponentType("film_color_palette",
+                arg -> arg.persistent(ResourceLocation.CODEC).networkSynchronized(ResourceLocation.STREAM_CODEC));
 
         public static final DataComponentType<List<Frame>> FILM_FRAMES =
                 Register.dataComponentType("film_frames",
-                        arg -> arg.persistent(Frame.CODEC.listOf())
-                                .networkSynchronized(Frame.STREAM_CODEC.apply(ByteBufCodecs.list())));
+                        arg -> arg.persistent(Frame.CODEC.listOf(0, 256))
+                                .networkSynchronized(Frame.STREAM_CODEC.apply(ByteBufCodecs.list(256))));
 
         // Photograph
 

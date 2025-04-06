@@ -14,7 +14,6 @@ import io.github.mortuusars.exposure.client.util.Minecrft;
 import io.github.mortuusars.exposure.client.util.ZoomDirection;
 import io.github.mortuusars.exposure.world.camera.Camera;
 import io.github.mortuusars.exposure.world.camera.component.*;
-import io.github.mortuusars.exposure.world.item.camera.CameraItem;
 import io.github.mortuusars.exposure.world.item.camera.CameraSettings;
 import io.github.mortuusars.exposure.network.Packets;
 import io.github.mortuusars.exposure.network.packet.serverbound.ActiveCameraReleaseC2SP;
@@ -58,7 +57,7 @@ public class ViewfinderCameraControlsScreen extends Screen {
 
     protected static final int SEPARATOR_WIDTH = 1;
     protected static final int BUTTON_HEIGHT = 18;
-    protected static final int SIDE_BUTTONS_WIDTH = 48;
+    protected static final int SIDE_BUTTONS_WIDTH = 49;
     protected static final int BUTTON_WIDTH = 15;
 
     protected final Camera camera;
@@ -104,7 +103,7 @@ public class ViewfinderCameraControlsScreen extends Screen {
         leftPos = (width - 256) / 2;
         topPos = Math.round(viewfinder.overlay().getOpening().y + viewfinder.overlay().getOpening().height - 256);
 
-        boolean hasFlash = camera.map(CameraItem::hasFlash).orElse(false);
+        boolean hasFlash = camera.map((i, s) -> i.getFlash().isAvailable(s)).orElse(false);
 
         int elementX = leftPos + 128 - (SIDE_BUTTONS_WIDTH + 1 + BUTTON_WIDTH + 1 + BUTTON_WIDTH + 1 + (hasFlash ? BUTTON_WIDTH + 1 : 0) + SIDE_BUTTONS_WIDTH) / 2;
         int elementY = topPos + 238;

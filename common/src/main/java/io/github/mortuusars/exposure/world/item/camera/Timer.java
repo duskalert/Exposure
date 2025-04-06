@@ -28,6 +28,10 @@ public class Timer {
         setReleaseTick(stack, holder.asHolderEntity().level().getGameTime() + seconds * 20L);
     }
 
+    public void stop(ItemStack stack) {
+        setReleaseTick(stack, -1L);
+    }
+
     /**
      * @return true if state has changed.
      */

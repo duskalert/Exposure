@@ -13,11 +13,17 @@ import java.util.Optional;
  */
 public interface CameraHolder {
     /**
-     * Player that captures the image (renders it).
+     * Player that captures the image (renders it). If missing - photo should not be taken.
      */
-    default @NotNull Player getPlayerExecutingExposure() {
+    default Optional<Player> getPlayerExecutingExposure() {
         throw new IllegalStateException("This method must be implemented, " +
                 "and should return a player that will render the image.");
+    }
+
+    default Optional<ServerPlayer> getServerPlayerExecutingExposure() {
+        return getPlayerExecutingExposure()
+                .filter(pl -> pl instanceof ServerPlayer)
+                .map(pl -> (ServerPlayer) pl);
     }
 
     /**

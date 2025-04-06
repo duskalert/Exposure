@@ -17,9 +17,11 @@ import io.github.mortuusars.exposure.integration.ModCompatibilityClient;
 import io.github.mortuusars.exposure.world.inventory.tooltip.PhotographTooltip;
 import io.github.mortuusars.exposure.network.fabric.FabricS2CPacketHandler;
 import io.github.mortuusars.exposure.client.render.PhotographFrameEntityRenderer;
+import io.github.mortuusars.exposure.world.item.camera.CameraItem;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.model.loading.v1.ModelLoadingPlugin;
+import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.fabricmc.fabric.api.client.rendering.v1.TooltipComponentCallback;
@@ -31,6 +33,8 @@ public class ExposureFabricClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
         ExposureClient.init();
+
+        ColorProviderRegistry.ITEM.register(CameraItem::getGlassTintColor, Exposure.Items.CAMERA.get());
 
         KeyboardHandler.registerKeymappings(KeyBindingHelper::registerKeyBinding);
 

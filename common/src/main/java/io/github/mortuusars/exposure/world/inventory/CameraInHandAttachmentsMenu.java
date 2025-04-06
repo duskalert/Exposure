@@ -3,6 +3,7 @@ package io.github.mortuusars.exposure.world.inventory;
 import com.google.common.base.Preconditions;
 import io.github.mortuusars.exposure.Exposure;
 import io.github.mortuusars.exposure.world.camera.CameraId;
+import io.github.mortuusars.exposure.world.inventory.slot.FilteredSlot;
 import io.github.mortuusars.exposure.world.item.camera.CameraItem;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.world.Container;

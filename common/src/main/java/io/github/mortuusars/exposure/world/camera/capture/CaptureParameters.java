@@ -6,10 +6,9 @@ import io.github.mortuusars.exposure.util.Codecs;
 import io.github.mortuusars.exposure.util.ExtraData;
 import io.github.mortuusars.exposure.world.camera.CameraId;
 import io.github.mortuusars.exposure.world.camera.ColorChannel;
-import io.github.mortuusars.exposure.world.camera.ExposureType;
 import io.github.mortuusars.exposure.world.camera.component.ShutterSpeed;
-import io.github.mortuusars.exposure.world.entity.CameraHolder;
 import io.github.mortuusars.exposure.world.camera.film.properties.FilmProperties;
+import io.github.mortuusars.exposure.world.entity.CameraHolder;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
@@ -26,9 +25,8 @@ public record CaptureParameters(String exposureId,
                                 Optional<Double> fov,
                                 float cropFactor,
                                 Optional<ResourceLocation> filter,
-                                Optional<ProjectionInfo> projection,
+                                Optional<Projection> projection,
                                 Optional<ColorChannel> singleChannel,
-                                ExposureType filmType,
                                 FilmProperties filmProperties,
                                 ExtraData extraData) {
 
@@ -48,10 +46,9 @@ public record CaptureParameters(String exposureId,
             Codecs.POSITIVE_DOUBLE.optionalFieldOf("fov").forGetter(CaptureParameters::fov),
             Codecs.floatRange(0.001f, 1f).optionalFieldOf("crop_factor", 1f).forGetter(CaptureParameters::cropFactor),
             ResourceLocation.CODEC.optionalFieldOf("filter").forGetter(CaptureParameters::filter),
-            ProjectionInfo.CODEC.optionalFieldOf("projection").forGetter(CaptureParameters::projection),
+            Projection.CODEC.optionalFieldOf("projection").forGetter(CaptureParameters::projection),
             ColorChannel.CODEC.optionalFieldOf("single_channel").forGetter(CaptureParameters::singleChannel),
-            ExposureType.CODEC.optionalFieldOf("film_type", ExposureType.COLOR).forGetter(CaptureParameters::filmType),
-            FilmProperties.CODEC.optionalFieldOf("film_properties", FilmProperties.EMPTY).forGetter(CaptureParameters::filmProperties),
+            FilmProperties.CODEC.optionalFieldOf("film", FilmProperties.EMPTY).forGetter(CaptureParameters::filmProperties),
             ExtraData.CODEC.optionalFieldOf("extra_data", ExtraData.EMPTY).forGetter(CaptureParameters::extraData)
     ).apply(instance, CaptureParameters::new));
 
@@ -64,9 +61,8 @@ public record CaptureParameters(String exposureId,
                     ByteBufCodecs.optional(ByteBufCodecs.DOUBLE).decode(buffer),
                     ByteBufCodecs.FLOAT.decode(buffer),
                     ByteBufCodecs.optional(ResourceLocation.STREAM_CODEC).decode(buffer),
-                    ByteBufCodecs.optional(ProjectionInfo.STREAM_CODEC).decode(buffer),
+                    ByteBufCodecs.optional(Projection.STREAM_CODEC).decode(buffer),
                     ByteBufCodecs.optional(ColorChannel.STREAM_CODEC).decode(buffer),
-                    ExposureType.STREAM_CODEC.decode(buffer),
                     FilmProperties.STREAM_CODEC.decode(buffer),
                     ExtraData.STREAM_CODEC.decode(buffer));
         }
@@ -78,9 +74,8 @@ public record CaptureParameters(String exposureId,
             ByteBufCodecs.optional(ByteBufCodecs.DOUBLE).encode(buffer, data.fov());
             ByteBufCodecs.FLOAT.encode(buffer, data.cropFactor());
             ByteBufCodecs.optional(ResourceLocation.STREAM_CODEC).encode(buffer, data.filter());
-            ByteBufCodecs.optional(ProjectionInfo.STREAM_CODEC).encode(buffer, data.projection());
+            ByteBufCodecs.optional(Projection.STREAM_CODEC).encode(buffer, data.projection());
             ByteBufCodecs.optional(ColorChannel.STREAM_CODEC).encode(buffer, data.singleChannel());
-            ExposureType.STREAM_CODEC.encode(buffer, data.filmType());
             FilmProperties.STREAM_CODEC.encode(buffer, data.filmProperties());
             ExtraData.STREAM_CODEC.encode(buffer, data.extraData());
         }
@@ -105,9 +100,8 @@ public record CaptureParameters(String exposureId,
         private @Nullable Double fov;
         private float cropFactor = 1f;
         private @Nullable ResourceLocation filter = null;
-        private @Nullable ProjectionInfo projectionInfo;
+        private @Nullable Projection projection;
         private @Nullable ColorChannel chromaticChannel;
-        private ExposureType filmType = ExposureType.COLOR;
         private FilmProperties filmProperties = FilmProperties.EMPTY;
         private final ExtraData extraData = new ExtraData();
 
@@ -141,13 +135,13 @@ public record CaptureParameters(String exposureId,
             return this;
         }
 
-        public Builder setProjectionInfo(@Nullable ProjectionInfo projectionInfo) {
-            this.projectionInfo = projectionInfo;
+        public Builder setProjectionInfo(@Nullable Projection projection) {
+            this.projection = projection;
             return this;
         }
 
-        public Builder setProjectingInfo(Optional<ProjectionInfo> projectingInfo) {
-            this.projectionInfo = projectingInfo.orElse(null);
+        public Builder setProjection(Optional<Projection> projection) {
+            this.projection = projection.orElse(null);
             return this;
         }
 
@@ -158,11 +152,6 @@ public record CaptureParameters(String exposureId,
 
         public Builder setChromaticChannel(Optional<ColorChannel> chromaticChannel) {
             this.chromaticChannel = chromaticChannel.orElse(null);
-            return this;
-        }
-
-        public Builder setFilmType(@Nullable ExposureType filmType) {
-            this.filmType = filmType;
             return this;
         }
 
@@ -188,9 +177,8 @@ public record CaptureParameters(String exposureId,
                     Optional.ofNullable(this.fov),
                     this.cropFactor,
                     Optional.ofNullable(this.filter),
-                    Optional.ofNullable(this.projectionInfo),
+                    Optional.ofNullable(this.projection),
                     Optional.ofNullable(this.chromaticChannel),
-                    this.filmType,
                     this.filmProperties,
                     this.extraData);
         }

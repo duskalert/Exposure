@@ -8,6 +8,7 @@ import io.github.mortuusars.exposure.data.ColorPalette;
 import io.github.mortuusars.exposure.data.ColorPalettes;
 import io.github.mortuusars.exposure.world.camera.ExposureType;
 import io.github.mortuusars.exposure.client.gui.ClientGUI;
+import io.github.mortuusars.exposure.world.camera.film.properties.FilmProperties;
 import io.github.mortuusars.exposure.world.camera.frame.Frame;
 import io.github.mortuusars.exposure.world.inventory.ItemRenameMenu;
 import net.minecraft.ChatFormatting;
@@ -49,19 +50,10 @@ public class FilmRollItem extends Item implements SensitiveFilmItem {
         return type;
     }
 
-    @Override
-    public int getBarColor(@NotNull ItemStack stack) {
-        return barColor;
-    }
+    // --
 
-    @Override
-    public boolean isBarVisible(@NotNull ItemStack stack) {
-        return hasFrames(stack);
-    }
-
-    @Override
-    public int getBarWidth(@NotNull ItemStack stack) {
-        return Math.min(1 + 12 * getStoredFramesCount(stack) / getMaxFrameCount(stack), 13);
+    public boolean canAddFrame(ItemStack stack) {
+        return getStoredFramesCount(stack) < getMaxFrameCount(stack);
     }
 
     public void addFrame(ItemStack stack, Frame frame) {
@@ -74,39 +66,31 @@ public class FilmRollItem extends Item implements SensitiveFilmItem {
         stack.set(Exposure.DataComponents.FILM_FRAMES, frames);
     }
 
-    public boolean canAddFrame(ItemStack stack) {
-        return getStoredFramesCount(stack) < getMaxFrameCount(stack);
-    }
+    // --
 
     @Override
-    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
+    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> list, TooltipFlag tooltipFlag) {
         int exposedFrames = getStoredFramesCount(stack);
         if (exposedFrames > 0) {
             int totalFrames = getMaxFrameCount(stack);
-            tooltipComponents.add(Component.translatable("item.exposure.film_roll.tooltip.frame_count", exposedFrames, totalFrames)
+            list.add(Component.translatable("item.exposure.film_roll.tooltip.frame_count", exposedFrames, totalFrames)
                     .withStyle(ChatFormatting.GRAY));
         }
 
-        int frameSize = getFrameSize(stack);
-        if (frameSize != getDefaultFrameSize(stack)) {
-            tooltipComponents.add(Component.translatable("item.exposure.film_roll.tooltip.frame_size",
-                            Component.literal(String.format("%.1f", frameSize / 10f)))
-                    .withStyle(ChatFormatting.GRAY));
-        }
+        addFrameSizeToTooltip(stack, list);
 
-        ResourceKey<ColorPalette> colorPaletteId = getColorPaletteId(stack);
-        if (tooltipFlag.isAdvanced() && !colorPaletteId.equals(ColorPalettes.DEFAULT)) {
-            tooltipComponents.add(Component.translatable("item.exposure.film_roll.tooltip.palette", colorPaletteId.location().toString())
-                    .withStyle(ChatFormatting.GRAY));
+        if (tooltipFlag.isAdvanced()) {
+            addPaletteToTooltip(stack, list);
+            addStyleToTooltip(stack, list);
         }
 
         if (Config.Server.FILM_ROLL_EASY_RENAMING.get()) {
-            tooltipComponents.add(Component.translatable("item.exposure.film_roll.tooltip.renaming"));
+            list.add(Component.translatable("item.exposure.film_roll.tooltip.renaming"));
         }
 
         //noinspection ConstantValue
         if (exposedFrames > 0 && !PlatformHelper.isModLoaded("jei") && Config.Client.RECIPE_TOOLTIPS_WITHOUT_JEI.get()) {
-            ClientGUI.addFilmRollDevelopingTooltip(stack, context, tooltipComponents, tooltipFlag);
+            ClientGUI.addFilmRollDevelopingTooltip(stack, context, list, tooltipFlag);
         }
     }
 
@@ -131,6 +115,25 @@ public class FilmRollItem extends Item implements SensitiveFilmItem {
         PlatformHelper.openMenu(serverPlayer, menuProvider, buffer -> buffer.writeInt(slot));
         return InteractionResultHolder.success(player.getItemInHand(usedHand));
     }
+
+    // -- Bar
+
+    @Override
+    public int getBarColor(@NotNull ItemStack stack) {
+        return barColor;
+    }
+
+    @Override
+    public boolean isBarVisible(@NotNull ItemStack stack) {
+        return hasFrames(stack);
+    }
+
+    @Override
+    public int getBarWidth(@NotNull ItemStack stack) {
+        return Math.min(1 + 12 * getStoredFramesCount(stack) / getMaxFrameCount(stack), 13);
+    }
+
+    // --
 
     protected int getMatchingSlotInInventory(Inventory inventory, ItemStack stack) {
         for (int i = 0; i < inventory.getContainerSize(); i++) {

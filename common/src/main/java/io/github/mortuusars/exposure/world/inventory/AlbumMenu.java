@@ -4,6 +4,8 @@ import com.google.common.base.Preconditions;
 import com.mojang.blaze3d.platform.InputConstants;
 import io.github.mortuusars.exposure.Exposure;
 import io.github.mortuusars.exposure.util.PagingDirection;
+import io.github.mortuusars.exposure.world.inventory.slot.AlbumPhotographSlot;
+import io.github.mortuusars.exposure.world.inventory.slot.AlbumPlayerInventorySlot;
 import io.github.mortuusars.exposure.world.item.AlbumItem;
 import io.github.mortuusars.exposure.world.item.PhotographItem;
 import io.github.mortuusars.exposure.world.item.component.album.AlbumContent;

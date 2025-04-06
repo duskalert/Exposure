@@ -29,14 +29,14 @@ public record ColorPalette(int[] colors) {
                     Color.HEX_STRING_CODEC.listOf().fieldOf("colors").forGetter(ColorPalette::toColorList))
             .apply(instance, ColorPalette::new));
 
-    public static final Codec<Holder<ColorPalette>> HOLDER_CODEC = RegistryFixedCodec.create(Exposure.Registries.COLOR_PALETTE);
-
-    public static final StreamCodec<ByteBuf, ColorPalette> DIRECT_STREAM_CODEC = ByteBufCodecs.INT.apply(ByteBufCodecs.list())
-            .map(list -> new ColorPalette(list.stream().mapToInt(Integer::intValue).toArray()),
-                    palette -> Arrays.stream(palette.colors()).boxed().toList());
-
-    public static final StreamCodec<RegistryFriendlyByteBuf, Holder<ColorPalette>> STREAM_CODEC =
-            ByteBufCodecs.holder(Exposure.Registries.COLOR_PALETTE, DIRECT_STREAM_CODEC);
+//    public static final Codec<Holder<ColorPalette>> HOLDER_CODEC = RegistryFixedCodec.create(Exposure.Registries.COLOR_PALETTE);
+//
+//    public static final StreamCodec<ByteBuf, ColorPalette> DIRECT_STREAM_CODEC = ByteBufCodecs.INT.apply(ByteBufCodecs.list())
+//            .map(list -> new ColorPalette(list.stream().mapToInt(Integer::intValue).toArray()),
+//                    palette -> Arrays.stream(palette.colors()).boxed().toList());
+//
+//    public static final StreamCodec<RegistryFriendlyByteBuf, Holder<ColorPalette>> STREAM_CODEC =
+//            ByteBufCodecs.holder(Exposure.Registries.COLOR_PALETTE, DIRECT_STREAM_CODEC);
 
     public ColorPalette {
         Preconditions.checkState(colors.length > 0, "Cannot create palette that's empty.");

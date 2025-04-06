@@ -42,7 +42,7 @@ public class FlashAction implements CaptureAction {
         Level level = cameraHolder.level();
         Vec3 pos = cameraHolder.position();
         Vec3 lookAngle = cameraHolder.getLookAngle();
-        pos = pos.add(0, 1.2, 0).add(lookAngle.multiply(0.8f, 0.8f, 0.8f));
+        pos = pos.add(0, 1.1, 0).add(lookAngle.scale(0.8));
 
         RandomSource r = level.getRandom();
         for (int i = 0; i < 3; i++) {

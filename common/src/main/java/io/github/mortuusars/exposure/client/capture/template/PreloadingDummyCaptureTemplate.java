@@ -24,7 +24,7 @@ public class PreloadingDummyCaptureTemplate implements CaptureTemplate {
                         CaptureAction.forceCamera(CameraType.FIRST_PERSON),
                         CaptureAction.setFilter(Optional.empty()),
                         CaptureAction.setFov(50),
-                        CaptureAction.forceRegularOrSelfieCamera(),
+                        CaptureAction.forceRegularOrSelfieCamera(null),
                         CaptureAction.disablePostEffect(),
                         CaptureAction.modifyGamma(params.getShutterSpeed()))
                 .handleErrorAndGetResult()

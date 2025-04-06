@@ -9,7 +9,6 @@ import net.minecraft.core.component.DataComponentType;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
@@ -24,6 +23,7 @@ public record Attachment<T extends Item>(ResourceLocation id,
                                          DataComponentType<StoredItemStack> component,
                                          Predicate<ItemStack> itemPredicate,
                                          Class<T> itemType,
+                                         Supplier<Integer> maxCount,
                                          Optional<SoundEffect> insertedSound,
                                          Optional<SoundEffect> removedSound) {
     public static final Attachment<FilmRollItem> FILM = new Attachment<>(
@@ -31,6 +31,7 @@ public record Attachment<T extends Item>(ResourceLocation id,
             Exposure.DataComponents.FILM,
             stack -> stack.getItem() instanceof FilmRollItem,
             FilmRollItem.class,
+            () -> 1,
             new SoundEffect(Exposure.SoundEvents.FILM_ADVANCE, 0.9F, 1F),
             new SoundEffect(Exposure.SoundEvents.FILM_REMOVED, 0.7F, 1F));
     public static final Attachment<Item> FLASH = new Attachment<>(
@@ -38,6 +39,7 @@ public record Attachment<T extends Item>(ResourceLocation id,
             Exposure.DataComponents.FLASH,
             stack -> stack.is(Exposure.Tags.Items.FLASHES),
             Item.class,
+            () -> 1,
             new SoundEffect(Exposure.SoundEvents.CAMERA_GENERIC_CLICK, 0.6F, 1.15F),
             new SoundEffect(Exposure.SoundEvents.CAMERA_GENERIC_CLICK, 0.35F, 0.95F));
     public static final Attachment<Item> LENS = new Attachment<>(
@@ -45,6 +47,7 @@ public record Attachment<T extends Item>(ResourceLocation id,
             Exposure.DataComponents.LENS,
             stack -> stack.is(Exposure.Tags.Items.LENSES),
             Item.class,
+            () -> 1,
             new SoundEffect(Exposure.SoundEvents.LENS_INSERT),
             new SoundEffect(Exposure.SoundEvents.LENS_REMOVE));
     public static final Attachment<Item> FILTER = new Attachment<>(
@@ -52,6 +55,7 @@ public record Attachment<T extends Item>(ResourceLocation id,
             Exposure.DataComponents.FILTER,
             stack -> stack.is(Exposure.Tags.Items.FILTERS),
             Item.class,
+            () -> 1,
             new SoundEffect(Exposure.SoundEvents.FILTER_INSERT),
             new SoundEffect(Exposure.SoundEvents.FILTER_REMOVE, 0.5F));
 
@@ -59,16 +63,18 @@ public record Attachment<T extends Item>(ResourceLocation id,
                       DataComponentType<StoredItemStack> component,
                       Predicate<ItemStack> itemPredicate,
                       Class<T> itemType,
+                      Supplier<Integer> maxCount,
                       SoundEffect insertedSound,
                       SoundEffect removedSound) {
-        this(id, component, itemPredicate, itemType, Optional.of(insertedSound), Optional.of(removedSound));
+        this(id, component, itemPredicate, itemType, maxCount, Optional.of(insertedSound), Optional.of(removedSound));
     }
 
     public Attachment(ResourceLocation id,
                       DataComponentType<StoredItemStack> component,
                       Predicate<ItemStack> itemPredicate,
-                      Class<T> itemType) {
-        this(id, component, itemPredicate, itemType, Optional.empty(), Optional.empty());
+                      Class<T> itemType,
+                      Supplier<Integer> maxCount) {
+        this(id, component, itemPredicate, itemType, maxCount, Optional.empty(), Optional.empty());
     }
 
     public boolean matches(ItemStack stack) {
@@ -174,22 +180,14 @@ public record Attachment<T extends Item>(ResourceLocation id,
         return this;
     }
 
-    public void playInsertSoundSided(Player player) {
-        playInsertSoundSided(player, player);
-    }
-
-    public void playRemoveSoundSided(Player player) {
-        playRemoveSoundSided(player, player);
-    }
-
-    public void playInsertSoundSided(Player player, Entity entity) {
+    public void playInsertSoundSided(Entity entity) {
         insertedSound().ifPresent(sound ->
-                Sound.playUniqueSided(Integer.toString(entity.getId()), player, entity, sound, SoundSource.PLAYERS));
+                Sound.playUniqueSided(Integer.toString(entity.getId()), entity, sound, SoundSource.PLAYERS));
     }
 
-    public void playRemoveSoundSided(Player player, Entity entity) {
+    public void playRemoveSoundSided(Entity entity) {
         removedSound().ifPresent(sound ->
-                Sound.playUniqueSided(Integer.toString(entity.getId()), player, entity, sound, SoundSource.PLAYERS));
+                Sound.playUniqueSided(Integer.toString(entity.getId()), entity, sound, SoundSource.PLAYERS));
     }
 
     @Override

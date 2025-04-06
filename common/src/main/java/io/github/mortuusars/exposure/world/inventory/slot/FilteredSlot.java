@@ -1,4 +1,4 @@
-package io.github.mortuusars.exposure.world.inventory;
+package io.github.mortuusars.exposure.world.inventory.slot;
 
 import com.google.common.base.Preconditions;
 import net.minecraft.world.Container;
@@ -10,10 +10,10 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 public class FilteredSlot extends Slot {
-    private final Consumer<SlotChangedArgs> onItemChanged;
-    private final int maxStackSize;
-    private final int slot;
-    private final Predicate<ItemStack> mayPlacePredicate;
+    protected final Consumer<SlotChangedArgs> onItemChanged;
+    protected final int maxStackSize;
+    protected final int slot;
+    protected final Predicate<ItemStack> mayPlacePredicate;
 
     public FilteredSlot(Container container, int slot, int x, int y, int maxStackSize, Consumer<SlotChangedArgs> onItemChanged,
                         Predicate<ItemStack> mayPlacePredicate) {

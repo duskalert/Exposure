@@ -9,6 +9,7 @@
 
 - Changed selfie stick texture.
 - Changed `entities_in_frame` for `exposure:frame_exposed` advancement trigger and `exposure:frame` predicate. It is now a list instead of singular entity.
+- `/exposure debug expose_rgb` now requires player to hold a Camera.
 <br><br>
 
 - Fixed projecting image from URL always timing-out.

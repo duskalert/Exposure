@@ -12,6 +12,7 @@ import io.github.mortuusars.exposure.world.camera.ExposureType;
 import io.github.mortuusars.exposure.world.camera.capture.CaptureParameters;
 import io.github.mortuusars.exposure.util.cycles.task.Task;
 import io.github.mortuusars.exposure.world.camera.film.properties.FilmProperties;
+import io.github.mortuusars.exposure.world.camera.film.properties.FilmStyle;
 import io.github.mortuusars.exposure.world.level.storage.ExposureData;
 import io.github.mortuusars.exposure.util.TranslatableError;
 import io.github.mortuusars.exposure.util.UnixTimestamp;
@@ -27,21 +28,22 @@ public interface CaptureTemplate {
     Task<?> createTask(CaptureParameters params);
 
     default Holder<ColorPalette> getColorPalette(CaptureParameters params) {
-        return params.filmProperties().colorPalette().orElse(ColorPalettes.getDefault(Minecrft.registryAccess()));
+        return ColorPalettes.get(Minecrft.registryAccess(), params.filmProperties().colorPalette());
     }
 
     default Function<Image, Image> applyEffectsToImage(CaptureParameters params) {
-        FilmProperties filmProperties = params.filmProperties();
+        FilmProperties film = params.filmProperties();
+        FilmStyle style = film.style();
         return ImageEffect.chain(
                 ImageEffect.Crop.SQUARE_CENTER,
                 ImageEffect.Crop.factor(params.cropFactor()),
-                ImageEffect.Resize.to(filmProperties.size().orElse(Config.Server.DEFAULT_FRAME_SIZE.get())),
-                ImageEffect.exposure(params.getShutterSpeed().getBrightness() * (filmProperties.sensitivity() + 1)),
-                ImageEffect.contrast(filmProperties.contrast()),
-                ImageEffect.levels(filmProperties.levels()),
-                ImageEffect.hsb(filmProperties.hsb()),
-                ImageEffect.noise(filmProperties.noise()),
-                ImageEffect.optional(params.filmType() == ExposureType.BLACK_AND_WHITE,
+                ImageEffect.Resize.to(film.size().orElse(Config.Server.DEFAULT_FRAME_SIZE.get())),
+                ImageEffect.exposure(params.getShutterSpeed().getBrightness() * (style.sensitivity() + 1)),
+                ImageEffect.contrast(style.contrast()),
+                ImageEffect.levels(style.levels()),
+                ImageEffect.hsb(style.hsb()),
+                ImageEffect.noise(style.noise()),
+                ImageEffect.optional(params.filmProperties().type() == ExposureType.BLACK_AND_WHITE,
                         params.singleChannel()
                                 .map(ImageEffect::singleChannelBlackAndWhite)
                                 .orElse(ImageEffect.BLACK_AND_WHITE)));
@@ -52,8 +54,8 @@ public interface CaptureTemplate {
         return image -> new ExposureData(image.width(), image.height(), image.pixels(), paletteId, tag);
     }
 
-    default ExposureData.Tag createExposureTag(CaptureParameters data, boolean isLoaded) {
-        return new ExposureData.Tag(data.filmType(), Minecrft.player().getScoreboardName(),
+    default ExposureData.Tag createExposureTag(CaptureParameters params, boolean isLoaded) {
+        return new ExposureData.Tag(params.filmProperties().type(), Minecrft.player().getScoreboardName(),
                 UnixTimestamp.Seconds.now(), isLoaded, false);
     }
 

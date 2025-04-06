@@ -10,7 +10,7 @@ import io.github.mortuusars.exposure.data.ColorPalette;
 import io.github.mortuusars.exposure.util.cycles.task.EmptyTask;
 import io.github.mortuusars.exposure.util.cycles.task.Task;
 import io.github.mortuusars.exposure.world.camera.capture.CaptureParameters;
-import io.github.mortuusars.exposure.world.camera.capture.ProjectionInfo;
+import io.github.mortuusars.exposure.world.camera.capture.Projection;
 import net.minecraft.core.Holder;
 import net.minecraft.world.entity.Entity;
 import org.jetbrains.annotations.Nullable;
@@ -37,15 +37,15 @@ public class PathCaptureTemplate implements CaptureTemplate {
             return new EmptyTask<>();
         }
 
-        ProjectionInfo projectionInfo = params.projection().get();
-        String path = projectionInfo.path();
+        Projection projection = params.projection().get();
+        String path = projection.path();
         Holder<ColorPalette> palette = getColorPalette(params);
 
         return Capture.of(Capture.path(path),
                         CaptureAction.optional(params.cameraId(), CaptureAction::interplanarProjection))
                 .logErrorAndGetResult(LOGGER)
                 .thenAsync(applyEffectsToImage(params))
-                .thenAsync(Palettizer.fromProjectionMode(projectionInfo.mode()).palettizeAndClose(palette.value()))
+                .thenAsync(Palettizer.fromProjectionMode(projection.mode()).palettizeAndClose(palette.value()))
                 .thenAsync(convertToExposureData(palette, createExposureTag(params, true)))
                 .acceptAsync(image -> ExposureUploader.upload(params.exposureId(), image))
                 .onError(printCasualErrorInChat());

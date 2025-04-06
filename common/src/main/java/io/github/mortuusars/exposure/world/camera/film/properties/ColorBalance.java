@@ -29,4 +29,12 @@ public record ColorBalance(float r, float g, float b) {
             ByteBufCodecs.FLOAT, ColorBalance::b,
             ColorBalance::new
     );
+
+    // --
+
+
+    @Override
+    public String toString() {
+        return "R:%s, G:%s, B:%s".formatted(r, g, b);
+    }
 }

@@ -6,6 +6,7 @@ import io.github.mortuusars.exposure.ExposureClient;
 import io.github.mortuusars.exposure.PlatformHelperClient;
 import io.github.mortuusars.exposure.client.util.Minecrft;
 import io.github.mortuusars.exposure.world.entity.CameraStandEntity;
+import io.github.mortuusars.exposure.world.item.camera.CameraItem;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
@@ -17,10 +18,12 @@ import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemDisplayContext;
+import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 public class CameraStandEntityRenderer <T extends CameraStandEntity> extends EntityRenderer<T> {
     public static final ResourceLocation TEXTURE_LOCATION = ResourceLocation.withDefaultNamespace("textures/item/camera.png");
+    public static final float MOUNT_SCALE = 0.9f;
 
     protected final BlockRenderDispatcher blockRenderer;
 
@@ -75,7 +78,7 @@ public class CameraStandEntityRenderer <T extends CameraStandEntity> extends Ent
     private void renderMount(T entity, float entityYaw, float entityPitch, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight) {
         poseStack.pushPose();
         poseStack.translate(0, 1.125, 0);
-        float scale = 0.9f;
+        float scale = MOUNT_SCALE;
         poseStack.scale(scale, scale, scale);
 
         poseStack.mulPose(Axis.YP.rotationDegrees(-entityYaw + 180));
@@ -96,20 +99,23 @@ public class CameraStandEntityRenderer <T extends CameraStandEntity> extends Ent
 
     private void renderCamera(T entity, float entityYaw, float entityPitch, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight) {
         poseStack.pushPose();
-        poseStack.translate(0, 1.125, 0);
-        float scale = 0.9f;
-        poseStack.scale(scale, scale, scale);
 
+        poseStack.translate(0, 1.125, 0);
         poseStack.mulPose(Axis.YP.rotationDegrees(-entityYaw + 180));
         poseStack.mulPose(Axis.XP.rotationDegrees(-entityPitch));
+        poseStack.translate(0, 0.125 * MOUNT_SCALE, 0);
 
         if (entity.isMalfunctioned()) {
             poseStack.mulPose(Axis.ZP.rotationDegrees(-50));
             poseStack.mulPose(Axis.XP.rotationDegrees(-15));
         }
 
-        poseStack.translate(0, 0.625, 0);
-        Minecrft.get().getItemRenderer().renderStatic(entity.getCamera(), ItemDisplayContext.NONE, packedLight, OverlayTexture.NO_OVERLAY, poseStack, bufferSource, entity.level(), 0);
+        ItemStack camera = entity.getCamera();
+        float scale = camera.getItem() instanceof CameraItem cameraItem ? cameraItem.getScaleOnStand() : MOUNT_SCALE;
+        poseStack.scale(scale, scale, scale);
+        poseStack.translate(0, 0.5, 0);
+
+        Minecrft.get().getItemRenderer().renderStatic(camera, ItemDisplayContext.NONE, packedLight, OverlayTexture.NO_OVERLAY, poseStack, bufferSource, entity.level(), 0);
         poseStack.popPose();
     }
 }

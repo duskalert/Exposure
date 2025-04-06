@@ -8,9 +8,10 @@ import io.github.mortuusars.exposure.client.capture.palettizer.Palettizer;
 import io.github.mortuusars.exposure.client.capture.saving.ExposureUploader;
 import io.github.mortuusars.exposure.client.util.Minecrft;
 import io.github.mortuusars.exposure.world.camera.capture.CaptureParameters;
-import io.github.mortuusars.exposure.world.camera.capture.ProjectionInfo;
+import io.github.mortuusars.exposure.world.camera.capture.Projection;
 import io.github.mortuusars.exposure.data.ColorPalette;
 import io.github.mortuusars.exposure.util.cycles.task.EmptyTask;
+import io.github.mortuusars.exposure.world.entity.CameraHolder;
 import io.github.mortuusars.exposure.world.level.storage.ExposureData;
 import io.github.mortuusars.exposure.util.cycles.task.Task;
 import net.minecraft.core.Holder;
@@ -34,11 +35,13 @@ public class CameraCaptureTemplate implements CaptureTemplate {
             return new EmptyTask<>();
         }
 
+        @Nullable CameraHolder holder = entity instanceof CameraHolder cameraHolder ? cameraHolder : null;
+
         Holder<ColorPalette> palette = getColorPalette(params);
 
         Task<ExposureData> captureTask = Capture.of(Capture.screenshot(),
                         CaptureAction.setCameraEntity(entity),
-                        CaptureAction.forceRegularOrSelfieCamera(),
+                        CaptureAction.forceRegularOrSelfieCamera(holder),
                         CaptureAction.optional(params.fov(), CaptureAction::setFov),
                         CaptureAction.hideGui(),
                         CaptureAction.optional(Config.Client.KEEP_POST_EFFECT.isFalse(), CaptureAction::disablePostEffect),
@@ -51,14 +54,14 @@ public class CameraCaptureTemplate implements CaptureTemplate {
                 .then(convertToExposureData(palette, createExposureTag(params, false)));
 
         if (params.projection().isPresent()) {
-            ProjectionInfo projectionInfo = params.projection().get();
-            String path = projectionInfo.path();
+            Projection projection = params.projection().get();
+            String path = projection.path();
 
             captureTask = captureTask.overridenBy(Capture.of(Capture.path(path),
                             CaptureAction.optional(params.cameraId(), CaptureAction::interplanarProjection))
                     .logErrorAndGetResult(LOGGER)
                     .thenAsync(applyEffectsToImage(params))
-                    .thenAsync(Palettizer.fromProjectionMode(projectionInfo.mode()).palettizeAndClose(palette.value()))
+                    .thenAsync(Palettizer.fromProjectionMode(projection.mode()).palettizeAndClose(palette.value()))
                     .then(convertToExposureData(palette, createExposureTag(params, true))));
         }
 

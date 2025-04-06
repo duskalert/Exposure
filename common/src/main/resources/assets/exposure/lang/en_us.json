@@ -30,6 +30,12 @@
   "block.exposure.lightroom": "Lightroom",
   "category.exposure": "Exposure",
   "command.exposure.debug.develop.fail.wrong_item": "Player should hold a Film Roll in hand.",
+  "command.exposure.debug.expose_rgb.fail.wrong_item": "Player should hold a Camera in hand.",
+  "command.exposure.debug.expose_rgb.success.captured": "Captured %s channel exposure: ",
+  "command.exposure.debug.expose_rgb.success.capturing": "Capturing RGB channels...",
+  "command.exposure.debug.chromatic_from_last_three.fail.not_enough_frames": "Not enough frames captured. 3 is required.",
+  "command.exposure.debug.chromatic_from_last_three.success.created": "Created chromatic exposure: ",
+  "command.exposure.debug.chromatic_from_last_three.fail.error": "Failed to create chromatic exposure: %s",
   "command.exposure.debug.develop.success": "Developed %s",
   "command.exposure.export.confirm": "[Confirm?]",
   "command.exposure.export.confirm.tooltip": "Click to confirm (or run command again)",
@@ -336,5 +342,12 @@
   "task.exposure.export.status.exporting": "Exporting  '%s' - [%s/%s]",
   "task.exposure.export.status.requesting": "Requesting '%s' - [%s/%s]",
   "task.exposure.export.stopped": "Export stopped.",
-  "tooltip.exposure.hold_for_details": "§8Hold [§7Shift§8] for Details"
+  "tooltip.exposure.hold_for_details": "§8Hold [§7Shift§8] for Details",
+
+  "item.exposure.film_roll.tooltip.sensitivity": "Sensitivity: %s",
+  "item.exposure.film_roll.tooltip.contrast": "Contrast: %s",
+  "item.exposure.film_roll.tooltip.levels": "Levels: %s",
+  "item.exposure.film_roll.tooltip.hsb": "HSB: %s",
+  "item.exposure.film_roll.tooltip.color_balance": "Color Balance: %s",
+  "item.exposure.film_roll.tooltip.noise": "Noise: %s"
 }

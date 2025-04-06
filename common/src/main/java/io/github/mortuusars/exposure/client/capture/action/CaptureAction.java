@@ -3,9 +3,11 @@ package io.github.mortuusars.exposure.client.capture.action;
 import io.github.mortuusars.exposure.util.TranslatableError;
 import io.github.mortuusars.exposure.world.camera.CameraId;
 import io.github.mortuusars.exposure.world.camera.component.ShutterSpeed;
+import io.github.mortuusars.exposure.world.entity.CameraHolder;
 import net.minecraft.client.CameraType;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 import java.util.function.Function;
@@ -43,8 +45,8 @@ public interface CaptureAction {
         return new ForceCameraTypeAction(cameraType);
     }
 
-    static CaptureAction forceRegularOrSelfieCamera() {
-        return new ForceRegularOrSelfieCameraTypeAction();
+    static CaptureAction forceRegularOrSelfieCamera(@Nullable CameraHolder holder) {
+        return new ForceRegularOrSelfieCameraTypeAction(holder);
     }
 
     static CaptureAction hideGui() {

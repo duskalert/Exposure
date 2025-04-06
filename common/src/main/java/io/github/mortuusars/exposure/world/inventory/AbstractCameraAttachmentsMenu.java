@@ -1,5 +1,6 @@
 package io.github.mortuusars.exposure.world.inventory;
 
+import io.github.mortuusars.exposure.world.inventory.slot.FilteredSlot;
 import io.github.mortuusars.exposure.world.item.camera.Attachment;
 import io.github.mortuusars.exposure.world.item.camera.CameraItem;
 import net.minecraft.world.Container;

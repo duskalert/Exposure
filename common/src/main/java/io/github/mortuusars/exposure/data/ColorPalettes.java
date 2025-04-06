@@ -8,15 +8,11 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 
 public class ColorPalettes {
-    public static final ResourceKey<ColorPalette> MAP_COLORS_PLUS = createKey("map_colors_plus");
-    public static final ResourceKey<ColorPalette> MAP_COLORS = createKey("map_colors");
-    public static final ResourceKey<ColorPalette> RESURRECT_64 = createKey("resurrect_64");
-    public static final ResourceKey<ColorPalette> SLSO8 = createKey("slso8");
-    public static final ResourceKey<ColorPalette> INK = createKey("ink");
-    public static final ResourceKey<ColorPalette> DEFAULT = MAP_COLORS_PLUS;
+    public static final ResourceKey<ColorPalette> DEFAULT = createKey(Exposure.resource("map_colors_plus"));
+    public static final ResourceKey<ColorPalette> MAP_COLORS = createKey(Exposure.resource("map_colors"));
 
-    private static ResourceKey<ColorPalette> createKey(String name) {
-        return ResourceKey.create(Exposure.Registries.COLOR_PALETTE, Exposure.resource(name));
+    public static ResourceKey<ColorPalette> createKey(ResourceLocation location) {
+        return ResourceKey.create(Exposure.Registries.COLOR_PALETTE, location);
     }
 
     public static Holder<ColorPalette> get(RegistryAccess registryAccess, ResourceKey<ColorPalette> key) {

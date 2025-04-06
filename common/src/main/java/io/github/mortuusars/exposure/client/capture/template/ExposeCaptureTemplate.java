@@ -10,6 +10,7 @@ import io.github.mortuusars.exposure.data.ColorPalette;
 import io.github.mortuusars.exposure.util.cycles.task.EmptyTask;
 import io.github.mortuusars.exposure.util.cycles.task.Task;
 import io.github.mortuusars.exposure.world.camera.capture.CaptureParameters;
+import io.github.mortuusars.exposure.world.entity.CameraHolder;
 import net.minecraft.core.Holder;
 import net.minecraft.world.entity.Entity;
 import org.jetbrains.annotations.Nullable;
@@ -31,6 +32,8 @@ public class ExposeCaptureTemplate implements CaptureTemplate {
             return new EmptyTask<>();
         }
 
+        @Nullable CameraHolder holder = entity instanceof CameraHolder cameraHolder ? cameraHolder : null;
+
         Holder<ColorPalette> palette = getColorPalette(params);
 
         return Capture.of(Capture.screenshot(),
@@ -38,7 +41,7 @@ public class ExposeCaptureTemplate implements CaptureTemplate {
                         CaptureAction.optional(params.fov(), CaptureAction::setFov),
                         CaptureAction.setFilter(params.filter()),
                         CaptureAction.hideGui(),
-                        CaptureAction.forceRegularOrSelfieCamera(),
+                        CaptureAction.forceRegularOrSelfieCamera(holder),
                         CaptureAction.disablePostEffect(),
                         CaptureAction.modifyGamma(params.getShutterSpeed()),
                         CaptureAction.optional(params.getFlash(), () -> CaptureAction.flash(entity)))

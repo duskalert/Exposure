@@ -29,4 +29,11 @@ public record HSB(float hue, float saturation, float brightness) {
             ByteBufCodecs.FLOAT, HSB::brightness,
             HSB::new
     );
+
+    // --
+
+    @Override
+    public String toString() {
+        return "H:%s, S:%s, B:%s".formatted(hue, saturation, brightness);
+    }
 }
