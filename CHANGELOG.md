@@ -3,6 +3,8 @@
 ## UNRELEASED
 - Added Camera Stand.
 - Added Self-Timer to the Camera.
+- Added High-Sensitivity Films.
+  - Removed shutter speeds above 1 second.
 - Added dedicated creative tab for Exposure items
 - Camera model now changes depending on attachments.
 <br><br>
@@ -14,6 +16,7 @@
 
 - Fixed projecting image from URL always timing-out.
 - Fixed extra row of pixels in Lightroom screen and process toggle button position.
+- Fixed flash breaking underwater vegetation.
 - [NeoForge] Fixed Exposure's loot not generating in chests.
 
 ## 1.8.11 - 2025-03-16

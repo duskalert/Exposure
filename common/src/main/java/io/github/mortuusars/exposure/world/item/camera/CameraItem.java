@@ -124,11 +124,7 @@ public class CameraItem extends Item {
                 new ShutterSpeed("1/8"),
                 new ShutterSpeed("1/4"),
                 new ShutterSpeed("1/2"),
-                new ShutterSpeed("1\""),
-                new ShutterSpeed("2\""),
-                new ShutterSpeed("4\""),
-                new ShutterSpeed("8\""),
-                new ShutterSpeed("15\"")
+                new ShutterSpeed("1\"")
         );
     }
 

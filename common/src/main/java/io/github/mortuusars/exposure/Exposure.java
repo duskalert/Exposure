@@ -154,21 +154,21 @@ public class Exposure {
                         new Item.Properties()
                                 .stacksTo(16)));
 
-//        public static final Supplier<FilmRollItem> HIGH_SENSITIVITY_BLACK_AND_WHITE_FILM = Register.item("high_sensitivity_black_and_white_film",
-//                () -> new FilmRollItem(ExposureType.BLACK_AND_WHITE, FilmRollItem.BAR_BLACK_AND_WHITE,
-//                        new Item.Properties()
-//                                .component(DataComponents.FILM_PROPERTIES, FilmProperties.create()
-//                                        .withSensitivity(2f)
-//                                        .withNoise(0.05f))
-//                                .stacksTo(16)));
-//
-//        public static final Supplier<FilmRollItem> HIGH_SENSITIVITY_COLOR_FILM = Register.item("high_sensitivity_color_film",
-//                () -> new FilmRollItem(ExposureType.COLOR, FilmRollItem.BAR_COLOR,
-//                        new Item.Properties()
-//                                .component(DataComponents.FILM_PROPERTIES, FilmProperties.create()
-//                                        .withSensitivity(2f)
-//                                        .withNoise(0.05f))
-//                                .stacksTo(16)));
+        public static final Supplier<FilmRollItem> HIGH_SENSITIVITY_BLACK_AND_WHITE_FILM = Register.item("high_sensitivity_black_and_white_film",
+                () -> new FilmRollItem(ExposureType.BLACK_AND_WHITE, FilmRollItem.BAR_BLACK_AND_WHITE,
+                        new Item.Properties()
+                                .component(DataComponents.FILM_STYLE, FilmStyle.create()
+                                        .withSensitivity(2f)
+                                        .withNoise(0.05f))
+                                .stacksTo(16)));
+
+        public static final Supplier<FilmRollItem> HIGH_SENSITIVITY_COLOR_FILM = Register.item("high_sensitivity_color_film",
+                () -> new FilmRollItem(ExposureType.COLOR, FilmRollItem.BAR_COLOR,
+                        new Item.Properties()
+                                .component(DataComponents.FILM_STYLE, FilmStyle.create()
+                                        .withSensitivity(2f)
+                                        .withNoise(0.05f))
+                                .stacksTo(16)));
 
         public static final Supplier<DevelopedFilmItem> DEVELOPED_BLACK_AND_WHITE_FILM = Register.item("developed_black_and_white_film",
                 () -> new DevelopedFilmItem(ExposureType.BLACK_AND_WHITE, new Item.Properties()
@@ -231,8 +231,8 @@ public class Exposure {
                             output.accept(Items.CAMERA_STAND.get());
                             output.accept(Items.BLACK_AND_WHITE_FILM.get());
                             output.accept(Items.COLOR_FILM.get());
-//                            output.accept(Items.HIGH_SENSITIVITY_BLACK_AND_WHITE_FILM.get());
-//                            output.accept(Items.HIGH_SENSITIVITY_COLOR_FILM.get());
+                            output.accept(Items.HIGH_SENSITIVITY_BLACK_AND_WHITE_FILM.get());
+                            output.accept(Items.HIGH_SENSITIVITY_COLOR_FILM.get());
                             output.accept(Items.DEVELOPED_BLACK_AND_WHITE_FILM.get());
                             output.accept(Items.DEVELOPED_COLOR_FILM.get());
                             output.accept(Items.PHOTOGRAPH.get());
