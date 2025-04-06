@@ -7,6 +7,7 @@
   - Removed shutter speeds above 1 second.
 - Added dedicated creative tab for Exposure items
 - Camera model now changes depending on attachments.
+- Added `pixel_perfect_photograph_frame` client config option. Resizes images in Photograph Frame to match 16px grid.
 <br><br>
 
 - Changed selfie stick texture.

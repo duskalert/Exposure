@@ -268,6 +268,7 @@ public class Config {
         public static final ModConfigSpec.IntValue DIRECT_CAPTURE_DELAY_FRAMES;
 
         // RENDER
+        public static final ModConfigSpec.BooleanValue PIXEL_PERFECT_PHOTOGRAPH_FRAME;
         public static final ModConfigSpec.BooleanValue PHOTOGRAPH_RENDERS_IN_ITEM_FRAME;
         public static final ModConfigSpec.BooleanValue HIDE_PROJECTED_PHOTOGRAPHS_MADE_BY_OTHERS;
         public static final ModConfigSpec.BooleanValue HIDE_ALL_PHOTOGRAPHS_MADE_BY_OTHERS;
@@ -391,14 +392,17 @@ public class Config {
 
             {
                 builder.push("render");
+                PIXEL_PERFECT_PHOTOGRAPH_FRAME = builder
+                        .comment("Makes photos in Photograph Frame render with alignment to 16 pixel grid (like paintings). Just for fun. Default: false")
+                        .define("pixel_perfect_photograph_frame", false);
                 PHOTOGRAPH_RENDERS_IN_ITEM_FRAME = builder
                         .comment("Photographs in Item Frame will be rendered as image instead of an item icon. Default: false")
                         .define("photograph_renders_in_item_frame", false);
                 HIDE_PROJECTED_PHOTOGRAPHS_MADE_BY_OTHERS = builder
-                        .comment("Projected photographs (using Interplanar Projector) made by other players will be censored (pixelated).")
+                        .comment("Projected photographs (using Interplanar Projector) made by other players will be censored (pixelated). Default: false")
                         .define("censor_projected_photographs_made_by_others", false);
                 HIDE_ALL_PHOTOGRAPHS_MADE_BY_OTHERS = builder
-                        .comment("All photographs made by other players will will be censored (pixelated).")
+                        .comment("All photographs made by other players will will be censored (pixelated). Default: false")
                         .define("censor_all_photographs_made_by_others", false);
                 PHOTOGRAPH_FRAME_CULLING_DISTANCE = builder
                         .comment("Distance from the player beyond which Photograph Frame would not be rendered. Default: 64",

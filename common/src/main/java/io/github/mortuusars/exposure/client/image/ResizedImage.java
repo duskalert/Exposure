@@ -2,13 +2,12 @@ package io.github.mortuusars.exposure.client.image;
 
 import net.minecraft.util.Mth;
 
-public class ResizedImage implements Image {
-    private final Image original;
+public class ResizedImage extends Image.Wrapped {
     private final int width;
     private final int height;
 
-    public ResizedImage(Image original, int width, int height) {
-        this.original = original;
+    public ResizedImage(Image image, int width, int height) {
+        super(image);
         this.width = width;
         this.height = height;
     }
@@ -25,17 +24,13 @@ public class ResizedImage implements Image {
 
     @Override
     public int getPixelARGB(int x, int y) {
-        double xRatio = (double) original.width() / width;
-        double yRatio = (double) original.height() / height;
+        Image image = getImage();
+        double xRatio = (double) image.width() / width;
+        double yRatio = (double) image.height() / height;
 
-        int originalX = Mth.clamp(Mth.floor(x * xRatio), 0, original.width() - 1);
-        int originalY = Mth.clamp(Mth.floor(y * yRatio), 0, original.height() - 1);
+        int originalX = Mth.clamp(Mth.floor(x * xRatio), 0, image.width() - 1);
+        int originalY = Mth.clamp(Mth.floor(y * yRatio), 0, image.height() - 1);
 
-        return original.getPixelARGB(originalX, originalY);
-    }
-
-    @Override
-    public void close() {
-        original.close();
+        return image.getPixelARGB(originalX, originalY);
     }
 }
