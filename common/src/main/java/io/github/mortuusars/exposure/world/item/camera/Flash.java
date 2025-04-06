@@ -14,6 +14,8 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.Vec3;
@@ -73,7 +75,8 @@ public class Flash {
     }
 
     protected boolean isPositionSuitable(Level level, BlockPos pos) {
-        return level.getBlockState(pos).isAir() || level.getFluidState(pos).isSourceOfType(Fluids.WATER);
+        BlockState state = level.getBlockState(pos);
+        return state.isAir() || (state.is(Blocks.WATER) && level.getFluidState(pos).isSourceOfType(Fluids.WATER));
     }
 
     // --
