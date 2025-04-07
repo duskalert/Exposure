@@ -22,6 +22,8 @@ public class Config {
         public static final ModConfigSpec.DoubleValue SELFIE_CAMERA_DISTANCE;
         public static final ModConfigSpec.BooleanValue CAMERA_GUI_RIGHT_CLICK_OPEN_ATTACHMENTS;
         public static final ModConfigSpec.BooleanValue CAMERA_GUI_RIGHT_CLICK_HOTSWAP;
+        public static final ModConfigSpec.BooleanValue TIMER_ATTRACTS_MOB_ATTENTION;
+        public static final ModConfigSpec.IntValue TIMER_ATTENTION_RADIUS;
 
         // Camera Stand
         public static final ModConfigSpec.IntValue CAMERA_STAND_WORKING_RANGE;
@@ -85,6 +87,12 @@ public class Config {
                         .comment("Right-clicking Camera in GUI with attachment item will insert/swap it.",
                                 "Default: true")
                         .define("right_click_hotswap", true);
+                TIMER_ATTRACTS_MOB_ATTENTION = builder
+                        .comment("Self-timer will attract attention of nearby entities and makes them look at the Camera. Default: true")
+                        .define("timer_attracts_mob_attention", true);
+                TIMER_ATTENTION_RADIUS = builder
+                        .comment("Radius in blocks around the camera in which mobs will be affected by the timer. Default: 16")
+                        .defineInRange("timer_attention_radius", 16, 1, 64);
                 builder.pop();
             }
 

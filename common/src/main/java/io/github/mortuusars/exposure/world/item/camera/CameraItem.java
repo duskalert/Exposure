@@ -33,6 +33,7 @@ import io.github.mortuusars.exposure.util.*;
 import io.github.mortuusars.exposure.world.sound.Sound;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.commands.arguments.EntityAnchorArgument;
 import net.minecraft.core.*;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.particles.ParticleTypes;
@@ -51,6 +52,7 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.SlotAccess;
 import net.minecraft.world.entity.monster.EnderMan;
 import net.minecraft.world.entity.player.Inventory;
@@ -66,6 +68,7 @@ import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.StainedGlassPaneBlock;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.levelgen.Heightmap;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
@@ -557,6 +560,11 @@ public class CameraItem extends Item {
         boolean shutterStateChanged = getShutter().tick(holder, serverLevel, stack);
         boolean timerChanged = getTimer().tick(holder, serverLevel, stack);
 
+        if (Config.Server.TIMER_ATTRACTS_MOB_ATTENTION.get()
+                && getTimer().isTicking(holder, stack) || getTimer().getTicksSinceLastRelease(holder, stack) < 10) {
+            grabAttentionOfNearbyMobs(holder, stack);
+        }
+
         boolean projectionChanged = CameraInstances.getOptional(stack).map(instance -> {
             CameraInstance.ProjectionState state = instance.getProjectionState(level);
             switch (state) {
@@ -574,6 +582,37 @@ public class CameraItem extends Item {
         }
 
         return shutterStateChanged || timerChanged || projectionChanged;
+    }
+
+    protected void grabAttentionOfNearbyMobs(CameraHolder holder, ItemStack stack) {
+        Entity holderEntity = holder.asHolderEntity();
+        Vec3 pos = isInSelfieMode(stack)
+                ? holderEntity.getEyePosition().add(holderEntity.getLookAngle().scale(Config.Server.SELFIE_CAMERA_DISTANCE.get()))
+                : holderEntity.getEyePosition();
+
+        holderEntity.level().getEntities(holderEntity, new AABB(holderEntity.blockPosition())
+                        .inflate(Config.Server.TIMER_ATTENTION_RADIUS.get()))
+                .stream()
+                .filter(entity -> entity instanceof Mob)
+                .map(entity -> ((Mob) entity))
+                .filter(mob -> canGrabAttentionOf(holder, mob))
+                .forEach(mob -> {
+                    // Each entity has slightly different delay until looking
+                    long startLookingTick = getTimer().getStartTick(stack) + (mob.getId() % 15);
+                    if (mob.level().getGameTime() > startLookingTick) {
+                        mob.lookAt(EntityAnchorArgument.Anchor.EYES, pos);
+                    }
+                });
+    }
+
+    protected boolean canGrabAttentionOf(CameraHolder holder, Mob mob) {
+        return mob.isAlive()
+                && !mob.isDeadOrDying()
+                && !mob.isSleeping()
+                && !mob.getType().is(Exposure.Tags.Entities.IGNORES_CAMERA)
+                && (mob.getTarget() == null || mob.getTarget().equals(holder))
+                && !mob.hasEffect(MobEffects.BLINDNESS)
+                && mob.hasLineOfSight(holder.asHolderEntity());
     }
 
     @Override
@@ -635,10 +674,10 @@ public class CameraItem extends Item {
             return InteractionResultHolder.consume(stack);
         }
 
-        if (getTimer().getReleaseTick(stack) != level.getGameTime()) {
+        if (getTimer().getEndTick(stack) != level.getGameTime()) {
             SelfTimer selfTimer = CameraSettings.SELF_TIMER.getOrDefault(stack);
             if (selfTimer != SelfTimer.OFF) {
-                getTimer().set(holder, stack, selfTimer.getSeconds());
+                getTimer().set(holder, stack, selfTimer.getTicks());
                 return InteractionResultHolder.consume(stack);
             }
         }
@@ -662,8 +701,8 @@ public class CameraItem extends Item {
         String exposureId = ExposureIdentifier.createId(executingPlayer);
         int lightLevel = LevelUtil.getLightLevelAt(level, entity.blockPosition());
         boolean flash = getFlash().isAvailable(stack)
-                             && getFlash().shouldFire(stack, lightLevel)
-                             && getFlash().fire(holder, level, stack);
+                && getFlash().shouldFire(stack, lightLevel)
+                && getFlash().fire(holder, level, stack);
 
         CaptureParameters captureParameters = new CaptureParameters.Builder(exposureId)
                 .setCameraID(cameraId)
@@ -878,7 +917,7 @@ public class CameraItem extends Item {
 
     public void onFrameAdded(CameraHolder holder, ServerLevel level, ItemStack stack, Frame frame,
                              List<BlockPos> positionsInFrame, List<LivingEntity> entitiesInFrame) {
-        Entity executor = holder.getPlayerExecutingExposure().map(pl -> (Entity)pl).orElse(holder.asHolderEntity());
+        Entity executor = holder.getPlayerExecutingExposure().map(pl -> (Entity) pl).orElse(holder.asHolderEntity());
         ExposureServer.frameHistory().add(executor, frame);
 
         entitiesInFrame.forEach(entity -> entityCaptured(holder, stack, entity));

@@ -34,7 +34,6 @@ import io.github.mortuusars.exposure.world.item.component.StoredItemStack;
 import io.github.mortuusars.exposure.world.item.component.album.AlbumContent;
 import io.github.mortuusars.exposure.world.item.component.album.SignedAlbumContent;
 import io.github.mortuusars.exposure.world.item.camera.ShutterState;
-import io.github.mortuusars.exposure.world.item.camera.Shutter;
 import io.github.mortuusars.exposure.world.item.crafting.recipe.ComponentTransferringRecipe;
 import io.github.mortuusars.exposure.world.item.crafting.recipe.FilmDevelopingRecipe;
 import io.github.mortuusars.exposure.world.item.crafting.recipe.PhotographAgingRecipe;
@@ -271,7 +270,13 @@ public class Exposure {
         public static final DataComponentType<ShutterState> SHUTTER_STATE = Register.dataComponentType("camera_shutter_state",
                 arg -> arg.persistent(ShutterState.CODEC).networkSynchronized(ShutterState.STREAM_CODEC));
 
-        public static final DataComponentType<Long> RELEASE_TICK = Register.dataComponentType("camera_release_tick",
+        public static final DataComponentType<Long> TIMER_START_TICK = Register.dataComponentType("camera_timer_start_tick",
+                arg -> arg.persistent(Codec.LONG).networkSynchronized(ByteBufCodecs.VAR_LONG));
+
+        public static final DataComponentType<Long> TIMER_END_TICK = Register.dataComponentType("camera_timer_end_tick",
+                arg -> arg.persistent(Codec.LONG).networkSynchronized(ByteBufCodecs.VAR_LONG));
+
+        public static final DataComponentType<Long> TIMER_LAST_RELEASE_TICK = Register.dataComponentType("camera_timer_last_release_tick",
                 arg -> arg.persistent(Codec.LONG).networkSynchronized(ByteBufCodecs.VAR_LONG));
 
         // Settings
@@ -566,6 +571,10 @@ public class Exposure {
 
         public static class Blocks {
             public static final TagKey<Block> CHROMATIC_REFRACTORS = TagKey.create(net.minecraft.core.registries.Registries.BLOCK, Exposure.resource("chromatic_refractors"));
+        }
+
+        public static class Entities {
+            public static final TagKey<EntityType<?>> IGNORES_CAMERA = TagKey.create(net.minecraft.core.registries.Registries.ENTITY_TYPE, Exposure.resource("ignores_camera"));
         }
     }
 

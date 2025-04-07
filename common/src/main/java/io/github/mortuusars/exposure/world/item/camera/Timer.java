@@ -8,52 +8,82 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.item.ItemStack;
 
 public class Timer {
-    public boolean isTicking(CameraHolder holder, ItemStack stack) {
-        return getReleaseTick(stack) > holder.asHolderEntity().level().getGameTime();
-    }
-
-    public int getRemainingTicks(CameraHolder holder, ItemStack stack) {
-        return (int)Math.max(-1, getReleaseTick(stack) - holder.asHolderEntity().level().getGameTime());
-    }
-
-    public long getReleaseTick(ItemStack stack) {
-        return stack.getOrDefault(Exposure.DataComponents.RELEASE_TICK, -1L);
-    }
-
-    public void setReleaseTick(ItemStack stack, long tick) {
-        stack.set(Exposure.DataComponents.RELEASE_TICK, tick);
-    }
-
-    public void set(CameraHolder holder, ItemStack stack, int seconds) {
-        setReleaseTick(stack, holder.asHolderEntity().level().getGameTime() + seconds * 20L);
+    public void set(CameraHolder holder, ItemStack stack, int ticks) {
+        long gameTime = holder.asHolderEntity().level().getGameTime();
+        setStartTick(stack, gameTime);
+        setEndTick(stack, gameTime + ticks);
     }
 
     public void stop(ItemStack stack) {
-        setReleaseTick(stack, -1L);
+        setStartTick(stack, -1L);
+        setEndTick(stack, -1L);
     }
+
+    public boolean isTicking(CameraHolder holder, ItemStack stack) {
+        return getEndTick(stack) > holder.asHolderEntity().level().getGameTime();
+    }
+
+    // --
+
+    public int getRemainingTicks(CameraHolder holder, ItemStack stack) {
+        return (int)Math.max(-1, getEndTick(stack) - holder.asHolderEntity().level().getGameTime());
+    }
+
+    public long getTicksSinceLastRelease(CameraHolder holder, ItemStack stack) {
+        return holder.asHolderEntity().level().getGameTime() - getLastReleaseTick(stack);
+    }
+
+    // --
+
+    public long getStartTick(ItemStack stack) {
+        return stack.getOrDefault(Exposure.DataComponents.TIMER_START_TICK, -1L);
+    }
+
+    public void setStartTick(ItemStack stack, long tick) {
+        stack.set(Exposure.DataComponents.TIMER_START_TICK, tick);
+    }
+
+    public long getEndTick(ItemStack stack) {
+        return stack.getOrDefault(Exposure.DataComponents.TIMER_END_TICK, -1L);
+    }
+
+    public void setEndTick(ItemStack stack, long tick) {
+        stack.set(Exposure.DataComponents.TIMER_END_TICK, tick);
+    }
+
+    public long getLastReleaseTick(ItemStack stack) {
+        return stack.getOrDefault(Exposure.DataComponents.TIMER_LAST_RELEASE_TICK, -1L);
+    }
+
+    public void setLastReleaseTick(ItemStack stack, long tick) {
+        stack.set(Exposure.DataComponents.TIMER_LAST_RELEASE_TICK, tick);
+    }
+
+    // --
 
     /**
      * @return true if state has changed.
      */
     public boolean tick(CameraHolder holder, ServerLevel level, ItemStack stack) {
-        long releaseTick = getReleaseTick(stack);
+        long releaseTick = getEndTick(stack);
         if (releaseTick <= -1L) return false;
         long currentTick = level.getGameTime();
         long remainingTicks = releaseTick - currentTick;
 
-        if (remainingTicks < -10) {
+        if (remainingTicks < -5) {
             // Ignore if release tick was passed some time ago.
             // To not release when player drops or puts camera in chest and then picks up after some time.
-            setReleaseTick(stack, -1L);
+            stop(stack);
             return true;
         }
 
         if (remainingTicks == 0) {
-            setReleaseTick(stack, currentTick);
+            setEndTick(stack, currentTick);
+            setLastReleaseTick(stack, currentTick);
             if (stack.getItem() instanceof CameraItem cameraItem) {
                 cameraItem.release(holder, stack);
             }
-            setReleaseTick(stack, -1L);
+            stop(stack);
             return true;
         }
 
@@ -63,6 +93,8 @@ public class Timer {
 
         return false;
     }
+
+    // --
 
     protected void playTickSound(CameraHolder holder) {
         Sound.play(holder.asHolderEntity(), Exposure.SoundEvents.CAMERA_TIMER_TICK.get(), SoundSource.PLAYERS, 1, 0.8f);

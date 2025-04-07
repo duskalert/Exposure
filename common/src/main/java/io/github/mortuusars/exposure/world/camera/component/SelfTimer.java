@@ -39,6 +39,10 @@ public enum SelfTimer implements StringRepresentable {
         return seconds;
     }
 
+    public int getTicks() {
+        return seconds * 20;
+    }
+
     public MutableComponent translate() {
         return Component.translatable("gui." + Exposure.ID + ".self_timer." + name);
     }
