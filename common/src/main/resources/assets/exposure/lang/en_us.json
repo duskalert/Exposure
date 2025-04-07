@@ -161,6 +161,7 @@
   "exposure.configuration.render": "Render",
   "exposure.configuration.attachments_show_info_toast": "Attachments info toast",
   "exposure.configuration.attachments_show_wiki_toast": "Attachments wiki toast",
+  "gui.exposure.lightroom.toast.develop_film.title": "Film needs developing",
   "exposure.configuration.right_click_attachments_screen": "Right-Click Opens Attachments",
   "exposure.configuration.right_click_hotswap": "Right-Click hotswaps Attachment",
   "exposure.configuration.selfie_camera_distance": "Selfie Camera Distance",

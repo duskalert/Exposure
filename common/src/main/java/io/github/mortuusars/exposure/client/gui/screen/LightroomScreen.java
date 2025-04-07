@@ -6,6 +6,8 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import io.github.mortuusars.exposure.Exposure;
 import io.github.mortuusars.exposure.ExposureClient;
+import io.github.mortuusars.exposure.client.gui.toast.BetterTutorialToast;
+import io.github.mortuusars.exposure.client.gui.toast.ToastIcon;
 import io.github.mortuusars.exposure.client.input.Key;
 import io.github.mortuusars.exposure.client.input.KeyBindings;
 import io.github.mortuusars.exposure.client.util.Minecrft;
@@ -17,6 +19,7 @@ import io.github.mortuusars.exposure.client.image.renderable.RenderableImage;
 import io.github.mortuusars.exposure.client.render.image.RenderCoordinates;
 import io.github.mortuusars.exposure.world.camera.FilmColor;
 import io.github.mortuusars.exposure.world.camera.ExposureType;
+import io.github.mortuusars.exposure.world.item.FilmRollItem;
 import io.github.mortuusars.exposure.world.lightroom.PrintingMode;
 import io.github.mortuusars.exposure.world.item.DevelopedFilmItem;
 import io.github.mortuusars.exposure.world.camera.frame.Frame;
@@ -29,6 +32,7 @@ import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.ImageButton;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.components.WidgetSprites;
+import net.minecraft.client.gui.components.toasts.TutorialToast;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.GameRenderer;
@@ -82,6 +86,8 @@ public class LightroomScreen extends AbstractContainerScreen<LightroomMenu> {
     protected CycleButton<PrintingMode> printingModeToggleButton;
 
     protected Map<Integer, Rect2i> slotPlaceholders = Collections.emptyMap();
+
+    protected boolean hasShownDevelopingToast;
 
     public LightroomScreen(LightroomMenu menu, Inventory playerInventory, Component title) {
         super(menu, playerInventory, title);
@@ -377,6 +383,16 @@ public class LightroomScreen extends AbstractContainerScreen<LightroomMenu> {
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
         if (button == 0) {
+            Slot filmSlot = getMenu().getSlot(Lightroom.FILM_SLOT);
+            if (!hasShownDevelopingToast && !filmSlot.hasItem()
+                    && isHovering(filmSlot.x, filmSlot.y, 16, 16, mouseX, mouseY)
+                    && getMenu().getCarried().getItem() instanceof FilmRollItem) {
+                Minecrft.get().getToasts().addToast(new BetterTutorialToast(ToastIcon.HEADS_UP,
+                        Component.translatable("gui.exposure.lightroom.toast.develop_film.title"),
+                        null, BetterTutorialToast.DEFAULT_SHOW_DURATION_MS));
+                hasShownDevelopingToast = true;
+            }
+
             if (isOverCenterFrame((int) mouseX, (int) mouseY)) {
                 enterFrameInspectMode();
                 return true;

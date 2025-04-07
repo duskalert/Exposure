@@ -16,6 +16,7 @@ public interface ToastIcon {
     ToastIcon RIGHT_CLICK = new TutorialIcon(TutorialToast.Icons.RIGHT_CLICK);
     ToastIcon HOVER = new SpriteIcon(Exposure.resource("toast/hover"));
     ToastIcon F1 = new SpriteIcon(Exposure.resource("toast/f1"));
+    ToastIcon HEADS_UP = new SpriteIcon(Exposure.resource("toast/heads_up"));
 
     void render(GuiGraphics guiGraphics, int x, int y);
 
