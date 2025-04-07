@@ -3,10 +3,12 @@
 ## UNRELEASED
 - Added Camera Stand.
 - Added Self-Timer to the Camera.
+  - Mobs will look at the camera when timer is ticking.
 - Added High-Sensitivity Films.
   - Removed shutter speeds above 1 second.
 - Added dedicated creative tab for Exposure items
 - Camera model now changes depending on attachments.
+- Added tutorial toasts to Attachments menu.
 - Added `pixel_perfect_photograph_frame` client config option. Resizes images in Photograph Frame to match 16px grid.
 <br><br>
 

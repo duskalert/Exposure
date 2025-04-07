@@ -291,6 +291,10 @@ public class Config {
         public static final ModConfigSpec.BooleanValue EXPORT_ORGANIZE_BY_WORLD;
         public static final ModConfigSpec.IntValue EXPORT_SIZE_MULTIPLIER;
 
+        // MISC
+        public static final ModConfigSpec.BooleanValue ATTACHMENTS_SHOW_INFO_TOAST;
+        public static final ModConfigSpec.BooleanValue ATTACHMENTS_SHOW_WIKI_TOAST;
+
         static {
             ModConfigSpec.Builder builder = new ModConfigSpec.Builder();
 
@@ -445,6 +449,19 @@ public class Config {
                                 "Default: 2")
                         .defineInRange("export_size_multiplier", 2, 1, 10);
 
+                builder.pop();
+            }
+
+            {
+                builder.push("tutorial");
+                ATTACHMENTS_SHOW_INFO_TOAST = builder
+                        .comment("Toast that teaches hovering mouse over camera parts will be shown when attachments menu is first opened. Default: true.",
+                                "*This setting will be automatically set to false on first show.*")
+                        .define("attachments_show_info_toast", true);
+                ATTACHMENTS_SHOW_WIKI_TOAST = builder
+                        .comment("Toast that teaches wiki opening will be shown when attachments menu is first opened, after info toast. Default: true.",
+                                "*This setting will be automatically set to false on first show.*")
+                        .define("attachments_show_wiki_toast", true);
                 builder.pop();
             }
 

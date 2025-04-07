@@ -1,9 +1,12 @@
 package io.github.mortuusars.exposure.client.gui.screen.camera;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.systems.RenderSystem;
 import io.github.mortuusars.exposure.Config;
 import io.github.mortuusars.exposure.Exposure;
 import io.github.mortuusars.exposure.client.gui.screen.ItemListScreen;
+import io.github.mortuusars.exposure.client.gui.toast.BetterTutorialToast;
+import io.github.mortuusars.exposure.client.gui.toast.ToastIcon;
 import io.github.mortuusars.exposure.client.input.KeyboardHandler;
 import io.github.mortuusars.exposure.client.util.Minecrft;
 import io.github.mortuusars.exposure.util.color.Color;
@@ -13,8 +16,10 @@ import io.github.mortuusars.exposure.data.Filters;
 import io.github.mortuusars.exposure.world.inventory.AbstractCameraAttachmentsMenu;
 import io.github.mortuusars.exposure.world.inventory.CameraInHandAttachmentsMenu;
 import net.minecraft.ChatFormatting;
+import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.screens.ConfirmLinkScreen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.client.renderer.GameRenderer;
@@ -22,6 +27,7 @@ import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -50,13 +56,35 @@ public class CameraAttachmentsScreen extends AbstractContainerScreen<AbstractCam
             new Rect2i(106, 61, 17, 24)), () -> !getMenu().getSlot(2).hasItem());
     protected final HoveredElement lensBuiltIn = new HoveredElement(List.of(new Rect2i(93, 48, 29, 32)),
             () -> !getMenu().getSlot(2).hasItem());
+    protected final HoveredElement selfTimer = new HoveredElement(List.of(new Rect2i(92, 77, 6, 7)), () -> true);
     protected final HoveredElement viewfinder = new HoveredElement(List.of(new Rect2i(65, 25, 30, 12),
             new Rect2i(72, 31, 39, 11), new Rect2i(80, 42, 24, 5)), () -> true);
     protected final HoveredElement shutterSpeedKnob = new HoveredElement(List.of(new Rect2i(68, 49, 21, 26)), () -> true);
 
+    protected long openedAt = System.currentTimeMillis();
+    protected boolean hasHoveredOverPart;
+
     public CameraAttachmentsScreen(AbstractCameraAttachmentsMenu menu, Inventory playerInventory, Component title) {
         super(menu, playerInventory, title);
         this.player = playerInventory.player;
+        showTutorialToasts();
+    }
+
+    protected void showTutorialToasts() {
+        if (Config.Client.ATTACHMENTS_SHOW_INFO_TOAST.get()) {
+            Minecrft.get().getToasts().addToast(new BetterTutorialToast(ToastIcon.HOVER,
+                    Component.translatable("gui.exposure.camera_attachments.mouse_over_toast.title"),
+                    Component.translatable("gui.exposure.camera_attachments.mouse_over_toast.message"),
+                    () -> hasHoveredOverPart));
+            Config.Client.ATTACHMENTS_SHOW_INFO_TOAST.set(false);
+        }
+        if (Config.Client.ATTACHMENTS_SHOW_WIKI_TOAST.get()) {
+            Minecrft.get().getToasts().addToast(new BetterTutorialToast(ToastIcon.F1,
+                    Component.translatable("gui.exposure.camera_attachments.wiki_toast.title"),
+                    Component.translatable("gui.exposure.camera_attachments.wiki_toast.message"),
+                    BetterTutorialToast.DEFAULT_SHOW_DURATION_MS));
+            Config.Client.ATTACHMENTS_SHOW_WIKI_TOAST.set(false);
+        }
     }
 
     @Override
@@ -140,12 +168,12 @@ public class CameraAttachmentsScreen extends AbstractContainerScreen<AbstractCam
             RenderSystem.enableBlend();
             RenderSystem.defaultBlendFunc();
             guiGraphics.blit(TEXTURE, leftPos + 106, topPos + 56, 176, 165, 15, 23);
-        }
-
-        if (isMouseOver(viewfinder, mouseX, mouseY) && !isMouseOver(flash, mouseX, mouseY)) {
+        } else if (isMouseOver(viewfinder, mouseX, mouseY) && !isMouseOver(flash, mouseX, mouseY)) {
             guiGraphics.blit(TEXTURE, leftPos + 65, topPos + 24, 42, 185, 49, 26);
         } else if (isMouseOver(shutterSpeedKnob, mouseX, mouseY)) {
             guiGraphics.blit(TEXTURE, leftPos + 68, topPos + 49, 148, 185, 21, 26);
+        } else if (isMouseOver(selfTimer, mouseX, mouseY)) {
+            guiGraphics.blit(TEXTURE, leftPos + 93, topPos + 78, 169, 185, 4, 5);
         }
     }
 
@@ -201,9 +229,13 @@ public class CameraAttachmentsScreen extends AbstractContainerScreen<AbstractCam
 
     @Override
     protected void renderTooltip(GuiGraphics guiGraphics, int x, int y) {
+        int maxTooltipWidth = 230;
+
+        boolean hoveredOverPart = true; // easier to set it to false in else block, than in every if block.
+
         if (isMouseOver(flash, x, y)) {
             guiGraphics.renderTooltip(font, font.split(
-                    Component.translatable("gui.exposure.camera_attachments.flash.tooltip"), 230), x, y);
+                    Component.translatable("gui.exposure.camera_attachments.flash.tooltip"), maxTooltipWidth), x, y);
         } else if (isMouseOver(viewfinder, x, y)) {
             Component controlsKey = Component.literal(KeyboardHandler.getCameraControlsKey().getTranslatedKeyMessage().getString())
                     .withStyle(ChatFormatting.GRAY);
@@ -215,18 +247,30 @@ public class CameraAttachmentsScreen extends AbstractContainerScreen<AbstractCam
             Component sprintKey = Component.literal(Minecrft.options().keySprint.getTranslatedKeyMessage().getString())
                     .withStyle(ChatFormatting.GRAY);
             guiGraphics.renderTooltip(font, font.split(
-                    Component.translatable("gui.exposure.camera_attachments.viewfinder.tooltip", controlsKey, middleClick, selfieKey, sprintKey), 230), x, y);
+                    Component.translatable("gui.exposure.camera_attachments.viewfinder.tooltip",
+                            controlsKey, middleClick, selfieKey, sprintKey), maxTooltipWidth), x, y);
         } else if (isMouseOver(shutterSpeedKnob, x, y)) {
             guiGraphics.renderTooltip(font, font.split(
-                    Component.translatable("gui.exposure.camera_attachments.shutter_speed.tooltip"), 230), x, y);
+                    Component.translatable("gui.exposure.camera_attachments.shutter_speed.tooltip"), maxTooltipWidth), x, y);
         } else if (isMouseOver(filter, x, y) || isMouseOver(filterOnLens, x, y)) {
             guiGraphics.renderTooltip(font, font.split(
-                    Component.translatable("gui.exposure.camera_attachments.filter.tooltip"), 230), x, y);
+                    Component.translatable("gui.exposure.camera_attachments.filter.tooltip"), maxTooltipWidth), x, y);
         } else if (isMouseOver(lens, x, y) || isMouseOver(lensBuiltIn, x, y)) {
             guiGraphics.renderTooltip(font, font.split(
-                    Component.translatable("gui.exposure.camera_attachments.lens.tooltip"), 230), x, y);
+                    Component.translatable("gui.exposure.camera_attachments.lens.tooltip"), maxTooltipWidth), x, y);
+        } else if (isMouseOver(selfTimer, x, y)) {
+            MutableComponent component = Component.translatable("gui.exposure.camera_attachments.self_timer.tooltip");
+            if (Config.Server.TIMER_ATTRACTS_MOB_ATTENTION.get()) {
+                component.append(Component.translatable("gui.exposure.camera_attachments.self_timer_attention.tooltip"));
+            }
+            guiGraphics.renderTooltip(font, font.split(component, maxTooltipWidth), x, y);
         } else {
+            hoveredOverPart = false;
             super.renderTooltip(guiGraphics, x, y);
+        }
+
+        if (!hasHoveredOverPart && hoveredOverPart && System.currentTimeMillis() - openedAt > 3000) {
+            hasHoveredOverPart = true;
         }
     }
 
@@ -244,6 +288,23 @@ public class CameraAttachmentsScreen extends AbstractContainerScreen<AbstractCam
                         .withStyle(ChatFormatting.GRAY)));
 
         return tooltip;
+    }
+
+    @Override
+    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+        if (keyCode == InputConstants.KEY_F1) {
+            String url = "https://moddedmc.wiki/project/exposure";
+            Minecrft.get().setScreen(new ConfirmLinkScreen(confirmed -> {
+                if (confirmed) {
+                    Util.getPlatform().openUri(url);
+                }
+
+                Minecrft.get().setScreen(this);
+            }, "https://moddedmc.wiki/project/exposure", true));
+            return true;
+        }
+
+        return super.keyPressed(keyCode, scanCode, modifiers);
     }
 
     @Override
@@ -283,5 +344,6 @@ public class CameraAttachmentsScreen extends AbstractContainerScreen<AbstractCam
         }
     }
 
-    public record HoveredElement(List<Rect2i> hoverArea, Supplier<Boolean> isEnabled) { }
+    public record HoveredElement(List<Rect2i> hoverArea, Supplier<Boolean> isEnabled) {
+    }
 }
