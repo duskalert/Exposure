@@ -10,17 +10,30 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
-public class Widgets {
+public class Sprites {
     public static final WidgetSprites PREVIOUS_BUTTON_SPRITES =
-            threeStateSprites(Exposure.resource("widgets/previous_button"));
+            normalDisabledHighlighted(Exposure.resource("widgets/previous_button"));
     public static final WidgetSprites NEXT_BUTTON_SPRITES =
-            threeStateSprites(Exposure.resource("widgets/next_button"));
+            normalDisabledHighlighted(Exposure.resource("widgets/next_button"));
     public static final WidgetSprites CONFIRM_BUTTON_SPRITES =
-            threeStateSprites(Exposure.resource("widgets/confirm_button"));
+            normalDisabledHighlighted(Exposure.resource("widgets/confirm_button"));
     public static final WidgetSprites CANCEL_BUTTON_SPRITES =
-            threeStateSprites(Exposure.resource("widgets/cancel_button"));
+            normalDisabledHighlighted(Exposure.resource("widgets/cancel_button"));
 
-    public static WidgetSprites threeStateSprites(ResourceLocation base) {
+    public static ResourceLocation empty() {
+        return Exposure.resource("empty");
+    }
+
+    public static WidgetSprites normalAndHighlighted(ResourceLocation base) {
+        return new WidgetSprites(base, base,
+                ResourceLocation.fromNamespaceAndPath(base.getNamespace(), base.getPath() + "_highlighted"));
+    }
+
+    public static WidgetSprites normalAndHighlighted(ResourceLocation normal, ResourceLocation highlighted) {
+        return new WidgetSprites(normal, normal, highlighted);
+    }
+
+    public static WidgetSprites normalDisabledHighlighted(ResourceLocation base) {
         return new WidgetSprites(base,
                 ResourceLocation.fromNamespaceAndPath(base.getNamespace(), base.getPath() + "_disabled"),
                 ResourceLocation.fromNamespaceAndPath(base.getNamespace(), base.getPath() + "_highlighted"));

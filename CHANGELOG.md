@@ -9,6 +9,7 @@
 - Added dedicated creative tab for Exposure items
 - Camera model now changes depending on attachments.
 - Added tutorial toasts to Attachments menu.
+- Added film info to attachments menu.
 - Added `pixel_perfect_photograph_frame` client config option. Resizes images in Photograph Frame to match 16px grid.
 <br><br>
 

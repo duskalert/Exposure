@@ -17,6 +17,7 @@ import io.github.mortuusars.exposure.world.inventory.AbstractCameraAttachmentsMe
 import io.github.mortuusars.exposure.world.inventory.CameraInHandAttachmentsMenu;
 import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
+import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.ConfirmLinkScreen;
@@ -29,6 +30,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.Slot;
@@ -44,7 +46,12 @@ public class CameraAttachmentsScreen extends AbstractContainerScreen<AbstractCam
 
     protected final Player player;
 
-    protected Map<Integer, Rect2i> slotPlaceholders = Collections.emptyMap();
+    protected Map<Integer, Rect2i> slotPlaceholders = Map.of(
+            0, new Rect2i(238, 0, 18, 18),
+            1, new Rect2i(238, 18, 18, 18),
+            2, new Rect2i(238, 36, 18, 18),
+            3, new Rect2i(238, 54, 18, 18)
+    );
 
     protected final HoveredElement flash = new HoveredElement(List.of(new Rect2i(96, 11, 28, 27)),
             () -> getMenu().getSlot(1).hasItem());
@@ -59,6 +66,8 @@ public class CameraAttachmentsScreen extends AbstractContainerScreen<AbstractCam
     protected final HoveredElement selfTimer = new HoveredElement(List.of(new Rect2i(92, 77, 6, 7)), () -> true);
     protected final HoveredElement viewfinder = new HoveredElement(List.of(new Rect2i(65, 25, 30, 12),
             new Rect2i(72, 31, 39, 11), new Rect2i(80, 42, 24, 5)), () -> true);
+    protected final HoveredElement film = new HoveredElement(List.of(new Rect2i(48, 33, 15, 38),
+            new Rect2i(52, 24, 16, 11)), () -> true);
     protected final HoveredElement shutterSpeedKnob = new HoveredElement(List.of(new Rect2i(68, 49, 21, 26)), () -> true);
 
     protected long openedAt = System.currentTimeMillis();
@@ -75,14 +84,28 @@ public class CameraAttachmentsScreen extends AbstractContainerScreen<AbstractCam
             Minecrft.get().getToasts().addToast(new BetterTutorialToast(ToastIcon.HOVER,
                     Component.translatable("gui.exposure.camera_attachments.mouse_over_toast.title"),
                     Component.translatable("gui.exposure.camera_attachments.mouse_over_toast.message"),
-                    () -> hasHoveredOverPart));
+                    () -> {
+                        if (Minecrft.get().screen != this) {
+                            // Show again on next open:
+                            Config.Client.ATTACHMENTS_SHOW_INFO_TOAST.set(true);
+                            return true;
+                        }
+                        return hasHoveredOverPart;
+                    }));
             Config.Client.ATTACHMENTS_SHOW_INFO_TOAST.set(false);
         }
         if (Config.Client.ATTACHMENTS_SHOW_WIKI_TOAST.get()) {
             Minecrft.get().getToasts().addToast(new BetterTutorialToast(ToastIcon.F1,
                     Component.translatable("gui.exposure.camera_attachments.wiki_toast.title"),
                     Component.translatable("gui.exposure.camera_attachments.wiki_toast.message"),
-                    BetterTutorialToast.DEFAULT_SHOW_DURATION_MS));
+                    BetterTutorialToast.DEFAULT_SHOW_DURATION_MS, () -> {
+                if (Minecrft.get().screen != this) {
+                    // Show again on next open:
+                    Config.Client.ATTACHMENTS_SHOW_WIKI_TOAST.set(true);
+                    return true;
+                }
+                return false;
+            }));
             Config.Client.ATTACHMENTS_SHOW_WIKI_TOAST.set(false);
         }
     }
@@ -92,19 +115,13 @@ public class CameraAttachmentsScreen extends AbstractContainerScreen<AbstractCam
         this.imageHeight = 185;
         inventoryLabelY = this.imageHeight - 94;
         super.init();
-
-        slotPlaceholders = Map.of(
-                0, new Rect2i(238, 0, 18, 18),
-                1, new Rect2i(238, 18, 18, 18),
-                2, new Rect2i(238, 36, 18, 18),
-                3, new Rect2i(238, 54, 18, 18)
-        );
     }
 
     @Override
     public void render(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
         super.render(guiGraphics, mouseX, mouseY, partialTick);
 
+        // Disabled slot overlay
         for (Slot slot : getMenu().slots) {
             if (!slot.mayPickup(player)) {
                 guiGraphics.renderItem(slot.getItem(), leftPos + slot.x, topPos + slot.y);
@@ -139,7 +156,7 @@ public class CameraAttachmentsScreen extends AbstractContainerScreen<AbstractCam
         RenderSystem.disableBlend();
     }
 
-    private void renderAttachments(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+    protected void renderAttachments(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
         if (getMenu().getSlot(1).hasItem()) {
             int vOffset = isMouseOver(flash, mouseX, mouseY) ? 28 : 0;
             guiGraphics.blit(TEXTURE, leftPos + 96, topPos + 11, 176, vOffset, 28, 28);
@@ -170,6 +187,8 @@ public class CameraAttachmentsScreen extends AbstractContainerScreen<AbstractCam
             guiGraphics.blit(TEXTURE, leftPos + 106, topPos + 56, 176, 165, 15, 23);
         } else if (isMouseOver(viewfinder, mouseX, mouseY) && !isMouseOver(flash, mouseX, mouseY)) {
             guiGraphics.blit(TEXTURE, leftPos + 65, topPos + 24, 42, 185, 49, 26);
+        } else if (isMouseOver(film, mouseX, mouseY)) {
+            guiGraphics.blit(TEXTURE, leftPos + 47, topPos + 20, 0, 185, 42, 52);
         } else if (isMouseOver(shutterSpeedKnob, mouseX, mouseY)) {
             guiGraphics.blit(TEXTURE, leftPos + 68, topPos + 49, 148, 185, 21, 26);
         } else if (isMouseOver(selfTimer, mouseX, mouseY)) {
@@ -229,41 +248,33 @@ public class CameraAttachmentsScreen extends AbstractContainerScreen<AbstractCam
 
     @Override
     protected void renderTooltip(GuiGraphics guiGraphics, int x, int y) {
-        int maxTooltipWidth = 230;
-
         boolean hoveredOverPart = true; // easier to set it to false in else block, than in every if block.
 
         if (isMouseOver(flash, x, y)) {
-            guiGraphics.renderTooltip(font, font.split(
-                    Component.translatable("gui.exposure.camera_attachments.flash.tooltip"), maxTooltipWidth), x, y);
+            guiGraphics.renderTooltip(font, getTooltipLines(translate("flash.tooltip")), x, y);
         } else if (isMouseOver(viewfinder, x, y)) {
-            Component controlsKey = Component.literal(KeyboardHandler.getCameraControlsKey().getTranslatedKeyMessage().getString())
-                    .withStyle(ChatFormatting.GRAY);
+            Component controlsKey = translateKey(KeyboardHandler.getCameraControlsKey(), ChatFormatting.GRAY);
             Component middleClick = Config.Client.VIEWFINDER_MIDDLE_CLICK_CONTROLS.get()
-                    ? Component.translatable("gui.exposure.camera_attachments.viewfinder.tooltip.or_middle_click")
+                    ? translate("viewfinder.tooltip.or_middle_click")
                     : Component.empty();
-            Component selfieKey = Component.literal(Minecrft.options().keyTogglePerspective.getTranslatedKeyMessage().getString())
-                    .withStyle(ChatFormatting.GRAY);
-            Component sprintKey = Component.literal(Minecrft.options().keySprint.getTranslatedKeyMessage().getString())
-                    .withStyle(ChatFormatting.GRAY);
-            guiGraphics.renderTooltip(font, font.split(
-                    Component.translatable("gui.exposure.camera_attachments.viewfinder.tooltip",
-                            controlsKey, middleClick, selfieKey, sprintKey), maxTooltipWidth), x, y);
+            Component selfieKey = translateKey(Minecrft.options().keyTogglePerspective, ChatFormatting.GRAY);
+            Component sprintKey = translateKey(Minecrft.options().keySprint, ChatFormatting.GRAY);
+            guiGraphics.renderTooltip(font, getTooltipLines(
+                    translate("viewfinder.tooltip", controlsKey, middleClick, selfieKey, sprintKey)), x, y);
         } else if (isMouseOver(shutterSpeedKnob, x, y)) {
-            guiGraphics.renderTooltip(font, font.split(
-                    Component.translatable("gui.exposure.camera_attachments.shutter_speed.tooltip"), maxTooltipWidth), x, y);
+            guiGraphics.renderTooltip(font, getTooltipLines(translate("shutter_speed.tooltip")), x, y);
         } else if (isMouseOver(filter, x, y) || isMouseOver(filterOnLens, x, y)) {
-            guiGraphics.renderTooltip(font, font.split(
-                    Component.translatable("gui.exposure.camera_attachments.filter.tooltip"), maxTooltipWidth), x, y);
+            guiGraphics.renderTooltip(font, getTooltipLines(translate("filter.tooltip")), x, y);
         } else if (isMouseOver(lens, x, y) || isMouseOver(lensBuiltIn, x, y)) {
-            guiGraphics.renderTooltip(font, font.split(
-                    Component.translatable("gui.exposure.camera_attachments.lens.tooltip"), maxTooltipWidth), x, y);
+            guiGraphics.renderTooltip(font, getTooltipLines(translate("lens.tooltip")), x, y);
+        } else if (isMouseOver(film, x, y)) {
+            guiGraphics.renderTooltip(font, getTooltipLines(translate("film.tooltip")), x, y);
         } else if (isMouseOver(selfTimer, x, y)) {
-            MutableComponent component = Component.translatable("gui.exposure.camera_attachments.self_timer.tooltip");
+            MutableComponent tooltip = translate("self_timer.tooltip");
             if (Config.Server.TIMER_ATTRACTS_MOB_ATTENTION.get()) {
-                component.append(Component.translatable("gui.exposure.camera_attachments.self_timer_attention.tooltip"));
+                tooltip.append(translate("self_timer_attention.tooltip"));
             }
-            guiGraphics.renderTooltip(font, font.split(component, maxTooltipWidth), x, y);
+            guiGraphics.renderTooltip(font, getTooltipLines(tooltip), x, y);
         } else {
             hoveredOverPart = false;
             super.renderTooltip(guiGraphics, x, y);
@@ -331,6 +342,15 @@ public class CameraAttachmentsScreen extends AbstractContainerScreen<AbstractCam
             ItemListScreen screen = new ItemListScreen(this, Component.translatable("gui.exposure.lenses"), itemStacks);
             Minecrft.get().setScreen(screen);
             return true;
+        } else if (isMouseOver(film, x, y)) {
+            List<ItemStack> itemStacks = new ArrayList<>();
+            for (Holder<Item> holder : BuiltInRegistries.ITEM.getTagOrEmpty(Exposure.Tags.Items.FILM_ROLLS)) {
+                itemStacks.add(new ItemStack(holder));
+            }
+
+            ItemListScreen screen = new ItemListScreen(this, Component.translatable("gui.exposure.film_rolls"), itemStacks);
+            Minecrft.get().setScreen(screen);
+            return true;
         }
 
         return super.mouseClicked(mouseX, mouseY, button);
@@ -343,6 +363,38 @@ public class CameraAttachmentsScreen extends AbstractContainerScreen<AbstractCam
             Minecrft.get().setScreen(new InventoryScreen(player));
         }
     }
+
+    // --
+
+    protected MutableComponent translate(String key) {
+        return Component.translatable("gui.exposure.camera_attachments." + key);
+    }
+
+    protected MutableComponent translate(String key, Object... args) {
+        return Component.translatable("gui.exposure.camera_attachments." + key, args);
+    }
+
+    protected MutableComponent translate(String key, ChatFormatting formatting) {
+        return Component.translatable("gui.exposure.camera_attachments." + key).withStyle(formatting);
+    }
+
+    protected MutableComponent translateKey(KeyMapping mapping, ChatFormatting formatting) {
+        return Component.literal(mapping.getTranslatedKeyMessage().getString()).withStyle(formatting);
+    }
+
+    protected List<FormattedCharSequence> getTooltipLines(Component component, int width) {
+        return font.split(component, width);
+    }
+
+    protected List<FormattedCharSequence> getTooltipLines(Component component) {
+        return font.split(component, getMaxTooltipWidth());
+    }
+
+    protected int getMaxTooltipWidth() {
+        return 250;
+    }
+
+    // --
 
     public record HoveredElement(List<Rect2i> hoverArea, Supplier<Boolean> isEnabled) {
     }

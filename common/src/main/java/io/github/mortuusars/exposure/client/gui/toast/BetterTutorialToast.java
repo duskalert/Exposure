@@ -25,22 +25,30 @@ public class BetterTutorialToast implements Toast {
 
     protected final long shownAt = System.currentTimeMillis();
     protected final int showDurationMs;
-    protected final Supplier<Boolean> shouldHide;
+    protected final Supplier<Boolean> hideIf;
+
+    public BetterTutorialToast(ToastIcon icon, Component title, @Nullable Component message, int showDurationMs, Supplier<Boolean> hideIf) {
+        this.icon = icon;
+        this.title = title;
+        this.message = message;
+        this.showDurationMs = showDurationMs;
+        this.hideIf = hideIf;
+    }
 
     public BetterTutorialToast(ToastIcon icon, Component title, @Nullable Component message, int showDurationMs) {
         this.icon = icon;
         this.title = title;
         this.message = message;
         this.showDurationMs = showDurationMs;
-        this.shouldHide = () -> false;
+        this.hideIf = () -> false;
     }
 
-    public BetterTutorialToast(ToastIcon icon, Component title, @Nullable Component message, Supplier<Boolean> shouldHide) {
+    public BetterTutorialToast(ToastIcon icon, Component title, @Nullable Component message, Supplier<Boolean> hideIf) {
         this.icon = icon;
         this.title = title;
         this.message = message;
         this.showDurationMs = -1;
-        this.shouldHide = shouldHide;
+        this.hideIf = hideIf;
     }
 
     public void hide() {
@@ -49,7 +57,7 @@ public class BetterTutorialToast implements Toast {
 
     @Override
     public @NotNull Visibility render(GuiGraphics guiGraphics, ToastComponent toastComponent, long timeSinceLastVisible) {
-        if (visibility == Visibility.SHOW && shouldHide.get() || (showDurationMs > 0 && System.currentTimeMillis() > shownAt + showDurationMs)) {
+        if (visibility == Visibility.SHOW && hideIf.get() || (showDurationMs > 0 && System.currentTimeMillis() > shownAt + showDurationMs)) {
             hide();
             onHide.run();
         }

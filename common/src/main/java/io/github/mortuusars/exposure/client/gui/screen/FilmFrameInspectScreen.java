@@ -4,7 +4,7 @@ import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.systems.RenderSystem;
 import io.github.mortuusars.exposure.Exposure;
 import io.github.mortuusars.exposure.ExposureClient;
-import io.github.mortuusars.exposure.client.gui.Widgets;
+import io.github.mortuusars.exposure.client.gui.Sprites;
 import io.github.mortuusars.exposure.client.gui.component.SteppedZoom;
 import io.github.mortuusars.exposure.client.gui.screen.element.Pager;
 import io.github.mortuusars.exposure.client.image.modifier.ImageEffect;
@@ -89,12 +89,12 @@ public class FilmFrameInspectScreen extends Screen {
         zoomFactor = ((float) height / BG_SIZE) / (float)zoom.getZoomPerStep();
 
         ImageButton previousButton = new ImageButton(0, (int) (height / 2f - 16 / 2f), 16, 16,
-                Widgets.PREVIOUS_BUTTON_SPRITES,
+                Sprites.PREVIOUS_BUTTON_SPRITES,
                 button -> pager.changePage(PagingDirection.PREVIOUS), Component.translatable("gui.exposure.previous_page"));
         addRenderableWidget(previousButton);
 
         ImageButton nextButton = new ImageButton(width - 16, (int) (height / 2f - 16 / 2f), 16, 16,
-                Widgets.NEXT_BUTTON_SPRITES,
+                Sprites.NEXT_BUTTON_SPRITES,
                 button -> pager.changePage(PagingDirection.NEXT), Component.translatable("gui.exposure.next_page"));
         addRenderableWidget(nextButton);
 

@@ -2,7 +2,7 @@ package io.github.mortuusars.exposure.client.gui.component;
 
 import com.google.common.base.Preconditions;
 import io.github.mortuusars.exposure.client.gui.Tooltips;
-import io.github.mortuusars.exposure.client.gui.Widgets;
+import io.github.mortuusars.exposure.client.gui.Sprites;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
@@ -16,7 +16,6 @@ import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -24,7 +23,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -61,12 +59,12 @@ public class CycleButton<T> extends Button {
 
     public CycleButton(int x, int y, int width, int height, List<T> values, @NotNull T startingValue,
                        Function<T, WidgetSprites> spritesFunc, OnCycle<T> onCycle) {
-        this(x, y, width, height, values, startingValue, Widgets.createMap(values, spritesFunc), onCycle);
+        this(x, y, width, height, values, startingValue, Sprites.createMap(values, spritesFunc), onCycle);
     }
 
     public CycleButton(int x, int y, int width, int height, List<T> values, @NotNull T startingValue,
                        Function<T, WidgetSprites> spritesFunc) {
-        this(x, y, width, height, values, startingValue, Widgets.createMap(values, spritesFunc), (b, v) -> {});
+        this(x, y, width, height, values, startingValue, Sprites.createMap(values, spritesFunc), (b, v) -> {});
     }
 
     public CycleButton<T> setLooping(boolean loop) {
