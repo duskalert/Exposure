@@ -88,25 +88,29 @@ public class CameraAttachmentsScreen extends AbstractContainerScreen<AbstractCam
                         if (Minecrft.get().screen != this) {
                             // Show again on next open:
                             Config.Client.ATTACHMENTS_SHOW_INFO_TOAST.set(true);
+                            Config.Client.SPEC.save();
                             return true;
                         }
                         return hasHoveredOverPart;
                     }));
             Config.Client.ATTACHMENTS_SHOW_INFO_TOAST.set(false);
+            Config.Client.SPEC.save();
         }
         if (Config.Client.ATTACHMENTS_SHOW_WIKI_TOAST.get()) {
             Minecrft.get().getToasts().addToast(new BetterTutorialToast(ToastIcon.F1,
                     Component.translatable("gui.exposure.camera_attachments.wiki_toast.title"),
                     Component.translatable("gui.exposure.camera_attachments.wiki_toast.message"),
                     BetterTutorialToast.DEFAULT_SHOW_DURATION_MS, () -> {
-                if (Minecrft.get().screen != this) {
+                if (Minecrft.get().screen != this && !(Minecrft.get().screen instanceof ConfirmLinkScreen)) {
                     // Show again on next open:
                     Config.Client.ATTACHMENTS_SHOW_WIKI_TOAST.set(true);
+                    Config.Client.SPEC.save();
                     return true;
                 }
                 return false;
             }));
             Config.Client.ATTACHMENTS_SHOW_WIKI_TOAST.set(false);
+            Config.Client.SPEC.save();
         }
     }
 

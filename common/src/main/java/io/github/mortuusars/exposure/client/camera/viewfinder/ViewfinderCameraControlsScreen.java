@@ -3,7 +3,7 @@ package io.github.mortuusars.exposure.client.camera.viewfinder;
 import com.mojang.blaze3d.platform.InputConstants;
 import io.github.mortuusars.exposure.Config;
 import io.github.mortuusars.exposure.Exposure;
-import io.github.mortuusars.exposure.client.gui.Sprites;
+import io.github.mortuusars.exposure.client.gui.Widgets;
 import io.github.mortuusars.exposure.client.gui.component.CycleButton;
 import io.github.mortuusars.exposure.client.gui.screen.camera.button.FocalLengthButton;
 import io.github.mortuusars.exposure.client.gui.screen.camera.button.FrameCounterButton;
@@ -167,7 +167,7 @@ public class ViewfinderCameraControlsScreen extends Screen {
     protected @NotNull Button createCompositionGuideButton() {
         List<CompositionGuide> guides = CompositionGuides.getGuides();
         CompositionGuide currentGuide = camera.map(CameraSettings.COMPOSITION_GUIDE::getOrDefault, CompositionGuides.NONE);
-        Function<CompositionGuide, WidgetSprites> spritesFunc = guide -> Sprites.normalDisabledHighlighted(guide.buttonSpriteLocation());
+        Function<CompositionGuide, WidgetSprites> spritesFunc = guide -> Widgets.threeStateSprites(guide.buttonSpriteLocation());
 
         return new CycleButton<>(0, 0, BUTTON_WIDTH, BUTTON_HEIGHT, guides, currentGuide, spritesFunc)
                 .setDefaultTooltip(Tooltip.create(Component.translatable("gui.exposure.camera_controls.composition_guide.tooltip")))
@@ -180,7 +180,7 @@ public class ViewfinderCameraControlsScreen extends Screen {
     protected @NotNull Button createSelfTimerButton() {
         List<SelfTimer> values = Arrays.asList(SelfTimer.values());
         SelfTimer currentValue = camera.map(CameraSettings.SELF_TIMER::getOrDefault, SelfTimer.OFF);
-        Function<SelfTimer, WidgetSprites> spritesFunc = mode -> Sprites.normalDisabledHighlighted(
+        Function<SelfTimer, WidgetSprites> spritesFunc = mode -> Widgets.threeStateSprites(
                 Exposure.resource("camera_controls/self_timer/timer_" + mode.getSerializedName()));
 
         return new CycleButton<>(0, 0, BUTTON_WIDTH, BUTTON_HEIGHT, values, currentValue, spritesFunc)
@@ -194,7 +194,7 @@ public class ViewfinderCameraControlsScreen extends Screen {
     protected @NotNull Button createFlashModeButton() {
         List<FlashMode> modes = Arrays.asList(FlashMode.values());
         FlashMode currentMode = camera.map(CameraSettings.FLASH_MODE::getOrDefault, FlashMode.OFF);
-        Function<FlashMode, WidgetSprites> spritesFunc = mode -> Sprites.normalDisabledHighlighted(
+        Function<FlashMode, WidgetSprites> spritesFunc = mode -> Widgets.threeStateSprites(
                 Exposure.resource("camera_controls/flash_mode/flash_" + mode.getSerializedName()));
 
         return new CycleButton<>(0, 0, BUTTON_WIDTH, BUTTON_HEIGHT, modes, currentMode, spritesFunc)

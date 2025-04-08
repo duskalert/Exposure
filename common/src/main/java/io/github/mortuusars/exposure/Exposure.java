@@ -158,7 +158,7 @@ public class Exposure {
                         new Item.Properties()
                                 .component(DataComponents.FILM_STYLE, FilmStyle.create()
                                         .withSensitivity(2f)
-                                        .withNoise(0.05f))
+                                        .withNoise(0.065f))
                                 .stacksTo(16)));
 
         public static final Supplier<FilmRollItem> HIGH_SENSITIVITY_COLOR_FILM = Register.item("high_sensitivity_color_film",
@@ -166,7 +166,7 @@ public class Exposure {
                         new Item.Properties()
                                 .component(DataComponents.FILM_STYLE, FilmStyle.create()
                                         .withSensitivity(2f)
-                                        .withNoise(0.05f))
+                                        .withNoise(0.065f))
                                 .stacksTo(16)));
 
         public static final Supplier<DevelopedFilmItem> DEVELOPED_BLACK_AND_WHITE_FILM = Register.item("developed_black_and_white_film",

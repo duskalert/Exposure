@@ -2,7 +2,7 @@ package io.github.mortuusars.exposure.client.gui.screen;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import io.github.mortuusars.exposure.Exposure;
-import io.github.mortuusars.exposure.client.gui.Sprites;
+import io.github.mortuusars.exposure.client.gui.Widgets;
 import io.github.mortuusars.exposure.world.inventory.ItemRenameMenu;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -51,13 +51,13 @@ public class ItemRenameScreen extends AbstractContainerScreen<ItemRenameMenu> {
         setInitialFocus(name);
 
         ImageButton applyButton = new ImageButton(leftPos + 133, topPos + 42, 19, 19,
-                Sprites.CONFIRM_BUTTON_SPRITES,
+                Widgets.CONFIRM_BUTTON_SPRITES,
                 button -> confirm(), Component.translatable("gui.exposure.item_rename.apply"));
         applyButton.setTooltip(Tooltip.create(Component.translatable("gui.exposure.item_rename.apply")));
         addRenderableWidget(applyButton);
 
         ImageButton cancelButton = new ImageButton(leftPos + 154, topPos + 42, 19, 19,
-                Sprites.CANCEL_BUTTON_SPRITES,
+                Widgets.CANCEL_BUTTON_SPRITES,
                 button -> cancel(), Component.translatable("gui.exposure.item_rename.cancel"));
         cancelButton.setTooltip(Tooltip.create(Component.translatable("gui.exposure.item_rename.cancel")));
         addRenderableWidget(cancelButton);
