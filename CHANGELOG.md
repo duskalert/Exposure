@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.9.1 - 2025-04-09
+- Added `#exposure:black_and_white_film_rolls` and `#exposure:color_film_rolls` item tags.
+- Fixed not being able to develop high-sensitivity film rolls.
+
 ## 1.9.0 - 2025-04-09
 - Added Camera Stand.
 - Added Self-Timer to the Camera.

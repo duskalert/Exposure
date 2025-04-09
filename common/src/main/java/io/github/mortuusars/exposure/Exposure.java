@@ -553,6 +553,8 @@ public class Exposure {
     public static class Tags {
         public static class Items {
             public static final TagKey<Item> FILM_ROLLS = TagKey.create(net.minecraft.core.registries.Registries.ITEM, Exposure.resource("film_rolls"));
+            public static final TagKey<Item> BLACK_AND_WHITE_FILM_ROLLS = TagKey.create(net.minecraft.core.registries.Registries.ITEM, Exposure.resource("black_and_white_film_rolls"));
+            public static final TagKey<Item> COLOR_FILM_ROLLS = TagKey.create(net.minecraft.core.registries.Registries.ITEM, Exposure.resource("color_film_rolls"));
             public static final TagKey<Item> DEVELOPED_FILM_ROLLS = TagKey.create(net.minecraft.core.registries.Registries.ITEM, Exposure.resource("developed_film_rolls"));
             public static final TagKey<Item> CYAN_PRINTING_DYES = TagKey.create(net.minecraft.core.registries.Registries.ITEM, Exposure.resource("cyan_printing_dyes"));
             public static final TagKey<Item> MAGENTA_PRINTING_DYES = TagKey.create(net.minecraft.core.registries.Registries.ITEM, Exposure.resource("magenta_printing_dyes"));

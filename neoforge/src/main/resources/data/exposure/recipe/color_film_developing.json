@@ -1,7 +1,7 @@
 {
   "type": "exposure:film_developing",
   "film": {
-    "item": "exposure:color_film"
+    "tag": "exposure:color_film_rolls"
   },
   "ingredients": [
     [
