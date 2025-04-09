@@ -62,23 +62,6 @@ public class Sound {
         player.level().playSound(player, x, y, z, sound, source, volume, pitch);
     }
 
-//    public static void playSided(Player player, Entity entity, SoundEvent sound) {
-//        playSided(player, entity, sound, entity.getSoundSource(), 1F, 1F, 0F);
-//    }
-//
-//    public static void playSided(Player player, Entity entity, SoundEvent sound, SoundSource source) {
-//        playSided(player, entity, sound, source, 1F, 1F, 0F);
-//    }
-//
-//    public static void playSided(Player player, Entity entity, SoundEvent sound, SoundSource source, float volume, float pitch) {
-//        playSided(player, entity, sound, source, volume, pitch, 0F);
-//    }
-//
-//    public static void playSided(Player player, Entity entity, SoundEvent sound, SoundSource source, float volume, float pitch, float pitchVariability) {
-//        pitch = vary(pitch, pitchVariability);
-//        player.level().playSound(player, entity, sound, source, volume, pitch);
-//    }
-
     public static void playSided(Entity entity, SoundEffect sound) {
         playSided(entity, sound.get(), entity.getSoundSource(), sound.volume(), sound.pitch(), sound.pitchVariability());
     }
@@ -121,6 +104,18 @@ public class Sound {
         if (entity.level() instanceof ServerLevel serverLevel) {
             UniqueSoundPlayS2CP packet = new UniqueSoundPlayS2CP(id, entity.getId(), sound, source, volume, pitch);
             Packets.sendToPlayersNear(packet, serverLevel, null, entity, sound.getRange(1f) * 4);
+        }
+    }
+
+    public static void playUniqueSided(String id, Entity entity, SoundEffect sound, SoundSource source) {
+        @Nullable ServerPlayer excludedPlayer = entity instanceof ServerPlayer player ? player : null;
+
+        float pitch = vary(sound.pitch(), sound.pitchVariability());
+        if (entity.level() instanceof ServerLevel serverLevel) {
+            UniqueSoundPlayS2CP packet = new UniqueSoundPlayS2CP(id, entity.getId(), sound.get(), source, sound.volume(), sound.pitch());
+            Packets.sendToPlayersNear(packet, serverLevel, excludedPlayer, entity, sound.get().getRange(1f) * 4);
+        } else if (entity instanceof Player && entity.level().isClientSide()) {
+            UniqueSoundManager.play(id, entity, sound.get(), source, sound.volume(), pitch);
         }
     }
 

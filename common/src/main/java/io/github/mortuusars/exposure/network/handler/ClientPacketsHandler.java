@@ -17,9 +17,10 @@ import io.github.mortuusars.exposure.client.capture.template.CaptureTemplates;
 import io.github.mortuusars.exposure.client.capture.palettizer.Palettizer;
 import io.github.mortuusars.exposure.client.capture.saving.ExposureUploader;
 import io.github.mortuusars.exposure.world.camera.ExposureType;
-import io.github.mortuusars.exposure.world.camera.capture.CaptureProperties;
+import io.github.mortuusars.exposure.world.camera.capture.CaptureParameters;
 import io.github.mortuusars.exposure.data.ColorPalette;
 import io.github.mortuusars.exposure.util.cycles.task.Result;
+import io.github.mortuusars.exposure.world.entity.CameraStandEntity;
 import io.github.mortuusars.exposure.world.level.storage.ExposureData;
 import io.github.mortuusars.exposure.client.gui.screen.PhotographScreen;
 import io.github.mortuusars.exposure.data.ColorPalettes;
@@ -117,15 +118,15 @@ public class ClientPacketsHandler {
     }
 
     public static void startCapture(CaptureStartS2CP packet) {
-        Task<?> captureTask = CaptureTemplates.getOrThrow(packet.templateId()).createTask(packet.captureProperties());
+        Task<?> captureTask = CaptureTemplates.getOrThrow(packet.templateId()).createTask(packet.captureParameters());
         ExposureClient.cycles().enqueueTask(captureTask);
     }
 
     public static void startDebugRGBCapture(CaptureStartDebugRGBS2CP packet) {
         CaptureTemplate template = CaptureTemplates.getOrThrow(packet.templateId());
 
-        for (CaptureProperties captureProperties : packet.captureProperties()) {
-            Task<?> captureTask = template.createTask(captureProperties);
+        for (CaptureParameters captureParameters : packet.captureProperties()) {
+            Task<?> captureTask = template.createTask(captureParameters);
             ExposureClient.cycles().enqueueTask(captureTask);
         }
     }
@@ -143,6 +144,13 @@ public class ClientPacketsHandler {
                     Exposure.SoundEvents.SHUTTER_TICKING.get(), entity.getSoundSource(),
                     packet.volume(), packet.pitch(), packet.durationTicks());
             UniqueSoundManager.play(packet.cameraId().toString(), instance);
+        }
+    }
+
+    public static void stopControllingCameraStand(CameraStandStopControllingS2CP packet) {
+        if (Minecrft.get().cameraEntity != Minecrft.player() && Minecrft.level().getEntity(packet.standId()) instanceof CameraStandEntity stand) {
+            stand.stopControlling();
+            CameraClient.setCameraEntity(Minecrft.player());
         }
     }
 }

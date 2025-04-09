@@ -39,6 +39,19 @@ public class Minecrft {
     }
 
     public static void releaseUseButton() {
-        get().options.keyUse.setDown(false);
+        options().keyUse.setDown(false);
+    }
+
+    public static void stopPlayerMovement() {
+        // Stop player moving if movement key is held
+        Minecrft.player().xxa = 0;
+        Minecrft.player().yya = 0;
+        Minecrft.player().zza = 0;
+        Minecrft.player().setJumping(false);
+        options().keyUp.setDown(false);
+        options().keyDown.setDown(false);
+        options().keyLeft.setDown(false);
+        options().keyRight.setDown(false);
+        options().keyJump.setDown(false);
     }
 }

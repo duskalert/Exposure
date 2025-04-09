@@ -11,6 +11,7 @@ import net.minecraft.core.component.DataComponentType;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
 import java.util.Optional;
 
 public record FramePredicate(Optional<ExposureIdentifier> identifier,
@@ -21,7 +22,7 @@ public record FramePredicate(Optional<ExposureIdentifier> identifier,
                              Optional<MinMaxBounds.Ints> lightLevel,
                              Optional<MinMaxBounds.Ints> dayTime,
                              Optional<MinMaxBounds.Ints> entitiesInFrameCount,
-                             Optional<EntityInFramePredicate> entityInFrame,
+                             Optional<List<EntityInFramePredicate>> entitiesInFrame,
                              Optional<ExtraDataPredicate> extraData) implements SingleComponentItemPredicate<Frame> {
     public static final Codec<FramePredicate> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             ExposureIdentifier.CODEC.optionalFieldOf("identifier").forGetter(FramePredicate::identifier),
@@ -32,7 +33,7 @@ public record FramePredicate(Optional<ExposureIdentifier> identifier,
             MinMaxBounds.Ints.CODEC.optionalFieldOf("light_level").forGetter(FramePredicate::lightLevel),
             MinMaxBounds.Ints.CODEC.optionalFieldOf("day_time").forGetter(FramePredicate::dayTime),
             MinMaxBounds.Ints.CODEC.optionalFieldOf("entities_in_frame_count").forGetter(FramePredicate::entitiesInFrameCount),
-            EntityInFramePredicate.CODEC.optionalFieldOf("entity_in_frame").forGetter(FramePredicate::entityInFrame),
+            EntityInFramePredicate.CODEC.listOf().optionalFieldOf("entities_in_frame").forGetter(FramePredicate::entitiesInFrame),
             ExtraDataPredicate.CODEC.optionalFieldOf("extra_data").forGetter(FramePredicate::extraData)
     ).apply(instance, FramePredicate::new));
 
@@ -55,7 +56,7 @@ public record FramePredicate(Optional<ExposureIdentifier> identifier,
                 && (lightLevel.isEmpty() || frame.extraData().get(Frame.LIGHT_LEVEL).map(lightLevel.get()::matches).orElse(false))
                 && (dayTime.isEmpty() || frame.extraData().get(Frame.DAY_TIME).map(dayTime.get()::matches).orElse(false))
                 && (entitiesInFrameCount.isEmpty() || entitiesInFrameCount.get().matches(frame.entitiesInFrame().size()))
-                && (entityInFrame.isEmpty() || entityInFrame.get().matches(frame.entitiesInFrame()))
+                && (entitiesInFrame.isEmpty() || entitiesInFrame.get().stream().allMatch(predicate -> predicate.matches(frame.entitiesInFrame())))
                 && (extraData.isEmpty() || extraData.get().matches(frame.extraData()));
     }
 }

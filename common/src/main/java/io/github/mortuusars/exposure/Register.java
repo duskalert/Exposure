@@ -1,8 +1,10 @@
 package io.github.mortuusars.exposure;
 
 import com.mojang.brigadier.arguments.ArgumentType;
+import com.mojang.serialization.MapCodec;
 import dev.architectury.injectables.annotations.ExpectPlatform;
 import net.minecraft.advancements.CriterionTrigger;
+import net.minecraft.advancements.critereon.EntitySubPredicate;
 import net.minecraft.advancements.critereon.ItemSubPredicate;
 import net.minecraft.commands.synchronization.ArgumentTypeInfo;
 import net.minecraft.core.BlockPos;
@@ -18,6 +20,7 @@ import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeInput;
@@ -58,6 +61,11 @@ public class Register {
 
     @ExpectPlatform
     public static <T extends Item> Supplier<T> item(String id, Supplier<T> supplier) {
+        throw new AssertionError();
+    }
+
+    @ExpectPlatform
+    public static <T extends CreativeModeTab> Supplier<T> creativeTab(String id, Supplier<T> supplier) {
         throw new AssertionError();
     }
 
@@ -106,6 +114,11 @@ public class Register {
 
     @ExpectPlatform
     public static <T extends ItemSubPredicate.Type<?>> Supplier<T> itemSubPredicate(String name, Supplier<T> supplier) {
+        throw new AssertionError();
+    }
+
+    @ExpectPlatform
+    public static <T extends EntitySubPredicate> Supplier<MapCodec<T>> entitySubPredicate(String name, Supplier<MapCodec<T>> supplier) {
         throw new AssertionError();
     }
 

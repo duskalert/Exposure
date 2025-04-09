@@ -2,10 +2,17 @@ package io.github.mortuusars.exposure.client.render;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
+import io.github.mortuusars.exposure.Config;
 import io.github.mortuusars.exposure.ExposureClient;
 import io.github.mortuusars.exposure.PlatformHelperClient;
+import io.github.mortuusars.exposure.client.image.modifier.ImageEffect;
+import io.github.mortuusars.exposure.client.image.renderable.RenderableImage;
+import io.github.mortuusars.exposure.client.render.image.RenderCoordinates;
+import io.github.mortuusars.exposure.client.render.photograph.PhotographStyle;
 import io.github.mortuusars.exposure.client.util.Minecrft;
+import io.github.mortuusars.exposure.world.camera.frame.Frame;
 import io.github.mortuusars.exposure.world.entity.PhotographFrameEntity;
+import io.github.mortuusars.exposure.world.item.PhotographItem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.renderer.LightTexture;
@@ -138,8 +145,29 @@ public class PhotographFrameEntityRenderer<T extends PhotographFrameEntity> exte
 
         int brightness = isGlowing ? 255 : getPhotographBrightness(entity);
 
-        boolean photographRendered = ExposureClient.photographRenderer().render(item, false, false,
-                poseStack, bufferSource, packedLight, brightness, brightness, brightness, 255);
+        boolean photographRendered = false;
+
+        if (Config.Client.PIXEL_PERFECT_PHOTOGRAPH_FRAME.get()) {
+            if (item.getItem() instanceof PhotographItem photographItem) {
+                PhotographStyle style = PhotographStyle.of(item);
+                Frame frame = photographItem.getFrame(item);
+
+                RenderableImage image = style.process(ExposureClient.renderedExposures().getOrCreate(frame));
+
+                int pixels = 16 * (entity.getSize() + 1);
+                if (!frameInvisible) {
+                    pixels -= 4;
+                }
+                image = image.modifyWith(ImageEffect.Resize.to(pixels)::modify, "pixels-" + pixels);
+
+                ExposureClient.imageRenderer().render(image, poseStack, bufferSource, RenderCoordinates.DEFAULT,
+                        packedLight, brightness, brightness, brightness, 255);
+                photographRendered = !image.isEmpty();
+            }
+        } else {
+            photographRendered = ExposureClient.photographRenderer().render(item, false, false,
+                    poseStack, bufferSource, packedLight, brightness, brightness, brightness, 255);
+        }
 
         poseStack.popPose();
 

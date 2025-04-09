@@ -1,6 +1,5 @@
 package io.github.mortuusars.exposure.neoforge.event;
 
-import io.github.mortuusars.exposure.Config;
 import io.github.mortuusars.exposure.Exposure;
 import io.github.mortuusars.exposure.data.ColorPalette;
 import io.github.mortuusars.exposure.data.Filter;
@@ -19,8 +18,6 @@ import net.minecraft.stats.Stats;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.fml.config.ModConfig;
-import net.neoforged.fml.event.config.ModConfigEvent;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
@@ -76,27 +73,28 @@ public class NeoForgeCommonEvents {
             }
         }
 
-        @SubscribeEvent
-        public static void onCreativeTabsBuild(BuildCreativeModeTabContentsEvent event) {
-            if (event.getTabKey() == CreativeModeTabs.TOOLS_AND_UTILITIES) {
-                event.accept(Exposure.Items.CAMERA.get());
-                event.accept(Exposure.Items.BLACK_AND_WHITE_FILM.get());
-                event.accept(Exposure.Items.COLOR_FILM.get());
-                event.accept(Exposure.Items.DEVELOPED_BLACK_AND_WHITE_FILM.get());
-                event.accept(Exposure.Items.DEVELOPED_COLOR_FILM.get());
-                event.accept(Exposure.Items.PHOTOGRAPH.get());
-                event.accept(Exposure.Items.AGED_PHOTOGRAPH.get());
-                event.accept(Exposure.Items.INTERPLANAR_PROJECTOR.get());
-                event.accept(Exposure.Items.STACKED_PHOTOGRAPHS.get());
-                event.accept(Exposure.Items.PHOTOGRAPH_FRAME.get());
-                event.accept(Exposure.Items.CLEAR_PHOTOGRAPH_FRAME.get());
-                event.accept(Exposure.Items.ALBUM.get());
-            }
-
-            if (event.getTabKey() == CreativeModeTabs.FUNCTIONAL_BLOCKS) {
-                event.accept(Exposure.Items.LIGHTROOM.get());
-            }
-        }
+//        @SubscribeEvent
+//        public static void onCreativeTabsBuild(BuildCreativeModeTabContentsEvent event) {
+//            if (event.getTabKey() == CreativeModeTabs.TOOLS_AND_UTILITIES) {
+//                event.accept(Exposure.Items.CAMERA.get());
+//                event.accept(Exposure.Items.BLACK_AND_WHITE_FILM.get());
+//                event.accept(Exposure.Items.COLOR_FILM.get());
+//                event.accept(Exposure.Items.DEVELOPED_BLACK_AND_WHITE_FILM.get());
+//                event.accept(Exposure.Items.DEVELOPED_COLOR_FILM.get());
+//                event.accept(Exposure.Items.PHOTOGRAPH.get());
+//                event.accept(Exposure.Items.AGED_PHOTOGRAPH.get());
+//                event.accept(Exposure.Items.INTERPLANAR_PROJECTOR.get());
+//                event.accept(Exposure.Items.STACKED_PHOTOGRAPHS.get());
+//                event.accept(Exposure.Items.PHOTOGRAPH_FRAME.get());
+//                event.accept(Exposure.Items.CLEAR_PHOTOGRAPH_FRAME.get());
+//                event.accept(Exposure.Items.CAMERA_STAND.get());
+//                event.accept(Exposure.Items.ALBUM.get());
+//            }
+//
+//            if (event.getTabKey() == CreativeModeTabs.FUNCTIONAL_BLOCKS) {
+//                event.accept(Exposure.Items.LIGHTROOM.get());
+//            }
+//        }
 
         @SubscribeEvent
         public static void onRegisterCapabilities(RegisterCapabilitiesEvent event) {

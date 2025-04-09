@@ -25,17 +25,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(LecternBlock.class)
 public abstract class LecternMixin {
-//    @Inject(method = "useWithoutItem", at = @At(value = "HEAD"), cancellable = true)
-//    private void useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult, CallbackInfoReturnable<InteractionResult> cir) {
-//        if (level.getBlockEntity(pos) instanceof LecternBlockEntity lecternBlockEntity
-//                && (lecternBlockEntity.getBook().getItem() instanceof AlbumItem
-//                || lecternBlockEntity.getBook().getItem() instanceof SignedAlbumItem)) {
-//            ClientGUI.openAlbumViewScreen(lecternBlockEntity.getBook());
-//            player.awardStat(Stats.INTERACT_WITH_LECTERN);
-//            cir.setReturnValue(InteractionResult.sidedSuccess(level.isClientSide));
-//        }
-//    }
-
     @Inject(method = "openScreen", at = @At(value = "HEAD"), cancellable = true)
     private void openScreen(Level level, BlockPos pos, Player player, CallbackInfo ci) {
         if (level.getBlockEntity(pos) instanceof LecternBlockEntity lecternBlockEntity

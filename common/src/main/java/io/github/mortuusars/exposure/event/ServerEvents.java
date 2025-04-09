@@ -3,7 +3,6 @@ package io.github.mortuusars.exposure.event;
 import io.github.mortuusars.exposure.Config;
 import io.github.mortuusars.exposure.Exposure;
 import io.github.mortuusars.exposure.ExposureServer;
-import io.github.mortuusars.exposure.world.camera.CameraInHand;
 import io.github.mortuusars.exposure.world.item.camera.CameraItem;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;

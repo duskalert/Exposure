@@ -2,7 +2,7 @@ package io.github.mortuusars.exposure;
 
 import dev.architectury.injectables.annotations.ExpectPlatform;
 import io.github.mortuusars.exposure.util.ExtraData;
-import io.github.mortuusars.exposure.world.camera.capture.CaptureProperties;
+import io.github.mortuusars.exposure.world.camera.capture.CaptureParameters;
 import io.github.mortuusars.exposure.world.camera.frame.Frame;
 import io.github.mortuusars.exposure.world.entity.CameraHolder;
 import net.minecraft.core.BlockPos;
@@ -10,7 +10,6 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.MenuProvider;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
@@ -68,7 +67,7 @@ public class PlatformHelper {
     }
 
     @ExpectPlatform
-    public static void postModifyFrameExtraDataEvent(CameraHolder cameraHolder, ItemStack camera, CaptureProperties captureProperties,
+    public static void postModifyFrameExtraDataEvent(CameraHolder cameraHolder, ItemStack camera, CaptureParameters captureParameters,
                                                      List<BlockPos> positionsInFrame, List<LivingEntity> entitiesInFrame, ExtraData data) {
         throw new AssertionError();
     }

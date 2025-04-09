@@ -2,17 +2,17 @@ package io.github.mortuusars.exposure.client.animation;
 
 import io.github.mortuusars.exposure.client.util.Minecrft;
 import io.github.mortuusars.exposure.world.entity.CameraOperator;
+import io.github.mortuusars.exposure.world.entity.CameraStandEntity;
 import net.minecraft.client.CameraType;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.ModelPart;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.phys.Vec3;
 
 public class CameraPoses {
     public void applyHolding(HumanoidModel<?> model, LivingEntity entity, HumanoidArm arm) {
-        float actionProgress = getCameraActionAnim(entity);
-        actionProgress = (float)EasingFunction.EASE_OUT_CUBIC.ease(actionProgress);
-        float actionAnim =  actionProgress > 0.3F ? (1F - actionProgress) : actionProgress;
 
         boolean rightHanded = arm == HumanoidArm.RIGHT;
 
@@ -26,6 +26,7 @@ public class CameraPoses {
         offHand.yRot = (rightHanded ? 0.5F : -0.5F) + model.head.yRot;
         mainHand.xRot = model.head.xRot - 1.5F;
         offHand.xRot = model.head.xRot - 1.5F;
+        float actionAnim = getCameraActionAnim(entity);
         offHand.xRot += (actionAnim * 0.1F) * (rightHanded ? 1 : -1);
         offHand.yRot += (actionAnim * 0.1F) * (rightHanded ? 1 : -1);
         model.head.xRot += 0.3f; // Applying rest of head rotation after arms
@@ -51,10 +52,6 @@ public class CameraPoses {
             return;
         }
 
-        float actionProgress = getCameraActionAnim(entity);
-        actionProgress = (float)EasingFunction.EASE_OUT_CUBIC.ease(actionProgress);
-        float actionAnim =  actionProgress > 0.3F ? (1F - actionProgress) : actionProgress;
-
         model.head.xRot += 0.4f; // Applying part of head rotation. If we turn head down completely - arms will be too low.
         model.head.xRot = Math.clamp(model.head.xRot, -0.75F, 0.75F); // Look up/down limit
 
@@ -66,6 +63,7 @@ public class CameraPoses {
         offHand.yRot = (rightHanded ? 0.6F : -0.6F) + model.head.yRot;
         mainHand.xRot = model.head.xRot - 1.5F;
         offHand.xRot = model.head.xRot - 1.5F;
+        float actionAnim = getCameraActionAnim(entity);
         offHand.xRot += (actionAnim * 0.1F) * (rightHanded ? 1 : -1);
         offHand.yRot += (actionAnim * 0.1F) * (rightHanded ? 1 : -1);
         model.head.xRot += 0.3f; // Applying rest of head rotation after arms
@@ -73,11 +71,48 @@ public class CameraPoses {
         model.hat.copyFrom(model.head);
     }
 
-    public float getCameraActionAnim(LivingEntity entity) {
+    public void applyStand(HumanoidModel<?> model, LivingEntity entity, HumanoidArm arm, CameraStandEntity stand) {
+        boolean rightHanded = arm == HumanoidArm.RIGHT;
+
+        ModelPart mainHand = rightHanded ? model.rightArm : model.leftArm;
+        ModelPart offHand = rightHanded ? model.leftArm : model.rightArm;
+
+        // Loot at stand:
+        Vec3 direction = entity.getEyePosition().subtract(stand.getEyePosition());
+        float yawToStandDegrees = (float) Mth.wrapDegrees(Math.toDegrees(Math.atan2(direction.x, direction.z)) + 180);
+        float bodyRotDegrees = entity.yBodyRot;
+        float yawDegrees = Mth.wrapDegrees(bodyRotDegrees + yawToStandDegrees);
+        yawDegrees = Mth.clamp(yawDegrees, -60, 60); // Limit head turning. Player is not owl.
+        float yaw = (float) Math.toRadians(yawDegrees);
+        model.head.yRot = -yaw;
+
+        double distanceXZ = Math.sqrt(direction.x * direction.x + direction.z * direction.z);
+        float pitch = (float)Math.atan2(-direction.y, distanceXZ);
+        model.head.xRot = -pitch;
+
+        model.hat.copyFrom(model.head);
+
+        // Arms to stand:
+        mainHand.yRot = (rightHanded ? -0.2F : 0.2F) + model.head.yRot;
+        offHand.yRot = (rightHanded ? 0.2F : -0.2F) + model.head.yRot;
+        mainHand.xRot = -1.2f;
+        offHand.xRot = -1.2f;
+        float actionAnim = getCameraActionAnim(entity);
+        offHand.xRot += (actionAnim * 0.1F) * (rightHanded ? 1 : -1);
+        offHand.yRot += (actionAnim * 0.1F) * (rightHanded ? 1 : -1);
+    }
+
+    public float getCameraActionProgress(LivingEntity entity) {
         if (entity instanceof CameraOperator operator) {
             float partialTick = Minecrft.get().getTimer().getGameTimeDeltaPartialTick(true);
             return operator.getExposureCameraActionAnim(partialTick);
         }
         return 0F;
+    }
+
+    public float getCameraActionAnim(LivingEntity entity) {
+        float actionProgress = getCameraActionProgress(entity);
+        actionProgress = (float)EasingFunction.EASE_OUT_CUBIC.ease(actionProgress);
+        return actionProgress > 0.5F ? (1F - actionProgress) : actionProgress;
     }
 }

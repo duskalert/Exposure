@@ -4,7 +4,7 @@ import com.mojang.logging.LogUtils;
 import io.github.mortuusars.exposure.Config;
 import io.github.mortuusars.exposure.ExposureClient;
 import io.github.mortuusars.exposure.client.export.ImageExporter;
-import io.github.mortuusars.exposure.client.image.modifier.ImageModifier;
+import io.github.mortuusars.exposure.client.image.modifier.ImageEffect;
 import io.github.mortuusars.exposure.client.util.Minecrft;
 import io.github.mortuusars.exposure.data.export.ExportLook;
 import io.github.mortuusars.exposure.data.export.ExportSize;
@@ -116,9 +116,9 @@ public class ExportExposuresTask extends Task<Result<Boolean>> {
             try {
                 String fileName = id + look.getIdSuffix();
                 new ImageExporter(exposure, fileName)
-                        .modify(ImageModifier.chain(
+                        .modify(ImageEffect.chain(
                                 look.getModifier(),
-                                ImageModifier.Resize.multiplier(size.getMultiplier())
+                                ImageEffect.Resize.multiplier(size.getMultiplier())
                         ))
                         .toExposuresFolder()
                         .organizeByWorld(Config.Client.EXPORT_ORGANIZE_BY_WORLD.get())

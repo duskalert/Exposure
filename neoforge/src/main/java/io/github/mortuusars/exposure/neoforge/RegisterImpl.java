@@ -1,9 +1,11 @@
 package io.github.mortuusars.exposure.neoforge;
 
 import com.mojang.brigadier.arguments.ArgumentType;
+import com.mojang.serialization.MapCodec;
 import io.github.mortuusars.exposure.Exposure;
 import io.github.mortuusars.exposure.Register;
 import net.minecraft.advancements.CriterionTrigger;
+import net.minecraft.advancements.critereon.EntitySubPredicate;
 import net.minecraft.advancements.critereon.ItemSubPredicate;
 import net.minecraft.commands.synchronization.ArgumentTypeInfo;
 import net.minecraft.commands.synchronization.ArgumentTypeInfos;
@@ -18,6 +20,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
@@ -36,6 +39,7 @@ public class RegisterImpl {
     public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(Registries.BLOCK, Exposure.ID);
     public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITY_TYPES = DeferredRegister.create(Registries.BLOCK_ENTITY_TYPE, Exposure.ID);
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(Registries.ITEM, Exposure.ID);
+    public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TAB = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, Exposure.ID);
     public static final DeferredRegister<EntityType<?>> ENTITY_TYPES = DeferredRegister.create(Registries.ENTITY_TYPE, Exposure.ID);
     public static final DeferredRegister<MenuType<?>> MENU_TYPES = DeferredRegister.create(Registries.MENU, Exposure.ID);
     public static final DeferredRegister<SoundEvent> SOUND_EVENTS = DeferredRegister.create(Registries.SOUND_EVENT, Exposure.ID);
@@ -43,6 +47,7 @@ public class RegisterImpl {
     public static final DeferredRegister<RecipeSerializer<?>> RECIPE_SERIALIZERS = DeferredRegister.create(Registries.RECIPE_SERIALIZER, Exposure.ID);
     public static final DeferredRegister<CriterionTrigger<?>> CRITERION_TRIGGERS = DeferredRegister.create(Registries.TRIGGER_TYPE, Exposure.ID);
     public static final DeferredRegister<ItemSubPredicate.Type<?>> ITEM_SUB_PREDICATES = DeferredRegister.create(Registries.ITEM_SUB_PREDICATE_TYPE, Exposure.ID);
+    public static final DeferredRegister<MapCodec<? extends EntitySubPredicate>> ENTITY_SUB_PREDICATES = DeferredRegister.create(Registries.ENTITY_SUB_PREDICATE_TYPE, Exposure.ID);
     public static final DeferredRegister<ArgumentTypeInfo<?, ?>> COMMAND_ARGUMENT_TYPES = DeferredRegister.create(Registries.COMMAND_ARGUMENT_TYPE, Exposure.ID);
     public static final DeferredRegister<Feature<?>> WORLD_GEN_FEATURES = DeferredRegister.create(Registries.FEATURE, Exposure.ID);
     public static final DeferredRegister.DataComponents DATA_COMPONENT_TYPES = DeferredRegister.createDataComponents(Registries.DATA_COMPONENT_TYPE, Exposure.ID);
@@ -63,6 +68,10 @@ public class RegisterImpl {
 
     public static <T extends Item> Supplier<T> item(String id, Supplier<T> supplier) {
         return ITEMS.register(id, supplier);
+    }
+
+    public static <T extends CreativeModeTab> Supplier<T> creativeTab(String id, Supplier<T> supplier) {
+        return CREATIVE_MODE_TAB.register(id, supplier);
     }
 
     public static <T extends Entity> Supplier<EntityType<T>> entityType(String id, EntityType.EntityFactory<T> factory, MobCategory category,
@@ -106,6 +115,10 @@ public class RegisterImpl {
 
     public static <T extends ItemSubPredicate.Type<?>> Supplier<T> itemSubPredicate(String name, Supplier<T> supplier) {
         return ITEM_SUB_PREDICATES.register(name, supplier);
+    }
+
+    public static <T extends MapCodec<EntitySubPredicate>> Supplier<T> entitySubPredicate(String name, Supplier<T> supplier) {
+        return ENTITY_SUB_PREDICATES.register(name, supplier);
     }
 
     public static <A extends ArgumentType<?>, T extends ArgumentTypeInfo.Template<A>, I extends ArgumentTypeInfo<A, T>>

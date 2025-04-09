@@ -7,7 +7,7 @@ import io.github.mortuusars.exposure.ExposureClient;
 import io.github.mortuusars.exposure.client.gui.Widgets;
 import io.github.mortuusars.exposure.client.gui.component.SteppedZoom;
 import io.github.mortuusars.exposure.client.gui.screen.element.Pager;
-import io.github.mortuusars.exposure.client.image.modifier.ImageModifier;
+import io.github.mortuusars.exposure.client.image.modifier.ImageEffect;
 import io.github.mortuusars.exposure.client.image.renderable.RenderableImage;
 import io.github.mortuusars.exposure.client.input.Key;
 import io.github.mortuusars.exposure.client.input.KeyBindings;
@@ -141,7 +141,7 @@ public class FilmFrameInspectScreen extends Screen {
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
 
         guiGraphics.pose().translate(12, 12, 0);
-        RenderableImage image = ExposureClient.renderedExposures().getOrCreate(frame).modifyWith(ImageModifier.NEGATIVE_FILM);
+        RenderableImage image = ExposureClient.renderedExposures().getOrCreate(frame).modifyWith(ImageEffect.NEGATIVE_FILM);
         MultiBufferSource.BufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
         ExposureClient.imageRenderer().render(image,  guiGraphics.pose(), bufferSource,
                 new RenderCoordinates(0, 0, FRAME_SIZE, FRAME_SIZE), filmType.getImageColor());

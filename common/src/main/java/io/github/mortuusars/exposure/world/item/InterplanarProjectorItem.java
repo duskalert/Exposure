@@ -3,7 +3,7 @@ package io.github.mortuusars.exposure.world.item;
 import io.github.mortuusars.exposure.Config;
 import io.github.mortuusars.exposure.Exposure;
 import io.github.mortuusars.exposure.world.camera.capture.ProjectionMode;
-import io.github.mortuusars.exposure.world.camera.capture.ProjectionInfo;
+import io.github.mortuusars.exposure.world.camera.capture.Projection;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
@@ -46,7 +46,7 @@ public class InterplanarProjectorItem extends Item {
             components.add(Component.translatable("item.exposure.interplanar_projector.tooltip.disabled"));
         }
 
-        if (getProjectingInfo(stack).isPresent()) {
+        if (getProjection(stack).isPresent()) {
             components.add(getMode(stack).translate());
         }
 
@@ -55,7 +55,7 @@ public class InterplanarProjectorItem extends Item {
                 components.add(Component.translatable("item.exposure.interplanar_projector.tooltip.consumed_info"));
             }
             components.add(Component.translatable("item.exposure.interplanar_projector.tooltip.info"));
-            if (getProjectingInfo(stack).isPresent()) {
+            if (getProjection(stack).isPresent()) {
                 components.add(Component.translatable("item.exposure.interplanar_projector.tooltip.change_mode_info"));
             }
         } else {
@@ -65,7 +65,7 @@ public class InterplanarProjectorItem extends Item {
 
     @Override
     public boolean overrideOtherStackedOnMe(ItemStack stack, ItemStack other, Slot slot, ClickAction action, Player player, SlotAccess access) {
-        if (other.isEmpty() && action == ClickAction.SECONDARY && getProjectingInfo(stack).isPresent()) {
+        if (other.isEmpty() && action == ClickAction.SECONDARY && getProjection(stack).isPresent()) {
             setMode(stack, getMode(stack).cycle());
             slot.setChanged();
             if (player.level().isClientSide) {
@@ -82,7 +82,7 @@ public class InterplanarProjectorItem extends Item {
         return customName != null ? Optional.of(customName.getString()) : Optional.empty();
     }
 
-    public Optional<ProjectionInfo> getProjectingInfo(ItemStack stack) {
-        return isAllowed() ? getPath(stack).map(filepath -> new ProjectionInfo(filepath, getMode(stack))) : Optional.empty();
+    public Optional<Projection> getProjection(ItemStack stack) {
+        return isAllowed() ? getPath(stack).map(filepath -> new Projection(filepath, getMode(stack))) : Optional.empty();
     }
 }

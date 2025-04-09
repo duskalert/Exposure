@@ -6,17 +6,20 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import io.github.mortuusars.exposure.Exposure;
 import io.github.mortuusars.exposure.ExposureClient;
+import io.github.mortuusars.exposure.client.gui.toast.BetterTutorialToast;
+import io.github.mortuusars.exposure.client.gui.toast.ToastIcon;
 import io.github.mortuusars.exposure.client.input.Key;
 import io.github.mortuusars.exposure.client.input.KeyBindings;
 import io.github.mortuusars.exposure.client.util.Minecrft;
 import io.github.mortuusars.exposure.world.block.entity.Lightroom;
 import io.github.mortuusars.exposure.world.block.entity.LightroomBlockEntity;
 import io.github.mortuusars.exposure.client.gui.component.CycleButton;
-import io.github.mortuusars.exposure.client.image.modifier.ImageModifier;
+import io.github.mortuusars.exposure.client.image.modifier.ImageEffect;
 import io.github.mortuusars.exposure.client.image.renderable.RenderableImage;
 import io.github.mortuusars.exposure.client.render.image.RenderCoordinates;
 import io.github.mortuusars.exposure.world.camera.FilmColor;
 import io.github.mortuusars.exposure.world.camera.ExposureType;
+import io.github.mortuusars.exposure.world.item.FilmRollItem;
 import io.github.mortuusars.exposure.world.lightroom.PrintingMode;
 import io.github.mortuusars.exposure.world.item.DevelopedFilmItem;
 import io.github.mortuusars.exposure.world.camera.frame.Frame;
@@ -29,6 +32,7 @@ import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.ImageButton;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.components.WidgetSprites;
+import net.minecraft.client.gui.components.toasts.TutorialToast;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.GameRenderer;
@@ -82,6 +86,8 @@ public class LightroomScreen extends AbstractContainerScreen<LightroomMenu> {
     protected CycleButton<PrintingMode> printingModeToggleButton;
 
     protected Map<Integer, Rect2i> slotPlaceholders = Collections.emptyMap();
+
+    protected boolean hasShownDevelopingToast;
 
     public LightroomScreen(LightroomMenu menu, Inventory playerInventory, Component title) {
         super(menu, playerInventory, title);
@@ -146,7 +152,7 @@ public class LightroomScreen extends AbstractContainerScreen<LightroomMenu> {
                 PrintingMode.CHROMATIC, Tooltip.create(Component.translatable("gui.exposure.lightroom.printing_mode.chromatic")
                         .append(CommonComponents.NEW_LINE)
                         .append(Component.translatable("gui.exposure.lightroom.printing_mode.chromatic.info").withStyle(ChatFormatting.GRAY))));
-        return new CycleButton<>(leftPos - 19, topPos + 91, 18, 18,
+        return new CycleButton<>(leftPos - 17, topPos + 91, 18, 18,
                 Arrays.asList(PrintingMode.values()), getMenu().getBlockEntity().getActualPrintingMode(),
                 spritesMap, (button, newMode) -> clickButton(LightroomMenu.TOGGLE_PROCESS_BUTTON_ID))
                 .setClickSound(SoundEvents.UI_BUTTON_CLICK.value())
@@ -189,7 +195,7 @@ public class LightroomScreen extends AbstractContainerScreen<LightroomMenu> {
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
         guiGraphics.blit(MAIN_TEXTURE, leftPos, topPos, 0, 0, imageWidth, imageHeight);
-        guiGraphics.blit(MAIN_TEXTURE, leftPos - 27, topPos + 34, 0, 208, 28, 31);
+        guiGraphics.blit(MAIN_TEXTURE, leftPos - 27, topPos + 35, 0, 209, 28, 31);
 
         renderSlotPlaceholders(guiGraphics, mouseX, mouseY, partialTick);
 
@@ -344,7 +350,7 @@ public class LightroomScreen extends AbstractContainerScreen<LightroomMenu> {
 
     public void renderFrame(@NotNull Frame frame, PoseStack poseStack,
                             float x, float y, float size, float alpha, ExposureType exposureType) {
-        RenderableImage image = ExposureClient.renderedExposures().getOrCreate(frame).modifyWith(ImageModifier.NEGATIVE_FILM);
+        RenderableImage image = ExposureClient.renderedExposures().getOrCreate(frame).modifyWith(ImageEffect.NEGATIVE_FILM);
 
         MultiBufferSource.BufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
         ExposureClient.imageRenderer().render(image, poseStack, bufferSource, new RenderCoordinates(x, y, size, size),
@@ -377,6 +383,16 @@ public class LightroomScreen extends AbstractContainerScreen<LightroomMenu> {
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
         if (button == 0) {
+            Slot filmSlot = getMenu().getSlot(Lightroom.FILM_SLOT);
+            if (!hasShownDevelopingToast && !filmSlot.hasItem()
+                    && isHovering(filmSlot.x, filmSlot.y, 16, 16, mouseX, mouseY)
+                    && getMenu().getCarried().getItem() instanceof FilmRollItem) {
+                Minecrft.get().getToasts().addToast(new BetterTutorialToast(ToastIcon.HEADS_UP,
+                        Component.translatable("gui.exposure.lightroom.toast.develop_film.title"),
+                        null, BetterTutorialToast.DEFAULT_SHOW_DURATION_MS));
+                hasShownDevelopingToast = true;
+            }
+
             if (isOverCenterFrame((int) mouseX, (int) mouseY)) {
                 enterFrameInspectMode();
                 return true;

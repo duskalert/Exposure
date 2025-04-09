@@ -10,7 +10,7 @@ import io.github.mortuusars.exposure.client.export.ImageExporter;
 import io.github.mortuusars.exposure.client.gui.Widgets;
 import io.github.mortuusars.exposure.client.gui.screen.element.Pager;
 import io.github.mortuusars.exposure.client.gui.component.SteppedZoom;
-import io.github.mortuusars.exposure.client.image.modifier.ImageModifier;
+import io.github.mortuusars.exposure.client.image.modifier.ImageEffect;
 import io.github.mortuusars.exposure.client.input.Key;
 import io.github.mortuusars.exposure.client.input.KeyBindings;
 import io.github.mortuusars.exposure.client.input.Modifier;
@@ -268,6 +268,9 @@ public class PhotographScreen extends Screen {
     // --
 
     protected boolean dropAsItem() {
+        if (!Minecrft.player().isCreative()) {
+            return false;
+        }
         ItemStack droppedStack = getCurrentPhotograph().getItemStack().copy();
         Minecrft.gameMode().handleCreativeModeItemDrop(droppedStack);
         Minecrft.player().displayClientMessage(Component.translatable("gui.exposure.photograph_screen.item_dropped_message",
@@ -339,9 +342,9 @@ public class PhotographScreen extends Screen {
             savedExposureIds.add(filename);
 
             CompletableFuture.runAsync(() -> new ImageExporter(exposure, filename)
-                            .modify(ImageModifier.chain(
+                            .modify(ImageEffect.chain(
                                     photographStyle.modifier(),
-                                    ImageModifier.Resize.multiplier(Config.Client.EXPORT_SIZE_MULTIPLIER.get())
+                                    ImageEffect.Resize.multiplier(Config.Client.EXPORT_SIZE_MULTIPLIER.get())
                             ))
                             .toExposuresFolder()
                             .organizeByWorld(Config.Client.EXPORT_ORGANIZE_BY_WORLD.get())

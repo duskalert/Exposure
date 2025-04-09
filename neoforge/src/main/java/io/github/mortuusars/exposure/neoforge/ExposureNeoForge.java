@@ -5,6 +5,7 @@ import com.mojang.serialization.MapCodec;
 import io.github.mortuusars.exposure.Config;
 import io.github.mortuusars.exposure.Exposure;
 import io.github.mortuusars.exposure.neoforge.loot.ConfigurableAddTableLootModifier;
+import net.minecraft.world.item.CreativeModeTab;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
@@ -37,17 +38,20 @@ public class ExposureNeoForge {
         RegisterImpl.BLOCK_ENTITY_TYPES.register(modEventBus);
         RegisterImpl.ENTITY_TYPES.register(modEventBus);
         RegisterImpl.ITEMS.register(modEventBus);
+        RegisterImpl.CREATIVE_MODE_TAB.register(modEventBus);
         RegisterImpl.MENU_TYPES.register(modEventBus);
         RegisterImpl.RECIPE_TYPES.register(modEventBus);
         RegisterImpl.RECIPE_SERIALIZERS.register(modEventBus);
         RegisterImpl.CRITERION_TRIGGERS.register(modEventBus);
         RegisterImpl.ITEM_SUB_PREDICATES.register(modEventBus);
+        RegisterImpl.ENTITY_SUB_PREDICATES.register(modEventBus);
         RegisterImpl.SOUND_EVENTS.register(modEventBus);
         RegisterImpl.COMMAND_ARGUMENT_TYPES.register(modEventBus);
         RegisterImpl.WORLD_GEN_FEATURES.register(modEventBus);
         RegisterImpl.DATA_COMPONENT_TYPES.register(modEventBus);
         RegisterImpl.PARTICLE_TYPES.register(modEventBus);
         RegisterImpl.CUSTOM_STATS.register(modEventBus);
+        LootModifiers.LOOT_MODIFIERS.register(modEventBus);
 
         if (FMLEnvironment.dist == Dist.CLIENT) {
             ExposureNeoForgeClient.init(container);

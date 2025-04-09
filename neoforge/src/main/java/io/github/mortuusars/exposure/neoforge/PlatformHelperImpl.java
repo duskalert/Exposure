@@ -4,7 +4,7 @@ import io.github.mortuusars.exposure.neoforge.api.event.ModifyEntityInFrameDataE
 import io.github.mortuusars.exposure.neoforge.api.event.FrameAddedEvent;
 import io.github.mortuusars.exposure.neoforge.api.event.ModifyFrameExtraDataEvent;
 import io.github.mortuusars.exposure.util.ExtraData;
-import io.github.mortuusars.exposure.world.camera.capture.CaptureProperties;
+import io.github.mortuusars.exposure.world.camera.capture.CaptureParameters;
 import io.github.mortuusars.exposure.world.camera.frame.Frame;
 import io.github.mortuusars.exposure.world.entity.CameraHolder;
 import net.minecraft.core.BlockPos;
@@ -67,9 +67,9 @@ public class PlatformHelperImpl {
         NeoForge.EVENT_BUS.post(new ModifyEntityInFrameDataEvent(cameraHolder, camera, entityInFrame, data));
     }
 
-    public static void postModifyFrameExtraDataEvent(CameraHolder cameraHolder, ItemStack camera, CaptureProperties captureProperties,
+    public static void postModifyFrameExtraDataEvent(CameraHolder cameraHolder, ItemStack camera, CaptureParameters captureParameters,
                                                      List<BlockPos> positionsInFrame, List<LivingEntity> entitiesInFrame, ExtraData data) {
-        NeoForge.EVENT_BUS.post(new ModifyFrameExtraDataEvent(cameraHolder, camera, captureProperties, positionsInFrame, entitiesInFrame, data));
+        NeoForge.EVENT_BUS.post(new ModifyFrameExtraDataEvent(cameraHolder, camera, captureParameters, positionsInFrame, entitiesInFrame, data));
     }
 
     public static void postFrameAddedEvent(CameraHolder cameraHolder, ItemStack camera, Frame frame, List<BlockPos> positionsInFrame, List<LivingEntity> entitiesInFrame) {

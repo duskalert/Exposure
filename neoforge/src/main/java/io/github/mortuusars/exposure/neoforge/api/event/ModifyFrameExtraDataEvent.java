@@ -1,7 +1,7 @@
 package io.github.mortuusars.exposure.neoforge.api.event;
 
 import io.github.mortuusars.exposure.util.ExtraData;
-import io.github.mortuusars.exposure.world.camera.capture.CaptureProperties;
+import io.github.mortuusars.exposure.world.camera.capture.CaptureParameters;
 import io.github.mortuusars.exposure.world.entity.CameraHolder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
@@ -18,16 +18,16 @@ import java.util.List;
 public class ModifyFrameExtraDataEvent extends Event {
     private final CameraHolder cameraHolder;
     private final ItemStack stack;
-    private final CaptureProperties captureProperties;
+    private final CaptureParameters captureParameters;
     private final List<BlockPos> positionsInFrame;
     private final List<LivingEntity> entitiesInFrame;
     private final ExtraData data;
 
-    public ModifyFrameExtraDataEvent(CameraHolder cameraHolder, ItemStack stack, CaptureProperties captureProperties,
+    public ModifyFrameExtraDataEvent(CameraHolder cameraHolder, ItemStack stack, CaptureParameters captureParameters,
                                      List<BlockPos> positionsInFrame, List<LivingEntity> entitiesInFrame, ExtraData data) {
         this.cameraHolder = cameraHolder;
         this.stack = stack;
-        this.captureProperties = captureProperties;
+        this.captureParameters = captureParameters;
         this.positionsInFrame = positionsInFrame;
         this.entitiesInFrame = entitiesInFrame;
         this.data = data;
@@ -45,8 +45,8 @@ public class ModifyFrameExtraDataEvent extends Event {
         return stack;
     }
 
-    public CaptureProperties getCaptureProperties() {
-        return captureProperties;
+    public CaptureParameters getCaptureProperties() {
+        return captureParameters;
     }
 
     public List<BlockPos> getPositionsInFrame() {

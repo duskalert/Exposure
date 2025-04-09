@@ -22,6 +22,13 @@ public class Config {
         public static final ModConfigSpec.DoubleValue SELFIE_CAMERA_DISTANCE;
         public static final ModConfigSpec.BooleanValue CAMERA_GUI_RIGHT_CLICK_OPEN_ATTACHMENTS;
         public static final ModConfigSpec.BooleanValue CAMERA_GUI_RIGHT_CLICK_HOTSWAP;
+        public static final ModConfigSpec.BooleanValue TIMER_ATTRACTS_MOB_ATTENTION;
+        public static final ModConfigSpec.IntValue TIMER_ATTENTION_RADIUS;
+
+        // Camera Stand
+        public static final ModConfigSpec.IntValue CAMERA_STAND_WORKING_RANGE;
+        public static final ModConfigSpec.BooleanValue CAMERA_STAND_RANGE_MALFUNCTION;
+        public static final ModConfigSpec.BooleanValue CAMERA_STAND_FALLBACK_TO_OTHER_PLAYERS;
 
         // Capture
         public static final ModConfigSpec.IntValue DEFAULT_FRAME_SIZE;
@@ -80,6 +87,28 @@ public class Config {
                         .comment("Right-clicking Camera in GUI with attachment item will insert/swap it.",
                                 "Default: true")
                         .define("right_click_hotswap", true);
+                TIMER_ATTRACTS_MOB_ATTENTION = builder
+                        .comment("Self-timer will attract attention of nearby entities and makes them look at the Camera. Default: true")
+                        .define("timer_attracts_mob_attention", true);
+                TIMER_ATTENTION_RADIUS = builder
+                        .comment("Radius in blocks around the camera in which mobs will be affected by the timer. Default: 16")
+                        .defineInRange("timer_attention_radius", 16, 1, 64);
+                builder.pop();
+            }
+
+            {
+                builder.push("camera_stand");
+                CAMERA_STAND_WORKING_RANGE = builder
+                        .comment("Maximum allowed distance between Camera Stand and a player for the stand to function.",
+                                "Camera on stand will capture the chunks that player is currently seeing, this may result is some parts of the world missing when camera on stand is taking photos while a player far away. Short render distances can be a problem as well.",
+                                "Default: 100")
+                        .defineInRange("working_range", 100, 1, Integer.MAX_VALUE);
+                CAMERA_STAND_RANGE_MALFUNCTION = builder
+                        .comment("Attempting to take a photo outside the working range will cause the Camera on stand to 'malfunction' and it would need to be repaired (by simply using it). Default: true")
+                        .define("out_of_working_range_malfunction", true);
+                CAMERA_STAND_FALLBACK_TO_OTHER_PLAYERS = builder
+                        .comment("If owner of the Camera Stand is not in range, closest player will be chosen to create and render a photo. Default: true")
+                        .define("fallback_to_other_players", true);
                 builder.pop();
             }
 
@@ -224,6 +253,7 @@ public class Config {
         public static final ModConfigSpec.BooleanValue CAMERA_SHOW_FILM_BAR_ON_ITEM;
         public static final ModConfigSpec.BooleanValue PHOTOGRAPH_SHOW_PHOTOGRAPHER_IN_TOOLTIP;
         public static final ModConfigSpec.BooleanValue PHOTOGRAPH_IN_HAND_HIDE_CROSSHAIR;
+        public static final ModConfigSpec.BooleanValue CAMERA_STAND_TOOLTIP;
 
         public static final ModConfigSpec.BooleanValue ALBUM_PHOTOS_COUNT_TOOLTIP;
         public static final ModConfigSpec.ConfigValue<String> ALBUM_FONT_MAIN_COLOR;
@@ -246,6 +276,7 @@ public class Config {
         public static final ModConfigSpec.IntValue DIRECT_CAPTURE_DELAY_FRAMES;
 
         // RENDER
+        public static final ModConfigSpec.BooleanValue PIXEL_PERFECT_PHOTOGRAPH_FRAME;
         public static final ModConfigSpec.BooleanValue PHOTOGRAPH_RENDERS_IN_ITEM_FRAME;
         public static final ModConfigSpec.BooleanValue HIDE_PROJECTED_PHOTOGRAPHS_MADE_BY_OTHERS;
         public static final ModConfigSpec.BooleanValue HIDE_ALL_PHOTOGRAPHS_MADE_BY_OTHERS;
@@ -259,6 +290,10 @@ public class Config {
         public static final ModConfigSpec.BooleanValue EXPORT_PHOTOGRAPH_WHEN_VIEWED;
         public static final ModConfigSpec.BooleanValue EXPORT_ORGANIZE_BY_WORLD;
         public static final ModConfigSpec.IntValue EXPORT_SIZE_MULTIPLIER;
+
+        // MISC
+        public static final ModConfigSpec.BooleanValue ATTACHMENTS_SHOW_INFO_TOAST;
+        public static final ModConfigSpec.BooleanValue ATTACHMENTS_SHOW_WIKI_TOAST;
 
         static {
             ModConfigSpec.Builder builder = new ModConfigSpec.Builder();
@@ -292,6 +327,10 @@ public class Config {
                 PHOTOGRAPH_IN_HAND_HIDE_CROSSHAIR = builder
                         .comment("Crosshair will not get in the way when holding a photograph.")
                         .define("photograph_in_hand_hide_crosshair", true);
+
+                CAMERA_STAND_TOOLTIP = builder
+                        .comment("When looking at the Camera Stand, in-world tooltip will show information about the camera on it. Default: true")
+                        .define("camera_stand_tooltip", true);
 
                 ALBUM_PHOTOS_COUNT_TOOLTIP = builder
                         .comment("Album will show how many photographs it contains in a tooltip.")
@@ -365,14 +404,17 @@ public class Config {
 
             {
                 builder.push("render");
+                PIXEL_PERFECT_PHOTOGRAPH_FRAME = builder
+                        .comment("Makes photos in Photograph Frame render with alignment to 16 pixel grid (like paintings). Just for fun. Default: false")
+                        .define("pixel_perfect_photograph_frame", false);
                 PHOTOGRAPH_RENDERS_IN_ITEM_FRAME = builder
                         .comment("Photographs in Item Frame will be rendered as image instead of an item icon. Default: false")
                         .define("photograph_renders_in_item_frame", false);
                 HIDE_PROJECTED_PHOTOGRAPHS_MADE_BY_OTHERS = builder
-                        .comment("Projected photographs (using Interplanar Projector) made by other players will be censored (pixelated).")
+                        .comment("Projected photographs (using Interplanar Projector) made by other players will be censored (pixelated). Default: false")
                         .define("censor_projected_photographs_made_by_others", false);
                 HIDE_ALL_PHOTOGRAPHS_MADE_BY_OTHERS = builder
-                        .comment("All photographs made by other players will will be censored (pixelated).")
+                        .comment("All photographs made by other players will will be censored (pixelated). Default: false")
                         .define("censor_all_photographs_made_by_others", false);
                 PHOTOGRAPH_FRAME_CULLING_DISTANCE = builder
                         .comment("Distance from the player beyond which Photograph Frame would not be rendered. Default: 64",
@@ -407,6 +449,19 @@ public class Config {
                                 "Default: 2")
                         .defineInRange("export_size_multiplier", 2, 1, 10);
 
+                builder.pop();
+            }
+
+            {
+                builder.push("tutorial");
+                ATTACHMENTS_SHOW_INFO_TOAST = builder
+                        .comment("Toast that teaches hovering mouse over camera parts will be shown when attachments menu is first opened. Default: true.",
+                                "*This setting will be automatically set to false on first show.*")
+                        .define("attachments_show_info_toast", true);
+                ATTACHMENTS_SHOW_WIKI_TOAST = builder
+                        .comment("Toast that teaches wiki opening will be shown when attachments menu is first opened, after info toast. Default: true.",
+                                "*This setting will be automatically set to false on first show.*")
+                        .define("attachments_show_wiki_toast", true);
                 builder.pop();
             }
 

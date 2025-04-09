@@ -5,12 +5,10 @@ import io.github.mortuusars.exposure.Config;
 import io.github.mortuusars.exposure.client.capture.Capture;
 import io.github.mortuusars.exposure.client.capture.action.CaptureAction;
 import io.github.mortuusars.exposure.client.capture.palettizer.Palettizer;
-import io.github.mortuusars.exposure.client.image.modifier.ImageModifier;
 import io.github.mortuusars.exposure.client.capture.saving.ExposureUploader;
 import io.github.mortuusars.exposure.client.util.Minecrft;
-import io.github.mortuusars.exposure.world.camera.ExposureType;
-import io.github.mortuusars.exposure.world.camera.capture.CaptureProperties;
-import io.github.mortuusars.exposure.world.camera.capture.ProjectionInfo;
+import io.github.mortuusars.exposure.world.camera.capture.CaptureParameters;
+import io.github.mortuusars.exposure.world.camera.capture.Projection;
 import io.github.mortuusars.exposure.data.ColorPalette;
 import io.github.mortuusars.exposure.util.cycles.task.EmptyTask;
 import io.github.mortuusars.exposure.world.entity.CameraHolder;
@@ -18,71 +16,57 @@ import io.github.mortuusars.exposure.world.level.storage.ExposureData;
 import io.github.mortuusars.exposure.util.cycles.task.Task;
 import net.minecraft.core.Holder;
 import net.minecraft.world.entity.Entity;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 
 public class CameraCaptureTemplate implements CaptureTemplate {
     private static final Logger LOGGER = LogUtils.getLogger();
 
     @Override
-    public Task<?> createTask(CaptureProperties data) {
-        if (data.exposureId().isEmpty()) {
-            LOGGER.error("Failed to create capture task: exposure id cannot be empty. '{}'", data);
+    public Task<?> createTask(CaptureParameters params) {
+        if (params.exposureId().isEmpty()) {
+            LOGGER.error("Failed to create capture task: exposure id cannot be empty. '{}'", params);
             return new EmptyTask<>();
         }
 
-        int entityId = data.cameraHolderEntityId().orElse(Minecrft.player().getId());
-        if (!(Minecrft.level().getEntity(entityId) instanceof CameraHolder cameraHolder)) {
-            LOGGER.error("Failed to create capture task: camera holder cannot be obtained. '{}'", data);
+        @Nullable Entity entity = Minecrft.level().getEntity(params.cameraHolderId().orElse(Minecrft.player().getId()));
+        if (entity == null) {
+            LOGGER.error("Failed to create capture task: camera holder entity cannot be obtained. '{}'", params);
             return new EmptyTask<>();
         }
 
-        Entity entity = cameraHolder.asHolderEntity();
-        ExposureType filmType = data.filmType();
-        int frameSize = data.frameSize().orElse(Config.Server.DEFAULT_FRAME_SIZE.getAsInt());
-        Holder<ColorPalette> palette = data.getColorPalette(Minecrft.registryAccess());
+        @Nullable CameraHolder holder = entity instanceof CameraHolder cameraHolder ? cameraHolder : null;
+
+        Holder<ColorPalette> palette = getColorPalette(params);
 
         Task<ExposureData> captureTask = Capture.of(Capture.screenshot(),
                         CaptureAction.setCameraEntity(entity),
+                        CaptureAction.forceRegularOrSelfieCamera(holder),
+                        CaptureAction.optional(params.fov(), CaptureAction::setFov),
                         CaptureAction.hideGui(),
-                        CaptureAction.forceRegularOrSelfieCamera(),
-                        CaptureAction.optional(data.fovOverride(), fov -> CaptureAction.setFov(fov)),
                         CaptureAction.optional(Config.Client.KEEP_POST_EFFECT.isFalse(), CaptureAction::disablePostEffect),
-                        CaptureAction.modifyGamma(data.getShutterSpeed()),
-                        CaptureAction.optional(data.flash(), () -> CaptureAction.flash(entity)))
+                        CaptureAction.setFilter(params.filter()),
+                        CaptureAction.modifyGamma(params.getShutterSpeed()),
+                        CaptureAction.optional(params.getFlash(), () -> CaptureAction.flash(entity)))
                 .handleErrorAndGetResult(printCasualErrorInChat())
-                .thenAsync(ImageModifier.chain(
-                        ImageModifier.Crop.SQUARE_CENTER,
-                        ImageModifier.Crop.factor(data.cropFactor()),
-                        ImageModifier.Resize.to(frameSize),
-                        ImageModifier.brightness(data.getShutterSpeed()),
-                        ImageModifier.optional(filmType == ExposureType.BLACK_AND_WHITE,
-                                data.singleChannel()
-                                        .map(ImageModifier::singleChannelBlackAndWhite)
-                                        .orElse(ImageModifier.BLACK_AND_WHITE))))
+                .thenAsync(applyEffectsToImage(params))
                 .thenAsync(Palettizer.DITHERED.palettizeAndClose(palette.value()))
-                .thenAsync(convertToExposureData(palette, createExposureTag(cameraHolder.getPlayerExecutingExposure(), data, false)));
+                .then(convertToExposureData(palette, createExposureTag(params, false)));
 
-        if (data.projection().isPresent()) {
-            ProjectionInfo projectionInfo = data.projection().get();
-            String path = projectionInfo.path();
+        if (params.projection().isPresent()) {
+            Projection projection = params.projection().get();
+            String path = projection.path();
 
             captureTask = captureTask.overridenBy(Capture.of(Capture.path(path),
-                            CaptureAction.optional(data.cameraId(), CaptureAction::interplanarProjection))
+                            CaptureAction.optional(params.cameraId(), CaptureAction::interplanarProjection))
                     .logErrorAndGetResult(LOGGER)
-                    .thenAsync(ImageModifier.chain(
-                            ImageModifier.Crop.SQUARE_CENTER,
-                            ImageModifier.Resize.to(frameSize),
-                            ImageModifier.brightness(data.getShutterSpeed()),
-                            ImageModifier.optional(filmType == ExposureType.BLACK_AND_WHITE,
-                                    data.singleChannel()
-                                            .map(ImageModifier::singleChannelBlackAndWhite)
-                                            .orElse(ImageModifier.BLACK_AND_WHITE))))
-                    .thenAsync(Palettizer.fromProjectionMode(projectionInfo.mode()).palettizeAndClose(palette.value()))
-                    .thenAsync(convertToExposureData(palette, createExposureTag(cameraHolder.getPlayerExecutingExposure(), data, true))));
+                    .thenAsync(applyEffectsToImage(params))
+                    .thenAsync(Palettizer.fromProjectionMode(projection.mode()).palettizeAndClose(palette.value()))
+                    .then(convertToExposureData(palette, createExposureTag(params, true))));
         }
 
         return captureTask
-                .acceptAsync(image -> ExposureUploader.upload(data.exposureId(), image))
+                .acceptAsync(image -> ExposureUploader.upload(params.exposureId(), image))
                 .onError(printCasualErrorInChat());
     }
 }

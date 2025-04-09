@@ -2,10 +2,7 @@ package io.github.mortuusars.exposure.world.item.camera;
 
 import com.google.common.base.Preconditions;
 import io.github.mortuusars.exposure.Exposure;
-import io.github.mortuusars.exposure.world.camera.component.CompositionGuide;
-import io.github.mortuusars.exposure.world.camera.component.CompositionGuides;
-import io.github.mortuusars.exposure.world.camera.component.FlashMode;
-import io.github.mortuusars.exposure.world.camera.component.ShutterSpeed;
+import io.github.mortuusars.exposure.world.camera.component.*;
 import io.github.mortuusars.exposure.world.sound.SoundEffect;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
@@ -51,6 +48,8 @@ public class CameraSettings {
             new CameraSetting<>(Exposure.DataComponents.SHUTTER_SPEED, ShutterSpeed.DEFAULT, new SoundEffect(Exposure.SoundEvents.CAMERA_DIAL_CLICK)));
     public static final CameraSetting<CompositionGuide> COMPOSITION_GUIDE = register(Exposure.resource("composition_guide"),
             new CameraSetting<>(Exposure.DataComponents.COMPOSITION_GUIDE, CompositionGuides.NONE, new SoundEffect(Exposure.SoundEvents.CAMERA_BUTTON_CLICK)));
+    public static final CameraSetting<SelfTimer> SELF_TIMER = register(Exposure.resource("self_timer"),
+            new CameraSetting<>(Exposure.DataComponents.SELF_TIMER, SelfTimer.OFF, new SoundEffect(Exposure.SoundEvents.CAMERA_BUTTON_CLICK)));
     public static final CameraSetting<FlashMode> FLASH_MODE = register(Exposure.resource("flash_mode"),
             new CameraSetting<>(Exposure.DataComponents.FLASH_MODE, FlashMode.OFF, new SoundEffect(Exposure.SoundEvents.CAMERA_BUTTON_CLICK)));
 }

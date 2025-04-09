@@ -13,12 +13,8 @@ import io.github.mortuusars.exposure.client.input.MouseHandler;
 import io.github.mortuusars.exposure.client.util.Minecrft;
 import io.github.mortuusars.exposure.client.util.ZoomDirection;
 import io.github.mortuusars.exposure.world.camera.Camera;
-import io.github.mortuusars.exposure.world.item.camera.CameraItem;
+import io.github.mortuusars.exposure.world.camera.component.*;
 import io.github.mortuusars.exposure.world.item.camera.CameraSettings;
-import io.github.mortuusars.exposure.world.camera.component.CompositionGuide;
-import io.github.mortuusars.exposure.world.camera.component.CompositionGuides;
-import io.github.mortuusars.exposure.world.camera.component.FlashMode;
-import io.github.mortuusars.exposure.world.camera.component.ShutterSpeed;
 import io.github.mortuusars.exposure.network.Packets;
 import io.github.mortuusars.exposure.network.packet.serverbound.ActiveCameraReleaseC2SP;
 import net.minecraft.ChatFormatting;
@@ -61,7 +57,7 @@ public class ViewfinderCameraControlsScreen extends Screen {
 
     protected static final int SEPARATOR_WIDTH = 1;
     protected static final int BUTTON_HEIGHT = 18;
-    protected static final int SIDE_BUTTONS_WIDTH = 48;
+    protected static final int SIDE_BUTTONS_WIDTH = 49;
     protected static final int BUTTON_WIDTH = 15;
 
     protected final Camera camera;
@@ -107,9 +103,9 @@ public class ViewfinderCameraControlsScreen extends Screen {
         leftPos = (width - 256) / 2;
         topPos = Math.round(viewfinder.overlay().getOpening().y + viewfinder.overlay().getOpening().height - 256);
 
-        boolean hasFlash = camera.map(CameraItem::hasFlash).orElse(false);
+        boolean hasFlash = camera.map((i, s) -> i.getFlash().isAvailable(s)).orElse(false);
 
-        int elementX = leftPos + 128 - (SIDE_BUTTONS_WIDTH + 1 + BUTTON_WIDTH + 1 + (hasFlash ? BUTTON_WIDTH + 1 : 0) + SIDE_BUTTONS_WIDTH) / 2;
+        int elementX = leftPos + 128 - (SIDE_BUTTONS_WIDTH + 1 + BUTTON_WIDTH + 1 + BUTTON_WIDTH + 1 + (hasFlash ? BUTTON_WIDTH + 1 : 0) + SIDE_BUTTONS_WIDTH) / 2;
         int elementY = topPos + 238;
 
         // Order of adding influences TAB key behavior
@@ -130,6 +126,15 @@ public class ViewfinderCameraControlsScreen extends Screen {
         compositionGuideButton.setY(elementY);
         addRenderableWidget(compositionGuideButton);
         elementX += compositionGuideButton.getWidth();
+
+        addSeparator(elementX, elementY);
+        elementX += SEPARATOR_WIDTH;
+
+        Button selfTimerButton = createSelfTimerButton();
+        selfTimerButton.setX(elementX);
+        selfTimerButton.setY(elementY);
+        addRenderableWidget(selfTimerButton);
+        elementX += selfTimerButton.getWidth();
 
         addSeparator(elementX, elementY);
         elementX += SEPARATOR_WIDTH;
@@ -170,6 +175,20 @@ public class ViewfinderCameraControlsScreen extends Screen {
                         .append(CommonComponents.NEW_LINE)
                         .append(guide.translate().withStyle(ChatFormatting.GRAY)))
                 .onCycle(guide -> CameraSettings.COMPOSITION_GUIDE.setAndSync(camera, guide));
+    }
+
+    protected @NotNull Button createSelfTimerButton() {
+        List<SelfTimer> values = Arrays.asList(SelfTimer.values());
+        SelfTimer currentValue = camera.map(CameraSettings.SELF_TIMER::getOrDefault, SelfTimer.OFF);
+        Function<SelfTimer, WidgetSprites> spritesFunc = mode -> Widgets.threeStateSprites(
+                Exposure.resource("camera_controls/self_timer/timer_" + mode.getSerializedName()));
+
+        return new CycleButton<>(0, 0, BUTTON_WIDTH, BUTTON_HEIGHT, values, currentValue, spritesFunc)
+                .setDefaultTooltip(Tooltip.create(Component.translatable("gui.exposure.camera_controls.self_timer.tooltip")))
+                .setTooltips(mode -> Component.translatable("gui.exposure.camera_controls.self_timer.tooltip")
+                        .append(CommonComponents.NEW_LINE)
+                        .append(mode.translate().withStyle(ChatFormatting.GRAY)))
+                .onCycle(value -> CameraSettings.SELF_TIMER.setAndSync(camera, value));
     }
 
     protected @NotNull Button createFlashModeButton() {
@@ -281,6 +300,7 @@ public class ViewfinderCameraControlsScreen extends Screen {
 
         if (camera.inSelfieMode() && Minecrft.options().keySprint.isDown) {
             // Parameters are correct. Stop nagging me, Intellij
+            //noinspection SuspiciousNameCombination
             viewfinder.selfie.rotateCamera(dragY, dragX, true);
             return true;
         }

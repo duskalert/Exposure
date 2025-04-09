@@ -3,12 +3,14 @@
   "criteria": {
     "photograph_spider_man": {
       "conditions": {
-        "entity_in_frame": {
-          "type": "minecraft:skeleton",
-          "vehicle": {
-            "type": "minecraft:spider"
+        "entities_in_frame": [
+          {
+            "type": "minecraft:skeleton",
+            "vehicle": {
+              "type": "minecraft:spider"
+            }
           }
-        }
+        ]
       },
       "trigger": "exposure:frame_exposed"
     }

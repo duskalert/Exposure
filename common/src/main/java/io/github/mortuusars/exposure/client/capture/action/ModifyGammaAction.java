@@ -18,7 +18,7 @@ public class ModifyGammaAction implements CaptureAction {
     }
 
     public ModifyGammaAction(ShutterSpeed shutterSpeed) {
-        this(shutterSpeed.getStops(), 0.02f);
+        this(shutterSpeed.getStops(), 0.03f);
     }
 
     @Override

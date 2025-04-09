@@ -6,6 +6,9 @@ import io.github.mortuusars.exposure.client.util.Minecrft;
 import io.github.mortuusars.exposure.world.camera.Camera;
 import io.github.mortuusars.exposure.network.Packets;
 import io.github.mortuusars.exposure.network.packet.common.ActiveCameraDeactivateCommonPacket;
+import io.github.mortuusars.exposure.world.camera.CameraOnStand;
+import net.minecraft.client.CameraType;
+import net.minecraft.world.entity.Entity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -36,6 +39,20 @@ public class CameraClient {
         Packets.sendToServer(ActiveCameraDeactivateCommonPacket.INSTANCE);
     }
 
+    public static void setCameraEntity(Entity entity) {
+        // Not using Minecraft#setCameraEntity because it updates postEffect
+        Minecrft.get().cameraEntity = entity;
+
+        // Set eye height to final value to skip transition animation
+        Minecrft.get().gameRenderer.getMainCamera().eyeHeight = entity.getEyeHeight();
+        Minecrft.get().gameRenderer.getMainCamera().eyeHeightOld = entity.getEyeHeight();
+        Minecrft.get().gameRenderer.getMainCamera().reset();
+    }
+
+    public static void resetCameraEntity() {
+        setCameraEntity(Minecrft.player());
+    }
+
     // --
 
     public static @Nullable Viewfinder viewfinder() {
@@ -45,6 +62,10 @@ public class CameraClient {
     public static void setupViewfinder(@NotNull Camera camera) {
         removeViewfinder();
         activeViewfinder = ViewfinderRegistry.get(camera);
+
+        if (camera instanceof CameraOnStand) {
+            Minecrft.options().setCameraType(CameraType.FIRST_PERSON);
+        }
     }
 
     public static void removeViewfinder() {

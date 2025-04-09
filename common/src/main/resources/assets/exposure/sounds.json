@@ -141,6 +141,15 @@
       "exposure:item/camera/lens_ring3"
     ]
   },
+  "item.camera.timer_tick": {
+    "sounds": [
+      "exposure:item/camera/timer1",
+      "exposure:item/camera/timer2",
+      "exposure:item/camera/timer3",
+      "exposure:item/camera/timer4"
+    ],
+    "subtitle": "subtitle.exposure.camera.timer"
+  },
   "item.camera.release_button_click": {
     "sounds": [
       "exposure:item/camera/release_button_click"
@@ -281,5 +290,50 @@
       "exposure:misc/bsod"
     ],
     "subtitle": "subtitle.exposure.misc.bsod"
+  },
+  "entity.camera_stand.place": {
+    "sounds": [
+      "dig/stone1",
+      "dig/stone2",
+      "dig/stone3",
+      "dig/stone4"
+    ],
+    "subtitle": "subtitles.block.generic.place"
+  },
+  "entity.camera_stand.hit": {
+    "sounds": [
+      "entity/armorstand/hit1",
+      "entity/armorstand/hit2",
+      "entity/armorstand/hit3",
+      "entity/armorstand/hit4"
+    ],
+    "subtitle": "subtitles.block.generic.hit"
+  },
+  "entity.camera_stand.break": {
+    "sounds": [
+      "entity/armorstand/break1",
+      "entity/armorstand/break2",
+      "entity/armorstand/break3",
+      "entity/armorstand/break4"
+    ],
+    "subtitle": "subtitles.block.generic.break"
+  },
+  "entity.camera_stand.set_camera": {
+    "sounds": [
+      "entity/itemframe/add_item1",
+      "entity/itemframe/add_item2",
+      "entity/itemframe/add_item3",
+      "entity/itemframe/add_item4"
+    ],
+    "subtitle": "subtitle.exposure.camera_stand.set_camera"
+  },
+  "entity.camera_stand.remove_camera": {
+    "sounds": [
+      "entity/itemframe/remove_item1",
+      "entity/itemframe/remove_item2",
+      "entity/itemframe/remove_item3",
+      "entity/itemframe/remove_item4"
+    ],
+    "subtitle": "subtitle.exposure.camera_stand.remove_camera"
   }
 }

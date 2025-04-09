@@ -69,7 +69,7 @@ public class CameraInHand extends Camera {
             for (InteractionHand hand : InteractionHand.values()) {
                 ItemStack itemInHand = entity.getItemInHand(hand);
                 if (itemInHand.getItem() instanceof CameraItem cameraItem) {
-                    return new CameraInHand(holder, cameraItem.getOrCreateID(itemInHand), hand);
+                    return new CameraInHand(holder, cameraItem.getOrCreateId(itemInHand), hand);
                 }
             }
         }

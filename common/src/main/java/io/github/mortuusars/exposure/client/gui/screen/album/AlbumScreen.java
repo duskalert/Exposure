@@ -17,7 +17,7 @@ import io.github.mortuusars.exposure.network.packet.serverbound.AlbumSyncNoteC2S
 import io.github.mortuusars.exposure.world.item.PhotographItem;
 import io.github.mortuusars.exposure.world.item.component.album.AlbumPage;
 import io.github.mortuusars.exposure.world.inventory.AlbumMenu;
-import io.github.mortuusars.exposure.world.inventory.AlbumPlayerInventorySlot;
+import io.github.mortuusars.exposure.world.inventory.slot.AlbumPlayerInventorySlot;
 import io.github.mortuusars.exposure.util.PagingDirection;
 import io.github.mortuusars.exposure.util.Side;
 import io.github.mortuusars.exposure.world.sound.SoundEffect;

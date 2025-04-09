@@ -1,5 +1,28 @@
 # Changelog
 
+## 1.9.0 - 2025-04-09
+- Added Camera Stand.
+- Added Self-Timer to the Camera.
+  - Mobs will look at the camera when timer is ticking.
+- Added High-Sensitivity Films.
+  - Removed shutter speeds above 1 second.
+- Added dedicated creative tab for Exposure items
+- Camera model now changes depending on attachments.
+- Added tutorial toasts to Attachments menu.
+- Added film info to attachments menu.
+- Added `pixel_perfect_photograph_frame` client config option. Resizes images in Photograph Frame to match 16px grid.
+<br><br>
+
+- Changed selfie stick texture.
+- Changed `entities_in_frame` for `exposure:frame_exposed` advancement trigger and `exposure:frame` predicate. It is now a list instead of singular entity.
+- `/exposure debug expose_rgb` now requires player to hold a Camera.
+<br><br>
+
+- Fixed projecting image from URL always timing-out.
+- Fixed extra row of pixels in Lightroom screen and process toggle button position.
+- Fixed flash breaking underwater vegetation.
+- [NeoForge] Fixed Exposure's loot not generating in chests.
+
 ## 1.8.11 - 2025-03-16
 - Fixed crash with some mods (Little Tiles is a known one) due to conflicting mixin methods.
 

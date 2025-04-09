@@ -54,7 +54,7 @@ public class StoredItemStack {
         return getForReading().isEmpty();
     }
 
-    public <T extends Item, R> Optional<R> mapIf(Class<T> clazz, BiFunction<T, ItemStack, R> func) {
+    public <T, R> Optional<R> mapIf(Class<T> clazz, BiFunction<T, ItemStack, R> func) {
         if (getForReading().getItem().getClass().equals(clazz)) {
             return Optional.ofNullable(func.apply(clazz.cast(getForReading().getItem()), getForReading()));
         }

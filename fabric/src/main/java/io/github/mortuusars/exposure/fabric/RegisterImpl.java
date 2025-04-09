@@ -1,12 +1,14 @@
 package io.github.mortuusars.exposure.fabric;
 
 import com.mojang.brigadier.arguments.ArgumentType;
+import com.mojang.serialization.MapCodec;
 import io.github.mortuusars.exposure.Exposure;
 import io.github.mortuusars.exposure.Register;
 import io.netty.buffer.Unpooled;
 import net.fabricmc.fabric.api.command.v2.ArgumentTypeRegistry;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerType;
 import net.minecraft.advancements.CriterionTrigger;
+import net.minecraft.advancements.critereon.EntitySubPredicate;
 import net.minecraft.advancements.critereon.ItemSubPredicate;
 import net.minecraft.commands.synchronization.ArgumentTypeInfo;
 import net.minecraft.core.Registry;
@@ -24,6 +26,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
@@ -54,6 +57,11 @@ public class RegisterImpl {
 
     public static <T extends Item> Supplier<T> item(String id, Supplier<T> supplier) {
         T obj = Registry.register(BuiltInRegistries.ITEM, Exposure.resource(id), supplier.get());
+        return () -> obj;
+    }
+
+    public static <T extends CreativeModeTab> Supplier<T> creativeTab(String id, Supplier<T> supplier) {
+        T obj = Registry.register(BuiltInRegistries.CREATIVE_MODE_TAB, Exposure.resource(id), supplier.get());
         return () -> obj;
     }
 
@@ -115,6 +123,11 @@ public class RegisterImpl {
 
     public static <T extends ItemSubPredicate.Type<?>> Supplier<T> itemSubPredicate(String name, Supplier<T> supplier) {
         T obj = Registry.register(BuiltInRegistries.ITEM_SUB_PREDICATE_TYPE, Exposure.resource(name), supplier.get());
+        return () -> obj;
+    }
+
+    public static <T extends MapCodec<EntitySubPredicate>> Supplier<T> entitySubPredicate(String name, Supplier<T> supplier) {
+        T obj = Registry.register(BuiltInRegistries.ENTITY_SUB_PREDICATE_TYPE, Exposure.resource(name), supplier.get());
         return () -> obj;
     }
 

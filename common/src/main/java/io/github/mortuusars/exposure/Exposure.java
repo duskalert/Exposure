@@ -3,7 +3,9 @@ package io.github.mortuusars.exposure;
 import com.google.common.base.Preconditions;
 import com.mojang.logging.LogUtils;
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import io.github.mortuusars.exposure.advancements.predicate.FramePredicate;
+import io.github.mortuusars.exposure.advancements.predicate.TamedPredicate;
 import io.github.mortuusars.exposure.advancements.trigger.FrameExposedTrigger;
 import io.github.mortuusars.exposure.advancements.trigger.FramePrintedTrigger;
 import io.github.mortuusars.exposure.world.block.FlashBlock;
@@ -11,14 +13,17 @@ import io.github.mortuusars.exposure.world.block.LightroomBlock;
 import io.github.mortuusars.exposure.world.block.entity.LightroomBlockEntity;
 import io.github.mortuusars.exposure.commands.argument.*;
 import io.github.mortuusars.exposure.world.camera.CameraId;
+import io.github.mortuusars.exposure.world.camera.film.properties.FilmStyle;
 import io.github.mortuusars.exposure.world.camera.component.CompositionGuide;
 import io.github.mortuusars.exposure.world.camera.component.FlashMode;
 import io.github.mortuusars.exposure.world.camera.ExposureType;
 import io.github.mortuusars.exposure.world.camera.capture.ProjectionMode;
+import io.github.mortuusars.exposure.world.camera.component.SelfTimer;
 import io.github.mortuusars.exposure.world.camera.component.ShutterSpeed;
 import io.github.mortuusars.exposure.data.ColorPalette;
 import io.github.mortuusars.exposure.data.Filter;
 import io.github.mortuusars.exposure.data.Lens;
+import io.github.mortuusars.exposure.world.entity.CameraStandEntity;
 import io.github.mortuusars.exposure.world.entity.GlassPhotographFrameEntity;
 import io.github.mortuusars.exposure.world.entity.PhotographFrameEntity;
 import io.github.mortuusars.exposure.world.camera.frame.Frame;
@@ -29,7 +34,6 @@ import io.github.mortuusars.exposure.world.item.component.StoredItemStack;
 import io.github.mortuusars.exposure.world.item.component.album.AlbumContent;
 import io.github.mortuusars.exposure.world.item.component.album.SignedAlbumContent;
 import io.github.mortuusars.exposure.world.item.camera.ShutterState;
-import io.github.mortuusars.exposure.world.item.camera.Shutter;
 import io.github.mortuusars.exposure.world.item.crafting.recipe.ComponentTransferringRecipe;
 import io.github.mortuusars.exposure.world.item.crafting.recipe.FilmDevelopingRecipe;
 import io.github.mortuusars.exposure.world.item.crafting.recipe.PhotographAgingRecipe;
@@ -43,6 +47,7 @@ import net.minecraft.commands.synchronization.SingletonArgumentInfo;
 import net.minecraft.core.Registry;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -51,12 +56,10 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.stats.StatFormatter;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.ExtraCodecs;
-import net.minecraft.util.Mth;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.inventory.MenuType;
-import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.Item;
+import net.minecraft.world.item.*;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
@@ -84,9 +87,11 @@ public class Exposure {
         BlockEntityTypes.init();
         EntityTypes.init();
         Items.init();
+        CreativeTabs.init();
         DataComponents.init();
         CriteriaTriggers.init();
         ItemSubPredicates.init();
+        EntitySubPredicates.init();
         MenuTypes.init();
         RecipeSerializers.init();
         SoundEvents.init();
@@ -134,18 +139,35 @@ public class Exposure {
 
     public static class Items {
         public static final Supplier<CameraItem> CAMERA = Register.item("camera",
-                () -> new CameraItem(new Shutter(), new Item.Properties()
+                () -> new CameraItem(new Item.Properties()
                         .stacksTo(1)
                         .component(DataComponents.CAMERA_ACTIVE, false)));
 
         public static final Supplier<FilmRollItem> BLACK_AND_WHITE_FILM = Register.item("black_and_white_film",
-                () -> new FilmRollItem(ExposureType.BLACK_AND_WHITE, Mth.color(0.8F, 0.8F, 0.9F),
+                () -> new FilmRollItem(ExposureType.BLACK_AND_WHITE, FilmRollItem.BAR_BLACK_AND_WHITE,
                         new Item.Properties()
                                 .stacksTo(16)));
 
         public static final Supplier<FilmRollItem> COLOR_FILM = Register.item("color_film",
-                () -> new FilmRollItem(ExposureType.COLOR, Mth.color(0.4F, 0.4F, 1.0F), new Item.Properties()
-                        .stacksTo(16)));
+                () -> new FilmRollItem(ExposureType.COLOR, FilmRollItem.BAR_COLOR,
+                        new Item.Properties()
+                                .stacksTo(16)));
+
+        public static final Supplier<FilmRollItem> HIGH_SENSITIVITY_BLACK_AND_WHITE_FILM = Register.item("high_sensitivity_black_and_white_film",
+                () -> new FilmRollItem(ExposureType.BLACK_AND_WHITE, FilmRollItem.BAR_BLACK_AND_WHITE,
+                        new Item.Properties()
+                                .component(DataComponents.FILM_STYLE, FilmStyle.create()
+                                        .withSensitivity(2f)
+                                        .withNoise(0.065f))
+                                .stacksTo(16)));
+
+        public static final Supplier<FilmRollItem> HIGH_SENSITIVITY_COLOR_FILM = Register.item("high_sensitivity_color_film",
+                () -> new FilmRollItem(ExposureType.COLOR, FilmRollItem.BAR_COLOR,
+                        new Item.Properties()
+                                .component(DataComponents.FILM_STYLE, FilmStyle.create()
+                                        .withSensitivity(2f)
+                                        .withNoise(0.065f))
+                                .stacksTo(16)));
 
         public static final Supplier<DevelopedFilmItem> DEVELOPED_BLACK_AND_WHITE_FILM = Register.item("developed_black_and_white_film",
                 () -> new DevelopedFilmItem(ExposureType.BLACK_AND_WHITE, new Item.Properties()
@@ -188,8 +210,40 @@ public class Exposure {
         public static final Supplier<GlassPhotographFrameItem> CLEAR_PHOTOGRAPH_FRAME = Register.item("glass_photograph_frame",
                 () -> new GlassPhotographFrameItem(new Item.Properties()));
 
+        public static final Supplier<CameraStandItem> CAMERA_STAND = Register.item("camera_stand",
+                () -> new CameraStandItem(new Item.Properties()));
+
         public static final Supplier<BlockItem> LIGHTROOM = Register.item("lightroom",
                 () -> new BlockItem(Blocks.LIGHTROOM.get(), new Item.Properties()));
+
+        static void init() {
+        }
+    }
+
+    public static class CreativeTabs {
+        public static final Supplier<CreativeModeTab> EXPOSURE = Register.creativeTab("exposure", () ->
+                CreativeModeTab.builder(CreativeModeTab.Row.TOP, 0)
+                        .title(Component.translatable("itemGroup.exposure.exposure"))
+                        .icon(() -> new ItemStack(Items.CAMERA.get()))
+                        .displayItems((params, output) -> {
+                            output.accept(Items.CAMERA.get());
+                            output.accept(Items.CAMERA_STAND.get());
+                            output.accept(Items.BLACK_AND_WHITE_FILM.get());
+                            output.accept(Items.COLOR_FILM.get());
+                            output.accept(Items.HIGH_SENSITIVITY_BLACK_AND_WHITE_FILM.get());
+                            output.accept(Items.HIGH_SENSITIVITY_COLOR_FILM.get());
+                            output.accept(Items.DEVELOPED_BLACK_AND_WHITE_FILM.get());
+                            output.accept(Items.DEVELOPED_COLOR_FILM.get());
+                            output.accept(Items.PHOTOGRAPH.get());
+                            output.accept(Items.AGED_PHOTOGRAPH.get());
+                            output.accept(Items.STACKED_PHOTOGRAPHS.get());
+                            output.accept(Items.ALBUM.get());
+                            output.accept(Items.PHOTOGRAPH_FRAME.get());
+                            output.accept(Items.CLEAR_PHOTOGRAPH_FRAME.get());
+                            output.accept(Items.INTERPLANAR_PROJECTOR.get());
+                            output.accept(Items.LIGHTROOM.get());
+                        })
+                        .build());
 
         static void init() {
         }
@@ -216,6 +270,15 @@ public class Exposure {
         public static final DataComponentType<ShutterState> SHUTTER_STATE = Register.dataComponentType("camera_shutter_state",
                 arg -> arg.persistent(ShutterState.CODEC).networkSynchronized(ShutterState.STREAM_CODEC));
 
+        public static final DataComponentType<Long> TIMER_START_TICK = Register.dataComponentType("camera_timer_start_tick",
+                arg -> arg.persistent(Codec.LONG).networkSynchronized(ByteBufCodecs.VAR_LONG));
+
+        public static final DataComponentType<Long> TIMER_END_TICK = Register.dataComponentType("camera_timer_end_tick",
+                arg -> arg.persistent(Codec.LONG).networkSynchronized(ByteBufCodecs.VAR_LONG));
+
+        public static final DataComponentType<Long> TIMER_LAST_RELEASE_TICK = Register.dataComponentType("camera_timer_last_release_tick",
+                arg -> arg.persistent(Codec.LONG).networkSynchronized(ByteBufCodecs.VAR_LONG));
+
         // Settings
 
         public static final DataComponentType<ShutterSpeed> SHUTTER_SPEED = Register.dataComponentType("camera_shutter_speed",
@@ -223,6 +286,9 @@ public class Exposure {
 
         public static final DataComponentType<CompositionGuide> COMPOSITION_GUIDE = Register.dataComponentType("camera_composition_guide",
                 arg -> arg.persistent(CompositionGuide.CODEC).networkSynchronized(CompositionGuide.STREAM_CODEC));
+
+        public static final DataComponentType<SelfTimer> SELF_TIMER = Register.dataComponentType("camera_self_timer",
+                arg -> arg.persistent(SelfTimer.CODEC).networkSynchronized(SelfTimer.STREAM_CODEC));
 
         public static final DataComponentType<Float> ZOOM = Register.dataComponentType("camera_zoom",
                 arg -> arg.persistent(Codec.FLOAT).networkSynchronized(ByteBufCodecs.FLOAT));
@@ -252,19 +318,22 @@ public class Exposure {
 
         // Film
 
-        public static final DataComponentType<ResourceLocation> FILM_COLOR_PALETTE = Register.dataComponentType("film_color_palette",
-                arg -> arg.persistent(ResourceLocation.CODEC).networkSynchronized(ResourceLocation.STREAM_CODEC));
-
         public static final DataComponentType<Integer> FILM_FRAME_COUNT = Register.dataComponentType("film_frame_count",
                 arg -> arg.persistent(ExtraCodecs.intRange(1, 256)).networkSynchronized(ByteBufCodecs.VAR_INT));
 
         public static final DataComponentType<Integer> FILM_FRAME_SIZE = Register.dataComponentType("film_frame_size",
                 arg -> arg.persistent(ExtraCodecs.intRange(1, 2048)).networkSynchronized(ByteBufCodecs.VAR_INT));
 
+        public static final DataComponentType<FilmStyle> FILM_STYLE = Register.dataComponentType("film_style",
+                arg -> arg.persistent(FilmStyle.CODEC).networkSynchronized(FilmStyle.STREAM_CODEC));
+
+        public static final DataComponentType<ResourceLocation> FILM_COLOR_PALETTE = Register.dataComponentType("film_color_palette",
+                arg -> arg.persistent(ResourceLocation.CODEC).networkSynchronized(ResourceLocation.STREAM_CODEC));
+
         public static final DataComponentType<List<Frame>> FILM_FRAMES =
                 Register.dataComponentType("film_frames",
-                        arg -> arg.persistent(Frame.CODEC.listOf())
-                                .networkSynchronized(Frame.STREAM_CODEC.apply(ByteBufCodecs.list())));
+                        arg -> arg.persistent(Frame.CODEC.listOf(0, 256))
+                                .networkSynchronized(Frame.STREAM_CODEC.apply(ByteBufCodecs.list(256))));
 
         // Photograph
 
@@ -314,23 +383,28 @@ public class Exposure {
         public static final Supplier<EntityType<PhotographFrameEntity>> PHOTOGRAPH_FRAME = Register.entityType("photograph_frame",
                 PhotographFrameEntity::new, MobCategory.MISC, false, builder -> builder
                         .sized(0.5f, 0.5f)
-                        .clientTrackingRange(128)
                         .updateInterval(Integer.MAX_VALUE)
                         .eyeHeight(0));
 
         public static final Supplier<EntityType<GlassPhotographFrameEntity>> CLEAR_PHOTOGRAPH_FRAME = Register.entityType("glass_photograph_frame",
                 GlassPhotographFrameEntity::new, MobCategory.MISC, false, builder -> builder
                         .sized(0.5f, 0.5f)
-                        .clientTrackingRange(128)
                         .updateInterval(Integer.MAX_VALUE)
                         .eyeHeight(0));
+
+        public static final Supplier<EntityType<CameraStandEntity>> CAMERA_STAND = Register.entityType("camera_stand",
+                CameraStandEntity::new, MobCategory.MISC, false, builder -> builder
+                        .sized(0.7f, 1.6f)
+                        .updateInterval(3)
+                        .eyeHeight(1.40625f));
 
         static void init() {
         }
     }
 
     public static class MenuTypes {
-        public static final Supplier<MenuType<CameraAttachmentsMenu>> CAMERA = Register.menuType("camera", CameraAttachmentsMenu::fromBuffer);
+        public static final Supplier<MenuType<CameraInHandAttachmentsMenu>> CAMERA_IN_HAND = Register.menuType("camera_in_hand", CameraInHandAttachmentsMenu::fromBuffer);
+        public static final Supplier<MenuType<CameraOnStandAttachmentsMenu>> CAMERA_ON_STAND = Register.menuType("camera_on_stand", CameraOnStandAttachmentsMenu::fromBuffer);
         public static final Supplier<MenuType<AlbumMenu>> ALBUM = Register.menuType("album", AlbumMenu::fromBuffer);
         public static final Supplier<MenuType<SignedAlbumMenu>> SIGNED_ALBUM = Register.menuType("signed_album", SignedAlbumMenu::fromBuffer);
         public static final Supplier<MenuType<LecternAlbumMenu>> LECTERN_ALBUM = Register.menuType("lectern_album", LecternAlbumMenu::new);
@@ -374,6 +448,7 @@ public class Exposure {
         public static final Supplier<SoundEvent> CAMERA_RELEASE_BUTTON_CLICK = register("item", "camera.release_button_click");
         public static final Supplier<SoundEvent> CAMERA_DIAL_CLICK = register("item", "camera.dial_click");
         public static final Supplier<SoundEvent> CAMERA_LENS_RING_CLICK = register("item", "camera.lens_ring_click");
+        public static final Supplier<SoundEvent> CAMERA_TIMER_TICK = register("item", "camera.timer_tick");
         public static final Supplier<SoundEvent> LENS_INSERT = register("item", "camera.lens_insert");
         public static final Supplier<SoundEvent> LENS_REMOVE = register("item", "camera.lens_remove");
         public static final Supplier<SoundEvent> FILTER_INSERT = register("item", "camera.filter_insert");
@@ -390,6 +465,12 @@ public class Exposure {
         public static final Supplier<SoundEvent> PHOTOGRAPH_FRAME_ADD_ITEM = register("item", "photograph_frame.add_item");
         public static final Supplier<SoundEvent> PHOTOGRAPH_FRAME_REMOVE_ITEM = register("item", "photograph_frame.remove_item");
         public static final Supplier<SoundEvent> PHOTOGRAPH_FRAME_ROTATE_ITEM = register("item", "photograph_frame.rotate_item");
+
+        public static final Supplier<SoundEvent> CAMERA_STAND_PLACE = register("entity", "camera_stand.place");
+        public static final Supplier<SoundEvent> CAMERA_STAND_HIT = register("entity", "camera_stand.hit");
+        public static final Supplier<SoundEvent> CAMERA_STAND_BREAK = register("entity", "camera_stand.break");
+        public static final Supplier<SoundEvent> CAMERA_STAND_SET_CAMERA = register("entity", "camera_stand.set_camera");
+        public static final Supplier<SoundEvent> CAMERA_STAND_REMOVE_CAMERA = register("entity", "camera_stand.remove_camera");
 
         public static final Supplier<SoundEvent> LIGHTROOM_PRINT = register("block", "lightroom.print");
 
@@ -444,6 +525,14 @@ public class Exposure {
     public static class ItemSubPredicates {
         public static Supplier<ItemSubPredicate.Type<FramePredicate>> FRAME = Register.itemSubPredicate("frame",
                 () -> new ItemSubPredicate.Type<>(FramePredicate.CODEC));
+
+        public static void init() {
+        }
+    }
+
+    public static class EntitySubPredicates {
+        public static final Supplier<MapCodec<TamedPredicate>> TAMED = Register.entitySubPredicate("tamed", () -> TamedPredicate.CODEC);
+
         public static void init() {
         }
     }
@@ -454,7 +543,7 @@ public class Exposure {
         public static final ResourceKey<LootTable> ABANDONED_MINESHAFT_INJECT =
                 ResourceKey.create(net.minecraft.core.registries.Registries.LOOT_TABLE, Exposure.resource("chests/abandoned_mineshaft"));
         public static final ResourceKey<LootTable> STRONGHOLD_CROSSING_INJECT =
-                ResourceKey.create(net.minecraft.core.registries.Registries.LOOT_TABLE, Exposure.resource("chests/stronghold"));
+                ResourceKey.create(net.minecraft.core.registries.Registries.LOOT_TABLE, Exposure.resource("chests/stronghold_crossing"));
         public static final ResourceKey<LootTable> VILLAGE_PLAINS_HOUSE_INJECT =
                 ResourceKey.create(net.minecraft.core.registries.Registries.LOOT_TABLE, Exposure.resource("chests/village_plains_house"));
         public static final ResourceKey<LootTable> SHIPWRECK_MAP_INJECT =
@@ -482,6 +571,10 @@ public class Exposure {
 
         public static class Blocks {
             public static final TagKey<Block> CHROMATIC_REFRACTORS = TagKey.create(net.minecraft.core.registries.Registries.BLOCK, Exposure.resource("chromatic_refractors"));
+        }
+
+        public static class Entities {
+            public static final TagKey<EntityType<?>> IGNORES_CAMERA = TagKey.create(net.minecraft.core.registries.Registries.ENTITY_TYPE, Exposure.resource("ignores_camera"));
         }
     }
 

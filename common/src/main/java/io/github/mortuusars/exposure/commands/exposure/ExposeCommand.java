@@ -6,7 +6,7 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import io.github.mortuusars.exposure.Exposure;
 import io.github.mortuusars.exposure.ExposureServer;
 import io.github.mortuusars.exposure.network.packet.clientbound.CaptureStartS2CP;
-import io.github.mortuusars.exposure.world.camera.capture.CaptureProperties;
+import io.github.mortuusars.exposure.world.camera.capture.CaptureParameters;
 import io.github.mortuusars.exposure.world.camera.capture.CaptureType;
 import io.github.mortuusars.exposure.world.camera.frame.Frame;
 import io.github.mortuusars.exposure.world.level.storage.ExposureIdentifier;
@@ -41,17 +41,17 @@ public class ExposeCommand {
             properties.putString("id", ExposureIdentifier.createId(player));
         }
 
-        CaptureProperties captureProperties;
+        CaptureParameters captureParameters;
 
         try {
             RegistryOps<Tag> ops = RegistryOps.create(NbtOps.INSTANCE, context.getSource().registryAccess());
-            captureProperties = CaptureProperties.CODEC.decode(ops, properties).getOrThrow().getFirst();
+            captureParameters = CaptureParameters.CODEC.decode(ops, properties).getOrThrow().getFirst();
         } catch (Exception e) {
             context.getSource().sendFailure(Component.literal("Cannot decode properties: " + e.getMessage()));
             return 0;
         }
 
-        String exposureId = captureProperties.exposureId();
+        String exposureId = captureParameters.exposureId();
         Frame frame = Frame.EMPTY.toMutable().setIdentifier(ExposureIdentifier.id(exposureId)).toImmutable();
 
         Supplier<Component> msg = () -> {
@@ -70,7 +70,7 @@ public class ExposeCommand {
         ExposureServer.exposureRepository().expect(player, exposureId, (pl, id) -> context.getSource().sendSuccess(msg, true));
         ExposureServer.frameHistory().add(player, frame);
 
-        Packets.sendToClient(new CaptureStartS2CP(CaptureType.EXPOSE_COMMAND, captureProperties), player);
+        Packets.sendToClient(new CaptureStartS2CP(CaptureType.EXPOSE_COMMAND, captureParameters), player);
 
         return 0;
     }

@@ -4,17 +4,18 @@ import com.google.common.base.Preconditions;
 import io.github.mortuusars.exposure.Config;
 import io.github.mortuusars.exposure.Exposure;
 import io.github.mortuusars.exposure.PlatformHelper;
-import io.github.mortuusars.exposure.client.util.Minecrft;
 import io.github.mortuusars.exposure.data.ColorPalette;
 import io.github.mortuusars.exposure.data.ColorPalettes;
 import io.github.mortuusars.exposure.world.camera.ExposureType;
 import io.github.mortuusars.exposure.client.gui.ClientGUI;
+import io.github.mortuusars.exposure.world.camera.film.properties.FilmProperties;
 import io.github.mortuusars.exposure.world.camera.frame.Frame;
 import io.github.mortuusars.exposure.world.inventory.ItemRenameMenu;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.MenuProvider;
@@ -27,36 +28,32 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class FilmRollItem extends Item implements FilmItem {
-    private final ExposureType exposureType;
-    private final int barColor;
+public class FilmRollItem extends Item implements SensitiveFilmItem {
+    public static final int BAR_BLACK_AND_WHITE = Mth.color(0.8F, 0.8F, 0.9F);
+    public static final int BAR_COLOR = Mth.color(0.4F, 0.4F, 1.0F);
 
-    public FilmRollItem(ExposureType exposureType, int barColor, Properties properties) {
+    protected final ExposureType type;
+    protected final int barColor;
+
+    public FilmRollItem(ExposureType type, int barColor, Properties properties) {
         super(properties);
-        this.exposureType = exposureType;
+        this.type = type;
         this.barColor = barColor;
     }
 
     @Override
     public ExposureType getType() {
-        return exposureType;
+        return type;
     }
 
-    public boolean isBarVisible(@NotNull ItemStack stack) {
-        return hasFrames(stack);
-    }
+    // --
 
-    public int getBarWidth(@NotNull ItemStack stack) {
-        return Math.min(1 + 12 * getStoredFramesCount(stack) / getMaxFrameCount(stack), 13);
-    }
-
-    public int getBarColor(@NotNull ItemStack stack) {
-        return barColor;
+    public boolean canAddFrame(ItemStack stack) {
+        return getStoredFramesCount(stack) < getMaxFrameCount(stack);
     }
 
     public void addFrame(ItemStack stack, Frame frame) {
@@ -69,39 +66,31 @@ public class FilmRollItem extends Item implements FilmItem {
         stack.set(Exposure.DataComponents.FILM_FRAMES, frames);
     }
 
-    public boolean canAddFrame(ItemStack stack) {
-        return getStoredFramesCount(stack) < getMaxFrameCount(stack);
-    }
+    // --
 
     @Override
-    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
+    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> list, TooltipFlag tooltipFlag) {
         int exposedFrames = getStoredFramesCount(stack);
         if (exposedFrames > 0) {
             int totalFrames = getMaxFrameCount(stack);
-            tooltipComponents.add(Component.translatable("item.exposure.film_roll.tooltip.frame_count", exposedFrames, totalFrames)
+            list.add(Component.translatable("item.exposure.film_roll.tooltip.frame_count", exposedFrames, totalFrames)
                     .withStyle(ChatFormatting.GRAY));
         }
 
-        int frameSize = getFrameSize(stack);
-        if (frameSize != getDefaultFrameSize(stack)) {
-            tooltipComponents.add(Component.translatable("item.exposure.film_roll.tooltip.frame_size",
-                            Component.literal(String.format("%.1f", frameSize / 10f)))
-                    .withStyle(ChatFormatting.GRAY));
-        }
+        addFrameSizeToTooltip(stack, list);
 
-        ResourceKey<ColorPalette> colorPaletteId = getColorPaletteId(stack);
-        if (tooltipFlag.isAdvanced() && !colorPaletteId.equals(ColorPalettes.DEFAULT)) {
-            tooltipComponents.add(Component.translatable("item.exposure.film_roll.tooltip.palette", colorPaletteId.location().toString())
-                    .withStyle(ChatFormatting.GRAY));
+        if (tooltipFlag.isAdvanced()) {
+            addPaletteToTooltip(stack, list);
+            addStyleToTooltip(stack, list);
         }
 
         if (Config.Server.FILM_ROLL_EASY_RENAMING.get()) {
-            tooltipComponents.add(Component.translatable("item.exposure.film_roll.tooltip.renaming"));
+            list.add(Component.translatable("item.exposure.film_roll.tooltip.renaming"));
         }
 
         //noinspection ConstantValue
         if (exposedFrames > 0 && !PlatformHelper.isModLoaded("jei") && Config.Client.RECIPE_TOOLTIPS_WITHOUT_JEI.get()) {
-            ClientGUI.addFilmRollDevelopingTooltip(stack, context, tooltipComponents, tooltipFlag);
+            ClientGUI.addFilmRollDevelopingTooltip(stack, context, list, tooltipFlag);
         }
     }
 
@@ -126,6 +115,25 @@ public class FilmRollItem extends Item implements FilmItem {
         PlatformHelper.openMenu(serverPlayer, menuProvider, buffer -> buffer.writeInt(slot));
         return InteractionResultHolder.success(player.getItemInHand(usedHand));
     }
+
+    // -- Bar
+
+    @Override
+    public int getBarColor(@NotNull ItemStack stack) {
+        return barColor;
+    }
+
+    @Override
+    public boolean isBarVisible(@NotNull ItemStack stack) {
+        return hasFrames(stack);
+    }
+
+    @Override
+    public int getBarWidth(@NotNull ItemStack stack) {
+        return Math.min(1 + 12 * getStoredFramesCount(stack) / getMaxFrameCount(stack), 13);
+    }
+
+    // --
 
     protected int getMatchingSlotInInventory(Inventory inventory, ItemStack stack) {
         for (int i = 0; i < inventory.getContainerSize(); i++) {

@@ -20,6 +20,19 @@ public class Widgets {
     public static final WidgetSprites CANCEL_BUTTON_SPRITES =
             threeStateSprites(Exposure.resource("widgets/cancel_button"));
 
+    public static ResourceLocation empty() {
+        return Exposure.resource("empty");
+    }
+
+    public static WidgetSprites normalAndHighlighted(ResourceLocation base) {
+        return new WidgetSprites(base, base,
+                ResourceLocation.fromNamespaceAndPath(base.getNamespace(), base.getPath() + "_highlighted"));
+    }
+
+    public static WidgetSprites normalAndHighlighted(ResourceLocation normal, ResourceLocation highlighted) {
+        return new WidgetSprites(normal, normal, highlighted);
+    }
+
     public static WidgetSprites threeStateSprites(ResourceLocation base) {
         return new WidgetSprites(base,
                 ResourceLocation.fromNamespaceAndPath(base.getNamespace(), base.getPath() + "_disabled"),
