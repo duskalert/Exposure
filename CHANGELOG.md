@@ -1,6 +1,6 @@
 # Changelog
 
-## UNRELEASED
+## 1.9.0 - 2025-04-09
 - Added Camera Stand.
 - Added Self-Timer to the Camera.
   - Mobs will look at the camera when timer is ticking.
