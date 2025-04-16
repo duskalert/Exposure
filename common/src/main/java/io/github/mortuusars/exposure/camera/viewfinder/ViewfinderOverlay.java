@@ -76,12 +76,6 @@ public class ViewfinderOverlay {
         CameraItem cameraItem = camera.get().getItem();
         ItemStack cameraStack = camera.get().getStack();
 
-        RenderSystem.enableBlend();
-        RenderSystem.disableDepthTest();
-        RenderSystem.depthMask(false);
-        RenderSystem.defaultBlendFunc();
-        RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
-
         if (xRot == null || yRot == null || xRot0 == null || yRot0 == null) {
             xRot = player.getXRot();
             yRot = player.getYRot();
@@ -119,6 +113,8 @@ public class ViewfinderOverlay {
         if (minecraft.options.bobView().get())
             bobView(poseStack, minecraft.getFrameTime());
 
+        RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
+
         // -9999 to cover all screen when poseStack is scaled down.
         // Left
         drawRect(poseStack, -9999, opening.y, opening.x, opening.y + opening.height, backgroundColor);
@@ -130,14 +126,12 @@ public class ViewfinderOverlay {
         drawRect(poseStack, -9999, opening.y + opening.height, width + 9999, height + 9999, backgroundColor);
 
         // Shutter
-        if (cameraItem.isShutterOpen(cameraStack))
+        if (cameraItem.isShutterOpen(cameraStack)) {
             drawRect(poseStack, opening.x, opening.y, opening.x + opening.width, opening.y + opening.height, 0xfa1f1d1b);
+        }
 
         // Opening Texture
         RenderSystem.enableBlend();
-        RenderSystem.disableDepthTest();
-        RenderSystem.depthMask(false);
-        RenderSystem.defaultBlendFunc();
         RenderSystem.setShaderTexture(0, VIEWFINDER_TEXTURE);
         GuiUtil.blit(poseStack, opening.x, opening.x + opening.width, opening.y, opening.y + opening.height, 0f, 0f, 1f, 0f, 1f);
 
