@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.7.13 - 2025-04-18
+- Remove it_it lang that was added by mistake. (my bad)
+
+## 1.7.12 - 2025-04-17
+- Added italian translation
+
 ## 1.7.11 - 2025-04-16
 - Fixed messed up world rendering in the nether when new version on Sodium is installed. 
 
