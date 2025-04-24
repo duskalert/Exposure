@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.9.2 - UNRELEASED
+- Fixed missing Create spout developing recipes for high sensitivity films.
+
 ## 1.9.1 - 2025-04-09
 - Added `#exposure:black_and_white_film_rolls` and `#exposure:color_film_rolls` item tags.
 - Fixed not being able to develop high-sensitivity film rolls.
