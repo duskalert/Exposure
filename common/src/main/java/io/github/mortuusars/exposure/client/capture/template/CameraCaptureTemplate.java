@@ -60,7 +60,7 @@ public class CameraCaptureTemplate implements CaptureTemplate {
             captureTask = captureTask.overridenBy(Capture.of(Capture.path(path),
                             CaptureAction.optional(params.cameraId(), CaptureAction::interplanarProjection))
                     .logErrorAndGetResult(LOGGER)
-                    .thenAsync(applyEffectsToImage(params))
+                    .thenAsync(applyEffectsToImage(params.mutable().setCropFactor(1f).build())) // Remove crop factor for loaded images
                     .thenAsync(Palettizer.fromProjectionMode(projection.mode()).palettizeAndClose(palette.value()))
                     .then(convertToExposureData(palette, createExposureTag(params, true))));
         }

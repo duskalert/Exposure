@@ -3,6 +3,7 @@
 ## 1.9.2 - UNRELEASED
 - [Fabric] Config screen can now be accessed when ModMenu is installed.
 - Fixed missing Create spout developing recipes for high sensitivity films.
+- Images loaded with Interplanar Projector are no longer cropped. 
 
 ## 1.9.1 - 2025-04-09
 - Added `#exposure:black_and_white_film_rolls` and `#exposure:color_film_rolls` item tags.

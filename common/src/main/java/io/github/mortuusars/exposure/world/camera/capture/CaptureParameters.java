@@ -93,6 +93,10 @@ public record CaptureParameters(String exposureId,
         return extraData.get(LIGHT_LEVEL);
     }
 
+    public Builder mutable() {
+        return new Builder(this);
+    }
+
     public static final class Builder {
         private final String exposureId;
         private @Nullable CameraId cameraId;
@@ -107,6 +111,19 @@ public record CaptureParameters(String exposureId,
 
         public Builder(String exposureId) {
             this.exposureId = exposureId;
+        }
+
+        public Builder(CaptureParameters params) {
+            this.exposureId = params.exposureId();
+            this.cameraId = params.cameraId().orElse(null);
+            this.cameraHolderEntityID = params.cameraHolderId().orElse(null);
+            this.fov = params.fov.orElse(null);
+            this.cropFactor = params.cropFactor();
+            this.filter = params.filter().orElse(null);
+            this.projection = params.projection().orElse(null);
+            this.chromaticChannel = params.singleChannel().orElse(null);
+            this.filmProperties = params.filmProperties();
+            extraData.merge(params.extraData());
         }
 
         public Builder setCameraID(@Nullable CameraId cameraId) {
