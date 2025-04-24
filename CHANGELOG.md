@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.9.2 - UNRELEASED
+## 1.9.2 - 2025-04-24
 - [Fabric] Config screen can now be accessed when ModMenu is installed.
 - Fixed missing Create spout developing recipes for high sensitivity films.
 - Images loaded with Interplanar Projector are no longer cropped. 
