@@ -75,6 +75,12 @@ public class PhotographFrameEntity extends HangingEntity {
 
     @Override
     public boolean shouldRenderAtSqrDistance(double distance) {
+        // Return defaults when called on server. Some mods can do that.
+        if (!level().isClientSide) {
+            double d = 64 * getViewScale();
+            return distance < d * d;
+        }
+
         double d = Config.Client.PHOTOGRAPH_FRAME_CULLING_DISTANCE.get() * getViewScale();
         return distance < d * d;
     }
