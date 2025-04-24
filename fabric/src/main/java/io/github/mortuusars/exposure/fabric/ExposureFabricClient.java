@@ -1,5 +1,6 @@
 package io.github.mortuusars.exposure.fabric;
 
+import fuzs.forgeconfigapiport.fabric.api.neoforge.v4.client.ConfigScreenFactoryRegistry;
 import io.github.mortuusars.exposure.Exposure;
 import io.github.mortuusars.exposure.ExposureClient;
 import io.github.mortuusars.exposure.client.gui.tooltip.CameraStandTooltip;
@@ -28,11 +29,14 @@ import net.fabricmc.fabric.api.client.rendering.v1.TooltipComponentCallback;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.server.packs.PackType;
+import net.neoforged.neoforge.client.gui.ConfigurationScreen;
 
 public class ExposureFabricClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
         ExposureClient.init();
+
+        ConfigScreenFactoryRegistry.INSTANCE.register(Exposure.ID, ConfigurationScreen::new);
 
         ColorProviderRegistry.ITEM.register(CameraItem::getGlassTintColor, Exposure.Items.CAMERA.get());
 

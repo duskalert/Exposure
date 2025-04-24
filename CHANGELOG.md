@@ -1,6 +1,7 @@
 # Changelog
 
 ## 1.9.2 - UNRELEASED
+- [Fabric] Config screen can now be accessed when ModMenu is installed.
 - Fixed missing Create spout developing recipes for high sensitivity films.
 
 ## 1.9.1 - 2025-04-09
