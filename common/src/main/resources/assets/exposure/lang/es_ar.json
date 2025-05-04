@@ -97,7 +97,7 @@
   "error.exposure.generic.casual": "Algo no anda bien... ¿Quizás los registros digan más?",
   "error.exposure.generic.technical": "Ocurrió un error. Consultá los registros para más detalles.",
   "exposure.configuration.album": "Álbum",
-  "exposure.configuration.album_show_photos_count": "Mostrar cantidad de fotos en el Álbum"
+  "exposure.configuration.album_show_photos_count": "Mostrar cantidad de fotos en el Álbum",
   "exposure.configuration.attachments_show_info_toast": "Mostrar notificación de información de accesorios",
   "exposure.configuration.attachments_show_wiki_toast": "Mostrar notificación de la wiki de accesorios",
   "exposure.configuration.background_color": "Color de fondo",
@@ -197,7 +197,7 @@
   "gui.exposure.camera_attachments.self_timer_attention.tooltip": "\n§7Los mobs cercanos miran a la cámara mientras corre el temporizador",
   "gui.exposure.camera_attachments.shutter_speed.tooltip": "Velocidad de obturación\n§7La duración de la exposición afecta el brillo de la imagen",
   "gui.exposure.camera_attachments.viewfinder.tooltip": "Visor\n§7Muestra lo que ve la lente\n§8 • \n§8Presioná o mantené [%s§8]%s§8 para abrir controles\n§8 • \n§8Presioná [%s§8] para activar modo selfie\n§8Mantené [%s§8] en modo selfie para mover la cámara",
-  "gui.exposure.camera_attachments.viewfinder.tooltip.or_middle_click": "§8 o [§7Click del medio§8]"
+  "gui.exposure.camera_attachments.viewfinder.tooltip.or_middle_click": "§8 o [§7Click del medio§8]",
   "gui.exposure.camera_attachments.wiki_toast.message": "Presioná F1",
   "gui.exposure.camera_attachments.wiki_toast.title": "Consejo: Wiki",
   "gui.exposure.camera_controls.composition_guide.tooltip": "Guía de composición",
@@ -213,8 +213,8 @@
   "gui.exposure.camera_stand.error.in_use": "La cámara ya está en uso",
   "gui.exposure.camera_stand.malfunction_fixed": "La cámara fue reparada",
   "gui.exposure.camera_stand.tooltip.malfunctioned": "La cámara falló al sacar una foto,\ny no había nadie cerca para arreglarla.",
-  "gui.exposure.channel.blue": "A",
-  "gui.exposure.channel.green": "V",
+  "gui.exposure.channel.blue": "B",
+  "gui.exposure.channel.green": "G",
   "gui.exposure.channel.red": "R",
   "gui.exposure.channel.separator": "·",
   "gui.exposure.composition_guide.crosshair": "Mira",
@@ -297,7 +297,7 @@
   "item.exposure.film_roll.tooltip.noise": "Ruido: %s",
   "item.exposure.film_roll.tooltip.palette": "Paleta: %s",
   "item.exposure.film_roll.tooltip.renaming": "§8[§7Usar§8] para renombrar",
-  "item.exposure.film_roll.tooltip.sensitivity": "Sensibilidad: %s"
+  "item.exposure.film_roll.tooltip.sensitivity": "Sensibilidad: %s",
   "item.exposure.glass_photograph_frame": "Marco de Foto de Vidrio",
   "item.exposure.high_sensitivity_black_and_white_film": "Película Blanco y Negro de Alta Sensibilidad",
   "item.exposure.high_sensitivity_color_film": "Película a Color de Alta Sensibilidad",
