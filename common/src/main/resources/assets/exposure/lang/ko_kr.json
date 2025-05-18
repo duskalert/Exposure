@@ -152,7 +152,7 @@
   "item.exposure.photograph.generation.3": "낡음",
   "item.exposure.photograph.message.no_data": "이 종이는 깨끗합니다. 한때 이미지가 있었더라도 지금은 아무 흔적도 남아 있지 않습니다.",
   "item.exposure.photograph.photographer_tooltip": "촬영자: %s",
-  "item.exposure.photograph.tooltip.details.copy": "C다음 재료와 함께 제작하여 복사됨:",
+  "item.exposure.photograph.tooltip.details.copy": "다음 재료와 함께 제작하여 복사됨:",
   "item.exposure.photograph_frame": "사진 액자",
   "item.exposure.signed_album": "서명된 사진 앨범",
   "item.exposure.stacked_photographs": "사진 묶음",
