@@ -131,6 +131,7 @@ public class PhotographFrameEntityRenderer<T extends PhotographFrameEntity> exte
 
         float frameBorderOffset = frameInvisible ? 0f : 0.125f; // (2px / 16px = 0.125)
         float offsetFromCenter = frameInvisible ? 0.497f : 0.48f;
+        offsetFromCenter -= Config.Client.PHOTOGRAPH_FRAME_IMAGE_OFFSET.get();
         float desiredSize = size + 1 - frameBorderOffset * 2;
 
         poseStack.mulPose(Axis.ZP.rotationDegrees((entity.getItemRotation() * 360.0F / 4.0F)));

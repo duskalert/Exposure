@@ -281,6 +281,7 @@ public class Config {
         public static final ModConfigSpec.BooleanValue HIDE_PROJECTED_PHOTOGRAPHS_MADE_BY_OTHERS;
         public static final ModConfigSpec.BooleanValue HIDE_ALL_PHOTOGRAPHS_MADE_BY_OTHERS;
         public static final ModConfigSpec.IntValue PHOTOGRAPH_FRAME_CULLING_DISTANCE;
+        public static final ModConfigSpec.DoubleValue PHOTOGRAPH_FRAME_IMAGE_OFFSET;
 
         // INTEGRATION
         public static final ModConfigSpec.BooleanValue SHOW_JEI_INFORMATION;
@@ -420,6 +421,9 @@ public class Config {
                         .comment("Distance from the player beyond which Photograph Frame would not be rendered. Default: 64",
                                 "Note: this number may not relate to distance in blocks exactly. It's influenced by render distance and entity distance settings.")
                         .defineInRange("photograph_frame_culling_distance", 64, 8, 128);
+                PHOTOGRAPH_FRAME_IMAGE_OFFSET = builder
+                        .comment("Depth offset to Photograph in Photograph Frame. Can be used to fix issues with some 3D resourcepacks. Value of 0.015 is good for 'Classic 3D' resourcepack. Default: 0.0")
+                        .defineInRange("photograph_frame_image_offset", 0.0, -1.0, 1.0);
                 builder.pop();
             }
 
