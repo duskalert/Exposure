@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.7.14 - 2025-05-21
+- Updated localization files
+
 ## 1.7.13 - 2025-04-18
 - Remove it_it lang that was added by mistake. (my bad)
 
