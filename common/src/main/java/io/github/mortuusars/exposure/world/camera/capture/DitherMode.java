@@ -11,18 +11,18 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.function.IntFunction;
 
-public enum ProjectionMode implements StringRepresentable {
+public enum DitherMode implements StringRepresentable {
     DITHERED("dithered"),
     CLEAN("clean");
 
-    private static final IntFunction<ProjectionMode> BY_ID =
-            ByIdMap.continuous(ProjectionMode::ordinal, values(), ByIdMap.OutOfBoundsStrategy.ZERO);
-    public static final Codec<ProjectionMode> CODEC = StringRepresentable.fromEnum(ProjectionMode::values);
-    public static final StreamCodec<ByteBuf, ProjectionMode> STREAM_CODEC = ByteBufCodecs.idMapper(BY_ID, ProjectionMode::ordinal);
+    private static final IntFunction<DitherMode> BY_ID =
+            ByIdMap.continuous(DitherMode::ordinal, values(), ByIdMap.OutOfBoundsStrategy.ZERO);
+    public static final Codec<DitherMode> CODEC = StringRepresentable.fromEnum(DitherMode::values);
+    public static final StreamCodec<ByteBuf, DitherMode> STREAM_CODEC = ByteBufCodecs.idMapper(BY_ID, DitherMode::ordinal);
 
     private final String name;
 
-    ProjectionMode(String name) {
+    DitherMode(String name) {
         this.name = name;
     }
 
@@ -35,7 +35,7 @@ public enum ProjectionMode implements StringRepresentable {
         return Component.translatable("item.exposure.interplanar_projector.mode." + getSerializedName());
     }
 
-    public ProjectionMode cycle() {
+    public DitherMode cycle() {
         return BY_ID.apply(ordinal() + 1);
     }
 }

@@ -3,6 +3,7 @@ package io.github.mortuusars.exposure.world.item;
 import io.github.mortuusars.exposure.Exposure;
 import io.github.mortuusars.exposure.data.ColorPalette;
 import io.github.mortuusars.exposure.data.ColorPalettes;
+import io.github.mortuusars.exposure.world.camera.capture.DitherMode;
 import io.github.mortuusars.exposure.world.camera.film.properties.*;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
@@ -13,10 +14,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface SensitiveFilmItem extends FilmItem {
     default @NotNull FilmProperties getFilmProperties(ItemStack stack) {
-        return new FilmProperties(getType(), getFrameSize(stack), getColorPalette(stack), getFilmStyle(stack));
+        return new FilmProperties(getType(), Optional.of(getFrameSize(stack)), getColorPalette(stack), getDitherMode(stack), getFilmStyle(stack));
     }
 
     default @NotNull FilmStyle getFilmStyle(ItemStack stack) {
@@ -27,6 +29,10 @@ public interface SensitiveFilmItem extends FilmItem {
         @Nullable ResourceLocation location = stack.get(Exposure.DataComponents.FILM_COLOR_PALETTE);
         if (location != null) return ColorPalettes.createKey(location);
         return ColorPalettes.DEFAULT;
+    }
+
+    default @NotNull DitherMode getDitherMode(ItemStack stack) {
+        return stack.getOrDefault(Exposure.DataComponents.FILM_DITHER_MODE, DitherMode.DITHERED);
     }
 
     // --

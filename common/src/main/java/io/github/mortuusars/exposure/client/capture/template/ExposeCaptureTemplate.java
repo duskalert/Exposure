@@ -47,7 +47,7 @@ public class ExposeCaptureTemplate implements CaptureTemplate {
                         CaptureAction.optional(params.getFlash(), () -> CaptureAction.flash(entity)))
                 .handleErrorAndGetResult(err -> LOGGER.error(err.technical().getString()))
                 .thenAsync(applyEffectsToImage(params))
-                .thenAsync(Palettizer.DITHERED.palettizeAndClose(palette.value()))
+                .thenAsync(Palettizer.fromDitherMode(params.filmProperties().ditherMode()).palettizeAndClose(palette.value()))
                 .thenAsync(convertToExposureData(palette, createExposureTag(params, false)))
                 .acceptAsync(image -> ExposureUploader.upload(params.exposureId(), image))
                 .onError(err -> LOGGER.error(err.technical().getString()));

@@ -45,7 +45,7 @@ public class PathCaptureTemplate implements CaptureTemplate {
                         CaptureAction.optional(params.cameraId(), CaptureAction::interplanarProjection))
                 .logErrorAndGetResult(LOGGER)
                 .thenAsync(applyEffectsToImage(params.mutable().setCropFactor(1f).build())) // Remove crop factor for loaded images
-                .thenAsync(Palettizer.fromProjectionMode(projection.mode()).palettizeAndClose(palette.value()))
+                .thenAsync(Palettizer.fromDitherMode(projection.mode()).palettizeAndClose(palette.value()))
                 .thenAsync(convertToExposureData(palette, createExposureTag(params, true)))
                 .acceptAsync(image -> ExposureUploader.upload(params.exposureId(), image))
                 .onError(printCasualErrorInChat());

@@ -3,9 +3,8 @@ package io.github.mortuusars.exposure.client.capture.palettizer;
 import io.github.mortuusars.exposure.client.image.Image;
 import io.github.mortuusars.exposure.data.ColorPalette;
 import io.github.mortuusars.exposure.client.image.PalettedImage;
-import io.github.mortuusars.exposure.world.camera.capture.ProjectionMode;
+import io.github.mortuusars.exposure.world.camera.capture.DitherMode;
 
-import java.lang.ref.Cleaner;
 import java.util.function.Function;
 
 public interface Palettizer {
@@ -28,8 +27,8 @@ public interface Palettizer {
         return image -> palettizer.palettizeAndClose(image, palette);
     }
 
-    static Palettizer fromProjectionMode(ProjectionMode mode) {
-        return mode == ProjectionMode.DITHERED
+    static Palettizer fromDitherMode(DitherMode mode) {
+        return mode == DitherMode.DITHERED
                 ? DITHERED
                 : NEAREST;
     }

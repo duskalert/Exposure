@@ -2,7 +2,7 @@ package io.github.mortuusars.exposure.world.item;
 
 import io.github.mortuusars.exposure.Config;
 import io.github.mortuusars.exposure.Exposure;
-import io.github.mortuusars.exposure.world.camera.capture.ProjectionMode;
+import io.github.mortuusars.exposure.world.camera.capture.DitherMode;
 import io.github.mortuusars.exposure.world.camera.capture.Projection;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.component.DataComponents;
@@ -24,11 +24,11 @@ public class InterplanarProjectorItem extends Item {
         super(properties);
     }
 
-    public ProjectionMode getMode(ItemStack stack) {
-        return stack.getOrDefault(Exposure.DataComponents.INTERPLANAR_PROJECTOR_MODE, ProjectionMode.DITHERED);
+    public DitherMode getMode(ItemStack stack) {
+        return stack.getOrDefault(Exposure.DataComponents.INTERPLANAR_PROJECTOR_MODE, DitherMode.DITHERED);
     }
 
-    public void setMode(ItemStack stack, ProjectionMode mode) {
+    public void setMode(ItemStack stack, DitherMode mode) {
         stack.set(Exposure.DataComponents.INTERPLANAR_PROJECTOR_MODE, mode);
     }
 

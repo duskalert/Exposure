@@ -50,7 +50,7 @@ public class CameraCaptureTemplate implements CaptureTemplate {
                         CaptureAction.optional(params.getFlash(), () -> CaptureAction.flash(entity)))
                 .handleErrorAndGetResult(printCasualErrorInChat())
                 .thenAsync(applyEffectsToImage(params))
-                .thenAsync(Palettizer.DITHERED.palettizeAndClose(palette.value()))
+                .thenAsync(Palettizer.fromDitherMode(params.filmProperties().ditherMode()).palettizeAndClose(palette.value()))
                 .then(convertToExposureData(palette, createExposureTag(params, false)));
 
         if (params.projection().isPresent()) {
@@ -61,7 +61,7 @@ public class CameraCaptureTemplate implements CaptureTemplate {
                             CaptureAction.optional(params.cameraId(), CaptureAction::interplanarProjection))
                     .logErrorAndGetResult(LOGGER)
                     .thenAsync(applyEffectsToImage(params.mutable().setCropFactor(1f).build())) // Remove crop factor for loaded images
-                    .thenAsync(Palettizer.fromProjectionMode(projection.mode()).palettizeAndClose(palette.value()))
+                    .thenAsync(Palettizer.fromDitherMode(projection.mode()).palettizeAndClose(palette.value()))
                     .then(convertToExposureData(palette, createExposureTag(params, true))));
         }
 

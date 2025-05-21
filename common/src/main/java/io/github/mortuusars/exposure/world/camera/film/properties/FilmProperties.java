@@ -8,6 +8,7 @@ import io.github.mortuusars.exposure.Exposure;
 import io.github.mortuusars.exposure.data.ColorPalette;
 import io.github.mortuusars.exposure.data.ColorPalettes;
 import io.github.mortuusars.exposure.world.camera.ExposureType;
+import io.github.mortuusars.exposure.world.camera.capture.DitherMode;
 import net.minecraft.core.Holder;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -23,14 +24,8 @@ import java.util.Optional;
 public record FilmProperties(ExposureType type,
                              Optional<Integer> size,
                              ResourceKey<ColorPalette> colorPalette,
+                             DitherMode ditherMode,
                              FilmStyle style) {
-    public FilmProperties(ExposureType type,
-                          int size,
-                          ResourceKey<ColorPalette> colorPalette,
-                          FilmStyle style) {
-        this(type, Optional.of(size), colorPalette, style);
-    }
-
     public FilmProperties {
         size.ifPresent(s -> Preconditions.checkArgument(s > 0 && s <= 2048,
                 "size must be 1-2048: " + size));
@@ -40,23 +35,26 @@ public record FilmProperties(ExposureType type,
             ExposureType.CODEC.optionalFieldOf("type", ExposureType.COLOR).forGetter(FilmProperties::type),
             ExtraCodecs.intRange(0, 2048).optionalFieldOf("frame_size").forGetter(FilmProperties::size),
             ResourceKey.codec(Exposure.Registries.COLOR_PALETTE).optionalFieldOf("color_palette", ColorPalettes.DEFAULT).forGetter(FilmProperties::colorPalette),
+            DitherMode.CODEC.optionalFieldOf("dither_mode", DitherMode.DITHERED).forGetter(FilmProperties::ditherMode),
             FilmStyle.CODEC.optionalFieldOf("style", FilmStyle.EMPTY).forGetter(FilmProperties::style)
     ).apply(instance, FilmProperties::new));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, FilmProperties> STREAM_CODEC = new StreamCodec<>() {
+        public void encode(RegistryFriendlyByteBuf buffer, FilmProperties data) {
+            ExposureType.STREAM_CODEC.encode(buffer, data.type());
+            ByteBufCodecs.optional(ByteBufCodecs.VAR_INT).encode(buffer, data.size());
+            ResourceKey.streamCodec(Exposure.Registries.COLOR_PALETTE).encode(buffer, data.colorPalette());
+            DitherMode.STREAM_CODEC.encode(buffer, data.ditherMode());
+            FilmStyle.STREAM_CODEC.encode(buffer, data.style());
+        }
+
         public @NotNull FilmProperties decode(RegistryFriendlyByteBuf buffer) {
             return new FilmProperties(
                     ExposureType.STREAM_CODEC.decode(buffer),
                     ByteBufCodecs.optional(ByteBufCodecs.VAR_INT).decode(buffer),
                     ResourceKey.streamCodec(Exposure.Registries.COLOR_PALETTE).decode(buffer),
+                    DitherMode.STREAM_CODEC.decode(buffer),
                     FilmStyle.STREAM_CODEC.decode(buffer));
-        }
-
-        public void encode(RegistryFriendlyByteBuf buffer, FilmProperties data) {
-            ExposureType.STREAM_CODEC.encode(buffer, data.type());
-            ByteBufCodecs.optional(ByteBufCodecs.VAR_INT).encode(buffer, data.size());
-            ResourceKey.streamCodec(Exposure.Registries.COLOR_PALETTE).encode(buffer, data.colorPalette());
-            FilmStyle.STREAM_CODEC.encode(buffer, data.style());
         }
     };
 
@@ -64,22 +62,27 @@ public record FilmProperties(ExposureType type,
             ExposureType.COLOR,
             Optional.empty(),
             ColorPalettes.DEFAULT,
+            DitherMode.DITHERED,
             FilmStyle.EMPTY);
 
     public FilmProperties withType(ExposureType type) {
-        return new FilmProperties(type, size, colorPalette, style);
+        return new FilmProperties(type, size, colorPalette, ditherMode, style);
     }
 
     public FilmProperties withSize(@Nullable Integer size) {
-        return new FilmProperties(type, Optional.ofNullable(size), colorPalette, style);
+        return new FilmProperties(type, Optional.ofNullable(size), colorPalette, ditherMode, style);
     }
 
     public FilmProperties withColorPalette(@NotNull ResourceKey<ColorPalette> colorPalette) {
-        return new FilmProperties(type, size, colorPalette, style);
+        return new FilmProperties(type, size, colorPalette, ditherMode, style);
+    }
+
+    public FilmProperties withDitherMode(DitherMode ditherMode) {
+        return new FilmProperties(type, size, colorPalette, ditherMode, style);
     }
 
     public FilmProperties withStyle(@NotNull FilmStyle style) {
-        return new FilmProperties(type, size, colorPalette, style);
+        return new FilmProperties(type, size, colorPalette, ditherMode, style);
     }
 
     // --

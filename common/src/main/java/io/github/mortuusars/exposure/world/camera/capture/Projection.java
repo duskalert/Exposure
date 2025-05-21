@@ -6,15 +6,15 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 
-public record Projection(String path, ProjectionMode mode) {
+public record Projection(String path, DitherMode mode) {
     public static final Codec<Projection> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             Codec.STRING.fieldOf("path").forGetter(Projection::path),
-            ProjectionMode.CODEC.optionalFieldOf("mode", ProjectionMode.DITHERED).forGetter(Projection::mode)
+            DitherMode.CODEC.optionalFieldOf("mode", DitherMode.DITHERED).forGetter(Projection::mode)
     ).apply(instance, Projection::new));
 
     public static final StreamCodec<FriendlyByteBuf, Projection> STREAM_CODEC = StreamCodec.composite(
             ByteBufCodecs.STRING_UTF8, Projection::path,
-            ProjectionMode.STREAM_CODEC, Projection::mode,
+            DitherMode.STREAM_CODEC, Projection::mode,
             Projection::new
     );
 }

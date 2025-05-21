@@ -47,7 +47,7 @@ public class SingleChannelCaptureTemplate implements CaptureTemplate {
                         CaptureAction.optional(params.getFlash(), () -> CaptureAction.flash(entity)))
                 .handleErrorAndGetResult(printCasualErrorInChat())
                 .then(applyEffectsToImage(params))
-                .thenAsync(Palettizer.DITHERED.palettizeAndClose(palette.value()))
+                .thenAsync(Palettizer.fromDitherMode(params.filmProperties().ditherMode()).palettizeAndClose(palette.value()))
                 .then(convertToExposureData(palette, createExposureTag(params, false)))
                 .accept(image -> ExposureUploader.upload(params.exposureId(), image))
                 .onError(printCasualErrorInChat());
