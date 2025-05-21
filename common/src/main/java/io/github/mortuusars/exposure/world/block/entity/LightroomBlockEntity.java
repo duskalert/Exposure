@@ -107,8 +107,9 @@ public class LightroomBlockEntity extends BaseContainerBlockEntity implements Wo
 
     public static <T extends BlockEntity> void serverTick(Level ignoredLevel, BlockPos ignoredBlockPos,
                                                           BlockState ignoredBlockState, T blockEntity) {
-        if (blockEntity instanceof LightroomBlockEntity lightroomBlockEntity)
+        if (blockEntity instanceof LightroomBlockEntity lightroomBlockEntity) {
             lightroomBlockEntity.tick();
+        }
     }
 
     protected void tick() {

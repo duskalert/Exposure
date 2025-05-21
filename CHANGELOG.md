@@ -1,5 +1,8 @@
 # Changelog
 
+## UNRELEASED
+- Fixed photograph not rendering correctly in Item Frame (when 'photograph_renders_in_item_frame' is enabled).
+
 ## 1.9.2 - 2025-04-24
 - [Fabric] Config screen can now be accessed when ModMenu is installed.
 - Fixed missing Create spout developing recipes for high sensitivity films.
