@@ -3,6 +3,7 @@
 ## UNRELEASED
 - Readjusted selfie mode camera for holder POV and outside POV.
 - Fixed wrong selfie camera model showing when in selfie mode and looking at yourself from outside (Camera Stand for example).
+- Camera Stand tooltip no longer renders when HUD is hidden.
 
 ## 1.9.3 - 2025-05-21
 - Added 'exposure:film_dither_mode' ("dithered" or "clean") component for films.

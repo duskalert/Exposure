@@ -16,11 +16,10 @@ import java.util.List;
 
 public class CameraStandTooltip {
     public static void render(GuiGraphics guiGraphics, DeltaTracker partialTick) {
-        if (!Config.Client.CAMERA_STAND_TOOLTIP.get()) {
-            return;
-        }
+        if (!Config.Client.CAMERA_STAND_TOOLTIP.get()) return;
 
         Minecraft minecraft = Minecrft.get();
+        if (minecraft.options.hideGui) return;
         if (minecraft.level == null || minecraft.player == null) return;
         if (minecraft.screen != null || !(minecraft.hitResult instanceof EntityHitResult entityHitResult)) return;
         if (!(entityHitResult.getEntity() instanceof CameraStandEntity stand)) return;
