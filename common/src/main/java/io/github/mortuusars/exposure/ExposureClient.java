@@ -91,7 +91,7 @@ public class ExposureClient {
 
         ItemProperties.register(Exposure.Items.CAMERA.get(), Exposure.resource("camera_selfie"), (stack, level, entity, seed) ->
                 stack.getItem() instanceof CameraItem cameraItem && cameraItem.isInSelfieMode(stack)
-                        ? entity == Minecrft.player() ? 0.5f : 1f
+                        ? entity == Minecrft.get().getCameraEntity() ? 0.5f : 1f
                         : 0);
 
         ItemProperties.register(Exposure.Items.CAMERA.get(), Exposure.resource("camera_has_lens"), (stack, level, entity, seed) ->

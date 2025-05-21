@@ -40,6 +40,10 @@ public class CameraPoses {
         // Arm follows camera:
         cameraArm.xRot = (model.head.xRot + Math.abs(model.head.xRot * 0.13f)) + (-(float) Math.PI / 2F);
         cameraArm.yRot = model.head.yRot;
+        if (Minecrft.get().cameraEntity == entity) {
+            cameraArm.yRot += (arm == HumanoidArm.RIGHT ? -0.25f : 0.25f);
+        }
+
         if (model.head.xRot <= 0) {
             cameraArm.zRot = (model.head.xRot * 0.15f) * (arm == HumanoidArm.RIGHT ? -1 : 1);
         } else {

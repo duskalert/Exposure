@@ -1,5 +1,9 @@
 # Changelog
 
+## UNRELEASED
+- Readjusted selfie mode camera for holder POV and outside POV.
+- Fixed wrong selfie camera model showing when in selfie mode and looking at yourself from outside (Camera Stand for example).
+
 ## 1.9.3 - 2025-05-21
 - Added 'exposure:film_dither_mode' ("dithered" or "clean") component for films.
 - Added 'photograph_frame_image_offset' that can be used to fix some issues with 3D resourcepacks.
