@@ -1,5 +1,5 @@
 {
-	"parent": "exposure:item/camera",
+	"parent": "exposure:item/camera_selfie",
 	"textures": {
 		"texture": "exposure:item/camera/camera",
 		"particle": "exposure:item/camera/camera",

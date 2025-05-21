@@ -3,6 +3,7 @@
 ## 1.9.3 - 2025-05-21
 - Added 'exposure:film_dither_mode' ("dithered" or "clean") component for films.
 - Added 'photograph_frame_image_offset' that can be used to fix some issues with 3D resourcepacks.
+- Fixed Camera model holding pose in thirdperson selfie mode. 
 - Fixed photograph not rendering correctly in Item Frame (when 'photograph_renders_in_item_frame' is enabled).
 
 ## 1.9.2 - 2025-04-24
