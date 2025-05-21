@@ -32,7 +32,7 @@ public class ItemFramePhotographRenderer {
 
         poseStack.mulPose(Axis.ZP.rotationDegrees(180.0F));
         poseStack.scale(scale, scale, scale);
-        poseStack.translate(-0.5, -0.5, 10);
+        poseStack.translate(-0.5, -0.5, 0);
 
         ExposureClient.photographRenderer().renderPhotograph(poseStack, bufferSource, item, stack,
                 false, false, packedLight, 255, 255, 255, 255);
