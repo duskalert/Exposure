@@ -395,7 +395,7 @@ public class Config {
                                 "Format: '[\"mod_id\", \"mod_id\"]'. Default: [" + String.join(", ", Exposure.MODS_REQUIRING_DIRECT_CAPTURE) + "]")
                         .defineList("force_direct_capture_mods", () -> Exposure.MODS_REQUIRING_DIRECT_CAPTURE, () -> "mod_id", o -> true);
                 DIRECT_CAPTURE_DELAY_FRAMES = builder
-                        .comment("Delay in frames before capturing an image if 'direct_capture' method is in use (or if Oculus or Iris is installed).",
+                        .comment("Delay in frames before capturing an image if 'direct_capture' method is in use.",
                                 "Set to higher value when leftovers of GUI elements (such as nameplates) are visible on the images",
                                 "(some shaders have temporal effects that take several frames to disappear fully)")
                         .defineInRange("direct_capture_delay_frames", 0, 0, 100);
