@@ -60,15 +60,18 @@ public abstract class MinecraftMixin {
         }
     }
 
+    @Inject(method = "disconnect(Lnet/minecraft/client/gui/screens/Screen;Z)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/GameRenderer;resetData()V", shift = At.Shift.AFTER))
+    void disconnect(Screen nextScreen, boolean keepResourcePacks, CallbackInfo ci) {
+        ClientEvents.disconnect();
+    }
+
+    /**
+     * Fixes incompatibility with Iris and Distant Horizons (and potentially others).
+     */
     @Inject(method = "getMainRenderTarget", at = @At("HEAD"), cancellable = true)
     void onGetMainRenderTarget(CallbackInfoReturnable<RenderTarget> cir) {
         if (BackgroundScreenshotCaptureTask.capturing && BackgroundScreenshotCaptureTask.renderTarget != null) {
             cir.setReturnValue(BackgroundScreenshotCaptureTask.renderTarget);
         }
-    }
-
-    @Inject(method = "disconnect(Lnet/minecraft/client/gui/screens/Screen;Z)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/GameRenderer;resetData()V", shift = At.Shift.AFTER))
-    void disconnect(Screen nextScreen, boolean keepResourcePacks, CallbackInfo ci) {
-        ClientEvents.disconnect();
     }
 }

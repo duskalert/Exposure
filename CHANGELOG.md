@@ -1,6 +1,10 @@
 # Changelog
 
 ## UNRELEASED
+- Background capture method now works with Iris, Oculus and Distant Horizons. (thanks Inconn)
+  - Renamed config option 'force_direct_capture_mods' to 'force_direct_capture_default_mods' to reset this option to default (to remove now compatible mods in existing configs).
+    - If you have added custom values to this config option, you'll need to re-add them.
+    - Removed 'effective' from this config value and added 'veil', as it's the one that causes issues. 
 - Readjusted selfie mode camera for holder POV and outside POV.
 - Fixed wrong selfie camera model showing when in selfie mode and looking at yourself from outside (Camera Stand for example).
 - Camera Stand tooltip no longer renders when HUD is hidden.
