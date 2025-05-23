@@ -1,8 +1,8 @@
 package io.github.mortuusars.exposure.util;
 
+import com.google.gson.*;
 import io.github.mortuusars.exposure.Exposure;
 import io.github.mortuusars.exposure.client.util.Minecrft;
-import net.minecraft.Util;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -14,16 +14,19 @@ import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
 public class PatreonSupporters {
-    private static @Nullable Map<Tier, List<UUID>> supporters = null;
+    public static final UUID MORTUUSARS_UUID = UUID.fromString("19266046-b14b-428f-919b-75a21474ba07");
+
+    private static @Nullable Map<Tier, List<Supporter>> supporters = null;
     private static long lastQueryTime = -1L;
 
     public static boolean hasGoldenCamera(UUID uuid) {
-        Map<Tier, List<UUID>> supporters = getOrQuery();
-        return supporters.getOrDefault(Tier.GOLD, Collections.emptyList()).contains(uuid)
-                || supporters.getOrDefault(Tier.DIAMOND, Collections.emptyList()).contains(uuid);
+        if (uuid.equals(MORTUUSARS_UUID)) return true;
+        Map<Tier, List<Supporter>> supporters = getOrQuery();
+        return supporters.getOrDefault(Tier.GOLD, Collections.emptyList()).stream().anyMatch(s -> s.uuid().equals(uuid))
+                || supporters.getOrDefault(Tier.DIAMOND, Collections.emptyList()).stream().anyMatch(s -> s.uuid().equals(uuid));
     }
 
-    public static Map<Tier, List<UUID>> getOrQuery() {
+    public static Map<Tier, List<Supporter>> getOrQuery() {
         if (supporters != null) return supporters;
 
         if (System.currentTimeMillis() - lastQueryTime < 60000) { // 1 min
@@ -34,16 +37,16 @@ public class PatreonSupporters {
             lastQueryTime = System.currentTimeMillis();
 
             for (Tier tier : Tier.values()) {
-                readFileFromURL(tier.getUuidsUrl()).thenAccept(lines -> {
-                    if (lines == null) return;
+                readFileFromURL(tier.getUuidsUrl()).thenAccept(json -> {
+                    if (json == null) return;
 
-                    List<UUID> ids = parseUuids(lines);
-                    
+                    List<Supporter> parsedSupporters = parseSupporters(json);
+
                     Minecrft.execute(() -> {
                         if (supporters == null) {
                             supporters = new HashMap<>();
                         }
-                        supporters.put(tier, ids);
+                        supporters.put(tier, parsedSupporters);
                     });
                 });
             }
@@ -54,34 +57,39 @@ public class PatreonSupporters {
         return supporters;
     }
 
-    private static CompletableFuture<@Nullable List<String>> readFileFromURL(URI uri) {
+    private static CompletableFuture<@Nullable String> readFileFromURL(URI uri) {
         try (HttpClient client = HttpClient.newHttpClient()) {
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(uri)
                     .build();
 
             return client.sendAsync(request, HttpResponse.BodyHandlers.ofString())
-                    .thenApply(response -> response.body().lines().toList())
+                    .thenApply(HttpResponse::body)
                     .exceptionally(e -> {
                         Exposure.LOGGER.warn("Cannot get list of supporters.", e);
                         return null;
                     });
         } catch (Exception e) {
+            Exposure.LOGGER.warn("Cannot get list of supporters from {}.", uri, e);
             return CompletableFuture.completedFuture(null);
         }
     }
 
-    private static @NotNull List<UUID> parseUuids(List<String> lines) {
-        return lines.stream().map(line -> {
-                    try {
-                        return UUID.fromString(line);
-                    } catch (Exception e) {
-                        Exposure.LOGGER.warn("Cannot parse UUID from '{}'", line, e);
-                        return Util.NIL_UUID;
-                    }
-                })
-                .filter(id -> !id.equals(Util.NIL_UUID))
-                .toList();
+    public static @NotNull List<Supporter> parseSupporters(String json) {
+        Gson gson = new Gson();
+        JsonArray array = JsonParser.parseString(json).getAsJsonArray();
+        List<Supporter> supporters = new ArrayList<>();
+
+        for (JsonElement element : array) {
+            try {
+                Supporter p = gson.fromJson(element, Supporter.class);
+                supporters.add(p);
+            } catch (Exception e) {
+                Exposure.LOGGER.warn("Cannot parse supporter from '{}'", element, e);
+            }
+        }
+
+        return supporters;
     }
 
     public enum Tier {
@@ -92,7 +100,9 @@ public class PatreonSupporters {
 
         public URI getUuidsUrl() {
             return URI.create("https://raw.githubusercontent.com/mortuusars/resources/refs/heads/main/patreon/uuids/"
-                    + name().toLowerCase() + ".txt");
+                    + name().toLowerCase() + ".json");
         }
     }
+
+    public record Supporter(String name, UUID uuid) { }
 }

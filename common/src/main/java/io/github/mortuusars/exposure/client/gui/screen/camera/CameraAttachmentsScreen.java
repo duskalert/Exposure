@@ -4,11 +4,14 @@ import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.systems.RenderSystem;
 import io.github.mortuusars.exposure.Config;
 import io.github.mortuusars.exposure.Exposure;
+import io.github.mortuusars.exposure.client.gui.Widgets;
 import io.github.mortuusars.exposure.client.gui.screen.ItemListScreen;
+import io.github.mortuusars.exposure.client.gui.screen.element.ToggleImageButton;
 import io.github.mortuusars.exposure.client.gui.toast.BetterTutorialToast;
 import io.github.mortuusars.exposure.client.gui.toast.ToastIcon;
 import io.github.mortuusars.exposure.client.input.KeyboardHandler;
 import io.github.mortuusars.exposure.client.util.Minecrft;
+import io.github.mortuusars.exposure.util.PatreonSupporters;
 import io.github.mortuusars.exposure.util.color.Color;
 import io.github.mortuusars.exposure.data.Lenses;
 import io.github.mortuusars.exposure.data.Filter;
@@ -20,6 +23,8 @@ import net.minecraft.Util;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.Tooltip;
+import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.gui.screens.ConfirmLinkScreen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
@@ -43,6 +48,9 @@ import java.util.function.Supplier;
 
 public class CameraAttachmentsScreen extends AbstractContainerScreen<AbstractCameraAttachmentsMenu> {
     public static final ResourceLocation TEXTURE = Exposure.resource("textures/gui/camera_attachments.png");
+
+    public static final WidgetSprites SKIN_REGULAR_BUTTON_SPRITES = Widgets.threeStateSprites(Exposure.resource("camera_attachments/regular"));
+    public static final WidgetSprites SKIN_GOLD_BUTTON_SPRITES = Widgets.threeStateSprites(Exposure.resource("camera_attachments/gold"));
 
     protected final Player player;
 
@@ -119,6 +127,21 @@ public class CameraAttachmentsScreen extends AbstractContainerScreen<AbstractCam
         this.imageHeight = 185;
         inventoryLabelY = this.imageHeight - 94;
         super.init();
+
+        if (PatreonSupporters.hasGoldenCamera(Minecrft.player().getUUID())) {
+            ToggleImageButton button = new ToggleImageButton(leftPos + 8, topPos + 18, 7, 7,
+                    SKIN_GOLD_BUTTON_SPRITES, SKIN_REGULAR_BUTTON_SPRITES, this::changeSkin);
+            button.setState(getMenu().getCamera().map((i, s) -> s.getOrDefault(Exposure.DataComponents.CAMERA_GOLD, false)));
+            button.setTooltip(Tooltip.create(Component.translatable("gui.exposure.camera_attachments.change_skin")));
+            addRenderableWidget(button);
+        }
+    }
+
+    protected void changeSkin(boolean gold) {
+        int buttonId = gold
+                ? AbstractCameraAttachmentsMenu.SKIN_GOLD_BUTTON_ID
+                : AbstractCameraAttachmentsMenu.SKIN_REGULAR_BUTTON_ID;
+        Minecrft.gameMode().handleInventoryButtonClick(getMenu().containerId, buttonId);
     }
 
     @Override

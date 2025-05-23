@@ -57,9 +57,6 @@ public class ExposureClient {
 
         cycles().addParallelTask(new ClearStaleRenderedImagesIndefiniteTask());
 
-        // Query supporters early, so it will be available right away when needed
-        PatreonSupporters.getOrQuery();
-
         registerItemModelProperties();
     }
 

@@ -33,6 +33,10 @@ public class ToggleImageButton extends ImageButton {
         onToggled.accept(this.state);
     }
 
+    public void setState(boolean state) {
+        this.state = state;
+    }
+
     public <T> T mapState(Function<Boolean, T> mappingFunction) {
         return mappingFunction.apply(state);
     }

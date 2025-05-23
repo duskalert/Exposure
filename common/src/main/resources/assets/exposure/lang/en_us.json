@@ -187,6 +187,7 @@
   "gui.exposure.album.right_click_to_remove": "§8[§7Right Click§8] to Remove",
   "gui.exposure.album.sign": "Sign Album",
   "gui.exposure.album.sign.warning": "Note! When you sign the album, it will no longer be editable.",
+  "gui.exposure.camera_attachments.change_skin": "Change Skin",
   "gui.exposure.camera_attachments.film.tooltip": "Film\n§7Stores exposed negatives\n§8 • \n§8[§7Click§8] to see available film rolls",
   "gui.exposure.camera_attachments.filter.tooltip": "Filter\n§7Tints or alters the image\n§8 • \n§8[§7Click§8] to see available filters",
   "gui.exposure.camera_attachments.flash.tooltip": "Flash\n§7Illuminates small area in front of the Camera\n • Can be toggled §fOn§7/§fOff§7/§fAuto§7\n • When in §fAuto§7 mode - would only fire\n   if light level at Camera position is below 8",
