@@ -1,6 +1,6 @@
 # Changelog
 
-## UNRELEASED
+## 1.9.4 - 2025-05-23
 - Background capture method now works with Iris, Oculus and Distant Horizons. (thanks Inconn)
   - Renamed config option 'force_direct_capture_mods' to 'force_direct_capture_default_mods' to reset this option to default (to remove now compatible mods in existing configs).
     - If you have added custom values to this config option, you'll need to re-add them.
