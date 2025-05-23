@@ -255,6 +255,9 @@ public class Exposure {
         public static final DataComponentType<CameraId> CAMERA_ID = Register.dataComponentType("camera_id",
                 arg -> arg.persistent(CameraId.CODEC).networkSynchronized(CameraId.STREAM_CODEC));
 
+        public static final DataComponentType<Boolean> CAMERA_GOLD = Register.dataComponentType("camera_gold",
+                arg -> arg.persistent(Codec.BOOL).networkSynchronized(ByteBufCodecs.BOOL));
+
         public static final DataComponentType<Boolean> CAMERA_ACTIVE = Register.dataComponentType("camera_active",
                 arg -> arg.persistent(Codec.BOOL).networkSynchronized(ByteBufCodecs.BOOL));
 
