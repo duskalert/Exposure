@@ -32,12 +32,13 @@ public class Patreon {
 
                     List<Supporter> parsedSupporters = loader.parseSupporters(json);
 
-                    Minecrft.execute(() -> {
-                        if (patrons == null) {
-                            patrons = new HashMap<>();
-                        }
-                        patrons.put(patreonTier, parsedSupporters);
-                    });
+                    if (patrons == null) {
+                        patrons = new HashMap<>();
+                    }
+                    patrons.put(patreonTier, parsedSupporters);
+                }).exceptionally(e -> {
+                    Exposure.LOGGER.warn("Cannot get list of supporters.", e);
+                    return null;
                 });
             }
         } catch (Exception e) {

@@ -28,12 +28,10 @@ public class Gilded {
             Supporters.Loader loader = new Supporters.Loader();
             loader.readFileFromURL(getUuidsUri()).thenAccept(json -> {
                 if (json == null) return;
-
-                List<Supporter> parsedSupporters = loader.parseSupporters(json);
-
-                Minecrft.execute(() -> {
-                    gildedSupporters = parsedSupporters;
-                });
+                gildedSupporters = loader.parseSupporters(json);
+            }).exceptionally(e -> {
+                Exposure.LOGGER.warn("Cannot get list of supporters.", e);
+                return null;
             });
         } catch (Exception e) {
             Exposure.LOGGER.warn("Cannot get list of supporters.", e);
