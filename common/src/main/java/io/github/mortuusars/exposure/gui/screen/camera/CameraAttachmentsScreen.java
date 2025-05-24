@@ -11,9 +11,12 @@ import io.github.mortuusars.exposure.gui.screen.ItemListScreen;
 import io.github.mortuusars.exposure.item.CameraItem;
 import io.github.mortuusars.exposure.menu.CameraAttachmentsMenu;
 import io.github.mortuusars.exposure.sound.OnePerPlayerSounds;
+import io.github.mortuusars.exposure.util.supporter.Supporters;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.ImageButton;
+import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.Rect2i;
@@ -28,11 +31,9 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Supplier;
 
 public class CameraAttachmentsScreen extends AbstractContainerScreen<CameraAttachmentsMenu> {
@@ -54,6 +55,9 @@ public class CameraAttachmentsScreen extends AbstractContainerScreen<CameraAttac
             () -> !getMenu().getSlot(CameraItem.LENS_ATTACHMENT.slot()).hasItem());
     protected final HoveredElement viewfinder = new HoveredElement(List.of(new Rect2i(65, 25, 30, 12),
             new Rect2i(72, 31, 39, 11), new Rect2i(80, 42, 24, 5)), () -> true);
+
+    protected @Nullable ImageButton regularSkinButton;
+    protected @Nullable ImageButton goldSkinButton;
 
     public CameraAttachmentsScreen(CameraAttachmentsMenu menu, Inventory playerInventory, Component title) {
         super(menu, playerInventory, title);
@@ -77,10 +81,32 @@ public class CameraAttachmentsScreen extends AbstractContainerScreen<CameraAttac
                 CameraItem.LENS_ATTACHMENT.slot(), new Rect2i(238, 36, 18, 18),
                 CameraItem.FILTER_ATTACHMENT.slot(), new Rect2i(238, 54, 18, 18)
         );
+
+        if (Supporters.hasAccessToGoldenSkin(Objects.requireNonNull(Minecraft.getInstance().player).getUUID())) {
+            regularSkinButton = new ImageButton(leftPos + 8, topPos + 18, 7, 7, 224, 0, 7, TEXTURE, b -> changeCameraSkin(false));
+            goldSkinButton = new ImageButton(leftPos + 8, topPos + 18, 7, 7, 231, 0, 7, TEXTURE, b -> changeCameraSkin(true));
+            regularSkinButton.setTooltip(Tooltip.create(Component.translatable("gui.exposure.camera_attachments.change_skin")));
+            goldSkinButton.setTooltip(Tooltip.create(Component.translatable("gui.exposure.camera_attachments.change_skin")));
+            addRenderableWidget(regularSkinButton);
+            addRenderableWidget(goldSkinButton);
+        }
+    }
+
+    protected void changeCameraSkin(boolean isGold) {
+        int buttonId = isGold ? CameraAttachmentsMenu.SKIN_GOLD_BUTTON_ID : CameraAttachmentsMenu.SKIN_REGULAR_BUTTON_ID;
+        getMenu().clickMenuButton(Objects.requireNonNull(Minecraft.getInstance().player), buttonId);
+        Objects.requireNonNull(Minecraft.getInstance().gameMode).handleInventoryButtonClick(getMenu().containerId, buttonId);
     }
 
     @Override
     public void render(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+        if (regularSkinButton != null && goldSkinButton != null) {
+            boolean isGold = getMenu().getCamera().getStack().getTag() != null
+                    && getMenu().getCamera().getStack().getTag().getBoolean("GoldenCamera");
+            regularSkinButton.visible = isGold;
+            goldSkinButton.visible = !isGold;
+        }
+
         this.renderBackground(guiGraphics);
         super.render(guiGraphics, mouseX, mouseY, partialTick);
 
@@ -283,5 +309,6 @@ public class CameraAttachmentsScreen extends AbstractContainerScreen<CameraAttac
         return super.mouseClicked(mouseX, mouseY, button);
     }
 
-    public record HoveredElement(List<Rect2i> hoverArea, Supplier<Boolean> isEnabled) { }
+    public record HoveredElement(List<Rect2i> hoverArea, Supplier<Boolean> isEnabled) {
+    }
 }

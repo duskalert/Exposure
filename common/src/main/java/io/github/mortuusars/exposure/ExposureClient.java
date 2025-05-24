@@ -63,6 +63,8 @@ public class ExposureClient {
 
     private static void registerItemModelProperties() {
         ItemProperties.register(Exposure.Items.CAMERA.get(), new ResourceLocation("camera_state"), CameraItemClientExtensions::itemPropertyFunction);
+        ItemProperties.register(Exposure.Items.CAMERA.get(), new ResourceLocation("camera_gold"), (stack, level, entity, seed) ->
+                stack.getTag() != null && stack.getTag().getBoolean("GoldenCamera") ? 1 : 0);
         ItemProperties.register(Exposure.Items.CHROMATIC_SHEET.get(), new ResourceLocation("channels"), (stack, clientLevel, livingEntity, seed) ->
                 stack.getItem() instanceof ChromaticSheetItem chromaticSheet ?
                         chromaticSheet.getExposures(stack).size() / 10f : 0f);

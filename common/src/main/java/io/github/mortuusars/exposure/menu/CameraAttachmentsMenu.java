@@ -5,6 +5,7 @@ import io.github.mortuusars.exposure.Exposure;
 import io.github.mortuusars.exposure.camera.AttachmentType;
 import io.github.mortuusars.exposure.item.CameraItem;
 import io.github.mortuusars.exposure.util.ItemAndStack;
+import io.github.mortuusars.exposure.util.supporter.Supporters;
 import net.minecraft.core.NonNullList;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.Container;
@@ -21,6 +22,9 @@ import java.util.List;
 import java.util.Optional;
 
 public class CameraAttachmentsMenu extends AbstractContainerMenu {
+    public static final int SKIN_REGULAR_BUTTON_ID = 100;
+    public static final int SKIN_GOLD_BUTTON_ID = 101;
+
     private final int attachmentSlotsCount;
     private final int cameraSlotIndex;
     private final Player player;
@@ -261,6 +265,22 @@ public class CameraAttachmentsMenu extends AbstractContainerMenu {
             }
         }
         return hasRemainder;
+    }
+
+    @Override
+    public boolean clickMenuButton(Player player, int id) {
+        if (Supporters.hasAccessToGoldenSkin(player.getUUID())) {
+            if (id == SKIN_REGULAR_BUTTON_ID) {
+                getCamera().apply((i, s) -> s.getOrCreateTag().remove("GoldenCamera"));
+                broadcastChanges();
+                return true;
+            } else if (id == SKIN_GOLD_BUTTON_ID) {
+                getCamera().apply((i, s) -> s.getOrCreateTag().putBoolean("GoldenCamera", true));
+                broadcastChanges();
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override

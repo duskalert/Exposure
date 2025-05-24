@@ -7,9 +7,22 @@
   "overrides": [
     {
       "predicate": {
+        "camera_gold": 1
+      },
+      "model": "exposure:item/camera_gold_gui"
+    },
+    {
+      "predicate": {
         "camera_state": 0.1
       },
       "model": "exposure:item/camera_gui_active"
+    },
+    {
+      "predicate": {
+        "camera_gold": 1,
+        "camera_state": 0.1
+      },
+      "model": "exposure:item/camera_gold_gui_active"
     }
   ]
 }

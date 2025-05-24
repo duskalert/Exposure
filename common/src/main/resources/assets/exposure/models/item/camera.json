@@ -64,9 +64,22 @@
 	"overrides": [
 		{
 			"predicate": {
+				"camera_gold": 1
+			},
+			"model": "exposure:item/camera_gold"
+		},
+		{
+			"predicate": {
 				"camera_state": 0.1
 			},
 			"model": "exposure:item/camera_active"
+		},
+		{
+			"predicate": {
+				"camera_gold": 1,
+				"camera_state": 0.1
+			},
+			"model": "exposure:item/camera_gold_active"
 		},
 		{
 			"predicate": {
@@ -79,6 +92,13 @@
 				"camera_state": 0.3
 			},
 			"model": "exposure:item/camera_selfie"
+		},
+		{
+			"predicate": {
+				"camera_gold": 1,
+				"camera_state": 0.3
+			},
+			"model": "exposure:item/camera_gold_selfie"
 		}
 	]
 }

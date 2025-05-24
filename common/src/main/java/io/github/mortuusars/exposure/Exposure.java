@@ -21,6 +21,7 @@ import io.github.mortuusars.exposure.recipe.FilmDevelopingRecipe;
 import io.github.mortuusars.exposure.recipe.PhotographAgingRecipe;
 import io.github.mortuusars.exposure.recipe.PhotographCopyingRecipe;
 import io.github.mortuusars.exposure.util.CameraInHand;
+import io.github.mortuusars.exposure.util.supporter.Supporters;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.advancements.critereon.PlayerTrigger;
 import net.minecraft.commands.synchronization.ArgumentTypeInfo;
@@ -67,6 +68,9 @@ public class Exposure {
         RecipeSerializers.init();
         SoundEvents.init();
         ArgumentTypes.init();
+
+        // Query supporters early, so it will be available right away when needed
+        Supporters.query();
 
         Camera.registerCameraGetter(Exposure.resource("camera_in_hand"), player -> CameraInHand.ofPlayer(player, CameraItem.class));
     }
