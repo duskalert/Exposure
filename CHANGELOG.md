@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.9.6 - 2025-05-24
+- Fixed small server-side error.
+- Updated localization files.
+
 ## 1.9.5 - 2025-05-24
 - Added 'hide_hud_while_in_viewfinder' and 'status_icon_offset_<x/y>' config options.
 
