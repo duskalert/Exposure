@@ -282,8 +282,8 @@ public class ViewfinderOverlay {
 
     protected void renderNoFilmIcon(PoseStack poseStack) {
         RenderSystem.setShaderTexture(0, NO_FILM_ICON_TEXTURE);
-        int x = (int) ((opening.x + (opening.width / 2) - 12));
-        int y = (int) (opening.y + opening.height - 18);
+        int x = (int) ((opening.x + (opening.width / 2) - 12)) + Config.Client.VIEWFINDER_STATUS_ICON_OFFSET_X.get();
+        int y = (int) (opening.y + opening.height - 18) + Config.Client.VIEWFINDER_STATUS_ICON_OFFSET_Y.get();
         GuiUtil.blit(poseStack, x, y, 23, 18, 0, 0, 23, 18, 0);
     }
 
@@ -293,8 +293,8 @@ public class ViewfinderOverlay {
         int remainingFrames = Math.max(0, maxFrames - exposedFrames);
         if (maxFrames > 5 && remainingFrames <= 3) {
             RenderSystem.setShaderTexture(0, REMAINING_FRAMES_ICON_TEXTURE);
-            float x = (int) (opening.x + (opening.width / 2) - 17);
-            float y = (int) (opening.y + opening.height - 15);
+            float x = (int) (opening.x + (opening.width / 2) - 17) + Config.Client.VIEWFINDER_STATUS_ICON_OFFSET_X.get();
+            float y = (int) (opening.y + opening.height - 15) + Config.Client.VIEWFINDER_STATUS_ICON_OFFSET_Y.get();
             int vOffset = (remainingFrames - 1) * 15;
             GuiUtil.blit(poseStack, x, y, 33, 15, 0, vOffset, 33, 45, 0);
         }

@@ -366,5 +366,8 @@
   "task.exposure.export.status.exporting": "Exporting  '%s' - [%s/%s]",
   "task.exposure.export.status.requesting": "Requesting '%s' - [%s/%s]",
   "task.exposure.export.stopped": "Export stopped.",
-  "tooltip.exposure.hold_for_details": "§8Hold [§7Shift§8] for Details"
+  "tooltip.exposure.hold_for_details": "§8Hold [§7Shift§8] for Details",
+  "exposure.configuration.status_icon_offset_y": "Status Icon Offset X",
+  "exposure.configuration.status_icon_offset_x": "Status Icon Offset Y",
+  "exposure.configuration.hide_hud_while_in_viewfinder": "Hide Rest Of The HUD When Active"
 }

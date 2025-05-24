@@ -267,6 +267,9 @@ public class Config {
         public static final ModConfigSpec.ConfigValue<String> VIEWFINDER_BACKGROUND_COLOR;
         public static final ModConfigSpec.ConfigValue<String> VIEWFINDER_FONT_MAIN_COLOR;
         public static final ModConfigSpec.ConfigValue<String> VIEWFINDER_FONT_SECONDARY_COLOR;
+        public static final ModConfigSpec.BooleanValue HIDE_HUD_WHILE_IN_VIEWFINDER;
+        public static final ModConfigSpec.IntValue VIEWFINDER_STATUS_ICON_OFFSET_X;
+        public static final ModConfigSpec.IntValue VIEWFINDER_STATUS_ICON_OFFSET_Y;
 
         // CAPTURE
         public static final ModConfigSpec.BooleanValue KEEP_POST_EFFECT;
@@ -371,6 +374,15 @@ public class Config {
                         .comment("Color in hex format. AARRGGBB.").define("font_main_color", "FF2B2622");
                 VIEWFINDER_FONT_SECONDARY_COLOR = builder
                         .comment("Color in hex format. AARRGGBB.").define("font_secondary_color", "FF7A736C");
+                HIDE_HUD_WHILE_IN_VIEWFINDER = builder
+                        .comment("HUD will be hidden while looking through viewfinder. Default: true")
+                        .define("hide_hud_while_in_viewfinder", true);
+                VIEWFINDER_STATUS_ICON_OFFSET_X = builder
+                        .comment("X offset of a viewfinder status icon. Default: 0")
+                        .defineInRange("status_icon_offset_x", 0, -999, 999);
+                VIEWFINDER_STATUS_ICON_OFFSET_Y = builder
+                        .comment("Y offset of a viewfinder status icon. Default: 0")
+                        .defineInRange("status_icon_offset_y", 0, -999, 999);
                 builder.pop();
             }
 

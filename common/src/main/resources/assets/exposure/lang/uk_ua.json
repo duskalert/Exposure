@@ -366,5 +366,8 @@
   "task.exposure.export.status.exporting": "Експорт \"%s\" - [%s/%s]",
   "task.exposure.export.status.requesting": "Запит \"%s\" - [%s/%s]",
   "task.exposure.export.stopped": "Експорт зупинено.",
-  "tooltip.exposure.hold_for_details": "§8Утримуйте [§7Shift§8] для подробиць"
+  "tooltip.exposure.hold_for_details": "§8Утримуйте [§7Shift§8] для подробиць",
+  "exposure.configuration.status_icon_offset_y": "Зміщення Інконки Статусу по X",
+  "exposure.configuration.status_icon_offset_x": "Зміщення Інконки Статусу по Y",
+  "exposure.configuration.hide_hud_while_in_viewfinder": "Ховати Решту Інтерфейсу"
 }
