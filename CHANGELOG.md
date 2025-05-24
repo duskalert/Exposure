@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.7.15 
+## 1.7.15 - 2025-05-24
 - Updated film item textures.
 
 ## 1.7.14 - 2025-05-21
