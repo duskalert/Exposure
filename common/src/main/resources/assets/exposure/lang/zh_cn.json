@@ -187,6 +187,7 @@
   "gui.exposure.album.right_click_to_remove": "§8[§7右键点击§8]以移除",
   "gui.exposure.album.sign": "署名",
   "gui.exposure.album.sign.warning": "注意！在你署名后，它将不能再被修改。",
+  "gui.exposure.camera_attachments.change_skin": "改变外观",
   "gui.exposure.camera_attachments.film.tooltip": "胶卷\n§7储存已经拍摄的底片\n§8[§7点击§8]查看可用的胶卷",
   "gui.exposure.camera_attachments.filter.tooltip": "滤镜\n§7着色或修改图像\n§8按[§7F4§8]开启或关闭\n§8[§7点击§8]查看可用的滤镜",
   "gui.exposure.camera_attachments.flash.tooltip": "闪光灯\n§7照亮相机前方一小片区域\n•可切换§f开§7/§f关§7/§f自动§7\n•当切换至§f自动§7模式时——将只会在相机位置亮度低于8时启动",
@@ -366,4 +367,7 @@
   "task.exposure.export.status.requesting": "正在请求“%s”-[%s/%s]",
   "task.exposure.export.stopped": "导出中止",
   "tooltip.exposure.hold_for_details": "§8按住[§7Shift§8]显示详细信息"
+  "exposure.configuration.status_icon_offset_y": "状态图标X方向偏移",
+  "exposure.configuration.status_icon_offset_x": "状态图标Y方向偏移",
+  "exposure.configuration.hide_hud_while_in_viewfinder": "激活时隐藏HUD其余部分"
 }
