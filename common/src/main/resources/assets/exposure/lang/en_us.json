@@ -369,5 +369,21 @@
   "tooltip.exposure.hold_for_details": "§8Hold [§7Shift§8] for Details",
   "exposure.configuration.status_icon_offset_y": "Status Icon Offset X",
   "exposure.configuration.status_icon_offset_x": "Status Icon Offset Y",
-  "exposure.configuration.hide_hud_while_in_viewfinder": "Hide Rest Of The HUD When Active"
+  "exposure.configuration.hide_hud_while_in_viewfinder": "Hide Rest Of The HUD When Active",
+  "tag.item.exposure.black_and_white_film_rolls": "Black and White Film Rolls",
+  "tag.item.exposure.black_printing_dyes": "Black Printing Dyes",
+  "tag.item.exposure.blue_filters": "Blue Filters",
+  "tag.item.exposure.color_film_rolls": "Color Film Rolls",
+  "tag.item.exposure.cyan_printing_dyes": "Cyan Printing Dyes",
+  "tag.item.exposure.developed_film_rolls": "Developed Film Rolls",
+  "tag.item.exposure.film_rolls": "Film Rolls",
+  "tag.item.exposure.filters": "Filters",
+  "tag.item.exposure.flashes": "Flashes",
+  "tag.item.exposure.green_filters": "Green Filters",
+  "tag.item.exposure.lenses": "Lenses",
+  "tag.item.exposure.magenta_printing_dyes": "Magenta Printing Dyes",
+  "tag.item.exposure.photo_agers": "Photo Agers",
+  "tag.item.exposure.photo_papers": "Photo Papers",
+  "tag.item.exposure.red_filters": "Red Filters",
+  "tag.item.exposure.yellow_printing_dyes": "Yellow Printing Dyes"
 }
