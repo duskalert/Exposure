@@ -1,5 +1,7 @@
 package io.github.mortuusars.exposure.util;
 
+import io.github.mortuusars.exposure.util.supporter.Supporter;
+import io.github.mortuusars.exposure.util.supporter.Supporters;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -7,7 +9,7 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class PatreonSupportersTests {
+public class SupportersTests {
     @Test
     void parsingCorrectlyFromJson() {
         String json =
@@ -24,7 +26,7 @@ public class PatreonSupportersTests {
         ]
         """;
 
-        List<PatreonSupporters.Supporter> supporters = PatreonSupporters.parseSupporters(json);
+        List<Supporter> supporters = new Supporters.Loader().parseSupporters(json);
 
         assertEquals(2, supporters.size());
         assertEquals("player1", supporters.getFirst().name());

@@ -1,0 +1,58 @@
+package io.github.mortuusars.exposure.util.supporter;
+
+import io.github.mortuusars.exposure.Exposure;
+import io.github.mortuusars.exposure.client.util.Minecrft;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.net.URI;
+import java.util.*;
+
+public class Gilded {
+    private long lastQueryTime = -1L;
+    private @Nullable List<Supporter> gildedSupporters = null;
+
+    public boolean canQuery() {
+        return System.currentTimeMillis() - lastQueryTime > 60000; // 1 min
+    }
+
+    public @NotNull List<Supporter> getOrQuery() {
+        if (gildedSupporters != null) return gildedSupporters;
+        if (!canQuery()) return Collections.emptyList();
+        return query();
+    }
+
+    public @NotNull List<Supporter> query() {
+        try {
+            lastQueryTime = System.currentTimeMillis();
+            Supporters.Loader loader = new Supporters.Loader();
+            loader.readFileFromURL(getUuidsUri()).thenAccept(json -> {
+                if (json == null) return;
+
+                List<Supporter> parsedSupporters = loader.parseSupporters(json);
+
+                Minecrft.execute(() -> {
+                    gildedSupporters = parsedSupporters;
+                });
+            });
+        } catch (Exception e) {
+            Exposure.LOGGER.warn("Cannot get list of supporters.", e);
+        }
+
+        if (gildedSupporters == null) {
+            return Collections.emptyList();
+        }
+
+        return gildedSupporters;
+    }
+
+    protected URI getUuidsUri() {
+        return URI.create("https://raw.githubusercontent.com/mortuusars/resources/refs/heads/main/supporters/uuids/gilded.json");
+    }
+
+    // --
+
+    public boolean hasAccessToGoldenSkin(UUID uuid) {
+        return getOrQuery().stream().anyMatch(s -> s.matches(uuid));
+    }
+}

@@ -8,7 +8,7 @@ import io.github.mortuusars.exposure.advancements.predicate.FramePredicate;
 import io.github.mortuusars.exposure.advancements.predicate.TamedPredicate;
 import io.github.mortuusars.exposure.advancements.trigger.FrameExposedTrigger;
 import io.github.mortuusars.exposure.advancements.trigger.FramePrintedTrigger;
-import io.github.mortuusars.exposure.util.PatreonSupporters;
+import io.github.mortuusars.exposure.util.supporter.Supporters;
 import io.github.mortuusars.exposure.world.block.FlashBlock;
 import io.github.mortuusars.exposure.world.block.LightroomBlock;
 import io.github.mortuusars.exposure.world.block.entity.LightroomBlockEntity;
@@ -99,7 +99,7 @@ public class Exposure {
         ArgumentTypes.init();
 
         // Query supporters early, so it will be available right away when needed
-        PatreonSupporters.getOrQuery();
+        Supporters.query();
     }
 
     public static void initServer(MinecraftServer server) {
