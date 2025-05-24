@@ -1,7 +1,7 @@
 # Changelog
 
 ## 1.7.15 
-
+- Updated film item textures.
 
 ## 1.7.14 - 2025-05-21
 - Updated localization files
