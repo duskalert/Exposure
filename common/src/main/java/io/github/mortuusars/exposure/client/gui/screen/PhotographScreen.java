@@ -16,6 +16,7 @@ import io.github.mortuusars.exposure.client.input.KeyBindings;
 import io.github.mortuusars.exposure.client.input.Modifier;
 import io.github.mortuusars.exposure.client.render.photograph.PhotographStyle;
 import io.github.mortuusars.exposure.client.util.Minecrft;
+import io.github.mortuusars.exposure.world.camera.ExposureType;
 import io.github.mortuusars.exposure.world.item.StackedPhotographsItem;
 import io.github.mortuusars.exposure.world.photograph.PhotographType;
 import io.github.mortuusars.exposure.world.camera.frame.Frame;
@@ -272,6 +273,12 @@ public class PhotographScreen extends Screen {
             return false;
         }
         ItemStack droppedStack = getCurrentPhotograph().getItemStack().copy();
+
+        // Set type so copying recipe works properly.
+        Frame frame = droppedStack.getOrDefault(Exposure.DataComponents.PHOTOGRAPH_FRAME, Frame.EMPTY);
+        ExposureType type = frame.type();
+        droppedStack.set(Exposure.DataComponents.PHOTOGRAPH_TYPE, type);
+
         Minecrft.gameMode().handleCreativeModeItemDrop(droppedStack);
         Minecrft.player().displayClientMessage(Component.translatable("gui.exposure.photograph_screen.item_dropped_message",
                 droppedStack.getDisplayName()), false);

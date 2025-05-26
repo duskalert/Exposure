@@ -1,5 +1,8 @@
 # Changelog
 
+## UNRELEASED
+- Fixed photographs dropped as item in creative mode from photograph screen not setting their type and thus require wrong dyes in copying recipe. 
+
 ## 1.9.6 - 2025-05-24
 - Fixed small server-side error.
 - Updated localization files.
