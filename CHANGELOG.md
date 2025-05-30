@@ -1,6 +1,7 @@
 # Changelog
 
-## UNRELEASED
+## 1.9.7 - 2025-05-30
+- Fixed rendering issue when Distance Horizons and Iris are both installed and shader is activated by force enabling direct capture when these mods are detected together.
 - Fixed photographs dropped as item in creative mode from photograph screen not setting their type and thus require wrong dyes in copying recipe. 
 
 ## 1.9.6 - 2025-05-24

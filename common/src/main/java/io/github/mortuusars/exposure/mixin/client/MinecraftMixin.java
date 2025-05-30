@@ -1,6 +1,8 @@
 package io.github.mortuusars.exposure.mixin.client;
 
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.mojang.blaze3d.pipeline.RenderTarget;
+import io.github.mortuusars.exposure.Exposure;
 import io.github.mortuusars.exposure.client.camera.CameraClient;
 import io.github.mortuusars.exposure.client.camera.viewfinder.ViewfinderCameraControlsScreen;
 import io.github.mortuusars.exposure.client.capture.task.BackgroundScreenshotCaptureTask;
@@ -67,11 +69,15 @@ public abstract class MinecraftMixin {
 
     /**
      * Fixes incompatibility with Iris and Distant Horizons (and potentially others).
+     * But this is not working properly if Distant Horizons and Iris are both installed and shaders are used - LODs render weirdly on top.
+     * (this issue is also fixes itself when LODs are toggled off and back on again). I don't know how to fix it, so Background capture is disabled if those mods are both detected.
+     * If those mods are used by themselves all is ok.
      */
-    @Inject(method = "getMainRenderTarget", at = @At("HEAD"), cancellable = true)
-    void onGetMainRenderTarget(CallbackInfoReturnable<RenderTarget> cir) {
-        if (BackgroundScreenshotCaptureTask.capturing && BackgroundScreenshotCaptureTask.renderTarget != null) {
-            cir.setReturnValue(BackgroundScreenshotCaptureTask.renderTarget);
+    @ModifyReturnValue(method = "getMainRenderTarget", at = @At("RETURN"))
+    RenderTarget onGetMainRenderTarget(RenderTarget original) {
+        if (BackgroundScreenshotCaptureTask.isCapturing()) {
+            return BackgroundScreenshotCaptureTask.getRenderTarget();
         }
+        return original;
     }
 }

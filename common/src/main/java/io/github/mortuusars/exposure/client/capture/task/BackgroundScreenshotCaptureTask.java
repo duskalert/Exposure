@@ -15,21 +15,33 @@ import io.github.mortuusars.exposure.util.cycles.task.Task;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Screenshot;
 import net.minecraft.client.renderer.PostChain;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 
 /**
  * Captures a screenshot without showing it on screen. Makes photographing a seamless experience™.
  */
 public class BackgroundScreenshotCaptureTask extends Task<Result<Image>> {
-    public static boolean capturing = false;
-    public static @Nullable RenderTarget renderTarget = null;
+    private static boolean capturing = false;
+    private static @Nullable RenderTarget renderTarget = null;
+
+    public static boolean isCapturing() {
+        return capturing && renderTarget != null;
+    }
+
+    public static @NotNull RenderTarget getRenderTarget() {
+        return Objects.requireNonNull(renderTarget);
+    }
+
+    // --
 
     @Override
     public CompletableFuture<Result<Image>> execute() {
         if (ExposureClient.shouldUseDirectCapture()) {
-            Exposure.LOGGER.warn("BackgroundScreenshotCaptureMethod is used while Iris or Oculus is installed. " +
+            Exposure.LOGGER.warn("BackgroundScreenshotCaptureMethod is used while incompatible mods are installed. " +
                     "Captured image most likely will not look as expected.");
         }
 
@@ -64,10 +76,11 @@ public class BackgroundScreenshotCaptureTask extends Task<Result<Image>> {
             minecraft.gameRenderer.setPanoramicMode(false);
             minecraft.gameRenderer.setRenderBlockOutline(true);
             renderTarget.destroyBuffers();
+            renderTarget.unbindWrite();
             renderTarget = null;
+            capturing = false;
             minecraft.levelRenderer.graphicsChanged();
             minecraft.getMainRenderTarget().bindWrite(true);
-            capturing = false;
         }
     }
 

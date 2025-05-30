@@ -15,8 +15,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class KubeJSGameClientEventHandlerMixin {
     @Inject(method = "worldRender", at = @At("RETURN"))
     private static void onWorldRender(RenderLevelStageEvent event, CallbackInfo ci) {
-        if (BackgroundScreenshotCaptureTask.capturing && BackgroundScreenshotCaptureTask.renderTarget != null) {
-            BackgroundScreenshotCaptureTask.renderTarget.bindWrite(false);
+        if (BackgroundScreenshotCaptureTask.isCapturing()) {
+            BackgroundScreenshotCaptureTask.getRenderTarget().bindWrite(false);
         }
     }
 }

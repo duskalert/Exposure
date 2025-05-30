@@ -82,8 +82,13 @@ public class ExposureClient {
     // --
 
     public static boolean shouldUseDirectCapture() {
-        //noinspection ConstantValue
-        return Config.Client.FORCE_DIRECT_CAPTURE.isTrue() || Config.Client.FORCE_DIRECT_CAPTURE_MODS.get().stream().anyMatch(PlatformHelper::isModLoaded);
+        if (PlatformHelper.isModLoaded("distanthorizons")
+                && (PlatformHelper.isModLoaded("oculus") || PlatformHelper.isModLoaded("iris"))) {
+            return true;
+        }
+
+        return Config.Client.FORCE_DIRECT_CAPTURE.isTrue()
+                || Config.Client.FORCE_DIRECT_CAPTURE_MODS.get().stream().anyMatch(PlatformHelper::isModLoaded);
     }
 
     // --
