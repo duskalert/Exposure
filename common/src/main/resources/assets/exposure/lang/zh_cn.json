@@ -366,8 +366,24 @@
   "task.exposure.export.status.exporting": "正在导出“%s”-[%s/%s]",
   "task.exposure.export.status.requesting": "正在请求“%s”-[%s/%s]",
   "task.exposure.export.stopped": "导出中止",
-  "tooltip.exposure.hold_for_details": "§8按住[§7Shift§8]显示详细信息"
+  "tooltip.exposure.hold_for_details": "§8按住[§7Shift§8]显示详细信息",
   "exposure.configuration.status_icon_offset_y": "状态图标X方向偏移",
   "exposure.configuration.status_icon_offset_x": "状态图标Y方向偏移",
-  "exposure.configuration.hide_hud_while_in_viewfinder": "激活时隐藏HUD其余部分"
+  "exposure.configuration.hide_hud_while_in_viewfinder": "激活时隐藏HUD其余部分",
+  "tag.item.exposure.black_and_white_film_rolls": "黑白胶卷",
+  "tag.item.exposure.black_printing_dyes": "黑色打印染料",
+  "tag.item.exposure.blue_filters": "蓝色滤镜",
+  "tag.item.exposure.color_film_rolls": "彩色胶卷",
+  "tag.item.exposure.cyan_printing_dyes": "青色打印染料",
+  "tag.item.exposure.developed_film_rolls": "已冲洗胶卷",
+  "tag.item.exposure.film_rolls": "胶卷",
+  "tag.item.exposure.filters": "滤镜",
+  "tag.item.exposure.flashes": "闪光灯",
+  "tag.item.exposure.green_filters": "绿色滤镜",
+  "tag.item.exposure.lenses": "镜头",
+  "tag.item.exposure.magenta_printing_dyes": "品红色打印染料",
+  "tag.item.exposure.photo_agers": "照片做旧",
+  "tag.item.exposure.photo_papers": "相纸",
+  "tag.item.exposure.red_filters": "红色滤镜",
+  "tag.item.exposure.yellow_printing_dyes": "黄色打印染料"
 }
