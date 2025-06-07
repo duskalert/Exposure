@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.9.8 - 2025-06-07
+- Added `ProtoManly's Weather` to the `force_direct_capture_default_mods` config option, to fix their sky not appearing in photos.
+  - This change will not apply to existing configs, so you'll need to delete existing file to let it regenerate or add it manually. 
+- Updated localization files.
+
 ## 1.9.7 - 2025-05-30
 - Fixed rendering issue when Distance Horizons and Iris are both installed and shader is activated by force enabling direct capture when these mods are detected together.
 - Fixed photographs dropped as item in creative mode from photograph screen not setting their type and thus require wrong dyes in copying recipe. 

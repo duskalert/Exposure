@@ -5,8 +5,6 @@ import dev.architectury.injectables.annotations.ExpectPlatform;
 import io.github.mortuusars.exposure.Config;
 import io.github.mortuusars.exposure.Exposure;
 import io.github.mortuusars.exposure.PlatformHelper;
-import io.github.mortuusars.exposure.client.gui.screen.ItemListScreen;
-import io.github.mortuusars.exposure.client.util.Minecrft;
 import io.github.mortuusars.exposure.world.camera.ExposureType;
 import io.github.mortuusars.exposure.client.gui.screen.ItemRenameScreen;
 import io.github.mortuusars.exposure.client.gui.screen.album.AlbumScreen;
@@ -18,12 +16,9 @@ import io.github.mortuusars.exposure.integration.jei.recipe.PhotographStackingJe
 import io.github.mortuusars.exposure.world.item.crafting.recipe.ComponentTransferringRecipe;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
-import mezz.jei.api.gui.handlers.IGlobalGuiHandler;
 import mezz.jei.api.gui.handlers.IGuiContainerHandler;
 import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.registration.*;
-import mezz.jei.api.runtime.IClickableIngredient;
-import mezz.jei.api.runtime.IIngredientManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.network.chat.Component;
@@ -32,7 +27,6 @@ import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
-import java.util.Optional;
 
 @JeiPlugin
 public class ExposureJeiPlugin implements IModPlugin {
