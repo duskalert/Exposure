@@ -1,16 +1,20 @@
 package io.github.mortuusars.exposure.util.supporter;
 
+import com.google.common.io.CharStreams;
 import com.google.gson.*;
 import io.github.mortuusars.exposure.Exposure;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
+import java.net.URL;
+import java.net.URLConnection;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
-import java.util.concurrent.CompletableFuture;
 
 public class Supporters {
     private static final Gilded gilded = new Gilded();
@@ -36,39 +40,43 @@ public class Supporters {
     }
 
     public static class Loader {
-        public CompletableFuture<@Nullable String> readFileFromURL(URI uri) {
-            try (HttpClient client = HttpClient.newHttpClient()) {
-                HttpRequest request = HttpRequest.newBuilder()
-                        .uri(uri)
-                        .build();
+        public @Nullable String readFileFromURL(URI uri) {
+            try {
+                URL url = uri.toURL();
+                URLConnection connection = url.openConnection();
+                connection.setConnectTimeout(10000); // 10 seconds
+                @Nullable String encoding = connection.getContentEncoding();
+                Charset charset = (encoding == null) ? StandardCharsets.UTF_8 : Charset.forName(encoding);
 
-                return client.sendAsync(request, HttpResponse.BodyHandlers.ofString())
-                        .thenApply(HttpResponse::body)
-                        .exceptionally(e -> {
-                            Exposure.LOGGER.warn("Cannot get list of supporters.", e);
-                            return null;
-                        });
+                try (Reader reader = new BufferedReader(new InputStreamReader(url.openStream(), charset))) {
+                    return CharStreams.toString(reader);
+                }
             } catch (Exception e) {
-                Exposure.LOGGER.warn("Cannot get list of supporters from {}.", uri, e);
-                return CompletableFuture.completedFuture(null);
+                Exposure.LOGGER.warn("Cannot read file from '{}': {}", uri, e.getMessage());
             }
+            return null;
         }
 
         public @NotNull List<Supporter> parseSupporters(String json) {
-            Gson gson = new Gson();
-            JsonArray array = JsonParser.parseString(json).getAsJsonArray();
-            List<Supporter> supporters = new ArrayList<>();
+            try {
+                Gson gson = new Gson();
+                JsonArray array = JsonParser.parseString(json).getAsJsonArray();
+                List<Supporter> supporters = new ArrayList<>();
 
-            for (JsonElement element : array) {
-                try {
-                    Supporter p = gson.fromJson(element, Supporter.class);
-                    supporters.add(p);
-                } catch (Exception e) {
-                    Exposure.LOGGER.warn("Cannot parse supporter from '{}'", element, e);
+                for (JsonElement element : array) {
+                    try {
+                        Supporter p = gson.fromJson(element, Supporter.class);
+                        supporters.add(p);
+                    } catch (Exception e) {
+                        Exposure.LOGGER.warn("Cannot parse supporter from '{}': {}", element, e.getMessage());
+                    }
                 }
-            }
 
-            return supporters;
+                return supporters;
+            } catch (Exception e) {
+                Exposure.LOGGER.warn("Cannot get list of supporters: {}", e.getMessage());
+                return Collections.emptyList();
+            }
         }
     }
 }

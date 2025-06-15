@@ -1,7 +1,6 @@
 package io.github.mortuusars.exposure.util.supporter;
 
 import io.github.mortuusars.exposure.Exposure;
-import io.github.mortuusars.exposure.client.util.Minecrft;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -26,8 +25,14 @@ public class Patreon {
         lastQueryTime = System.currentTimeMillis();
         try {
             Supporters.Loader loader = new Supporters.Loader();
-            for (Tier patreonTier : Tier.values()) {
-                loader.readFileFromURL(patreonTier.getUuidsUri()).thenAccept(json -> {
+
+            if (patrons != null) {
+                patrons.clear();
+            }
+
+            new Thread(() -> {
+                for (Tier patreonTier : Tier.values()) {
+                    String json = loader.readFileFromURL(patreonTier.getUuidsUri());
                     if (json == null) return;
 
                     List<Supporter> parsedSupporters = loader.parseSupporters(json);
@@ -35,12 +40,10 @@ public class Patreon {
                     if (patrons == null) {
                         patrons = new HashMap<>();
                     }
+
                     patrons.put(patreonTier, parsedSupporters);
-                }).exceptionally(e -> {
-                    Exposure.LOGGER.warn("Cannot get list of supporters.", e);
-                    return null;
-                });
-            }
+                }
+            }).start();
         } catch (Exception e) {
             Exposure.LOGGER.warn("Cannot get list of supporters.", e);
         }

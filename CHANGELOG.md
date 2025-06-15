@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.9.9 - 2025-06-15
+- Fixed github query hanging the game for long time when it's not available.
+
 ## 1.9.8 - 2025-06-07
 - Added `ProtoManly's Weather` to the `force_direct_capture_default_mods` config option, to fix their sky not appearing in photos.
   - This change will not apply to existing configs, so you'll need to delete existing file to let it regenerate or add it manually. 

@@ -1,7 +1,6 @@
 package io.github.mortuusars.exposure.util.supporter;
 
 import io.github.mortuusars.exposure.Exposure;
-import io.github.mortuusars.exposure.client.util.Minecrft;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -23,16 +22,15 @@ public class Gilded {
     }
 
     public @NotNull List<Supporter> query() {
+        lastQueryTime = System.currentTimeMillis();
         try {
-            lastQueryTime = System.currentTimeMillis();
             Supporters.Loader loader = new Supporters.Loader();
-            loader.readFileFromURL(getUuidsUri()).thenAccept(json -> {
+
+            new Thread(() -> {
+                String json = loader.readFileFromURL(getUuidsUri());
                 if (json == null) return;
                 gildedSupporters = loader.parseSupporters(json);
-            }).exceptionally(e -> {
-                Exposure.LOGGER.warn("Cannot get list of supporters.", e);
-                return null;
-            });
+            }).start();
         } catch (Exception e) {
             Exposure.LOGGER.warn("Cannot get list of supporters.", e);
         }
