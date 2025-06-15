@@ -22,16 +22,15 @@ public class Gilded {
     }
 
     public @NotNull List<Supporter> query() {
+        lastQueryTime = System.currentTimeMillis();
         try {
-            lastQueryTime = System.currentTimeMillis();
             Supporters.Loader loader = new Supporters.Loader();
-            loader.readFileFromURL(getUuidsUri()).thenAccept(json -> {
+
+            new Thread(() -> {
+                String json = loader.readFileFromURL(getUuidsUri());
                 if (json == null) return;
                 gildedSupporters = loader.parseSupporters(json);
-            }).exceptionally(e -> {
-                Exposure.LOGGER.warn("Cannot get list of supporters.", e);
-                return null;
-            });
+            }).start();
         } catch (Exception e) {
             Exposure.LOGGER.warn("Cannot get list of supporters.", e);
         }

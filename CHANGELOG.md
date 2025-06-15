@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.7.16 - 2025-06-15
+- Fixed github query hanging the game for long time when it's not available.
+
 ## 1.7.15 - 2025-05-24
 - Updated film item textures.
 
