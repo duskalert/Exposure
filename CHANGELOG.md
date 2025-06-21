@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.9.10 - UNRELEASED
+- Fixed not being able to extract a Camera item from Refined Storage grids. 
+
 ## 1.9.9 - 2025-06-15
 - Fixed github query hanging the game for long time when it's not available.
 
