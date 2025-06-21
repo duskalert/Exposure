@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.9.10 - UNRELEASED
+## 1.9.10 - 2025-06-21
 - Create Deployer can now install/swap attachments on Camera Stand.
 - Fixed not being able to extract a Camera item from Refined Storage grids. 
 
