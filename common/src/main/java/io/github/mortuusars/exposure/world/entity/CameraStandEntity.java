@@ -39,7 +39,6 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.vehicle.AbstractMinecart;
 import net.minecraft.world.entity.vehicle.Boat;
-import net.minecraft.world.entity.vehicle.Minecart;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -315,6 +314,13 @@ public class CameraStandEntity extends Entity implements CameraHolder {
 
         if (cameraStack.isEmpty()) return InteractionResult.PASS;
         if (!(cameraStack.getItem() instanceof CameraItem cameraItem)) return InteractionResult.PASS;
+
+        if (PlatformHelper.isCreateDeployer(player, hand)) {
+            if (Config.Server.CREATE_DEPLOYER_STAND_HOTSWAP.get()) {
+                return handleSneakInteraction(player, hand, cameraItem, cameraStack, handStack);
+            }
+            return InteractionResult.CONSUME;
+        }
 
         if (player.isSecondaryUseActive()) {
             return handleSneakInteraction(player, hand, cameraItem, cameraStack, handStack);

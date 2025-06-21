@@ -16,6 +16,7 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Inventory;
@@ -85,8 +86,22 @@ public class PlatformHelperImpl {
         return FabricLoader.getInstance().isModLoaded(modId);
     }
 
+    /**
+     * This method is here because on forge checking if mod is loaded at mixin apply time is different (LoadingModList vs ModList)
+     * But on fabric we can use the same code.
+     */
+    public static boolean isModLoading(String modId) {
+        return isModLoaded(modId);
+    }
+
     public static boolean isInDevEnv() {
         return FabricLoader.getInstance().isDevelopmentEnvironment();
+    }
+
+    // --
+
+    public static boolean isCreateDeployer(Player player, InteractionHand hand) {
+        return false;
     }
 
     // --

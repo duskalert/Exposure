@@ -9,8 +9,10 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
@@ -55,6 +57,11 @@ public class PlatformHelper {
     }
 
     @ExpectPlatform
+    public static boolean isModLoading(String modId) {
+        throw new AssertionError();
+    }
+
+    @ExpectPlatform
     public static boolean isInDevEnv() {
         throw new AssertionError();
     }
@@ -75,6 +82,11 @@ public class PlatformHelper {
     @ExpectPlatform
     public static void postFrameAddedEvent(CameraHolder holder, ItemStack camera, Frame frame,
                                            List<BlockPos> positionsInFrame, List<LivingEntity> entitiesInFrame) {
+        throw new AssertionError();
+    }
+
+    @ExpectPlatform
+    public static boolean isCreateDeployer(Player player, InteractionHand hand) {
         throw new AssertionError();
     }
 }
