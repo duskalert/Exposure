@@ -29,6 +29,7 @@ public class Config {
         public static final ModConfigSpec.IntValue CAMERA_STAND_WORKING_RANGE;
         public static final ModConfigSpec.BooleanValue CAMERA_STAND_RANGE_MALFUNCTION;
         public static final ModConfigSpec.BooleanValue CAMERA_STAND_FALLBACK_TO_OTHER_PLAYERS;
+        public static final ModConfigSpec.BooleanValue CAMERA_STAND_FALLBACK_TO_OTHER_PLAYERS_PROJECTOR;
 
         // Capture
         public static final ModConfigSpec.IntValue DEFAULT_FRAME_SIZE;
@@ -112,6 +113,11 @@ public class Config {
                 CAMERA_STAND_FALLBACK_TO_OTHER_PLAYERS = builder
                         .comment("If owner of the Camera Stand is not in range, closest player will be chosen to create and render a photo. Default: true")
                         .define("fallback_to_other_players", true);
+                CAMERA_STAND_FALLBACK_TO_OTHER_PLAYERS_PROJECTOR = builder
+                        .comment("Other players can be chosen for Interplanar Projector exposure, if owner is not in range.",
+                                "WARNING: If enabled, projector will attempt to load an image from other player's computer (or use their PC to load from URL). Potentially, this can be used for malicious intents.",
+                                "Default: false")
+                        .define("fallback_to_other_players_projector", false);
                 builder.pop();
             }
 

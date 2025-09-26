@@ -10,6 +10,8 @@ import io.github.mortuusars.exposure.network.packet.clientbound.CameraStandSetRo
 import io.github.mortuusars.exposure.network.packet.clientbound.CameraStandStopControllingS2CP;
 import io.github.mortuusars.exposure.world.camera.CameraId;
 import io.github.mortuusars.exposure.world.inventory.CameraOnStandAttachmentsMenu;
+import io.github.mortuusars.exposure.world.item.InterplanarProjectorItem;
+import io.github.mortuusars.exposure.world.item.camera.Attachment;
 import io.github.mortuusars.exposure.world.item.camera.CameraItem;
 import io.github.mortuusars.exposure.world.sound.Sound;
 import net.minecraft.ChatFormatting;
@@ -76,7 +78,7 @@ public class CameraStandEntity extends Entity implements CameraHolder {
             SynchedEntityData.defineId(CameraStandEntity.class, EntityDataSerializers.BOOLEAN);
 
     protected static final Predicate<Entity> RIDABLE_MINECARTS = entity -> entity instanceof AbstractMinecart
-            && ((AbstractMinecart)entity).getMinecartType() == AbstractMinecart.Type.RIDEABLE;
+            && ((AbstractMinecart) entity).getMinecartType() == AbstractMinecart.Type.RIDEABLE;
 
     protected CameraStandRedstoneControl redstoneControl = new CameraStandRedstoneControl(this);
     protected UUID ownerPlayerId = Util.NIL_UUID;
@@ -161,7 +163,7 @@ public class CameraStandEntity extends Entity implements CameraHolder {
         return Optional.ofNullable(level().getPlayerByUUID(ownerPlayerId));
     }
 
-    public UUID getOwnerPlayerId() {
+    public UUID getOwnerPlayerUuid() {
         return ownerPlayerId;
     }
 
@@ -414,7 +416,7 @@ public class CameraStandEntity extends Entity implements CameraHolder {
         cameraItem.activateOnStand(player, getCamera(), this);
         setOperator(player);
 
-        if (getOwnerPlayerId().equals(Util.NIL_UUID)) {
+        if (getOwnerPlayerUuid().equals(Util.NIL_UUID)) {
             setOwnerPlayer(player);
         }
 
@@ -449,11 +451,23 @@ public class CameraStandEntity extends Entity implements CameraHolder {
 
     public void release() {
         if (!isMalfunctioned() && !isOnCooldown() && getCamera().getItem() instanceof CameraItem cameraItem) {
-            getPlayerExecutingExposure().ifPresentOrElse(
-                    player -> cameraItem.release(this, getCamera()),
-                    this::malfunction);
+            getPlayerExecutingExposure()
+                    .filter(player -> !shouldMalfunction(player))
+                    .ifPresentOrElse(
+                            player -> cameraItem.release(this, getCamera()),
+                            this::malfunction);
             forceUpdate();
         }
+    }
+
+    protected boolean shouldMalfunction(Player player) {
+        if (!Config.Server.CAMERA_STAND_FALLBACK_TO_OTHER_PLAYERS_PROJECTOR.get()
+                && Attachment.FILTER.get(getCamera()).getItem() instanceof InterplanarProjectorItem
+                && !player.getUUID().equals(getOwnerPlayerUuid())) {
+            return true;
+        }
+
+        return false;
     }
 
     protected void malfunction() {
@@ -487,25 +501,27 @@ public class CameraStandEntity extends Entity implements CameraHolder {
             setCooldown(cooldown - 1);
         }
 
+        if (isClientSide()) {
+            return;
+        }
+
         redstoneControl.tick();
 
-        if (!isClientSide() && getCamera().getItem() instanceof CameraItem cameraItem && cameraItem.tick(this, getCamera())) {
+        if (getCamera().getItem() instanceof CameraItem cameraItem && cameraItem.tick(this, getCamera())) {
             forceUpdate();
         }
 
-        if (!isClientSide()) {
-            @Nullable CameraOperator operator = operator();
-            if (operator == null) {
-                if (getCamera().getItem() instanceof CameraItem cameraItem && cameraItem.isActive(getCamera())) {
-                    cameraItem.deactivate(this, getCamera());
-                }
-            } else {
-                if (!isInInteractionRange(operator.asOperatorEntity())) {
-                    stopControlling();
-                } else if (!isCameraActive() && !(operator instanceof Player player
-                        && player.containerMenu instanceof CameraOnStandAttachmentsMenu)) {
-                    stopControlling();
-                }
+        @Nullable CameraOperator operator = operator();
+        if (operator == null) {
+            if (getCamera().getItem() instanceof CameraItem cameraItem && cameraItem.isActive(getCamera())) {
+                cameraItem.deactivate(this, getCamera());
+            }
+        } else {
+            if (!isInInteractionRange(operator.asOperatorEntity())) {
+                stopControlling();
+            } else if (!isCameraActive() && !(operator instanceof Player player
+                    && player.containerMenu instanceof CameraOnStandAttachmentsMenu)) {
+                stopControlling();
             }
         }
     }

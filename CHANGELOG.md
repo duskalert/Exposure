@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.9.11 - 2025-09-26
+- Camera on stand will now malfunction when attempting to take a shot with Interplanar Projector without an owner nearby.
+  - Added `camera_stand.fallback_to_other_players_projector` config option original behavior is desired.
+
 ## 1.9.10 - 2025-06-21
 - Create Deployer can now install/swap attachments on Camera Stand.
 - Fixed not being able to extract a Camera item from Refined Storage grids. 
