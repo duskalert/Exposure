@@ -25,7 +25,7 @@ public class FillingBySpoutMixin {
      * Transfers components from input stack to results, but only if input and result are both {@link FilmItem}.
      */
     @ModifyVariable(method = "fillItem", at = @At(value = "INVOKE_ASSIGN",
-            target = "Lcom/simibubi/create/content/fluids/transfer/FillingRecipe;rollResults()Ljava/util/List;"), index = 7)
+            target = "Lcom/simibubi/create/content/fluids/transfer/FillingRecipe;rollResults(Lnet/minecraft/util/RandomSource;)Ljava/util/List;"), index = 7)
     private static List<ItemStack> onFillItem(List<ItemStack> results, Level world, int requiredAmount, ItemStack stack, FluidStack availableFluid) {
         if (!(stack.getItem() instanceof FilmItem)) {
             return results;

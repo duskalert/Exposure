@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.9.12 - 2025-10-30
+- [NeoForge] Fixed crash with Create 6.0.7.
+
 ## 1.9.11 - 2025-09-26
 - Camera on stand will now malfunction when attempting to take a shot with Interplanar Projector without an owner nearby.
   - Added `camera_stand.fallback_to_other_players_projector` config option original behavior is desired.
