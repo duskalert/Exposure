@@ -58,7 +58,7 @@ dependencies {
     modRuntimeOnly("maven.modrinth:sodium:mc1.20.1-0.5.13-fabric")
 
     // Create
-    modCompileOnly("com.simibubi.create:create-fabric-${minecraft_version}:${create_fabric_version}")
+    // modCompileOnly("com.simibubi.create:create-fabric-${minecraft_version}:${create_fabric_version}")
     // modRuntimeOnly("com.simibubi.create:create-fabric-${minecraft_version}:${create_fabric_version}")
 
     // C2ME
