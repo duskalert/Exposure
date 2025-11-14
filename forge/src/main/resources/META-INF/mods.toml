@@ -1,6 +1,6 @@
 modLoader="javafml"
 license="${mod_license}"
-loaderVersion="${neoforge_loader_version_range}"
+loaderVersion="${forge_loader_version_range}"
 issueTrackerURL="${mod_issues}"
 displayURL="${mod_page}"
 logoFile="${mod_id}_logo.png"
@@ -9,7 +9,7 @@ logoFile="${mod_id}_logo.png"
 config="exposure-common.mixins.json"
 
 [[mixins]]
-config="exposure-neoforge.mixins.json"
+config="exposure-forge.mixins.json"
 
 [[mods]]
 modId="${mod_id}"
@@ -19,9 +19,9 @@ authors="${mod_authors}"
 description="${mod_description}"
 
 [[dependencies.${mod_id}]]
-modId="neoforge"
+modId="forge"
 required=true
-versionRange="${neoforge_version_range}"
+versionRange="${forge_version_range}"
 ordering="NONE"
 side="BOTH"
 
