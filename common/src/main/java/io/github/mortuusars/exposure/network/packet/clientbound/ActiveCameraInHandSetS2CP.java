@@ -6,6 +6,7 @@ import io.github.mortuusars.exposure.world.camera.CameraId;
 import io.github.mortuusars.exposure.world.camera.CameraInHand;
 import io.github.mortuusars.exposure.world.entity.CameraHolder;
 import io.github.mortuusars.exposure.world.entity.CameraOperator;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
@@ -19,7 +20,6 @@ import org.jetbrains.annotations.NotNull;
 
 public record ActiveCameraInHandSetS2CP(int operatorEntityId, CameraId cameraId, InteractionHand hand) implements Packet {
     public static final ResourceLocation ID = Exposure.resource("active_camera_in_hand_set");
-    public static final Type<ActiveCameraInHandSetS2CP> TYPE = new Type<>(ID);
 
     public static final StreamCodec<RegistryFriendlyByteBuf, ActiveCameraInHandSetS2CP> STREAM_CODEC = StreamCodec.composite(
             ByteBufCodecs.VAR_INT, ActiveCameraInHandSetS2CP::operatorEntityId,
@@ -29,8 +29,14 @@ public record ActiveCameraInHandSetS2CP(int operatorEntityId, CameraId cameraId,
     );
 
     @Override
-    public @NotNull Type<? extends CustomPacketPayload> type() {
-        return TYPE;
+    public void toPacket(FriendlyByteBuf buf) {
+        buf.writeInt(operatorEntityId);
+        cameraId.toPacket(buf);
+        buf.writeEnum(hand);
+    }
+
+    public static ActiveCameraInHandSetS2CP fromPacket(FriendlyByteBuf buf) {
+        return new ActiveCameraInHandSetS2CP(buf.readInt(),CameraId.fromPacket(buf),buf.readEnum(InteractionHand.class));
     }
 
     @Override

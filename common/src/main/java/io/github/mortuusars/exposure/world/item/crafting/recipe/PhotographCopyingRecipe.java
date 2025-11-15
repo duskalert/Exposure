@@ -3,6 +3,7 @@ package io.github.mortuusars.exposure.world.item.crafting.recipe;
 import io.github.mortuusars.exposure.Exposure;
 import io.github.mortuusars.exposure.world.item.PhotographItem;
 import net.minecraft.core.NonNullList;
+import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.*;
 import org.jetbrains.annotations.NotNull;
@@ -19,7 +20,7 @@ public class PhotographCopyingRecipe extends ComponentTransferringRecipe {
 
     @Override
     public @NotNull ItemStack transferComponents(ItemStack stack, ItemStack recipeResultStack) {
-        int generation = stack.getOrDefault(Exposure.DataComponents.PHOTOGRAPH_GENERATION, 0);
+        int generation = Exposure.DataComponents.getPhotographGeneration(stack, 0);
         if (generation < 2) {
             ItemStack result = super.transferComponents(stack, recipeResultStack);
             result.set(Exposure.DataComponents.PHOTOGRAPH_GENERATION, generation + 1);
@@ -30,7 +31,7 @@ public class PhotographCopyingRecipe extends ComponentTransferringRecipe {
     }
 
     @Override
-    public @NotNull NonNullList<ItemStack> getRemainingItems(CraftingInput input) {
+    public @NotNull NonNullList<ItemStack> getRemainingItems(CraftingContainer input) {
         NonNullList<ItemStack> remainingItems = super.getRemainingItems(input);;
 
         for(int i = 0; i < remainingItems.size(); ++i) {

@@ -96,7 +96,7 @@ public class ExposureClient {
 
     private static void registerItemModelProperties() {
         ItemProperties.register(Exposure.Items.CAMERA.get(), Exposure.resource("camera_gold"), (stack, level, entity, seed) ->
-                stack.getOrDefault(Exposure.DataComponents.CAMERA_GOLD, false) ? 1 : 0);
+                Exposure.DataComponents.getCameraGold(stack,false) ? 1 : 0);
 
         ItemProperties.register(Exposure.Items.CAMERA.get(), Exposure.resource("camera_active"), (stack, level, entity, seed) ->
                 stack.getItem() instanceof CameraItem cameraItem && cameraItem.isActive(stack) ? 1 : 0);

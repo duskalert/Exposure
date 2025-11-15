@@ -4,30 +4,24 @@ import io.github.mortuusars.exposure.Exposure;
 import io.github.mortuusars.exposure.world.camera.capture.CaptureParameters;
 import io.github.mortuusars.exposure.network.handler.ClientPacketsHandler;
 import io.github.mortuusars.exposure.network.packet.Packet;
-import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.codec.ByteBufCodecs;
-import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.protocol.PacketFlow;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
 public record CaptureStartDebugRGBS2CP(ResourceLocation templateId, List<CaptureParameters> captureProperties) implements Packet {
     public static final ResourceLocation ID = Exposure.resource("capture_start_debug_rgb");
-    public static final Type<CaptureStartDebugRGBS2CP> TYPE = new Type<>(ID);
-
-    public static final StreamCodec<RegistryFriendlyByteBuf, CaptureStartDebugRGBS2CP> STREAM_CODEC = StreamCodec.composite(
-            ResourceLocation.STREAM_CODEC, CaptureStartDebugRGBS2CP::templateId,
-            CaptureParameters.STREAM_CODEC.apply(ByteBufCodecs.list(3)), CaptureStartDebugRGBS2CP::captureProperties,
-            CaptureStartDebugRGBS2CP::new
-    );
 
     @Override
-    public @NotNull Type<? extends CustomPacketPayload> type() {
-        return TYPE;
+    public void toPacket(FriendlyByteBuf buf) {
+        buf.writeResourceLocation(templateId);
+        buf.writeCollection(captureProperties,(buf1, captureParameters) -> captureParameters.toPacket(buf1));
+    }
+
+    public static CaptureStartDebugRGBS2CP fromPacket(FriendlyByteBuf buf) {
+        return new CaptureStartDebugRGBS2CP(buf.readResourceLocation(),buf.readList(CaptureParameters::fromPacket));
     }
 
     @Override

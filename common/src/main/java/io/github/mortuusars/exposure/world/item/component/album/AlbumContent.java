@@ -3,9 +3,7 @@ package io.github.mortuusars.exposure.world.item.component.album;
 import com.google.common.base.Preconditions;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.codec.ByteBufCodecs;
-import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.FriendlyByteBuf;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -16,13 +14,16 @@ public record AlbumContent(List<AlbumPage> pages) {
     public static final int MAX_PAGES = 16;
 
     public static final Codec<AlbumContent> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-            AlbumPage.CODEC.sizeLimitedListOf(MAX_PAGES).fieldOf("pages").forGetter(AlbumContent::pages)
+            AlbumPage.CODEC.listOf().fieldOf("pages").forGetter(AlbumContent::pages)
     ).apply(instance, AlbumContent::new));
 
-    public static final StreamCodec<RegistryFriendlyByteBuf, AlbumContent> STREAM_CODEC = StreamCodec.composite(
-            AlbumPage.STREAM_CODEC.apply(ByteBufCodecs.list(MAX_PAGES)), AlbumContent::pages,
-            AlbumContent::new
-    );
+    public void toPacket(FriendlyByteBuf buf) {
+        buf.writeCollection(pages,(buf1, albumPage) -> albumPage.toPacket(buf1));
+    }
+
+    public static AlbumContent fromPacket(FriendlyByteBuf buf) {
+        return new AlbumContent(buf.readList(AlbumPage::fromPacket));
+    }
 
     public static final AlbumContent EMPTY = new AlbumContent(Collections.emptyList());
 

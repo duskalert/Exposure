@@ -235,8 +235,8 @@ public class PhotographScreen extends Screen {
     }
 
     @Override
-    public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
-        if (super.mouseScrolled(mouseX, mouseY, scrollX, scrollY)) return true;
+    public boolean mouseScrolled(double mouseX, double mouseY,double scrollY) {
+        if (super.mouseScrolled(mouseX, mouseY, scrollY)) return true;
 
         if (scrollY >= 0.0) {
             zoom.zoomIn();
@@ -275,9 +275,9 @@ public class PhotographScreen extends Screen {
         ItemStack droppedStack = getCurrentPhotograph().getItemStack().copy();
 
         // Set type so copying recipe works properly.
-        Frame frame = droppedStack.getOrDefault(Exposure.DataComponents.PHOTOGRAPH_FRAME, Frame.EMPTY);
+        Frame frame = Exposure.DataComponents.getPhotographFrame(droppedStack, Frame.EMPTY);
         ExposureType type = frame.type();
-        droppedStack.set(Exposure.DataComponents.PHOTOGRAPH_TYPE, type);
+        Exposure.DataComponents.setPhotographType(droppedStack, type);
 
         Minecrft.gameMode().handleCreativeModeItemDrop(droppedStack);
         Minecrft.player().displayClientMessage(Component.translatable("gui.exposure.photograph_screen.item_dropped_message",

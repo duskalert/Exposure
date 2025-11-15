@@ -258,7 +258,7 @@ public class ViewfinderCameraControlsScreen extends Screen {
         guiGraphics.pose().popPose();
     }
 
-    @Override
+   // @Override
     public void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
         // Prevents blur from rendering.
     }
@@ -348,8 +348,8 @@ public class ViewfinderCameraControlsScreen extends Screen {
     }
 
     @Override
-    public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
-        if (!super.mouseScrolled(mouseX, mouseY, scrollX, scrollY)) {
+    public boolean mouseScrolled(double mouseX, double mouseY, double scrollY) {
+        if (!super.mouseScrolled(mouseX, mouseY,  scrollY)) {
             viewfinder.zoom().zoom(scrollY > 0d ? ZoomDirection.IN : ZoomDirection.OUT, true);
             return true;
         }

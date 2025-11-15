@@ -28,6 +28,7 @@ import net.minecraft.world.level.storage.loot.entries.NestedLootTable;
 import net.neoforged.fml.config.ModConfig;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
 import java.util.stream.Stream;
 
 public class ExposureFabric implements ModInitializer {
@@ -59,7 +60,7 @@ public class ExposureFabric implements ModInitializer {
             ExposureFabric.server = null;
         });
 
-        ServerLifecycleEvents.SYNC_DATA_PACK_CONTENTS.register((player, joined) -> ServerEvents.syncDatapack(Stream.of(player)));
+        ServerLifecycleEvents.SYNC_DATA_PACK_CONTENTS.register((player, joined) -> ServerEvents.syncDatapack(List.of(player)));
 
         LootTableEvents.MODIFY.register(ExposureFabric::modifyLoot);
 

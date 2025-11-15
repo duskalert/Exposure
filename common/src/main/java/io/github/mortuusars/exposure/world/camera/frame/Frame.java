@@ -8,8 +8,6 @@ import io.github.mortuusars.exposure.world.camera.ExposureType;
 import io.github.mortuusars.exposure.world.camera.component.ShutterSpeed;
 import io.github.mortuusars.exposure.world.level.storage.ExposureIdentifier;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.codec.ByteBufCodecs;
-import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
@@ -49,7 +47,7 @@ public record Frame(ExposureIdentifier identifier,
     public static final ExtraData.Type<Boolean> IN_CAVE = ExtraData.Type.bool("in_cave");
     public static final ExtraData.Type<Boolean> UNDERWATER = ExtraData.Type.bool("underwater");
     public static final ExtraData.Type<List<ResourceLocation>> STRUCTURES = ExtraData.Type.stringBasedList("structures",
-            ResourceLocation::parse, ResourceLocation::toString);
+            ResourceLocation::new, ResourceLocation::toString);
     // --
 
     public static final Frame EMPTY = new Frame(
@@ -63,28 +61,23 @@ public record Frame(ExposureIdentifier identifier,
                     ExposureIdentifier.CODEC.fieldOf("identifier").forGetter(Frame::identifier),
                     ExposureType.CODEC.optionalFieldOf("type", ExposureType.COLOR).forGetter(Frame::type),
                     Photographer.CODEC.optionalFieldOf("photographer", Photographer.EMPTY).forGetter(Frame::photographer),
-                    EntityInFrame.CODEC.listOf(0, 16).optionalFieldOf("entities_in_frame", Collections.emptyList()).forGetter(Frame::entitiesInFrame),
+                    EntityInFrame.CODEC.listOf().optionalFieldOf("entities_in_frame", Collections.emptyList()).forGetter(Frame::entitiesInFrame),
                     ExtraData.CODEC.optionalFieldOf("extra_data", ExtraData.EMPTY).forGetter(Frame::extraData))
             .apply(instance, Frame::new));
 
-    public static final StreamCodec<FriendlyByteBuf, Frame> STREAM_CODEC = new StreamCodec<>() {
-        public @NotNull Frame decode(FriendlyByteBuf buffer) {
-            return new Frame(
-                    ExposureIdentifier.STREAM_CODEC.decode(buffer),
-                    ExposureType.STREAM_CODEC.decode(buffer),
-                    Photographer.STREAM_CODEC.decode(buffer),
-                    EntityInFrame.STREAM_CODEC.apply(ByteBufCodecs.list(16)).decode(buffer),
-                    ExtraData.STREAM_CODEC.decode(buffer));
-        }
 
-        public void encode(FriendlyByteBuf buffer, Frame frame) {
-            ExposureIdentifier.STREAM_CODEC.encode(buffer, frame.identifier());
-            ExposureType.STREAM_CODEC.encode(buffer, frame.type());
-            Photographer.STREAM_CODEC.encode(buffer, frame.photographer);
-            EntityInFrame.STREAM_CODEC.apply(ByteBufCodecs.list(16)).encode(buffer, frame.entitiesInFrame());
-            ExtraData.STREAM_CODEC.encode(buffer, frame.extraData());
-        }
-    };
+    public static Frame fromPacket(FriendlyByteBuf buf) {
+        return new Frame(ExposureIdentifier.fromPacket(buf),buf.readEnum(ExposureType.class),
+                Photographer.fromPacket(buf),buf.readList(EntityInFrame::fromPacket),ExtraData.fromPacket(buf));
+    }
+
+    public void toPacket(FriendlyByteBuf buf) {
+        identifier.toPacket(buf);
+        buf.writeEnum(type);
+        photographer.toPacket(buf);
+        buf.writeCollection(entitiesInFrame,(buf1, entityInFrame) -> entityInFrame.toPacket(buf1));
+        extraData.toPacket(buf);
+    }
 
     public static Mutable create() {
         return new Mutable(EMPTY);

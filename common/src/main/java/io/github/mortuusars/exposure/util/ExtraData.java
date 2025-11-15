@@ -6,12 +6,11 @@ import com.mojang.serialization.Codec;
 import io.github.mortuusars.exposure.Exposure;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.*;
-import net.minecraft.network.codec.ByteBufCodecs;
-import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.phys.Vec3;
-import org.apache.commons.lang3.function.TriConsumer;
+import org.apache.logging.log4j.util.TriConsumer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -24,8 +23,7 @@ import java.util.function.Function;
  * {@link Type} is meant to be stored in a static final field in appropriate places.
  */
 public class ExtraData extends CompoundTag {
-    public static final Codec<ExtraData> CODEC = CompoundTag.CODEC.xmap(ExtraData::new, data -> data);
-    public static final StreamCodec<ByteBuf, ExtraData> STREAM_CODEC = ByteBufCodecs.COMPOUND_TAG.map(ExtraData::new, data -> data);
+    public static final Codec<ExtraData> CODEC = CompoundTag.CODEC.xmap(ExtraData::new, Function.identity());
 
     public static final ExtraData EMPTY = new ExtraData(Collections.emptyMap());
     private final Map<String, Tag> tags;
@@ -42,6 +40,14 @@ public class ExtraData extends CompoundTag {
     public ExtraData(CompoundTag tag) {
         this(new HashMap<>());
         merge(tag);
+    }
+
+    public void toPacket(FriendlyByteBuf buf) {
+        buf.writeNbt(this);
+    }
+
+    public static ExtraData fromPacket(FriendlyByteBuf buf) {
+        return new ExtraData(buf.readNbt());
     }
 
     public <T> Optional<T> get(@NotNull ExtraData.Type<T> type) {
@@ -153,7 +159,7 @@ public class ExtraData extends CompoundTag {
 
         public static Type<ResourceLocation> resourceLocation(String key) {
             return new Type<>(key,
-                    (data, k) -> ResourceLocation.parse(data.getString(k)),
+                    (data, k) -> new ResourceLocation(data.getString(k)),
                     (data, k, value) -> data.putString(k, value.toString()));
         }
 

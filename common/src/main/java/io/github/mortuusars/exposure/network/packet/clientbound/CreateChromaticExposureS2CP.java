@@ -26,8 +26,13 @@ public record CreateChromaticExposureS2CP(String id, List<ExposureIdentifier> la
     );
 
     @Override
-    public @NotNull Type<? extends CustomPacketPayload> type() {
-        return TYPE;
+    public void toPacket(FriendlyByteBuf buf) {
+        buf.writeUtf(id);
+        buf.writeCollection(layers,(buf1, exposureIdentifier) -> exposureIdentifier.toPacket(buf1));
+    }
+
+    public static CreateChromaticExposureS2CP fromPacket(FriendlyByteBuf buf) {
+        return new CreateChromaticExposureS2CP(buf.readUtf(),buf.readList(ExposureIdentifier::fromPacket));
     }
 
     @Override

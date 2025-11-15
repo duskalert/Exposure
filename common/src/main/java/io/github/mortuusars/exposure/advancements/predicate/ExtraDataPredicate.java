@@ -1,11 +1,10 @@
 package io.github.mortuusars.exposure.advancements.predicate;
 
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import io.github.mortuusars.exposure.util.ExtraData;
-import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.*;
-import net.minecraft.network.codec.ByteBufCodecs;
-import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.FriendlyByteBuf;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -13,12 +12,16 @@ import org.jetbrains.annotations.Nullable;
  * This is basically a copy of its functionality to make ExtraData work.
  */
 public record ExtraDataPredicate(ExtraData data) {
-    public static final Codec<ExtraDataPredicate> CODEC = TagParser.LENIENT_CODEC.xmap(
+    public static final Codec<ExtraDataPredicate> CODEC = ExtraData.CODEC.xmap(ExtraDataPredicate::new, ExtraDataPredicate::data);/*TagParser.LENIENT_CODEC.xmap(
             tag -> new ExtraDataPredicate(new ExtraData(tag)),
-            predicate -> predicate.data);
-    public static final StreamCodec<ByteBuf, ExtraDataPredicate> STREAM_CODEC = ByteBufCodecs.COMPOUND_TAG.map(
-            tag -> new ExtraDataPredicate(new ExtraData(tag)),
-            predicate -> predicate.data);
+            predicate -> predicate.data);*/
+    public void toPacket(FriendlyByteBuf buf) {
+        data.toPacket(buf);
+    }
+
+    public static ExtraDataPredicate fromPacket(FriendlyByteBuf buf) {
+        return new ExtraDataPredicate(ExtraData.fromPacket(buf));
+    }
 
     public boolean matches(@Nullable Tag tag) {
         return tag != null && compareNbt(tag);

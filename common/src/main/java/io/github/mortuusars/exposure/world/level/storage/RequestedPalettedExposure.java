@@ -26,6 +26,15 @@ public class RequestedPalettedExposure {
             RequestedPalettedExposure::fromOptional
     );
 
+    public void toPacket(FriendlyByteBuf buf){
+        buf.writeOptional(getData(),(buf1, exposureData) -> exposureData.toPacket(buf1));
+        buf.writeEnum(status);
+    }
+
+    public static RequestedPalettedExposure fromPacket(FriendlyByteBuf buf) {
+        return fromOptional(buf.readOptional(ExposureData::fromPacket),buf.readEnum(RequestedExposureStatus.class));
+    }
+
     @Nullable
     protected final ExposureData exposure;
     protected final RequestedExposureStatus status;

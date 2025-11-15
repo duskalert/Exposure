@@ -2,10 +2,6 @@ package io.github.mortuusars.exposure.world.camera;
 
 import com.mojang.serialization.Codec;
 import io.github.mortuusars.exposure.util.color.Color;
-import io.netty.buffer.ByteBuf;
-import net.minecraft.network.codec.ByteBufCodecs;
-import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.util.ByIdMap;
 import net.minecraft.util.StringRepresentable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -17,8 +13,6 @@ public enum ExposureType implements StringRepresentable {
     BLACK_AND_WHITE("black_and_white", Color.WHITE, new FilmColor(1.0F, 1.0F, 1.0F, 1.0F));
 
     public static final Codec<ExposureType> CODEC = StringRepresentable.fromEnum(ExposureType::values);
-    public static final StreamCodec<ByteBuf, ExposureType> STREAM_CODEC =
-            ByteBufCodecs.idMapper(ByIdMap.continuous(ExposureType::ordinal, values(), ByIdMap.OutOfBoundsStrategy.ZERO), ExposureType::ordinal);
 
     private final String name;
     private final Color imageColor;

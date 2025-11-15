@@ -11,7 +11,7 @@ public class Filters {
     public static Optional<Filter> of(RegistryAccess registryAccess, ItemStack stack) {
         return registryAccess.registryOrThrow(Exposure.Registries.FILTER)
                 .stream()
-                .filter(filter -> filter.predicate().test(stack))
+                .filter(filter -> filter.predicate().matches(stack))
                 .findFirst();
     }
 

@@ -1,10 +1,7 @@
 package io.github.mortuusars.exposure.world.camera.capture;
 
 import com.mojang.serialization.Codec;
-import io.netty.buffer.ByteBuf;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.codec.ByteBufCodecs;
-import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.util.ByIdMap;
 import net.minecraft.util.StringRepresentable;
 import org.jetbrains.annotations.NotNull;
@@ -18,7 +15,6 @@ public enum DitherMode implements StringRepresentable {
     private static final IntFunction<DitherMode> BY_ID =
             ByIdMap.continuous(DitherMode::ordinal, values(), ByIdMap.OutOfBoundsStrategy.ZERO);
     public static final Codec<DitherMode> CODEC = StringRepresentable.fromEnum(DitherMode::values);
-    public static final StreamCodec<ByteBuf, DitherMode> STREAM_CODEC = ByteBufCodecs.idMapper(BY_ID, DitherMode::ordinal);
 
     private final String name;
 

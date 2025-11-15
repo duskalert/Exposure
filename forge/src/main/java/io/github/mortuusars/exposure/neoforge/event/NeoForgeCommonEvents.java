@@ -1,6 +1,8 @@
 package io.github.mortuusars.exposure.neoforge.event;
 
+import dev.latvian.mods.rhino.ObjArray;
 import io.github.mortuusars.exposure.Exposure;
+import io.github.mortuusars.exposure.client.util.Minecrft;
 import io.github.mortuusars.exposure.data.ColorPalette;
 import io.github.mortuusars.exposure.data.Filter;
 import io.github.mortuusars.exposure.data.Lens;
@@ -11,27 +13,35 @@ import io.github.mortuusars.exposure.network.packet.C2SPackets;
 import io.github.mortuusars.exposure.network.packet.CommonPackets;
 import io.github.mortuusars.exposure.network.packet.Packet;
 import io.github.mortuusars.exposure.network.packet.S2CPackets;
+import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.network.protocol.PacketFlow;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.stats.Stats;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.neoforged.neoforge.capabilities.Capabilities;
-import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
-import net.neoforged.neoforge.event.OnDatapackSyncEvent;
-import net.neoforged.neoforge.event.RegisterCommandsEvent;
-import net.neoforged.neoforge.event.server.ServerStartedEvent;
-import net.neoforged.neoforge.items.wrapper.InvWrapper;
-import net.neoforged.neoforge.items.wrapper.SidedInvWrapper;
-import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
-import net.neoforged.neoforge.network.registration.PayloadRegistrar;
-import net.neoforged.neoforge.registries.DataPackRegistryEvent;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
+import net.minecraftforge.event.AttachCapabilitiesEvent;
+import net.minecraftforge.event.OnDatapackSyncEvent;
+import net.minecraftforge.event.RegisterCommandsEvent;
+import net.minecraftforge.event.server.ServerStartedEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.minecraftforge.items.wrapper.InvWrapper;
+import net.minecraftforge.items.wrapper.SidedInvWrapper;
+import net.minecraftforge.network.NetworkEvent;
+import net.minecraftforge.network.NetworkRegistry;
+import net.minecraftforge.network.simple.SimpleChannel;
+import net.minecraftforge.registries.DataPackRegistryEvent;
+
+import java.util.Map;
+import java.util.function.BiConsumer;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 @SuppressWarnings("unused")
 public class NeoForgeCommonEvents {
-    @EventBusSubscriber(modid = Exposure.ID, bus = EventBusSubscriber.Bus.MOD)
+    @Mod.EventBusSubscriber(modid = Exposure.ID, bus = Mod.EventBusSubscriber.Bus.MOD)
     public static class ModBus {
         @SubscribeEvent
         public static void commonSetup(FMLCommonSetupEvent event) {
@@ -41,6 +51,7 @@ public class NeoForgeCommonEvents {
                     Stats.CUSTOM.get(location);
                 });
             });
+            registerPackets();
         }
 
         @SubscribeEvent
@@ -50,14 +61,17 @@ public class NeoForgeCommonEvents {
             event.dataPackRegistry(Exposure.Registries.FILTER, Filter.CODEC, Filter.CODEC);
         }
 
+        public static SimpleChannel registrar;
+
+
         @SuppressWarnings("unchecked")
-        @SubscribeEvent
-        public static void registerPackets(RegisterPayloadHandlersEvent event) {
-            PayloadRegistrar registrar = event.registrar("1");
+        public static void registerPackets() {
+            registrar = NetworkRegistry.newSimpleChannel(Exposure.resource("packet"), () -> "1.0", s -> true, s -> true);
             // This monstrosity is to avoid having to define packets for forge and fabric separately.
-            for (CustomPacketPayload.TypeAndCodec<? extends FriendlyByteBuf, ? extends CustomPacketPayload> definition : S2CPackets.getDefinitions()) {
-                registrar.playToClient((CustomPacketPayload.Type<Packet>) definition.type(),
-                        (StreamCodec<FriendlyByteBuf, Packet>) definition.codec(), PacketsImpl::handle);
+            int i = 0;
+            for (Map.Entry<Class<Packet>, Function<FriendlyByteBuf, Packet>> definition : S2CPackets.getDefinitions().entrySet()) {
+                registrar.registerMessage(i++,definition.getKey(), Packet::toPacket, definition.getValue(),
+                        NeoForgeCommonEvents.wrapC2S());
             }
 
             for (CustomPacketPayload.TypeAndCodec<? extends FriendlyByteBuf, ? extends CustomPacketPayload> definition : C2SPackets.getDefinitions()) {
@@ -72,13 +86,28 @@ public class NeoForgeCommonEvents {
         }
 
         @SubscribeEvent
-        public static void onRegisterCapabilities(RegisterCapabilitiesEvent event) {
+        public static void onRegisterCapabilities(AttachCapabilitiesEvent<BlockEntity> event) {
             event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, Exposure.BlockEntityTypes.LIGHTROOM.get(),
                     (be, side) -> side == null ? new InvWrapper(be) : new SidedInvWrapper(be, side));
         }
     }
 
-    @EventBusSubscriber(modid = Exposure.ID, bus = EventBusSubscriber.Bus.GAME)
+    public static <MSG extends Packet> BiConsumer<MSG, Supplier<NetworkEvent.Context>> wrapS2C() {
+        return ((msg, contextSupplier) -> {
+            contextSupplier.get().enqueueWork(() -> msg.handle(PacketFlow.CLIENTBOUND, Minecrft.player()));
+            contextSupplier.get().setPacketHandled(true);
+        });
+    }
+
+    public static <MSG extends Packet> BiConsumer<MSG, Supplier<NetworkEvent.Context>> wrapC2S() {
+        return ((msg, contextSupplier) -> {
+            ServerPlayer player = contextSupplier.get().getSender();
+            contextSupplier.get().enqueueWork(() -> msg.handle(PacketFlow.SERVERBOUND, player));
+            contextSupplier.get().setPacketHandled(true);
+        });
+    }
+
+    @Mod.EventBusSubscriber(modid = Exposure.ID)
     public static class GameBus {
         @SubscribeEvent
         public static void serverStarted(ServerStartedEvent event) {
@@ -87,7 +116,7 @@ public class NeoForgeCommonEvents {
 
         @SubscribeEvent
         public static void onDatapackSync(OnDatapackSyncEvent event) {
-            ServerEvents.syncDatapack(event.getRelevantPlayers());
+            ServerEvents.syncDatapack(event.getPlayers());
         }
 
         @SubscribeEvent

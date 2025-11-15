@@ -3,6 +3,7 @@ package io.github.mortuusars.exposure.world.item.crafting.recipe;
 import io.github.mortuusars.exposure.Exposure;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
+import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.Level;
@@ -47,7 +48,7 @@ public class ComponentTransferringRecipe extends CustomRecipe {
     }
 
     @Override
-    public boolean matches(CraftingInput input, Level level) {
+    public boolean matches(CraftingContainer input, Level level) {
         if (getSourceIngredient().isEmpty() || ingredients.isEmpty())
             return false;
 
@@ -56,7 +57,7 @@ public class ComponentTransferringRecipe extends CustomRecipe {
 
         int itemsInCraftingGrid = 0;
 
-        for (int i = 0; i < input.size(); i++) {
+        for (int i = 0; i < input.getContainerSize(); i++) {
             ItemStack stack = input.getItem(i);
             if (!stack.isEmpty())
                 itemsInCraftingGrid++;

@@ -5,7 +5,7 @@ import io.github.mortuusars.exposure.world.entity.CameraHolder;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.bus.api.Event;
+import net.minecraftforge.eventbus.api.Event;
 
 /**
  * Can be used to add/modify custom entity in frame NBT data that is stored in a frame.

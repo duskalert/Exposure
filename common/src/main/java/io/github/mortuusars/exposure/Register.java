@@ -5,15 +5,13 @@ import com.mojang.serialization.MapCodec;
 import dev.architectury.injectables.annotations.ExpectPlatform;
 import net.minecraft.advancements.CriterionTrigger;
 import net.minecraft.advancements.critereon.EntitySubPredicate;
-import net.minecraft.advancements.critereon.ItemSubPredicate;
 import net.minecraft.commands.synchronization.ArgumentTypeInfo;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.world.Container;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
@@ -23,7 +21,6 @@ import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.crafting.Recipe;
-import net.minecraft.world.item.crafting.RecipeInput;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.block.Block;
@@ -94,11 +91,11 @@ public class Register {
 
     @FunctionalInterface
     public interface MenuTypeSupplier<T extends AbstractContainerMenu> {
-        @NotNull T create(int windowId, Inventory playerInv, RegistryFriendlyByteBuf extraData);
+        @NotNull T create(int windowId, Inventory playerInv, FriendlyByteBuf extraData);
     }
 
     @ExpectPlatform
-    public static <T extends Recipe<I>, I extends RecipeInput> Supplier<RecipeType<T>> recipeType(String name, Supplier<RecipeType<T>> supplier) {
+    public static <T extends Recipe<I>, I extends Container> Supplier<RecipeType<T>> recipeType(String name, Supplier<RecipeType<T>> supplier) {
         throw new AssertionError();
     }
 
@@ -112,10 +109,10 @@ public class Register {
         throw new AssertionError();
     }
 
-    @ExpectPlatform
+    /*@ExpectPlatform
     public static <T extends ItemSubPredicate.Type<?>> Supplier<T> itemSubPredicate(String name, Supplier<T> supplier) {
         throw new AssertionError();
-    }
+    }*/
 
     @ExpectPlatform
     public static <T extends EntitySubPredicate> Supplier<MapCodec<T>> entitySubPredicate(String name, Supplier<MapCodec<T>> supplier) {
@@ -133,10 +130,10 @@ public class Register {
         throw new AssertionError();
     }
 
-    @ExpectPlatform
+    /*@ExpectPlatform
     public static <T> DataComponentType<T> dataComponentType(String name, Consumer<DataComponentType.Builder<T>> builderConsumer) {
         throw new AssertionError();
-    }
+    }*/
 
     @ExpectPlatform
     public static <T extends ParticleType<? extends ParticleOptions>> Supplier<T> particleType(String name, Supplier<T> supplier) {

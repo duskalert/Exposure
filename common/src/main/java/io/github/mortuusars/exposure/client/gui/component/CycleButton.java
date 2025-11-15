@@ -164,7 +164,7 @@ public class CycleButton<T> extends Button {
     }
 
     @Override
-    public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
+    public boolean mouseScrolled(double mouseX, double mouseY, double scrollY) {
         cycle(scrollY < 0d);
         playDownSound(Minecraft.getInstance().getSoundManager());
         return true;

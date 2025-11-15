@@ -39,7 +39,7 @@ public class PhotographItem extends Item {
     }
 
     public Frame getFrame(ItemStack stack) {
-        return stack.getOrDefault(Exposure.DataComponents.PHOTOGRAPH_FRAME, Frame.EMPTY);
+        return Exposure.DataComponents.getPhotographFrame(stack, Frame.EMPTY);
     }
 
     @Override
@@ -49,7 +49,7 @@ public class PhotographItem extends Item {
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
+    public void appendHoverText(ItemStack stack, Level context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
         @Nullable Integer generation = stack.get(Exposure.DataComponents.PHOTOGRAPH_GENERATION);
         if (generation != null) {
             if (generation > 0)
@@ -57,7 +57,7 @@ public class PhotographItem extends Item {
                         .withStyle(ChatFormatting.GRAY));
         }
 
-        @Nullable Frame frame = stack.get(Exposure.DataComponents.PHOTOGRAPH_FRAME);
+        @Nullable Frame frame = Exposure.DataComponents.getPhotographFrame(stack);
         if (frame == null) {
             return;
         }

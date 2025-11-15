@@ -5,8 +5,6 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import io.github.mortuusars.exposure.util.Codecs;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.codec.ByteBufCodecs;
-import net.minecraft.network.codec.StreamCodec;
 
 public record ColorBalance(float r, float g, float b) {
     public ColorBalance {
@@ -23,12 +21,15 @@ public record ColorBalance(float r, float g, float b) {
             Codecs.floatRange(-1, 1).optionalFieldOf("blue", 0f).forGetter(ColorBalance::b)
     ).apply(instance, ColorBalance::new));
 
-    public static final StreamCodec<FriendlyByteBuf, ColorBalance> STREAM_CODEC = StreamCodec.composite(
-            ByteBufCodecs.FLOAT, ColorBalance::r,
-            ByteBufCodecs.FLOAT, ColorBalance::g,
-            ByteBufCodecs.FLOAT, ColorBalance::b,
-            ColorBalance::new
-    );
+    public void toPacket(FriendlyByteBuf buf) {
+        buf.writeFloat(r);
+        buf.writeFloat(g);
+        buf.writeFloat(b);
+    }
+
+    public static ColorBalance fromPacket(FriendlyByteBuf buf) {
+        return new ColorBalance(buf.readFloat(),buf.readFloat(),buf.readFloat());
+    }
 
     // --
 

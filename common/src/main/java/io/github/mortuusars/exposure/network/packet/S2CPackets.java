@@ -2,32 +2,32 @@ package io.github.mortuusars.exposure.network.packet;
 
 import io.github.mortuusars.exposure.network.packet.clientbound.*;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.Function;
 
 public class S2CPackets {
-    public static List<CustomPacketPayload.TypeAndCodec<? extends FriendlyByteBuf, ? extends CustomPacketPayload>> getDefinitions() {
-        return List.of(
-                new CustomPacketPayload.TypeAndCodec<>(ActiveCameraRemoveS2CP.TYPE, ActiveCameraRemoveS2CP.STREAM_CODEC),
-                new CustomPacketPayload.TypeAndCodec<>(ActiveCameraInHandSetS2CP.TYPE, ActiveCameraInHandSetS2CP.STREAM_CODEC),
-                new CustomPacketPayload.TypeAndCodec<>(ActiveCameraOnStandSetS2CP.TYPE, ActiveCameraOnStandSetS2CP.STREAM_CODEC),
-                new CustomPacketPayload.TypeAndCodec<>(CameraStandSetRotationsS2CP.TYPE, CameraStandSetRotationsS2CP.STREAM_CODEC),
-                new CustomPacketPayload.TypeAndCodec<>(CameraStandStopControllingS2CP.TYPE, CameraStandStopControllingS2CP.STREAM_CODEC),
-                new CustomPacketPayload.TypeAndCodec<>(ShaderApplyS2CP.TYPE, ShaderApplyS2CP.STREAM_CODEC),
-                new CustomPacketPayload.TypeAndCodec<>(ClearRenderingCacheS2CP.TYPE, ClearRenderingCacheS2CP.STREAM_CODEC),
-                new CustomPacketPayload.TypeAndCodec<>(CreateChromaticExposureS2CP.TYPE, CreateChromaticExposureS2CP.STREAM_CODEC),
-                new CustomPacketPayload.TypeAndCodec<>(ExposureDataChangedS2CP.TYPE, ExposureDataChangedS2CP.STREAM_CODEC),
-                new CustomPacketPayload.TypeAndCodec<>(UniqueSoundPlayS2CP.TYPE, UniqueSoundPlayS2CP.STREAM_CODEC),
-                new CustomPacketPayload.TypeAndCodec<>(UniqueSoundPlayShutterTickingS2CP.TYPE, UniqueSoundPlayShutterTickingS2CP.STREAM_CODEC),
-                new CustomPacketPayload.TypeAndCodec<>(UniqueSoundStopS2CP.TYPE, UniqueSoundStopS2CP.STREAM_CODEC),
-                new CustomPacketPayload.TypeAndCodec<>(ShowExposureCommandS2CP.TYPE, ShowExposureCommandS2CP.STREAM_CODEC),
-                new CustomPacketPayload.TypeAndCodec<>(ExposureDataResponseS2CP.TYPE, ExposureDataResponseS2CP.STREAM_CODEC),
-                new CustomPacketPayload.TypeAndCodec<>(ShutterOpenedS2CP.TYPE, ShutterOpenedS2CP.STREAM_CODEC),
-                new CustomPacketPayload.TypeAndCodec<>(CaptureStartS2CP.TYPE, CaptureStartS2CP.STREAM_CODEC),
-                new CustomPacketPayload.TypeAndCodec<>(CaptureStartDebugRGBS2CP.TYPE, CaptureStartDebugRGBS2CP.STREAM_CODEC),
-                new CustomPacketPayload.TypeAndCodec<>(ExportS2CP.TYPE, ExportS2CP.STREAM_CODEC),
-                new CustomPacketPayload.TypeAndCodec<>(ExportStopS2CP.TYPE, ExportStopS2CP.STREAM_CODEC)
-        );
+    public static <T extends  Packet> Map<Class<T>, Function<FriendlyByteBuf,T>> getDefinitions() {
+        Map<Class<T>, Function<FriendlyByteBuf, T>> map = new HashMap<>();
+        map.put((Class<T>)ActiveCameraRemoveS2CP.class, buf -> (T)ActiveCameraRemoveS2CP.fromPacket(buf));
+                map.put((Class<T>)ActiveCameraInHandSetS2CP.class, buf -> (T)ActiveCameraInHandSetS2CP.fromPacket(buf));
+                map.put((Class<T>)ActiveCameraOnStandSetS2CP.class, buf -> (T)ActiveCameraOnStandSetS2CP.fromPacket(buf));
+                map.put((Class<T>)CameraStandSetRotationsS2CP.class,buf -> (T)CameraStandSetRotationsS2CP.fromPacket(buf));
+                map.put((Class<T>)CameraStandStopControllingS2CP.class, buf -> (T)CameraStandStopControllingS2CP.fromPacket(buf));
+                map.put((Class<T>)ShaderApplyS2CP.class, buf -> (T)ShaderApplyS2CP.fromPacket(buf));
+                map.put((Class<T>) ActionS2CP.class, buf -> (T) ActionS2CP.fromPacket(buf));
+                map.put((Class<T>)CreateChromaticExposureS2CP.class,buf ->  (T)CreateChromaticExposureS2CP.fromPacket(buf));
+                map.put((Class<T>)ExposureDataChangedS2CP.class, buf -> (T)ExposureDataChangedS2CP.fromPacket(buf));
+                map.put((Class<T>)UniqueSoundPlayS2CP.class,buf -> (T)UniqueSoundPlayS2CP.fromPacket(buf));
+                map.put((Class<T>)UniqueSoundPlayShutterTickingS2CP.class, buf -> (T)UniqueSoundPlayShutterTickingS2CP.fromPacket(buf));
+                map.put((Class<T>)UniqueSoundStopS2CP.class,buf -> (T)UniqueSoundStopS2CP.fromPacket(buf));
+                map.put((Class<T>)ShowExposureCommandS2CP.class, buf -> (T)ShowExposureCommandS2CP.fromPacket(buf));
+                map.put((Class<T>)ExposureDataResponseS2CP.class, buf -> (T)ExposureDataResponseS2CP.fromPacket(buf));
+                map.put((Class<T>)CaptureStartS2CP.class, buf -> (T)CaptureStartS2CP.fromPacket(buf));
+                map.put((Class<T>)CaptureStartDebugRGBS2CP.class,buf -> (T)CaptureStartDebugRGBS2CP.fromPacket(buf));
+                map.put((Class<T>)ExportS2CP.class, buf -> (T)ExportS2CP.STREAM_CODEC);
+                map.put((Class<T>)ExportStopS2CP.class, buf -> (T)ExportStopS2CP.STREAM_CODEC);
+        return map;
     }
 }

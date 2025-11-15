@@ -2,14 +2,9 @@ package io.github.mortuusars.exposure.world.camera.component;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
-import io.github.mortuusars.exposure.Exposure;
-import io.netty.buffer.ByteBuf;
-import net.minecraft.SharedConstants;
-import net.minecraft.network.codec.ByteBufCodecs;
-import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.util.StringRepresentable;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
@@ -24,8 +19,13 @@ public class ShutterSpeed implements StringRepresentable {
         }
     }, ShutterSpeed::getNotation);
 
-    public static final StreamCodec<ByteBuf, ShutterSpeed> STREAM_CODEC =
-            ByteBufCodecs.STRING_UTF8.map(ShutterSpeed::new, ShutterSpeed::getNotation);
+    public void toPacket(FriendlyByteBuf buf) {
+        buf.writeUtf(notation);
+    }
+
+    public static ShutterSpeed fromPacket(FriendlyByteBuf buf) {
+        return new ShutterSpeed(buf.readUtf());
+    }
 
     private final float valueMilliseconds;
     private final String notation;
@@ -59,7 +59,7 @@ public class ShutterSpeed implements StringRepresentable {
      * Should be at least 1 tick. Otherwise, it's probably not going to work correctly.
      */
     public int getDurationTicks() {
-        return Math.max(1, (int) (valueMilliseconds / SharedConstants.MILLIS_PER_TICK));
+        return Math.max(1, (int) (valueMilliseconds / 50));
     }
 
     public boolean shouldCauseTickingSound() {

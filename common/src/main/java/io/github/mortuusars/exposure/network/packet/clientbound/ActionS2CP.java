@@ -8,21 +8,27 @@ import net.minecraft.network.protocol.PacketFlow;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 
-public record CameraStandStopControllingS2CP(int standId) implements Packet {
-    public static final ResourceLocation ID = Exposure.resource("camera_stand_stop_controlling");
+public enum ActionS2CP implements Packet {
+    CLEAR_RENDERING_CACHE,SHUTTER_OPENED;
+
+    public static final ResourceLocation ID = Exposure.resource("clear_rendering_cache");
 
     @Override
     public void toPacket(FriendlyByteBuf buf) {
-        buf.writeInt(standId);
+        buf.writeEnum(this);
     }
 
-    public static CameraStandStopControllingS2CP fromPacket(FriendlyByteBuf buf) {
-        return new CameraStandStopControllingS2CP(buf.readInt());
+    public static ActionS2CP fromPacket(FriendlyByteBuf buf) {
+        return buf.readEnum(ActionS2CP.class);
     }
 
     @Override
     public boolean handle(PacketFlow flow, Player player) {
-        ClientPacketsHandler.stopControllingCameraStand(this);
+        switch (this){
+            case CLEAR_RENDERING_CACHE -> ClientPacketsHandler.clearRenderingCache();
+            case SHUTTER_OPENED -> ClientPacketsHandler.shutterOpened();
+        }
+        ;
         return true;
     }
 }

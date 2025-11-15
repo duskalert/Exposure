@@ -4,10 +4,7 @@ import com.google.common.base.Preconditions;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import io.github.mortuusars.exposure.util.Codecs;
-import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.codec.ByteBufCodecs;
-import net.minecraft.network.codec.StreamCodec;
-import org.jetbrains.annotations.NotNull;
+import net.minecraft.network.FriendlyByteBuf;
 import org.jetbrains.annotations.Nullable;
 
 public record FilmStyle(Float sensitivity,
@@ -35,26 +32,18 @@ public record FilmStyle(Float sensitivity,
             Codecs.floatRange(0f, 1f).optionalFieldOf("noise", 0f).forGetter(FilmStyle::noise)
     ).apply(instance, FilmStyle::new));
 
-    public static final StreamCodec<RegistryFriendlyByteBuf, FilmStyle> STREAM_CODEC = new StreamCodec<>() {
-        public @NotNull FilmStyle decode(RegistryFriendlyByteBuf buffer) {
-            return new FilmStyle(
-                    ByteBufCodecs.FLOAT.decode(buffer),
-                    ByteBufCodecs.FLOAT.decode(buffer),
-                    Levels.STREAM_CODEC.decode(buffer),
-                    HSB.STREAM_CODEC.decode(buffer),
-                    ColorBalance.STREAM_CODEC.decode(buffer),
-                    ByteBufCodecs.FLOAT.decode(buffer));
-        }
+    public void toPacket(FriendlyByteBuf buf) {
+        buf.writeFloat(sensitivity);
+        buf.writeFloat(contrast);
+        levels.toPacket(buf);
+        hsb.toPacket(buf);
+        colorBalance.toPacket(buf);
+        buf.writeFloat(noise);
+    }
 
-        public void encode(RegistryFriendlyByteBuf buffer, FilmStyle data) {
-            ByteBufCodecs.FLOAT.encode(buffer, data.sensitivity);
-            ByteBufCodecs.FLOAT.encode(buffer, data.contrast);
-            Levels.STREAM_CODEC.encode(buffer, data.levels);
-            HSB.STREAM_CODEC.encode(buffer, data.hsb);
-            ColorBalance.STREAM_CODEC.encode(buffer, data.colorBalance);
-            ByteBufCodecs.FLOAT.encode(buffer, data.noise);
-        }
-    };
+    public static FilmStyle fromPacket(FriendlyByteBuf buf) {
+        return new FilmStyle(buf.readFloat(),buf.readFloat(),Levels.fromPacket(buf),HSB.fromPacket(buf),ColorBalance.fromPacket(buf),buf.readFloat());
+    }
 
     public static final FilmStyle EMPTY = new FilmStyle(
             0f,

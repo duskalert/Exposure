@@ -25,15 +25,15 @@ public class SignedAlbumItem extends Item {
     }
 
     public SignedAlbumContent getContent(ItemStack stack) {
-        return stack.getOrDefault(Exposure.DataComponents.SIGNED_ALBUM_CONTENT, SignedAlbumContent.EMPTY);
+        return Exposure.DataComponents.getSignedAlbumContent(stack,SignedAlbumContent.EMPTY);
     }
 
     @Override
     public @NotNull Component getName(ItemStack stack) {
-        @Nullable SignedAlbumContent content = stack.get(Exposure.DataComponents.SIGNED_ALBUM_CONTENT);
+        @Nullable SignedAlbumContent content = Exposure.DataComponents.getSignedAlbumContent(stack);
         if (content != null) {
             String title = content.title();
-            if (!StringUtil.isBlank(title)) {
+            if (!title.isBlank()) {
                 return Component.literal(title);
             }
         }
@@ -50,12 +50,12 @@ public class SignedAlbumItem extends Item {
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
-        @Nullable SignedAlbumContent content = stack.get(Exposure.DataComponents.SIGNED_ALBUM_CONTENT);
+    public void appendHoverText(ItemStack stack, Level context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
+        @Nullable SignedAlbumContent content = Exposure.DataComponents.getSignedAlbumContent(stack);
 
         if (content != null) {
             String author = content.author();
-            if (!StringUtil.isBlank(author)) {
+            if (!author.isBlank()) {
                 tooltipComponents.add(Component.translatable("gui.exposure.album.by_author", author).withStyle(ChatFormatting.GRAY));
             }
 

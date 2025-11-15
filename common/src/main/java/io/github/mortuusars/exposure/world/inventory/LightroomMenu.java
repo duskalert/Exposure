@@ -8,7 +8,6 @@ import io.github.mortuusars.exposure.world.item.DevelopedFilmItem;
 import io.github.mortuusars.exposure.world.item.FilmItem;
 import io.github.mortuusars.exposure.world.camera.frame.Frame;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -128,7 +127,7 @@ public class LightroomMenu extends AbstractContainerMenu {
         this.addDataSlots(data);
     }
 
-    public static LightroomMenu fromBuffer(int containerId, Inventory playerInventory, RegistryFriendlyByteBuf buffer) {
+    public static LightroomMenu fromBuffer(int containerId, Inventory playerInventory, FriendlyByteBuf buffer) {
         return new LightroomMenu(containerId, playerInventory, getBlockEntity(playerInventory, buffer),
                 new SimpleContainerData(LightroomBlockEntity.CONTAINER_DATA_SIZE));
     }
@@ -245,7 +244,7 @@ public class LightroomMenu extends AbstractContainerMenu {
             while (!movedStack.isEmpty() && !(!reverseDirection ? i >= endIndex : i < startIndex)) {
                 Slot slot = this.slots.get(i);
                 ItemStack slotStack = slot.getItem();
-                if (!slotStack.isEmpty() && ItemStack.isSameItemSameComponents(movedStack, slotStack)) {
+                if (!slotStack.isEmpty() && ItemStack.isSameItemSameTags(movedStack, slotStack)) {
                     int maxSize;
                     int j = slotStack.getCount() + movedStack.getCount();
                     if (j <= (maxSize = Math.min(slot.getMaxStackSize(), movedStack.getMaxStackSize()))) {

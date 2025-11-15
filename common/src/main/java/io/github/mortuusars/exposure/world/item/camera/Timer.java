@@ -36,27 +36,27 @@ public class Timer {
     // --
 
     public long getStartTick(ItemStack stack) {
-        return stack.getOrDefault(Exposure.DataComponents.TIMER_START_TICK, -1L);
+        return Exposure.DataComponents.getTimerStartTick(stack, -1L);
     }
 
     public void setStartTick(ItemStack stack, long tick) {
-        stack.set(Exposure.DataComponents.TIMER_START_TICK, tick);
+        Exposure.DataComponents.setTimerStartTick(stack, tick);
     }
 
     public long getEndTick(ItemStack stack) {
-        return stack.getOrDefault(Exposure.DataComponents.TIMER_END_TICK, -1L);
+        return Exposure.DataComponents.getTimerEndTick(stack, -1L);
     }
 
     public void setEndTick(ItemStack stack, long tick) {
-        stack.set(Exposure.DataComponents.TIMER_END_TICK, tick);
+        Exposure.DataComponents.setTimerEndTick(stack, tick);
     }
 
     public long getLastReleaseTick(ItemStack stack) {
-        return stack.getOrDefault(Exposure.DataComponents.TIMER_LAST_RELEASE_TICK, -1L);
+        return Exposure.DataComponents.getTimerLastReleaseTick(stack, -1L);
     }
 
     public void setLastReleaseTick(ItemStack stack, long tick) {
-        stack.set(Exposure.DataComponents.TIMER_LAST_RELEASE_TICK, tick);
+        Exposure.DataComponents.setTimerLastReleaseTick(stack, tick);
     }
 
     // --

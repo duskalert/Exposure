@@ -3,9 +3,7 @@ package io.github.mortuusars.exposure.world.item.camera;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import io.github.mortuusars.exposure.world.camera.component.ShutterSpeed;
-import io.netty.buffer.ByteBuf;
-import net.minecraft.network.codec.ByteBufCodecs;
-import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.FriendlyByteBuf;
 
 public record ShutterState(boolean isOpen, long openedAtTick, ShutterSpeed shutterSpeed) {
     public static final ShutterState CLOSED = new ShutterState(false, 0L, ShutterSpeed.DEFAULT);
@@ -16,12 +14,15 @@ public record ShutterState(boolean isOpen, long openedAtTick, ShutterSpeed shutt
                     ShutterSpeed.CODEC.optionalFieldOf("shutter_speed", ShutterSpeed.DEFAULT).forGetter(ShutterState::shutterSpeed))
             .apply(instance, ShutterState::new));
 
-    public static final StreamCodec<ByteBuf, ShutterState> STREAM_CODEC = StreamCodec.composite(
-            ByteBufCodecs.BOOL, ShutterState::isOpen,
-            ByteBufCodecs.VAR_LONG, ShutterState::openedAtTick,
-            ShutterSpeed.STREAM_CODEC, ShutterState::shutterSpeed,
-            ShutterState::new
-    );
+    public void toPacket(FriendlyByteBuf buf) {
+        buf.writeBoolean(isOpen);
+        buf.writeLong(openedAtTick);
+        shutterSpeed.toPacket(buf);
+    }
+
+    public static ShutterState fromPacket(FriendlyByteBuf buf) {
+        return new ShutterState(buf.readBoolean(),buf.readLong(),ShutterSpeed.fromPacket(buf));
+    }
 
     public static ShutterState open(long openedAt, ShutterSpeed shutterSpeed) {
         return new ShutterState(true, openedAt, shutterSpeed);

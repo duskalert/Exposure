@@ -120,7 +120,7 @@ public class FilmFrameInspectScreen extends Screen {
         RenderSystem.defaultBlendFunc();
         RenderSystem.disableDepthTest();
 
-        renderTransparentBackground(guiGraphics);
+        //renderTransparentBackground(guiGraphics);
 
         guiGraphics.pose().pushPose();
         guiGraphics.pose().translate(x, y, 0);
@@ -156,7 +156,7 @@ public class FilmFrameInspectScreen extends Screen {
         guiGraphics.pose().popPose();
     }
 
-    @Override
+   // @Override
     public void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
         // Background is rendered manually in #render method.
         // Otherwise, background will be rendered on top
@@ -173,8 +173,8 @@ public class FilmFrameInspectScreen extends Screen {
     }
 
     @Override
-    public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
-        if (super.mouseScrolled(mouseX, mouseY, scrollX, scrollY)) return true;
+    public boolean mouseScrolled(double mouseX, double mouseY, double scrollY) {
+        if (super.mouseScrolled(mouseX, mouseY, scrollY)) return true;
 
         if (scrollY >= 0.0) {
             zoom.zoomIn();

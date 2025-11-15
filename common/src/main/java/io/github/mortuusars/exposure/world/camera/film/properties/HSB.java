@@ -5,8 +5,6 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import io.github.mortuusars.exposure.util.Codecs;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.codec.ByteBufCodecs;
-import net.minecraft.network.codec.StreamCodec;
 
 public record HSB(float hue, float saturation, float brightness) {
     public HSB {
@@ -23,12 +21,17 @@ public record HSB(float hue, float saturation, float brightness) {
             Codecs.floatRange(-1, 1).optionalFieldOf("brightness", 0f).forGetter(HSB::brightness)
     ).apply(instance, HSB::new));
 
-    public static final StreamCodec<FriendlyByteBuf, HSB> STREAM_CODEC = StreamCodec.composite(
-            ByteBufCodecs.FLOAT, HSB::hue,
-            ByteBufCodecs.FLOAT, HSB::saturation,
-            ByteBufCodecs.FLOAT, HSB::brightness,
-            HSB::new
-    );
+
+
+    public void toPacket(FriendlyByteBuf buf) {
+        buf.writeFloat(hue);
+        buf.writeFloat(saturation);
+        buf.writeFloat(brightness);
+    }
+
+    public static HSB fromPacket(FriendlyByteBuf buf) {
+        return new HSB(buf.readFloat(),buf.readFloat(),buf.readFloat());
+    }
 
     // --
 

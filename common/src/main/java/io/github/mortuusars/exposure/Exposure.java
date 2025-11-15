@@ -3,8 +3,8 @@ package io.github.mortuusars.exposure;
 import com.google.common.base.Preconditions;
 import com.mojang.logging.LogUtils;
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.Dynamic;
 import com.mojang.serialization.MapCodec;
-import io.github.mortuusars.exposure.advancements.predicate.FramePredicate;
 import io.github.mortuusars.exposure.advancements.predicate.TamedPredicate;
 import io.github.mortuusars.exposure.advancements.trigger.FrameExposedTrigger;
 import io.github.mortuusars.exposure.advancements.trigger.FramePrintedTrigger;
@@ -41,15 +41,14 @@ import io.github.mortuusars.exposure.world.item.crafting.recipe.PhotographAgingR
 import io.github.mortuusars.exposure.world.item.crafting.recipe.PhotographCopyingRecipe;
 import io.github.mortuusars.exposure.world.item.crafting.recipe.serializer.ComponentTransferringRecipeSerializer;
 import io.github.mortuusars.exposure.world.item.util.ItemAndStack;
-import net.minecraft.advancements.critereon.ItemSubPredicate;
 import net.minecraft.advancements.critereon.PlayerTrigger;
 import net.minecraft.commands.synchronization.ArgumentTypeInfo;
 import net.minecraft.commands.synchronization.SingletonArgumentInfo;
 import net.minecraft.core.Registry;
-import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.nbt.NbtOps;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
@@ -68,6 +67,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.storage.loot.LootTable;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 
 import java.util.HashMap;
@@ -110,7 +110,7 @@ public class Exposure {
      * Creates resource location in the mod namespace with the given filePath.
      */
     public static ResourceLocation resource(String path) {
-        return ResourceLocation.fromNamespaceAndPath(ID, path);
+        return new ResourceLocation(ID, path);
     }
 
     public static class Blocks {
@@ -121,7 +121,7 @@ public class Exposure {
                         .sound(SoundType.WOOD)));
 
         public static final Supplier<FlashBlock> FLASH = Register.block("flash",
-                () -> new FlashBlock(BlockBehaviour.Properties.ofFullCopy(net.minecraft.world.level.block.Blocks.AIR)
+                () -> new FlashBlock(BlockBehaviour.Properties.copy(net.minecraft.world.level.block.Blocks.AIR)
                         .strength(-1.0F, 3600000.8F)
                         .noLootTable()
                         .mapColor(MapColor.NONE)
@@ -145,7 +145,8 @@ public class Exposure {
         public static final Supplier<CameraItem> CAMERA = Register.item("camera",
                 () -> new CameraItem(new Item.Properties()
                         .stacksTo(1)
-                        .component(DataComponents.CAMERA_ACTIVE, false)));
+                 //       .component(DataComponents.CAMERA_ACTIVE, false)
+                ));
 
         public static final Supplier<FilmRollItem> BLACK_AND_WHITE_FILM = Register.item("black_and_white_film",
                 () -> new FilmRollItem(ExposureType.BLACK_AND_WHITE, FilmRollItem.BAR_BLACK_AND_WHITE,
@@ -160,17 +161,17 @@ public class Exposure {
         public static final Supplier<FilmRollItem> HIGH_SENSITIVITY_BLACK_AND_WHITE_FILM = Register.item("high_sensitivity_black_and_white_film",
                 () -> new FilmRollItem(ExposureType.BLACK_AND_WHITE, FilmRollItem.BAR_BLACK_AND_WHITE,
                         new Item.Properties()
-                                .component(DataComponents.FILM_STYLE, FilmStyle.create()
+                          /*      .component(DataComponents.FILM_STYLE, FilmStyle.create()
                                         .withSensitivity(2f)
-                                        .withNoise(0.065f))
+                                        .withNoise(0.065f))*/
                                 .stacksTo(16)));
 
         public static final Supplier<FilmRollItem> HIGH_SENSITIVITY_COLOR_FILM = Register.item("high_sensitivity_color_film",
                 () -> new FilmRollItem(ExposureType.COLOR, FilmRollItem.BAR_COLOR,
                         new Item.Properties()
-                                .component(DataComponents.FILM_STYLE, FilmStyle.create()
+                              /*  .component(DataComponents.FILM_STYLE, FilmStyle.create()
                                         .withSensitivity(2f)
-                                        .withNoise(0.065f))
+                                        .withNoise(0.065f))*/
                                 .stacksTo(16)));
 
         public static final Supplier<DevelopedFilmItem> DEVELOPED_BLACK_AND_WHITE_FILM = Register.item("developed_black_and_white_film",
@@ -256,37 +257,214 @@ public class Exposure {
     public static class DataComponents {
         // Camera State
 
-        public static final DataComponentType<CameraId> CAMERA_ID = Register.dataComponentType("camera_id",
-                arg -> arg.persistent(CameraId.CODEC).networkSynchronized(CameraId.STREAM_CODEC));
+        static Boolean getBoolean(ItemStack stack,String key) {//booleans are bytes internally
+            return stack.hasTag() && stack.getTag().contains(key, Tag.TAG_BYTE) ? stack.getTag().getBoolean(key) : null;
+        }
 
-        public static final DataComponentType<Boolean> CAMERA_GOLD = Register.dataComponentType("camera_gold",
-                arg -> arg.persistent(Codec.BOOL).networkSynchronized(ByteBufCodecs.BOOL));
+        static void setBoolean(ItemStack stack,String key,Boolean value) {
+            if (value == null) {
+                stack.removeTagKey(key);
+            } else {
+                stack.getOrCreateTag().putBoolean(key,value);
+            }
+        }
 
-        public static final DataComponentType<Boolean> CAMERA_ACTIVE = Register.dataComponentType("camera_active",
-                arg -> arg.persistent(Codec.BOOL).networkSynchronized(ByteBufCodecs.BOOL));
+        static Integer getInt(ItemStack stack,String key) {
+            return stack.hasTag() && stack.getTag().contains(key,Tag.TAG_INT) ? stack.getTag().getInt(key) : null;
+        }
 
-        public static final DataComponentType<Boolean> CAMERA_DISASSEMBLED = Register.dataComponentType("camera_disassembled",
-                arg -> arg.persistent(Codec.BOOL).networkSynchronized(ByteBufCodecs.BOOL));
+        static void setInt(ItemStack stack,String key,Integer value) {
+            if (value == null) {
+                stack.removeTagKey(key);
+            } else {
+                stack.getOrCreateTag().putInt(key,value);
+            }
+        }
 
-        public static final DataComponentType<Long> CAMERA_LAST_ACTION_TIME = Register.dataComponentType("camera_last_action_time",
-                arg -> arg.persistent(Codec.LONG).networkSynchronized(ByteBufCodecs.VAR_LONG));
+        static Long getLong(ItemStack stack,String key) {
+            return stack.hasTag() && stack.getTag().contains(key,Tag.TAG_LONG) ? stack.getTag().getLong(key) : null;
+        }
 
-        public static final DataComponentType<Boolean> SELFIE_MODE = Register.dataComponentType("camera_selfie_mode",
-                arg -> arg.persistent(Codec.BOOL).networkSynchronized(ByteBufCodecs.BOOL));
+        static void setLong(ItemStack stack,String key,Long value) {
+            if (value == null) {
+                stack.removeTagKey(key);
+            } else {
+                stack.getOrCreateTag().putLong(key,value);
+            }
+        }
 
-        public static final DataComponentType<ShutterState> SHUTTER_STATE = Register.dataComponentType("camera_shutter_state",
-                arg -> arg.persistent(ShutterState.CODEC).networkSynchronized(ShutterState.STREAM_CODEC));
+        static String getString(ItemStack stack,String key) {
+            return stack.hasTag() && stack.getTag().contains(key,Tag.TAG_STRING) ? stack.getTag().getString(key) : null;
+        }
 
-        public static final DataComponentType<Long> TIMER_START_TICK = Register.dataComponentType("camera_timer_start_tick",
-                arg -> arg.persistent(Codec.LONG).networkSynchronized(ByteBufCodecs.VAR_LONG));
+        static void setString(ItemStack stack,String key,String value) {
+            if (value == null) {
+                stack.removeTagKey(key);
+            } else {
+                stack.getOrCreateTag().putString(key,value);
+            }
+        }
 
-        public static final DataComponentType<Long> TIMER_END_TICK = Register.dataComponentType("camera_timer_end_tick",
-                arg -> arg.persistent(Codec.LONG).networkSynchronized(ByteBufCodecs.VAR_LONG));
 
-        public static final DataComponentType<Long> TIMER_LAST_RELEASE_TICK = Register.dataComponentType("camera_timer_last_release_tick",
-                arg -> arg.persistent(Codec.LONG).networkSynchronized(ByteBufCodecs.VAR_LONG));
+        @Nullable
+        static <T> T getValue(ItemStack stack,String key,Codec<T> codec) {
+            if (!stack.hasTag()) return null;
+            Tag tag = stack.getTag().get(key);
+            if (tag == null) return null;
+            return codec.parse(new Dynamic<>(NbtOps.INSTANCE, tag)).resultOrPartial(LOGGER::error).orElse(null);
+        }
+
+        static<T> void setValue(ItemStack stack,String key,T value,Codec<T> codec) {
+            if (value == null) {
+                stack.removeTagKey(key);
+            } else {
+                codec.encodeStart(NbtOps.INSTANCE,value).resultOrPartial(LOGGER::error).ifPresent(tag -> stack.getOrCreateTag().put(key,tag));
+            }
+        }
+
+        static  <E extends Enum<E>> E getEnum(ItemStack stack,String key,Class<E> clazz) {
+            E[] constants = clazz.getEnumConstants();
+            return stack.hasTag() && stack.getTag().contains(key,Tag.TAG_INT) ? constants[stack.getTag().getInt(key)] : null;
+        }
+
+        static <E extends Enum<E>> void setEnum(ItemStack stack,E value,String key) {
+            if (value == null) {
+                stack.removeTagKey(key);
+            } else {
+                stack.getOrCreateTag().putInt(key,value.ordinal());
+            }
+        }
+
+        @Nullable
+        public static CameraId getCameraId(ItemStack stack) {
+            return getValue(stack,"exposure:camera_id",CameraId.CODEC);
+        }
+
+        public static void setCameraId(ItemStack stack,CameraId id) {
+            setValue(stack, "exposure:camera_id", id, CameraId.CODEC);
+        }
+
+        public static Boolean getCameraGold(ItemStack stack) {
+            return getBoolean(stack,"exposure:camera_gold");
+        }
+
+        public static boolean getCameraGold(ItemStack stack,boolean fallback) {
+            Boolean aBoolean = getBoolean(stack, "exposure:camera_gold");
+            return aBoolean == null ? fallback : aBoolean;
+        }
+
+        public static void setCameraGold(ItemStack stack,Boolean cameraGold) {
+            setBoolean(stack, "exposure:camera_gold", cameraGold);
+        }
+
+
+        public static Boolean getCameraActive(ItemStack stack) {
+            return getBoolean(stack,"exposure:camera_active");
+        }
+
+        public static boolean getCameraActive(ItemStack stack,boolean fallback) {
+            Boolean aBoolean = getBoolean(stack, "exposure:camera_active");
+            return aBoolean == null ? fallback : aBoolean;
+        }
+
+        public static void setCameraActive(ItemStack stack,Boolean cameraActive) {
+            setBoolean(stack, "exposure:camera_active", cameraActive);
+        }
+
+        public static Boolean getCameraDisassembled(ItemStack stack) {
+            return getBoolean(stack,"exposure:camera_disassembled");
+        }
+
+        public static boolean getCameraDisassembled(ItemStack stack,boolean fallback) {
+            Boolean aBoolean = getBoolean(stack, "exposure:camera_disassembled");
+            return aBoolean == null ? fallback : aBoolean;
+        }
+
+        public static void setCameraDisassembled(ItemStack stack,Boolean cameraDisassembled) {
+            setBoolean(stack, "exposure:camera_disassembled", cameraDisassembled);
+        }
+
+        public static Long getLastCameraActionTime(ItemStack stack) {
+            return getLong(stack,"camera_last_action_time");
+        }
+
+        public static long getLastCameraActionTime(ItemStack stack,long fallback) {
+            Long cameraLastActionTime = getLong(stack, "camera_last_action_time");
+            return cameraLastActionTime == null ? fallback : cameraLastActionTime;
+        }
+
+        public static void setCameraLastActionTime(ItemStack stack,Long lastCameraActionTime) {
+            setLong(stack,"camera_last_action_time",lastCameraActionTime);
+        }
+
+
+        public static Boolean getSelfieMode(ItemStack stack) {
+            return getBoolean(stack,"exposure:camera_selfie_mode");
+        }
+
+        public static boolean getSelfieMode(ItemStack stack,boolean fallback) {
+            Boolean aBoolean = getBoolean(stack, "exposure:camera_selfie_mode");
+            return aBoolean == null ? fallback : aBoolean;
+        }
+
+        public static void setSelfieMode(ItemStack stack,Boolean selfieMode) {
+            setBoolean(stack, "exposure:camera_selfie_mode", selfieMode);
+        }
+
+        public static void setShutterState(ItemStack stack,ShutterState state) {
+            setValue(stack,"exposure:camera_shutter_state",state,ShutterState.CODEC);
+        }
+
+        public static ShutterState getCameraShutterState(ItemStack stack) {
+            return getValue(stack,"exposure:camera_shutter_state",ShutterState.CODEC);
+        }
+
+        public static Long getTimerStartTick(ItemStack stack) {
+            return getLong(stack,"camera_timer_start_tick");
+        }
+
+        public static long getTimerStartTick(ItemStack stack,long fallback) {
+            Long cameraLastActionTime = getLong(stack, "camera_timer_start_tick");
+            return cameraLastActionTime == null ? fallback : cameraLastActionTime;
+        }
+
+        public static void setTimerStartTick(ItemStack stack,Long timerStartTick) {
+            setLong(stack,"camera_timer_start_tick",timerStartTick);
+        }
+
+
+
+        public static Long getTimerEndTick(ItemStack stack) {
+            return getLong(stack,"camera_timer_end_tick");
+        }
+
+        public static long getTimerEndTick(ItemStack stack,long fallback) {
+            Long cameraLastActionTime = getLong(stack, "camera_timer_end_tick");
+            return cameraLastActionTime == null ? fallback : cameraLastActionTime;
+        }
+
+        public static void setTimerEndTick(ItemStack stack,Long timerEndTick) {
+            setLong(stack,"camera_timer_end_tick",timerEndTick);
+        }
+
+        public static Long getTimerLastReleaseTick(ItemStack stack) {
+            return getLong(stack,"camera_timer_last_release_tick");
+        }
+
+        public static long getTimerLastReleaseTick(ItemStack stack,long fallback) {
+            Long cameraLastActionTime = getLong(stack, "camera_timer_last_release_tick");
+            return cameraLastActionTime == null ? fallback : cameraLastActionTime;
+        }
+
+        public static void setTimerLastReleaseTick(ItemStack stack,Long timerLastReleaseTick) {
+            setLong(stack,"camera_timer_last_release_tick",timerLastReleaseTick);
+        }
 
         // Settings
+
+        public static ShutterSpeed getShutterSpeed(ItemStack stack) {
+            return getValue(stack,"shutter_speed",ShutterSpeed.CODEC);
+        }
 
         public static final DataComponentType<ShutterSpeed> SHUTTER_SPEED = Register.dataComponentType("camera_shutter_speed",
                 arg -> arg.persistent(ShutterSpeed.CODEC).networkSynchronized(ShutterSpeed.STREAM_CODEC));
@@ -311,47 +489,134 @@ public class Exposure {
 
         // Attachments
 
-        public static final DataComponentType<StoredItemStack> FILM = Register.dataComponentType("camera_film",
-                arg -> arg.persistent(StoredItemStack.CODEC).networkSynchronized(StoredItemStack.STREAM_CODEC));
+        public static StoredItemStack getStoredItemStack(ItemStack stack,String key) {
+            return getValue(stack,key,StoredItemStack.CODEC);
+        }
 
-        public static final DataComponentType<StoredItemStack> FLASH = Register.dataComponentType("camera_flash",
-                arg -> arg.persistent(StoredItemStack.CODEC).networkSynchronized(StoredItemStack.STREAM_CODEC));
+        public static StoredItemStack getStoredItemStack(ItemStack stack,String key,StoredItemStack fallback) {
+            StoredItemStack storedItemStack = getStoredItemStack(stack,key);
+            return storedItemStack == null ? fallback : storedItemStack;
+        }
 
-        public static final DataComponentType<StoredItemStack> LENS = Register.dataComponentType("camera_lens",
-                arg -> arg.persistent(StoredItemStack.CODEC).networkSynchronized(StoredItemStack.STREAM_CODEC));
-
-        public static final DataComponentType<StoredItemStack> FILTER = Register.dataComponentType("camera_filter",
-                arg -> arg.persistent(StoredItemStack.CODEC).networkSynchronized(StoredItemStack.STREAM_CODEC));
+        public static void setStoredItemStack(ItemStack stack,String key,StoredItemStack value) {
+            setValue(stack,key,value,StoredItemStack.CODEC);
+        }
 
         // Film
+
+        public static Integer getFilmFrameCount(ItemStack stack) {
+            return getInt(stack,"film_frame_count");
+        }
+
+        public static int getFilmFrameCount(ItemStack stack,int fallback) {
+            Integer filmFrameCount = getInt(stack, "film_frame_count");
+            return filmFrameCount == null ? fallback : filmFrameCount;
+        }
 
         public static final DataComponentType<Integer> FILM_FRAME_COUNT = Register.dataComponentType("film_frame_count",
                 arg -> arg.persistent(ExtraCodecs.intRange(1, 256)).networkSynchronized(ByteBufCodecs.VAR_INT));
 
-        public static final DataComponentType<Integer> FILM_FRAME_SIZE = Register.dataComponentType("film_frame_size",
-                arg -> arg.persistent(ExtraCodecs.intRange(1, 2048)).networkSynchronized(ByteBufCodecs.VAR_INT));
 
-        public static final DataComponentType<FilmStyle> FILM_STYLE = Register.dataComponentType("film_style",
-                arg -> arg.persistent(FilmStyle.CODEC).networkSynchronized(FilmStyle.STREAM_CODEC));
+        public static Integer getFilmFrameSize(ItemStack stack) {
+            return getInt(stack,"film_frame_size");
+        }
 
-        public static final DataComponentType<ResourceLocation> FILM_COLOR_PALETTE = Register.dataComponentType("film_color_palette",
-                arg -> arg.persistent(ResourceLocation.CODEC).networkSynchronized(ResourceLocation.STREAM_CODEC));
+        public static int getFilmFrameSize(ItemStack stack,int fallback) {
+            Integer filmFrameSize = getInt(stack, "film_frame_size");
+            return filmFrameSize == null ? fallback : filmFrameSize;
+        }
 
-        public static final DataComponentType<DitherMode> FILM_DITHER_MODE = Register.dataComponentType("film_dither_mode",
-                arg -> arg.persistent(DitherMode.CODEC).networkSynchronized(DitherMode.STREAM_CODEC));
+        public static void setFilmStyle(ItemStack stack,FilmStyle style) {
+            setValue(stack,"exposure:film_style",style,FilmStyle.CODEC);
+        }
 
-        public static final DataComponentType<List<Frame>> FILM_FRAMES =
-                Register.dataComponentType("film_frames",
-                        arg -> arg.persistent(Frame.CODEC.listOf(0, 256))
-                                .networkSynchronized(Frame.STREAM_CODEC.apply(ByteBufCodecs.list(256))));
+        public static FilmStyle getFilmStyle(ItemStack stack) {
+            return getValue(stack,"exposure:film_style",FilmStyle.CODEC);
+        }
+
+        public static FilmStyle getFilmStyle(ItemStack stack,FilmStyle fallback) {
+            FilmStyle filmStyle = getFilmStyle(stack);
+            return filmStyle == null ? fallback : filmStyle;
+        }
+
+        public static ResourceLocation getFilmColorPalette(ItemStack stack) {
+            return getValue(stack,"film_color_palette",ResourceLocation.CODEC);
+        }
+
+      //  public static final DataComponentType<ResourceLocation> FILM_COLOR_PALETTE = Register.dataComponentType("film_color_palette",
+       //         arg -> arg.persistent(ResourceLocation.CODEC).networkSynchronized(ResourceLocation.STREAM_CODEC));
+
+        public static DitherMode getFilmDitherMode(ItemStack stack) {
+            return getEnum(stack,"film_dither_mode", DitherMode.class);
+        }
+
+        public static DitherMode getFilmDitherMode(ItemStack stack,DitherMode fallback) {
+            DitherMode filmDitherMode = getFilmDitherMode(stack);
+            return filmDitherMode == null ? fallback : filmDitherMode;
+        }
+
+        public static void setFilmDitherMode(ItemStack stack,DitherMode mode) {
+            setEnum(stack,mode,"film_dither_mode");
+        }
+
+        public static void setFilmFrames(ItemStack stack,List<Frame> state) {
+            setValue(stack,"exposure:film_frames",state,Frame.CODEC.listOf());
+        }
+
+        public static List<Frame> getFilmFrames(ItemStack stack) {
+            return getValue(stack,"exposure:film_frames",Frame.CODEC.listOf());
+        }
+
+        public static List<Frame> getFilmFrames(ItemStack stack,List<Frame> fallback) {
+            List<Frame> value = getFilmFrames(stack);
+            return value == null ? fallback : value;
+        }
 
         // Photograph
 
-        public static final DataComponentType<Frame> PHOTOGRAPH_FRAME = Register.dataComponentType("photograph_frame",
-                arg -> arg.persistent(Frame.CODEC).networkSynchronized(Frame.STREAM_CODEC));
+        public static void setPhotographFrame(ItemStack stack,Frame state) {
+            setValue(stack,"exposure:photograph_frame",state,Frame.CODEC);
+        }
+
+        public static Frame getPhotographFrame(ItemStack stack) {
+            return getValue(stack,"exposure:photograph_frame",Frame.CODEC);
+        }
+
+        public static Frame getPhotographFrame(ItemStack stack,Frame fallback) {
+            Frame value = getPhotographFrame(stack);
+            return value == null ? fallback : value;
+        }
+
+        public static void setPhotographType(ItemStack stack,ExposureType state) {
+            setValue(stack,"exposure:photograph_type",state,ExposureType.CODEC);
+        }
+
+        public static ExposureType getPhotographType(ItemStack stack) {
+            return getValue(stack,"exposure:photograph_type",ExposureType.CODEC);
+        }
+
+        public static ExposureType getPhotographType(ItemStack stack,ExposureType fallback) {
+            ExposureType value = getPhotographType(stack);
+            return value == null ? fallback : value;
+        }
+
+
 
         public static final DataComponentType<ExposureType> PHOTOGRAPH_TYPE = Register.dataComponentType("photograph_type",
                 arg -> arg.persistent(ExposureType.CODEC).networkSynchronized(ExposureType.STREAM_CODEC));
+
+        public static Integer getPhotographGeneration(ItemStack stack) {
+            return getInt(stack,"photograph_generation");
+        }
+
+        public static int getPhotographGeneration(ItemStack stack,int fallback) {
+            Integer photographGeneration = getInt(stack, "photograph_generation");
+            return photographGeneration == null ? fallback : photographGeneration;
+        }
+
+        public static void setPhotographGeneration(ItemStack stack,Integer integer) {
+            setInt(stack,"photograph_generation",integer);
+        }
 
         public static final DataComponentType<Integer> PHOTOGRAPH_GENERATION = Register.dataComponentType("photograph_generation",
                 arg -> arg.persistent(ExtraCodecs.intRange(0, 3)).networkSynchronized(ByteBufCodecs.VAR_INT));
@@ -363,18 +628,47 @@ public class Exposure {
 
         // Album
 
-        public static final DataComponentType<AlbumContent> ALBUM_CONTENT = Register.dataComponentType("album_content",
-                arg -> arg.persistent(AlbumContent.CODEC).networkSynchronized(AlbumContent.STREAM_CODEC));
+        public static AlbumContent getAlbumContent(ItemStack stack) {
+            return getValue(stack,"exposure:album_content",AlbumContent.CODEC);
+        }
 
-        public static final DataComponentType<SignedAlbumContent> SIGNED_ALBUM_CONTENT = Register.dataComponentType("signed_album_content",
-                arg -> arg.persistent(SignedAlbumContent.CODEC).networkSynchronized(SignedAlbumContent.STREAM_CODEC));
+        public static AlbumContent getAlbumContent(ItemStack stack,AlbumContent fallback) {
+            AlbumContent albumContent = getAlbumContent(stack);
+            return albumContent ==  null ? fallback : albumContent;
+        }
+
+        public static void setAlbumContent(ItemStack stack,AlbumContent content) {
+            setValue(stack,"exposure:album_content",content,AlbumContent.CODEC);
+        }
+
+        public static SignedAlbumContent getSignedAlbumContent(ItemStack stack) {
+            return getValue(stack,"exposure:signed_album_content",SignedAlbumContent.CODEC);
+        }
+
+        public static SignedAlbumContent getSignedAlbumContent(ItemStack stack,SignedAlbumContent fallback) {
+            SignedAlbumContent signedAlbumContent = getSignedAlbumContent(stack);
+            return signedAlbumContent ==  null ? fallback : signedAlbumContent;
+        }
+
+        public static void setSignedAlbumContent(ItemStack stack,SignedAlbumContent content) {
+            setValue(stack,"exposure:signed_album_content",content,SignedAlbumContent.CODEC);
+        }
+
 
         // --
 
-        public static final DataComponentType<DitherMode> INTERPLANAR_PROJECTOR_MODE =
-                Register.dataComponentType("interplanar_projector_mode",
-                        arg -> arg.persistent(DitherMode.CODEC)
-                                .networkSynchronized(DitherMode.STREAM_CODEC));
+        public static DitherMode getInterplanarProjectorMode(ItemStack stack) {
+            return getEnum(stack,"interplanar_projector_mode", DitherMode.class);
+        }
+
+        public static DitherMode getInterplanarProjectorMode(ItemStack stack,DitherMode fallback) {
+            DitherMode interplanarProjectorMode = getInterplanarProjectorMode(stack);
+            return interplanarProjectorMode == null ? fallback : interplanarProjectorMode;
+        }
+
+        public static void setInterplanarProjectorMode(ItemStack stack,DitherMode mode) {
+            setEnum(stack,mode,"interplanar_projector_mode");
+        }
 
         public static final DataComponentType<String> INTERPLANAR_PROJECTOR_ERROR_CODE =
                 Register.dataComponentType("interplanar_projector_error_code",
@@ -384,6 +678,21 @@ public class Exposure {
                 Register.dataComponentType("chromatic_layers",
                         arg -> arg.persistent(Frame.CODEC.listOf(0, 3))
                                 .networkSynchronized(Frame.STREAM_CODEC.apply(ByteBufCodecs.list())));
+
+
+
+        public static void setChromaticLayers(ItemStack stack,List<Frame> state) {
+            setValue(stack,"exposure:chromatic_layers",state,Frame.CODEC.listOf());
+        }
+
+        public static List<Frame> getChromaticLayers(ItemStack stack) {
+            return getValue(stack,"exposure:chromatic_layers",Frame.CODEC.listOf());
+        }
+
+        public static List<Frame> getChromaticLayers(ItemStack stack,List<Frame> fallback) {
+            List<Frame> value = getValue(stack, "exposure:chromatic_layers", Frame.CODEC.listOf());
+            return value == null ? fallback : value;
+        }
 
         static void init() {
         }
@@ -533,9 +842,9 @@ public class Exposure {
     }
 
     public static class ItemSubPredicates {
-        public static Supplier<ItemSubPredicate.Type<FramePredicate>> FRAME = Register.itemSubPredicate("frame",
+        /*  public static Supplier<ItemSubPredicate.Type<FramePredicate>> FRAME = Register.itemSubPredicate("frame",
                 () -> new ItemSubPredicate.Type<>(FramePredicate.CODEC));
-
+*/
         public static void init() {
         }
     }

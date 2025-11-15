@@ -39,11 +39,11 @@ public class AlbumItem extends Item {
     }
 
     public AlbumContent getContent(ItemStack stack) {
-        return stack.getOrDefault(Exposure.DataComponents.ALBUM_CONTENT, AlbumContent.EMPTY);
+        return Exposure.DataComponents.getAlbumContent(stack, AlbumContent.EMPTY);
     }
 
     public void setContent(ItemStack stack, AlbumContent content) {
-        stack.set(Exposure.DataComponents.ALBUM_CONTENT, content);
+        Exposure.DataComponents.setAlbumContent(stack, content);
     }
 
     public void updatePage(ItemStack stack, int index, Function<Optional<AlbumPage>, AlbumPage> pageUpdater) {
@@ -98,7 +98,7 @@ public class AlbumItem extends Item {
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
+    public void appendHoverText(ItemStack stack, Level context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
         if (Config.Client.ALBUM_PHOTOS_COUNT_TOOLTIP.get()) {
             int photographsCount = getPhotographsCount(stack);
             if (photographsCount > 0)
@@ -119,7 +119,7 @@ public class AlbumItem extends Item {
                 .toList();
 
         SignedAlbumContent signedAlbumContent = new SignedAlbumContent(title, author, signedPages);
-        signedAlbumStack.set(Exposure.DataComponents.SIGNED_ALBUM_CONTENT, signedAlbumContent);
+        Exposure.DataComponents.setSignedAlbumContent(signedAlbumStack, signedAlbumContent);
 
         return signedAlbumStack;
     }

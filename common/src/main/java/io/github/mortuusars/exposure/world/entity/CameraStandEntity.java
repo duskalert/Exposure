@@ -16,7 +16,6 @@ import io.github.mortuusars.exposure.world.item.camera.CameraItem;
 import io.github.mortuusars.exposure.world.sound.Sound;
 import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
@@ -88,15 +87,15 @@ public class CameraStandEntity extends Entity implements CameraHolder {
     }
 
     @Override
-    protected void defineSynchedData(SynchedEntityData.Builder builder) {
-        builder.define(DATA_ID_HURT, 0);
-        builder.define(DATA_ID_HURTDIR, 1);
-        builder.define(DATA_ID_DAMAGE, 0.0F);
-        builder.define(DATA_ID_CAMERA, ItemStack.EMPTY);
-        builder.define(DATA_ID_OPERATOR_ID, -1);
-        builder.define(DATA_ID_COOLDOWN_TIME, 0);
-        builder.define(DATA_ID_COOLDOWN, 0);
-        builder.define(DATA_ID_MALFUNCTIONED, false);
+    protected void defineSynchedData() {
+        entityData.define(DATA_ID_HURT, 0);
+        entityData.define(DATA_ID_HURTDIR, 1);
+        entityData.define(DATA_ID_DAMAGE, 0.0F);
+        entityData.define(DATA_ID_CAMERA, ItemStack.EMPTY);
+        entityData.define(DATA_ID_OPERATOR_ID, -1);
+        entityData.define(DATA_ID_COOLDOWN_TIME, 0);
+        entityData.define(DATA_ID_COOLDOWN, 0);
+        entityData.define(DATA_ID_MALFUNCTIONED, false);
     }
 
     @Override
@@ -115,7 +114,7 @@ public class CameraStandEntity extends Entity implements CameraHolder {
         tag.putInt("Cooldown", getCooldown());
         tag.putBoolean("Malfunctioned", isMalfunctioned());
         if (!getCamera().isEmpty()) {
-            tag.put("Camera", getCamera().save(registryAccess()));
+            tag.put("Camera", getCamera().save(new CompoundTag()));
         }
 
         redstoneControl.save(tag);
@@ -130,7 +129,7 @@ public class CameraStandEntity extends Entity implements CameraHolder {
         setCooldownTime(tag.getInt("CooldownTime"));
         setCooldown(tag.getInt("Cooldown"));
         setMalfunctioned(tag.getBoolean("Malfunctioned"));
-        setCamera(ItemStack.parseOptional(registryAccess(), tag.getCompound("Camera")));
+        setCamera(ItemStack.of(tag.getCompound("Camera")));
 
         redstoneControl.load(tag);
 
@@ -264,7 +263,7 @@ public class CameraStandEntity extends Entity implements CameraHolder {
     // -- Interact
 
     public boolean isInInteractionRange(LivingEntity entity) {
-        double range = entity.getAttributeValue(Attributes.ENTITY_INTERACTION_RANGE);
+        double range = 5;//todo entity.getAttributeValue(Attributes.ENTITY_INTERACTION_RANGE);
         return this.getBoundingBox().distanceToSqr(entity.getEyePosition()) < range * range;
     }
 
@@ -390,8 +389,7 @@ public class CameraStandEntity extends Entity implements CameraHolder {
             MenuProvider menuProvider = new MenuProvider() {
                 @Override
                 public @NotNull Component getDisplayName() {
-                    return cameraStack.get(DataComponents.CUSTOM_NAME) != null
-                            ? cameraStack.getHoverName() : Component.translatable("container.exposure.camera");
+                    return cameraStack.getDisplayName();
                 }
 
                 @Override
@@ -531,7 +529,7 @@ public class CameraStandEntity extends Entity implements CameraHolder {
         this.yo = this.getY();
         this.zo = this.getZ();
 
-        this.applyGravity();
+        //this.applyGravity();
 
         if (this.isInWater() && this.getFluidHeight(FluidTags.WATER) > 0.1F) {
             this.setUnderwaterMovement();
@@ -690,7 +688,7 @@ public class CameraStandEntity extends Entity implements CameraHolder {
         this.kill();
         if (this.level().getGameRules().getBoolean(GameRules.RULE_DOENTITYDROPS)) {
             ItemStack itemStack = new ItemStack(dropItem);
-            itemStack.set(DataComponents.CUSTOM_NAME, this.getCustomName());
+            itemStack.setHoverName(this.getCustomName());
             this.spawnAtLocation(itemStack, 0.5f);
         }
     }
@@ -747,11 +745,6 @@ public class CameraStandEntity extends Entity implements CameraHolder {
     }
 
     @Override
-    protected double getDefaultGravity() {
-        return 0.08;
-    }
-
-    @Override
     public @NotNull SoundSource getSoundSource() {
         return SoundSource.BLOCKS;
     }
@@ -799,7 +792,7 @@ public class CameraStandEntity extends Entity implements CameraHolder {
 
     // --
 
-    @Override
+    //@Override
     public void lerpTo(double x, double y, double z, float yRot, float xRot, int steps) {
         this.setPos(x, y, z);
         // this method is called when client receives packet from server,

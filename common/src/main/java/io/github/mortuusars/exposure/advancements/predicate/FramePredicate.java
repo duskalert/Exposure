@@ -2,14 +2,11 @@ package io.github.mortuusars.exposure.advancements.predicate;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import io.github.mortuusars.exposure.Exposure;
+import io.github.mortuusars.exposure.Stuff;
 import io.github.mortuusars.exposure.world.camera.frame.Frame;
 import io.github.mortuusars.exposure.world.level.storage.ExposureIdentifier;
 import net.minecraft.advancements.critereon.MinMaxBounds;
-import net.minecraft.advancements.critereon.SingleComponentItemPredicate;
-import net.minecraft.core.component.DataComponentType;
 import net.minecraft.world.item.ItemStack;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Optional;
@@ -23,26 +20,22 @@ public record FramePredicate(Optional<ExposureIdentifier> identifier,
                              Optional<MinMaxBounds.Ints> dayTime,
                              Optional<MinMaxBounds.Ints> entitiesInFrameCount,
                              Optional<List<EntityInFramePredicate>> entitiesInFrame,
-                             Optional<ExtraDataPredicate> extraData) implements SingleComponentItemPredicate<Frame> {
+                             Optional<ExtraDataPredicate> extraData) {
     public static final Codec<FramePredicate> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             ExposureIdentifier.CODEC.optionalFieldOf("identifier").forGetter(FramePredicate::identifier),
             Codec.STRING.optionalFieldOf("type").forGetter(FramePredicate::type),
             Codec.STRING.optionalFieldOf("photographer").forGetter(FramePredicate::photographer),
             ShutterSpeedPredicate.CODEC.optionalFieldOf("shutter_speed").forGetter(FramePredicate::shutterSpeed),
-            MinMaxBounds.Ints.CODEC.optionalFieldOf("focal_length").forGetter(FramePredicate::focalLength),
-            MinMaxBounds.Ints.CODEC.optionalFieldOf("light_level").forGetter(FramePredicate::lightLevel),
-            MinMaxBounds.Ints.CODEC.optionalFieldOf("day_time").forGetter(FramePredicate::dayTime),
-            MinMaxBounds.Ints.CODEC.optionalFieldOf("entities_in_frame_count").forGetter(FramePredicate::entitiesInFrameCount),
+            Stuff.INTS_CODEC.optionalFieldOf("focal_length").forGetter(FramePredicate::focalLength),
+            Stuff.INTS_CODEC.optionalFieldOf("light_level").forGetter(FramePredicate::lightLevel),
+            Stuff.INTS_CODEC.optionalFieldOf("day_time").forGetter(FramePredicate::dayTime),
+            Stuff.INTS_CODEC.optionalFieldOf("entities_in_frame_count").forGetter(FramePredicate::entitiesInFrameCount),
             EntityInFramePredicate.CODEC.listOf().optionalFieldOf("entities_in_frame").forGetter(FramePredicate::entitiesInFrame),
             ExtraDataPredicate.CODEC.optionalFieldOf("extra_data").forGetter(FramePredicate::extraData)
     ).apply(instance, FramePredicate::new));
 
-    @Override
-    public @NotNull DataComponentType<Frame> componentType() {
-        return Exposure.DataComponents.PHOTOGRAPH_FRAME;
-    }
 
-    @Override
+
     public boolean matches(ItemStack stack, Frame frame) {
         return matches(frame);
     }

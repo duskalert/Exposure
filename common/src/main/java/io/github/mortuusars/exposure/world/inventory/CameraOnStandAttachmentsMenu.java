@@ -4,7 +4,7 @@ import com.google.common.base.Preconditions;
 import io.github.mortuusars.exposure.Exposure;
 import io.github.mortuusars.exposure.world.entity.CameraStandEntity;
 import io.github.mortuusars.exposure.world.item.camera.CameraItem;
-import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -31,7 +31,7 @@ public class CameraOnStandAttachmentsMenu extends AbstractCameraAttachmentsMenu 
         return stand.getCamera().getItem() instanceof CameraItem && stand.isInInteractionRange(player);
     }
 
-    public static CameraOnStandAttachmentsMenu fromBuffer(int containerId, Inventory playerInventory, RegistryFriendlyByteBuf buffer) {
+    public static CameraOnStandAttachmentsMenu fromBuffer(int containerId, Inventory playerInventory, FriendlyByteBuf buffer) {
         if (!(playerInventory.player.level().getEntity(buffer.readInt()) instanceof CameraStandEntity stand)) {
             throw new IllegalStateException("Cannot open attachments on stand: Camera Stand entity does not exist on client.");
         }

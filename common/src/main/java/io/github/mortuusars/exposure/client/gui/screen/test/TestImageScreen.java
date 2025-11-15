@@ -393,8 +393,8 @@ public class TestImageScreen extends Screen {
     }
 
     @Override
-    public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
-        if (super.mouseScrolled(mouseX, mouseY, scrollX, scrollY)) {
+    public boolean mouseScrolled(double mouseX, double mouseY,  double scrollY) {
+        if (super.mouseScrolled(mouseX, mouseY, scrollY)) {
             return true;
         }
 
@@ -447,9 +447,9 @@ public class TestImageScreen extends Screen {
     private void fillHorizontalGradient(GuiGraphics guiGraphics, int x1, int y1, int x2, int y2, int colorFrom, int colorTo) {
         VertexConsumer consumer = guiGraphics.bufferSource().getBuffer(RenderType.gui());
         Matrix4f matrix4f = guiGraphics.pose().last().pose();
-        consumer.addVertex(matrix4f, (float) x1, (float) y1, 0).setColor(colorFrom);
-        consumer.addVertex(matrix4f, (float) x1, (float) y2, 0).setColor(colorFrom);
-        consumer.addVertex(matrix4f, (float) x2, (float) y2, 0).setColor(colorTo);
-        consumer.addVertex(matrix4f, (float) x2, (float) y1, 0).setColor(colorTo);
+        consumer.vertex(matrix4f, (float) x1, (float) y1, 0).color(colorFrom).endVertex();
+        consumer.vertex(matrix4f, (float) x1, (float) y2, 0).color(colorFrom).endVertex();
+        consumer.vertex(matrix4f, (float) x2, (float) y2, 0).color(colorTo).endVertex();
+        consumer.vertex(matrix4f, (float) x2, (float) y1, 0).color(colorTo).endVertex();
     }
 }

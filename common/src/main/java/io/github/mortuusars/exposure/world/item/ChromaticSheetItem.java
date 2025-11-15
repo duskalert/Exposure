@@ -33,14 +33,14 @@ public class ChromaticSheetItem extends Item {
     }
 
     public List<Frame> getLayers(ItemStack stack) {
-        return stack.getOrDefault(Exposure.DataComponents.CHROMATIC_SHEET_LAYERS, Collections.emptyList());
+        return Exposure.DataComponents.getChromaticLayers(stack,Collections.emptyList());
     }
 
     public void addLayer(ItemStack stack, Frame frame) {
         List<Frame> layers = new ArrayList<>(getLayers(stack));
         Preconditions.checkState(layers.size() < 3, "Cannot add layer. Chromatic Sheet already has 3 layers.");
         layers.add(frame);
-        stack.set(Exposure.DataComponents.CHROMATIC_SHEET_LAYERS, layers);
+        Exposure.DataComponents.setChromaticLayers(stack, layers);
     }
 
     public boolean canCombine(ItemStack stack) {
@@ -48,7 +48,7 @@ public class ChromaticSheetItem extends Item {
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
+    public void appendHoverText(ItemStack stack, Level context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
         List<Frame> layers = getLayers(stack);
 
         if (!layers.isEmpty()) {
@@ -80,7 +80,7 @@ public class ChromaticSheetItem extends Item {
     @Override
     public void inventoryTick(ItemStack stack, Level level, Entity entity, int slotId, boolean isSelected) {
         if (entity instanceof ServerPlayer player && canCombine(stack)) {
-            boolean printed = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).contains("printed");
+            boolean printed = stack.hasTag() && stack.getTag().getBoolean("printed");
             ItemStack finalizedItem = combineIntoPhotograph(player, stack, printed);
             player.getInventory().setItem(slotId, finalizedItem);
         }
@@ -112,7 +112,8 @@ public class ChromaticSheetItem extends Item {
                 .toImmutable();
 
         ItemStack photographStack = new ItemStack(Exposure.Items.PHOTOGRAPH.get());
-        photographStack.set(Exposure.DataComponents.PHOTOGRAPH_FRAME, frameData);
+        Exposure.DataComponents.setPhotographFrame(photographStack,frameData);
+
         photographStack.set(Exposure.DataComponents.PHOTOGRAPH_TYPE, ExposureType.COLOR);
         return photographStack;
     }

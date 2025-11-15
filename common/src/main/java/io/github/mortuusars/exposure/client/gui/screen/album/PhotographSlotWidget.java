@@ -160,13 +160,13 @@ public class PhotographSlotWidget extends AbstractWidget {
     }
 
     @Override
-    public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
+    public boolean mouseScrolled(double mouseX, double mouseY, double scrollY) {
         if (scrollY > 0 && clicked(mouseX, mouseY) && hasPhotograph) {
             primaryAction.accept(this);
             return true;
         }
 
-        return super.mouseScrolled(mouseX, mouseY, scrollX, scrollY);
+        return super.mouseScrolled(mouseX, mouseY,  scrollY);
     }
 
     @Override

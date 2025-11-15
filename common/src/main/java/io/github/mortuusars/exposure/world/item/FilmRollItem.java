@@ -60,16 +60,16 @@ public class FilmRollItem extends Item implements SensitiveFilmItem {
         Preconditions.checkState(getStoredFramesCount(stack) < getMaxFrameCount(stack),
                 "Cannot add more frames than film could fit. Size: " + getMaxFrameCount(stack));
 
-        List<Frame> frames = new ArrayList<>(stack.getOrDefault(Exposure.DataComponents.FILM_FRAMES, Collections.emptyList()));
+        List<Frame> frames = new ArrayList<>(Exposure.DataComponents.getFilmFrames(stack, Collections.emptyList()));
         frames.add(frame);
 
-        stack.set(Exposure.DataComponents.FILM_FRAMES, frames);
+        Exposure.DataComponents.setFilmFrames(stack, frames);
     }
 
     // --
 
     @Override
-    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> list, TooltipFlag tooltipFlag) {
+    public void appendHoverText(ItemStack stack, Level context, List<Component> list, TooltipFlag tooltipFlag) {
         int exposedFrames = getStoredFramesCount(stack);
         if (exposedFrames > 0) {
             int totalFrames = getMaxFrameCount(stack);

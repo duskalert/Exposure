@@ -3,12 +3,9 @@ package io.github.mortuusars.exposure.world.camera.frame;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import io.github.mortuusars.exposure.world.entity.CameraHolder;
-import io.netty.buffer.ByteBuf;
 import net.minecraft.Util;
 import net.minecraft.core.UUIDUtil;
-import net.minecraft.network.codec.ByteBufCodecs;
-import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.util.StringUtil;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
@@ -21,14 +18,17 @@ public final class Photographer {
 
     public static final Codec<Photographer> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                     Codec.STRING.optionalFieldOf("name", "").forGetter(Photographer::name),
-                    UUIDUtil.LENIENT_CODEC.optionalFieldOf("uuid", Util.NIL_UUID).forGetter(Photographer::uuid))
+                    UUIDUtil.CODEC.optionalFieldOf("uuid", Util.NIL_UUID).forGetter(Photographer::uuid))
             .apply(instance, Photographer::new));
 
-    public static final StreamCodec<ByteBuf, Photographer> STREAM_CODEC = StreamCodec.composite(
-            ByteBufCodecs.STRING_UTF8, Photographer::name,
-            UUIDUtil.STREAM_CODEC, Photographer::uuid,
-            Photographer::new
-    );
+    public void toPacket(FriendlyByteBuf buf) {
+        buf.writeUtf(name);
+        buf.writeUUID(uuid);
+    }
+
+    public static Photographer fromPacket(FriendlyByteBuf buf) {
+        return new Photographer(buf.readUtf(),buf.readUUID());
+    }
 
     private final String name;
     private final UUID uuid;
@@ -50,11 +50,11 @@ public final class Photographer {
     }
 
     public boolean isPlayer() {
-        return !StringUtil.isBlank(name) && !uuid.equals(Util.NIL_UUID);
+        return !name.isBlank() && !uuid.equals(Util.NIL_UUID);
     }
 
     public boolean isNPC() {
-        return !StringUtil.isBlank(name) && uuid.equals(Util.NIL_UUID);
+        return !name.isBlank() && uuid.equals(Util.NIL_UUID);
     }
 
     public boolean isEmpty() {

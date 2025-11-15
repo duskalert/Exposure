@@ -105,7 +105,7 @@ public class PhotographFrameEntity extends HangingEntity {
         setDirection(Direction.from3DDataValue(direction));
     }
 
-    @Override
+    //@Override
     public @NotNull Packet<ClientGamePacketListener> getAddEntityPacket(ServerEntity entity) {
         int packedData = (size << 8) | direction.get3DDataValue();
         return new ClientboundAddEntityPacket(this, packedData, this.getPos());
@@ -115,13 +115,13 @@ public class PhotographFrameEntity extends HangingEntity {
         super.addAdditionalSaveData(tag);
         ItemStack item = getItem();
         if (!item.isEmpty()) {
-            tag.put("Item", item.save(this.registryAccess()));
+            tag.put("Item", item.save(new CompoundTag()));
             tag.putBoolean("IsGlowing", this.isGlowing()); // "Glowing" is used in vanilla
             tag.putByte("ItemRotation", (byte) this.getItemRotation());
         }
         ItemStack frameItem = getFrameItem();
         if (!frameItem.isEmpty())
-            tag.put("FrameItem", frameItem.save(this.registryAccess()));
+            tag.put("FrameItem", frameItem.save(new CompoundTag()));
 
         tag.putByte("Size", (byte) getSize());
         tag.putByte("Facing", (byte) direction.get3DDataValue());
@@ -132,13 +132,13 @@ public class PhotographFrameEntity extends HangingEntity {
         super.readAdditionalSaveData(tag);
         CompoundTag frameItemTag = tag.getCompound("FrameItem");
         if (!frameItemTag.isEmpty()) {
-            ItemStack stack = ItemStack.parse(registryAccess(), frameItemTag).orElse(new ItemStack(getBaseFrameItem()));
+            ItemStack stack = ItemStack.of(frameItemTag);//.orElse(new ItemStack(getBaseFrameItem()));
             setFrameItem(stack);
         }
 
         CompoundTag itemTag = tag.getCompound("Item");
         if (!itemTag.isEmpty()) {
-            ItemStack itemstack = ItemStack.parse(registryAccess(), itemTag).orElse(ItemStack.EMPTY);
+            ItemStack itemstack = ItemStack.of(itemTag);//.orElse(ItemStack.EMPTY);
             setItem(itemstack);
             setGlowing(tag.getBoolean("IsGlowing")); // "Glowing" is used in vanilla
             setItemRotation(tag.getByte("ItemRotation"));
@@ -172,7 +172,7 @@ public class PhotographFrameEntity extends HangingEntity {
         return getFrameItem().copy();
     }
 
-    @Override
+    //@Override
     protected @NotNull AABB calculateBoundingBox(BlockPos pos, Direction direction) {
         double x = (double)pos.getX() + 0.5;
         double y = (double)pos.getY() + 0.5;
@@ -397,12 +397,12 @@ public class PhotographFrameEntity extends HangingEntity {
     }
 
     @Override
-    protected void defineSynchedData(SynchedEntityData.Builder builder) {
-        builder.define(DATA_SIZE, 0);
-        builder.define(DATA_FRAME_ITEM, ItemStack.EMPTY);
-        builder.define(DATA_ITEM, ItemStack.EMPTY);
-        builder.define(DATA_ITEM_ROTATION, 0);
-        builder.define(DATA_GLOWING, false);
+    protected void defineSynchedData() {
+        entityData.define(DATA_SIZE, 0);
+        entityData.define(DATA_FRAME_ITEM, ItemStack.EMPTY);
+        entityData.define(DATA_ITEM, ItemStack.EMPTY);
+        entityData.define(DATA_ITEM_ROTATION, 0);
+        entityData.define(DATA_GLOWING, false);
     }
 
     @Override

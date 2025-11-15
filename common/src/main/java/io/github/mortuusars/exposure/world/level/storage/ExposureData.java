@@ -13,6 +13,7 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
@@ -39,6 +40,18 @@ public class ExposureData extends SavedData {
             Tag.STREAM_CODEC, ExposureData::getTag,
             ExposureData::new
     );
+
+    public void toPacket(FriendlyByteBuf buf){
+        buf.writeInt(width);
+        buf.writeInt(height);
+        buf.writeByteArray(pixels);
+        buf.writeResourceLocation(palette);
+        tag.toPacket(buf);
+    }
+
+    public static ExposureData fromPacket(FriendlyByteBuf buf) {
+        return new ExposureData(buf.readInt(),buf.readInt(),buf.readByteArray(),buf.readResourceLocation(),Tag.fromPacket(buf));
+    }
 
     public static final ExposureData EMPTY = new ExposureData(
             1, 1, new byte[]{0}, ColorPalettes.DEFAULT.location(), Tag.EMPTY);
@@ -107,10 +120,10 @@ public class ExposureData extends SavedData {
     // --
 
     @Override
-    public @NotNull CompoundTag save(CompoundTag tag, HolderLookup.Provider registries) {
+    public @NotNull CompoundTag save(CompoundTag tag) {
         DataResult<net.minecraft.nbt.Tag> encodingResult = CODEC.encode(this, NbtOps.INSTANCE, tag);
-        if (encodingResult.isSuccess()) {
-            net.minecraft.nbt.Tag encodedTag = encodingResult.getOrThrow();
+        if (encodingResult.error().isEmpty()) {
+            net.minecraft.nbt.Tag encodedTag = encodingResult.get().left().get();
             if (encodedTag instanceof CompoundTag encodedCompoundTag)
                 return encodedCompoundTag;
             else {
@@ -164,6 +177,18 @@ public class ExposureData extends SavedData {
                 ByteBufCodecs.BOOL.encode(buffer, data.wasPrinted());
             }
         };
+
+        public static Tag fromPacket(FriendlyByteBuf buf) {
+            return new Tag(buf.readEnum(ExposureType.class), buf.readUtf(),buf.readLong(),buf.readBoolean(),buf.readBoolean());
+        }
+
+        public void toPacket(FriendlyByteBuf buf) {
+            buf.writeEnum(type);
+            buf.writeUtf(creator);
+            buf.writeLong(unixTimestamp);
+            buf.writeBoolean(loaded);
+            buf.writeBoolean(wasPrinted);
+        }
 
         public static final Tag EMPTY = new Tag(ExposureType.COLOR, "", 0, false, false);
 

@@ -1,5 +1,6 @@
 package io.github.mortuusars.exposure.advancements.predicate;
 
+import com.google.gson.JsonObject;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -25,5 +26,15 @@ public record TamedPredicate(boolean isTamed) implements EntitySubPredicate {
     @Override
     public boolean matches(Entity entity, ServerLevel level, @Nullable Vec3 position) {
         return entity instanceof TamableAnimal animal && animal.isTame() == isTamed;
+    }
+
+    @Override
+    public JsonObject serializeCustomData() {
+        return null;
+    }
+
+    @Override
+    public Type type() {
+        return null;
     }
 }

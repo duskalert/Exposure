@@ -2,6 +2,7 @@ package io.github.mortuusars.exposure.world.item.crafting.recipe;
 
 import io.github.mortuusars.exposure.Exposure;
 import net.minecraft.core.NonNullList;
+import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.PotionItem;
@@ -19,10 +20,10 @@ public class FilmDevelopingRecipe extends ComponentTransferringRecipe {
     }
 
     @Override
-    public @NotNull NonNullList<ItemStack> getRemainingItems(CraftingInput input) {
+    public @NotNull NonNullList<ItemStack> getRemainingItems(CraftingContainer input) {
         NonNullList<ItemStack> remainingItems = super.getRemainingItems(input);
 
-        for (int i = 0; i < input.size(); ++i) {
+        for (int i = 0; i < input.getContainerSize(); ++i) {
             ItemStack item = input.getItem(i);
             if (item.getItem() instanceof PotionItem && remainingItems.get(i).isEmpty()) {
                 remainingItems.set(i, new ItemStack(Items.GLASS_BOTTLE));

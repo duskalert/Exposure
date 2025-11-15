@@ -3,7 +3,6 @@ package io.github.mortuusars.exposure.world.item.camera;
 import com.google.common.base.Preconditions;
 import io.github.mortuusars.exposure.*;
 import io.github.mortuusars.exposure.data.*;
-import io.github.mortuusars.exposure.network.packet.clientbound.ShutterOpenedS2CP;
 import io.github.mortuusars.exposure.util.color.Color;
 import io.github.mortuusars.exposure.client.util.Minecrft;
 import io.github.mortuusars.exposure.world.camera.*;
@@ -35,7 +34,6 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.commands.arguments.EntityAnchorArgument;
 import net.minecraft.core.*;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
@@ -44,6 +42,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
@@ -255,10 +254,12 @@ public class CameraItem extends Item {
     // --
 
     public CameraId getOrCreateId(ItemStack stack) {
-        if (!stack.has(Exposure.DataComponents.CAMERA_ID)) {
-            stack.set(Exposure.DataComponents.CAMERA_ID, CameraId.create());
+        CameraId cameraId = Exposure.DataComponents.getCameraId(stack);
+        if (cameraId == null) {
+            cameraId = CameraId.create();
+            Exposure.DataComponents.setCameraId(stack,cameraId);
         }
-        return stack.get(Exposure.DataComponents.CAMERA_ID);
+        return cameraId;
     }
 
     public boolean isInSelfieMode(ItemStack stack) {
@@ -266,35 +267,31 @@ public class CameraItem extends Item {
     }
 
     public boolean isActive(ItemStack stack) {
-        return stack.getOrDefault(Exposure.DataComponents.CAMERA_ACTIVE, false);
+        return Exposure.DataComponents.getCameraActive(stack,false);
     }
 
     public void setActive(ItemStack stack, boolean active) {
-        if (!active) {
-            stack.remove(Exposure.DataComponents.CAMERA_ACTIVE);
-        } else {
-            stack.set(Exposure.DataComponents.CAMERA_ACTIVE, true);
-        }
+        Exposure.DataComponents.setCameraActive(stack,active);
     }
 
     public boolean isDisassembled(ItemStack stack) {
-        return stack.getOrDefault(Exposure.DataComponents.CAMERA_DISASSEMBLED, false);
+        return Exposure.DataComponents.getCameraDisassembled(stack, false);
     }
 
     public void setDisassembled(ItemStack stack, boolean disassembled) {
         if (!disassembled) {
-            stack.remove(Exposure.DataComponents.CAMERA_DISASSEMBLED);
+            Exposure.DataComponents.setCameraDisassembled(stack,null);
         } else {
-            stack.set(Exposure.DataComponents.CAMERA_DISASSEMBLED, true);
+            Exposure.DataComponents.setCameraDisassembled(stack,true);
         }
     }
 
     public long getLastActionTime(ItemStack stack) {
-        return stack.getOrDefault(Exposure.DataComponents.CAMERA_LAST_ACTION_TIME, -1L);
+        return Exposure.DataComponents.getLastCameraActionTime(stack,-1L);
     }
 
     public void setLastActionTime(ItemStack stack, long lastActionTime) {
-        stack.set(Exposure.DataComponents.CAMERA_LAST_ACTION_TIME, lastActionTime);
+        Exposure.DataComponents.setCameraLastActionTime(stack, lastActionTime);
     }
 
     public void actionPerformed(ItemStack stack, CameraHolder holder) {
@@ -356,7 +353,7 @@ public class CameraItem extends Item {
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> components, TooltipFlag tooltipFlag) {
+    public void appendHoverText(ItemStack stack, Level context, List<Component> components, TooltipFlag tooltipFlag) {
         if (Config.Client.CAMERA_SHOW_FILM_FRAMES_IN_TOOLTIP.get()) {
             Attachment.FILM.ifPresent(stack, (filmItem, filmStack) -> {
                 int exposed = filmItem.getStoredFramesCount(filmStack);
@@ -448,7 +445,7 @@ public class CameraItem extends Item {
 
             if (attachment.matches(otherStack)) {
                 // Insertion
-                if (storedStack.isEmpty() || ItemStack.isSameItemSameComponents(storedStack.getForReading(), otherStack)) {
+                if (storedStack.isEmpty() || ItemStack.isSameItemSameTags(storedStack.getForReading(), otherStack)) {
                     int availableCount = Math.max(0, maxCount - storedStack.getForReading().getCount());
                     if (availableCount == 0) {
                         holder.asHolderEntity().playSound(Exposure.SoundEvents.CAMERA_LENS_RING_CLICK.get(), 0.9f, 1f);
@@ -513,7 +510,7 @@ public class CameraItem extends Item {
             MenuProvider menuProvider = new MenuProvider() {
                 @Override
                 public @NotNull Component getDisplayName() {
-                    return stack.get(DataComponents.CUSTOM_NAME) != null
+                    return stack.hasCustomHoverName()
                             ? stack.getHoverName() : Component.translatable("container.exposure.camera");
                 }
 
@@ -972,12 +969,13 @@ public class CameraItem extends Item {
         Attachment.FILTER.set(stack, filterStack);
 
         if (projectionState == CameraInstance.ProjectionState.SUCCESSFUL) {
+            RandomSource randomSource = level.random;
             holder.getServerPlayerAwardedForExposure()
                     .ifPresent(player -> Exposure.CriteriaTriggers.SUCCESSFULLY_PROJECT_IMAGE.get().trigger(player));
             Sound.play(entity, Exposure.SoundEvents.INTERPLANAR_PROJECT.get(), entity.getSoundSource(), 0.8f, 1.1f);
             for (int i = 0; i < 16; i++) {
                 level.sendParticles(ParticleTypes.PORTAL, entity.getX(), entity.getY() + 1.2, entity.getZ(), 2,
-                        entity.getRandom().nextGaussian() * 0.3, entity.getRandom().nextGaussian() * 0.3, entity.getRandom().nextGaussian() * 0.3, 0.01);
+                        randomSource.nextGaussian() * 0.3, randomSource.nextGaussian() * 0.3, randomSource.nextGaussian() * 0.3, 0.01);
             }
         }
     }
