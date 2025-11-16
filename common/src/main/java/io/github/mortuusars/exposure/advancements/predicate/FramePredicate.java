@@ -1,12 +1,15 @@
 package io.github.mortuusars.exposure.advancements.predicate;
 
+import com.google.gson.JsonElement;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import io.github.mortuusars.exposure.Stuff;
 import io.github.mortuusars.exposure.world.camera.frame.Frame;
 import io.github.mortuusars.exposure.world.level.storage.ExposureIdentifier;
+import net.minecraft.advancements.critereon.ItemPredicate;
 import net.minecraft.advancements.critereon.MinMaxBounds;
 import net.minecraft.world.item.ItemStack;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Optional;
@@ -34,9 +37,21 @@ public record FramePredicate(Optional<ExposureIdentifier> identifier,
             ExtraDataPredicate.CODEC.optionalFieldOf("extra_data").forGetter(FramePredicate::extraData)
     ).apply(instance, FramePredicate::new));
 
+    public static final FramePredicate ANY = new FramePredicate(Optional.empty(),Optional.empty(),
+            Optional.empty(),Optional.empty(),Optional.empty(),Optional.empty(),
+            Optional.empty(),Optional.empty(),Optional.empty(),Optional.empty());
+
+    public static FramePredicate fromJson(@Nullable JsonElement json) {
+        if (json == null || json.isJsonNull())
+            return ANY;
+
+        ExposureIdentifier exposureIdentifier = ExposureIdentifier.fromJson();
+
+        return new FramePredicate();
+    }
 
 
-    public boolean matches(ItemStack stack, Frame frame) {
+        public boolean matches(ItemStack stack, Frame frame) {
         return matches(frame);
     }
 

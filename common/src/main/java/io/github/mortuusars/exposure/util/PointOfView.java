@@ -72,7 +72,7 @@ public record PointOfView(Vec3 pos, Vec3 dir) {
             Vec3 pos = position.add(xOff * 0.1F, yOff * 0.1F, zOff * 0.1F);
             Vec3 endPos = pos.add(direction.scale(-maxDistance));
             HitResult hitResult = entity.level().clip(
-                    new ClipContext(pos, endPos, ClipContext.Block.VISUAL, ClipContext.Fluid.NONE, CollisionContext.of(entity)));
+                    new ClipContext(pos, endPos, ClipContext.Block.VISUAL, ClipContext.Fluid.NONE, entity));
             if (hitResult.getType() != HitResult.Type.MISS) {
                 float distanceSqr = (float) hitResult.getLocation().distanceToSqr(position);
                 if (distanceSqr < Mth.square(maxDistance)) {

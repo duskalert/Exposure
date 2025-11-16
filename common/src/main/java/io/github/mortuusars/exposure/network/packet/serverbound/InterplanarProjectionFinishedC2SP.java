@@ -6,13 +6,9 @@ import io.github.mortuusars.exposure.network.packet.Packet;
 import io.github.mortuusars.exposure.server.CameraInstances;
 import io.github.mortuusars.exposure.util.TranslatableError;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.codec.ByteBufCodecs;
-import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.PacketFlow;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 
@@ -20,18 +16,16 @@ public record InterplanarProjectionFinishedC2SP(CameraId cameraId,
                                                 boolean successful,
                                                 Optional<TranslatableError> error) implements Packet {
     public static final ResourceLocation ID = Exposure.resource("interplanar_projection_finished");
-    public static final Type<InterplanarProjectionFinishedC2SP> TYPE = new Type<>(ID);
-
-    public static final StreamCodec<FriendlyByteBuf, InterplanarProjectionFinishedC2SP> STREAM_CODEC = StreamCodec.composite(
-            CameraId.STREAM_CODEC, InterplanarProjectionFinishedC2SP::cameraId,
-            ByteBufCodecs.BOOL, InterplanarProjectionFinishedC2SP::successful,
-            ByteBufCodecs.optional(TranslatableError.STREAM_CODEC), InterplanarProjectionFinishedC2SP::error,
-            InterplanarProjectionFinishedC2SP::new
-    );
 
     @Override
-    public @NotNull Type<? extends CustomPacketPayload> type() {
-        return TYPE;
+    public void toPacket(FriendlyByteBuf buf) {
+        cameraId.toPacket(buf);
+        buf.writeBoolean(successful);
+        buf.writeOptional(error,(buf1, translatableError) -> translatableError.toPacket(buf1));
+    }
+
+    public static InterplanarProjectionFinishedC2SP fromPacket(FriendlyByteBuf buf) {
+        return new InterplanarProjectionFinishedC2SP(CameraId.fromPacket(buf),buf.readBoolean(),buf.readOptional(TranslatableError::fromPacket));
     }
 
     @Override

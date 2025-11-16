@@ -50,7 +50,7 @@ public class PhotographItem extends Item {
 
     @Override
     public void appendHoverText(ItemStack stack, Level context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
-        @Nullable Integer generation = stack.get(Exposure.DataComponents.PHOTOGRAPH_GENERATION);
+        @Nullable Integer generation = Exposure.DataComponents.getPhotographGeneration(stack);
         if (generation != null) {
             if (generation > 0)
                 tooltipComponents.add(Component.translatable("item.exposure.photograph.generation." + generation)

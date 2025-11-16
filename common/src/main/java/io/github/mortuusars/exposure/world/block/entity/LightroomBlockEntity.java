@@ -18,7 +18,6 @@ import io.github.mortuusars.exposure.world.item.PhotographItem;
 import io.github.mortuusars.exposure.world.item.StackedPhotographsItem;
 import net.minecraft.Util;
 import net.minecraft.core.*;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
@@ -37,7 +36,6 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BaseContainerBlockEntity;
@@ -403,17 +401,17 @@ public class LightroomBlockEntity extends BaseContainerBlockEntity implements Wo
                     return chromaticItem.combineIntoPhotograph(player, chromaticStack, true);
                 } else {
                     // This will be used when creating exposure to set 'wasPrinted' in exposure tag.
-                    CompoundTag tag = new CompoundTag();
-                    tag.putBoolean("printed", true);
-                    chromaticStack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
+                  //  CompoundTag tag = new CompoundTag();
+                   // tag.putBoolean("printed", true);
+                    chromaticStack.getOrCreateTag().putBoolean("printed",true);
                 }
             }
 
             return chromaticStack;
         } else {
             ItemStack photographStack = new ItemStack(Exposure.Items.PHOTOGRAPH.get());
-            photographStack.set(Exposure.DataComponents.PHOTOGRAPH_FRAME, frame);
-            photographStack.set(Exposure.DataComponents.PHOTOGRAPH_TYPE, frame.type());
+            Exposure.DataComponents.setPhotographFrame(photographStack,frame);
+            Exposure.DataComponents.setPhotographType(photographStack,frame.type());
             return photographStack;
         }
     }
@@ -602,9 +600,9 @@ public class LightroomBlockEntity extends BaseContainerBlockEntity implements Wo
     // Load/Save
 
     @Override
-    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+    public void load(CompoundTag tag) {
         this.items = NonNullList.withSize(this.getContainerSize(), ItemStack.EMPTY);
-        ContainerHelper.loadAllItems(tag, this.items, registries);
+        ContainerHelper.loadAllItems(tag, this.items);
 
         // Backwards compatibility:
         if (tag.contains("Inventory", Tag.TAG_COMPOUND)) {
@@ -616,7 +614,7 @@ public class LightroomBlockEntity extends BaseContainerBlockEntity implements Wo
                 int slot = itemTag.getInt("Slot");
 
                 if (slot >= 0 && slot < items.size()) {
-                    ItemStack.parse(registries, itemTag).ifPresent(stack -> items.set(slot, stack));
+                    items.set(slot,ItemStack.of(itemTag));
                 }
             }
         }
@@ -633,9 +631,9 @@ public class LightroomBlockEntity extends BaseContainerBlockEntity implements Wo
     }
 
     @Override
-    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-        super.saveAdditional(tag, registries);
-        ContainerHelper.saveAllItems(tag, items, registries);
+    protected void saveAdditional(CompoundTag tag) {
+        super.saveAdditional(tag);
+        ContainerHelper.saveAllItems(tag, items);
         if (getSelectedFrameIndex() > 0)
             tag.putInt("SelectedFrame", getSelectedFrameIndex());
         if (progress > 0)
@@ -656,7 +654,7 @@ public class LightroomBlockEntity extends BaseContainerBlockEntity implements Wo
         return this.items;
     }
 
-    @Override
+    //@Override
     protected void setItems(NonNullList<ItemStack> items) {
         this.items = items;
     }
@@ -722,7 +720,7 @@ public class LightroomBlockEntity extends BaseContainerBlockEntity implements Wo
     }
 
     @Override
-    public @NotNull CompoundTag getUpdateTag(HolderLookup.Provider registries) {
-        return saveWithoutMetadata(registries);
+    public @NotNull CompoundTag getUpdateTag() {
+        return saveWithoutMetadata();
     }
 }

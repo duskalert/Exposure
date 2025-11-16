@@ -5,23 +5,23 @@ import io.github.mortuusars.exposure.ExposureServer;
 import io.github.mortuusars.exposure.world.level.storage.ExposureData;
 import io.github.mortuusars.exposure.network.packet.Packet;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.codec.ByteBufCodecs;
-import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.PacketFlow;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
-import org.jetbrains.annotations.NotNull;
 
 public record ExposureDataC2SP(String id, ExposureData exposure) implements Packet {
     public static final ResourceLocation ID = Exposure.resource("exposure_data");
 
-    public static final StreamCodec<FriendlyByteBuf, ExposureDataC2SP> STREAM_CODEC = StreamCodec.composite(
-            ByteBufCodecs.STRING_UTF8, ExposureDataC2SP::id,
-            ExposureData.STREAM_CODEC, ExposureDataC2SP::exposure,
-            ExposureDataC2SP::new
-    );
+    @Override
+    public void toPacket(FriendlyByteBuf buf) {
+        buf.writeUtf(id);
+        exposure.toPacket(buf);
+    }
+
+    public static ExposureDataC2SP fromPacket(FriendlyByteBuf buf) {
+        return new ExposureDataC2SP(buf.readUtf(),ExposureData.fromPacket(buf));
+    }
 
     @Override
     public boolean handle(PacketFlow flow, Player player) {

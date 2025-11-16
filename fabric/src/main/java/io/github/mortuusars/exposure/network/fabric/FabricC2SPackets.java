@@ -15,7 +15,8 @@ public class FabricC2SPackets {
     @SuppressWarnings("unchecked")
     public static void register() {
         // This monstrosity is to avoid having to define packets for forge and fabric separately.
-        for (var definition : C2SPackets.getDefinitions()) {
+        for (var definition : C2SPackets.getDefinitions().entrySet()) {
+
             PayloadTypeRegistry.playC2S().register(
                     (CustomPacketPayload.Type<CustomPacketPayload>) definition.type(),
                     (StreamCodec<FriendlyByteBuf, CustomPacketPayload>) definition.codec().cast());

@@ -5,27 +5,21 @@ import io.github.mortuusars.exposure.Exposure;
 import io.github.mortuusars.exposure.world.inventory.AlbumMenu;
 import io.github.mortuusars.exposure.network.packet.Packet;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.codec.ByteBufCodecs;
-import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.PacketFlow;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
-import org.jetbrains.annotations.NotNull;
 
 public record AlbumSyncNoteC2SP(int pageIndex, String text) implements Packet {
     public static final ResourceLocation ID = Exposure.resource("album_update_note");
-    public static final CustomPacketPayload.Type<AlbumSyncNoteC2SP> TYPE = new CustomPacketPayload.Type<>(ID);
-
-    public static final StreamCodec<FriendlyByteBuf, AlbumSyncNoteC2SP> STREAM_CODEC = StreamCodec.composite(
-            ByteBufCodecs.VAR_INT, AlbumSyncNoteC2SP::pageIndex,
-            ByteBufCodecs.STRING_UTF8, AlbumSyncNoteC2SP::text,
-            AlbumSyncNoteC2SP::new
-    );
 
     @Override
-    public @NotNull Type<? extends CustomPacketPayload> type() {
-        return TYPE;
+    public void toPacket(FriendlyByteBuf buf) {
+        buf.writeInt(pageIndex);
+        buf.writeUtf(text);
+    }
+
+    public static AlbumSyncNoteC2SP fromPacket(FriendlyByteBuf buf){
+        return new AlbumSyncNoteC2SP(buf.readInt(),buf.readUtf());
     }
 
     @Override

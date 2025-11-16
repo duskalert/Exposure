@@ -1,6 +1,5 @@
 package io.github.mortuusars.exposure.neoforge.event;
 
-import dev.latvian.mods.rhino.ObjArray;
 import io.github.mortuusars.exposure.Exposure;
 import io.github.mortuusars.exposure.client.util.Minecrft;
 import io.github.mortuusars.exposure.data.ColorPalette;
@@ -8,18 +7,21 @@ import io.github.mortuusars.exposure.data.Filter;
 import io.github.mortuusars.exposure.data.Lens;
 import io.github.mortuusars.exposure.event.CommonEvents;
 import io.github.mortuusars.exposure.event.ServerEvents;
-import io.github.mortuusars.exposure.network.neoforge.PacketsImpl;
 import io.github.mortuusars.exposure.network.packet.C2SPackets;
 import io.github.mortuusars.exposure.network.packet.CommonPackets;
 import io.github.mortuusars.exposure.network.packet.Packet;
 import io.github.mortuusars.exposure.network.packet.S2CPackets;
-import net.minecraft.client.Minecraft;
+import io.github.mortuusars.exposure.world.block.entity.LightroomBlockEntity;
+import net.minecraft.core.Direction;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.protocol.PacketFlow;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
+import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.OnDatapackSyncEvent;
 import net.minecraftforge.event.RegisterCommandsEvent;
@@ -33,6 +35,8 @@ import net.minecraftforge.network.NetworkEvent;
 import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.network.simple.SimpleChannel;
 import net.minecraftforge.registries.DataPackRegistryEvent;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 import java.util.function.BiConsumer;
@@ -40,7 +44,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 @SuppressWarnings("unused")
-public class NeoForgeCommonEvents {
+public class ForgeCommonEvents {
     @Mod.EventBusSubscriber(modid = Exposure.ID, bus = Mod.EventBusSubscriber.Bus.MOD)
     public static class ModBus {
         @SubscribeEvent
@@ -71,24 +75,34 @@ public class NeoForgeCommonEvents {
             int i = 0;
             for (Map.Entry<Class<Packet>, Function<FriendlyByteBuf, Packet>> definition : S2CPackets.getDefinitions().entrySet()) {
                 registrar.registerMessage(i++,definition.getKey(), Packet::toPacket, definition.getValue(),
-                        NeoForgeCommonEvents.wrapC2S());
+                        ForgeCommonEvents.wrapC2S());
             }
 
-            for (CustomPacketPayload.TypeAndCodec<? extends FriendlyByteBuf, ? extends CustomPacketPayload> definition : C2SPackets.getDefinitions()) {
-                registrar.playToServer((CustomPacketPayload.Type<Packet>) definition.type(),
-                        (StreamCodec<FriendlyByteBuf, Packet>) definition.codec(), PacketsImpl::handle);
+            for (Map.Entry<Class<Packet>, Function<FriendlyByteBuf, Packet>> definition : C2SPackets.getDefinitions().entrySet()) {
+                registrar.registerMessage(i++,definition.getKey(),Packet::toPacket,definition.getValue(), ForgeCommonEvents.wrapS2C());
             }
 
-            for (CustomPacketPayload.TypeAndCodec<? extends FriendlyByteBuf, ? extends CustomPacketPayload> definition : CommonPackets.getDefinitions()) {
-                registrar.playBidirectional((CustomPacketPayload.Type<Packet>) definition.type(),
-                        (StreamCodec<FriendlyByteBuf, Packet>) definition.codec(), PacketsImpl::handle);
+            for (Map.Entry<Class<Packet>, Function<FriendlyByteBuf, Packet>> definition : CommonPackets.getDefinitions().entrySet()) {
+                registrar.registerMessage(i++,definition.getKey(),Packet::toPacket,definition.getValue(), ForgeCommonEvents.wrapS2C());
+                registrar.registerMessage(i++,definition.getKey(),Packet::toPacket,definition.getValue(), ForgeCommonEvents.wrapC2S());
             }
         }
 
         @SubscribeEvent
         public static void onRegisterCapabilities(AttachCapabilitiesEvent<BlockEntity> event) {
-            event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, Exposure.BlockEntityTypes.LIGHTROOM.get(),
-                    (be, side) -> side == null ? new InvWrapper(be) : new SidedInvWrapper(be, side));
+            BlockEntity object = event.getObject();
+            if (object instanceof LightroomBlockEntity lightroomBlockEntity) {
+                event.addCapability(Exposure.resource("lightroom"), new ICapabilityProvider() {
+
+                    @Override
+                    public @NotNull <T> LazyOptional<T> getCapability(@NotNull Capability<T> capability, @Nullable Direction side) {
+                        if (capability == ForgeCapabilities.ITEM_HANDLER) {
+                            return LazyOptional.of(() -> side == null ? new InvWrapper(lightroomBlockEntity) : new SidedInvWrapper(lightroomBlockEntity, side)).cast();
+                        }
+                        return LazyOptional.empty();
+                    }
+                });
+            }
         }
     }
 

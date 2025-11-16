@@ -12,12 +12,6 @@ import net.minecraft.world.entity.player.Player;
 public record ExposureDataResponseS2CP(String id, RequestedPalettedExposure result) implements Packet {
     public static final ResourceLocation ID = Exposure.resource("exposure_data_response");
 
-    public static final StreamCodec<FriendlyByteBuf, ExposureDataResponseS2CP> STREAM_CODEC = StreamCodec.composite(
-            ByteBufCodecs.STRING_UTF8, ExposureDataResponseS2CP::id,
-            RequestedPalettedExposure.STREAM_CODEC, ExposureDataResponseS2CP::result,
-            ExposureDataResponseS2CP::new
-    );
-
     @Override
     public void toPacket(FriendlyByteBuf buf) {
         buf.writeUtf(id);

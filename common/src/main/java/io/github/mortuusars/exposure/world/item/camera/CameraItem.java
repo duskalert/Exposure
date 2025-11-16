@@ -3,6 +3,7 @@ package io.github.mortuusars.exposure.world.item.camera;
 import com.google.common.base.Preconditions;
 import io.github.mortuusars.exposure.*;
 import io.github.mortuusars.exposure.data.*;
+import io.github.mortuusars.exposure.network.packet.clientbound.ActionS2CP;
 import io.github.mortuusars.exposure.util.color.Color;
 import io.github.mortuusars.exposure.client.util.Minecrft;
 import io.github.mortuusars.exposure.world.camera.*;
@@ -739,7 +740,7 @@ public class CameraItem extends Item {
     protected void onShutterOpen(CameraHolder holder, ServerLevel serverLevel, ItemStack stack) {
         holder.getExposureCameraOperator().ifPresent(operator -> {
             if (operator instanceof ServerPlayer player) {
-                Packets.sendToClient(ShutterOpenedS2CP.INSTANCE, player);
+                Packets.sendToClient(ActionS2CP.SHUTTER_OPENED, player);
             }
         });
     }
@@ -944,6 +945,12 @@ public class CameraItem extends Item {
         }
     }
 
+    public static ItemStack transmuteCopy(ItemStack original,Item newItem) {
+        ItemStack stack = new ItemStack(newItem,original.getCount());
+        stack.setTag(original.getTag());
+        return stack;
+    }
+
     public void handleProjectionResult(ServerLevel level, CameraHolder holder, ItemStack stack,
                                        CameraInstance.ProjectionState projectionState, Optional<TranslatableError> error) {
         StoredItemStack filter = Attachment.FILTER.get(stack);
@@ -954,8 +961,9 @@ public class CameraItem extends Item {
         Entity entity = holder.asHolderEntity();
 
         if (projectionState == CameraInstance.ProjectionState.FAILED || projectionState == CameraInstance.ProjectionState.TIMED_OUT) {
-            ItemStack filterStack = filter.getCopy().transmuteCopy(Exposure.Items.BROKEN_INTERPLANAR_PROJECTOR.get());
-            error.ifPresent(err -> filterStack.set(Exposure.DataComponents.INTERPLANAR_PROJECTOR_ERROR_CODE, err.code()));
+
+            ItemStack filterStack = transmuteCopy(filter.getCopy(),Exposure.Items.BROKEN_INTERPLANAR_PROJECTOR.get());
+            error.ifPresent(err -> Exposure.DataComponents.setInterplanarProjectorErrorCode(filterStack, err.code()));
             Attachment.FILTER.set(stack, filterStack);
             Sound.play(entity, Exposure.SoundEvents.BSOD.get());
             if (getShutter().isOpen(stack)) {
@@ -1020,8 +1028,8 @@ public class CameraItem extends Item {
             if (filter.isEmpty()) return shutterOpen ? 0xFF333333 : -1;
             if (filter.getForReading().getItem() instanceof BlockItem item && item.getBlock() instanceof StainedGlassPaneBlock pane) {
                 return shutterOpen
-                        ? Color.argb(pane.getColor().getTextureDiffuseColor()).multiply(0.2f).withAlpha(255).getARGB()
-                        : pane.getColor().getTextureDiffuseColor();
+                        ? Color.argb(pane.getColor().getTextColor()).multiply(0.2f).withAlpha(255).getARGB()
+                        : pane.getColor().getTextColor();
             }
             if (filter.getForReading().is(Exposure.Items.INTERPLANAR_PROJECTOR.get()))
                 return shutterOpen ? 0xFF051A0F : 0xFF50B27E;

@@ -23,7 +23,6 @@ import io.github.mortuusars.exposure.world.item.ChromaticSheetItem;
 import io.github.mortuusars.exposure.world.item.StackedPhotographsItem;
 import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.client.resources.model.ModelResourceLocation;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.resources.ResourceLocation;
 
 import java.util.HashSet;
@@ -126,7 +125,7 @@ public class ExposureClient {
                         stack.getItem() instanceof AlbumItem albumItem ? albumItem.getPhotographsCount(stack) / 100f : 0f);
 
         ItemProperties.register(Exposure.Items.INTERPLANAR_PROJECTOR.get(), Exposure.resource("projector_active"),
-                (stack, clientLevel, livingEntity, seed) -> Config.Server.CAN_PROJECT.get() && stack.has(DataComponents.CUSTOM_NAME) ? 1f : 0f);
+                (stack, clientLevel, livingEntity, seed) -> Config.Server.CAN_PROJECT.get() && stack.hasCustomHoverName() ? 1f : 0f);
     }
 
     public static class Models {

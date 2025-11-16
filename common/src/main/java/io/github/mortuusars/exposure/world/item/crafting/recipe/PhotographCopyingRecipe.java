@@ -23,7 +23,7 @@ public class PhotographCopyingRecipe extends ComponentTransferringRecipe {
         int generation = Exposure.DataComponents.getPhotographGeneration(stack, 0);
         if (generation < 2) {
             ItemStack result = super.transferComponents(stack, recipeResultStack);
-            result.set(Exposure.DataComponents.PHOTOGRAPH_GENERATION, generation + 1);
+            Exposure.DataComponents.setPhotographGeneration(result, generation + 1);
             return result;
         }
 

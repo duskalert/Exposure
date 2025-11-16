@@ -63,10 +63,10 @@ public class ExposureRepository {
 
     public RequestedPalettedExposure load(@NotNull String id) {
         Preconditions.checkNotNull(id, "id");
-        Preconditions.checkArgument(!StringUtil.isBlank(id), "Cannot load exposure: id is empty.");
+        Preconditions.checkArgument(!id.isBlank(), "Cannot load exposure: id is empty.");
 
         String name = EXPOSURES_DIRECTORY_NAME + "/" + id;
-        @Nullable ExposureData exposureData = dataStorage.get(ExposureData.factory(), name);
+        @Nullable ExposureData exposureData = dataStorage.get(ExposureData::load, name);
 
         if (exposureData == null) {
             File filepath = exposuresFolderPath.resolve(id + ".dat").toFile();
@@ -83,7 +83,7 @@ public class ExposureRepository {
     }
 
     public void save(@NotNull String id, ExposureData data) {
-        Preconditions.checkArgument(!StringUtil.isBlank(id), "Cannot save exposure: id is null or empty.");
+        Preconditions.checkArgument(!id.isBlank(), "Cannot save exposure: id is null or empty.");
 
         if (ensureExposuresDirectoryExists()) {
             String saveDataName = EXPOSURES_DIRECTORY_NAME + "/" + id;
@@ -94,7 +94,7 @@ public class ExposureRepository {
     }
 
     public void update(@NotNull String id, Function<ExposureData, ExposureData> updateFunction) {
-        Preconditions.checkArgument(!StringUtil.isBlank(id), "Cannot update exposure: id is null or empty.");
+        Preconditions.checkArgument(!id.isBlank(), "Cannot update exposure: id is null or empty.");
 
         load(id).getData().ifPresent(exposure -> {
             ExposureData updatedExposure = updateFunction.apply(exposure);
@@ -109,7 +109,7 @@ public class ExposureRepository {
     }
 
     public void expect(ServerPlayer player, String id, BiConsumer<ServerPlayer, String> onReceived) {
-        Preconditions.checkArgument(!StringUtil.isBlank(id), "id cannot be null or empty.");
+        Preconditions.checkArgument(!id.isBlank(), "id cannot be null or empty.");
         Set<ExpectedExposure> exposures = expectedExposures.computeIfAbsent(player, pl -> new HashSet<>());
         exposures.add(new ExpectedExposure(id, UnixTimestamp.Seconds.fromNow(EXPECTED_TIMEOUT_SECONDS), onReceived));
     }
@@ -121,7 +121,7 @@ public class ExposureRepository {
     public void handleClientRequest(ServerPlayer player, String id) {
         RequestedPalettedExposure result;
 
-        if (StringUtil.isBlank(id)) {
+        if (id.isBlank()) {
             LOGGER.error("Null or empty id cannot be used to get an exposure data. Player: '{}'", player.getScoreboardName());
             result = RequestedPalettedExposure.INVALID_ID;
         } else {
@@ -160,7 +160,7 @@ public class ExposureRepository {
     }
 
     protected boolean validateUpload(ServerPlayer player, String id) {
-        if (StringUtil.isBlank(id)) {
+        if (id.isBlank()) {
             LOGGER.error("Null or empty id cannot be used to save captured exposure. Player: '{}'", player.getScoreboardName());
             return false;
         }

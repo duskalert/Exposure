@@ -9,9 +9,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import io.github.mortuusars.exposure.Config;
 import io.github.mortuusars.exposure.util.Fov;
-import io.netty.buffer.ByteBuf;
-import net.minecraft.network.codec.ByteBufCodecs;
-import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.util.Mth;
 import net.minecraft.util.StringRepresentable;
 import org.jetbrains.annotations.NotNull;
@@ -27,14 +25,18 @@ public final class FocalRange implements StringRepresentable {
 
     public static final Codec<FocalRange> PRIME_CODEC = Codec.INT.xmap(FocalRange::new, FocalRange::min);
 
-    public static final Codec<FocalRange> CODEC = Codec.either(PRIME_CODEC, RANGE_CODEC).xmap(Either::unwrap,
-            focalRange -> focalRange.isPrime() ? Either.left(focalRange) : Either.right(focalRange));
+    public static final Codec<FocalRange> CODEC = Codec.either(PRIME_CODEC, RANGE_CODEC).xmap(focalRangeFocalRangeEither ->
+                    focalRangeFocalRangeEither.map(focalRange -> focalRange,focalRange -> focalRange),
+            focalRange -> focalRange.isPrime() ? Either.left(focalRange) : Either.right(focalRange));//todo what about?
 
-    public static final StreamCodec<ByteBuf, FocalRange> STREAM_CODEC = StreamCodec.composite(
-            ByteBufCodecs.VAR_INT, FocalRange::min,
-            ByteBufCodecs.VAR_INT, FocalRange::max,
-            FocalRange::new
-    );
+    public void toPacket(FriendlyByteBuf buf) {
+        buf.writeInt(min);
+        buf.writeInt(max);
+    }
+
+    public static FocalRange fromPacket(FriendlyByteBuf buf) {
+        return new FocalRange(buf.readInt(),buf.readInt());
+    }
 
     public static final FocalRange REGULAR = new FocalRange(18, 55);
     public static final int ALLOWED_MIN = 10;

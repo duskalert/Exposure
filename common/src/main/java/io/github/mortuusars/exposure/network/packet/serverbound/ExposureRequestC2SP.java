@@ -23,8 +23,12 @@ public record ExposureRequestC2SP(String id) implements Packet {
     );
 
     @Override
-    public @NotNull Type<? extends CustomPacketPayload> type() {
-        return TYPE;
+    public void toPacket(FriendlyByteBuf buf) {
+        buf.writeUtf(id);
+    }
+
+    public static ExposureRequestC2SP fromPacket(FriendlyByteBuf buf) {
+        return new ExposureRequestC2SP(buf.readUtf());
     }
 
     @Override

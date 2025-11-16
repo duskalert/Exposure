@@ -1,5 +1,6 @@
 package io.github.mortuusars.exposure.world.item.util;
 
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
@@ -27,6 +28,14 @@ public class ItemAndStack<T extends Item> {
     public ItemAndStack<T> apply(BiConsumer<T, ItemStack> function) {
         function.accept(item, stack);
         return this;
+    }
+
+    public void toPacket(FriendlyByteBuf buf) {
+        buf.writeItem(stack);
+    }
+
+    public static ItemAndStack<?> fromPacket(FriendlyByteBuf buf) {
+        return new ItemAndStack<>(buf.readItem());
     }
 
     public <R> R map(BiFunction<T, ItemStack, R> mappingFunction) {

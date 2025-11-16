@@ -5,6 +5,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.DynamicOps;
 import com.mojang.serialization.ListBuilder;
+import net.minecraft.util.ExtraCodecs;
 
 import java.util.function.Function;
 
@@ -59,12 +60,12 @@ public class Codecs {
         };
     }
 
-    public static final Codec<Double> POSITIVE_DOUBLE = Codec.DOUBLE.validate(f -> f > 0
+    public static final Codec<Double> POSITIVE_DOUBLE = ExtraCodecs.validate(Codec.DOUBLE,f -> f > 0
             ? DataResult.success(f)
             : DataResult.error(() -> "Value must be positive: " + f));
 
     public static Codec<Float> floatRange(float minInclusive, float maxInclusive) {
-        return Codec.FLOAT.validate(f -> f.compareTo(minInclusive) >= 0 && f.compareTo(maxInclusive) <= 0
+        return ExtraCodecs.validate(Codec.FLOAT,f -> f.compareTo(minInclusive) >= 0 && f.compareTo(maxInclusive) <= 0
                         ? DataResult.success(f)
                         : DataResult.error(() -> "Value must be between %s and %s: %s".formatted(minInclusive, maxInclusive, f)));
     }

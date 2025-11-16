@@ -1,6 +1,7 @@
 package io.github.mortuusars.exposure.world.level.storage;
 
 import com.google.common.base.Preconditions;
+import com.google.gson.JsonElement;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
@@ -78,6 +79,10 @@ public class ExposureIdentifier {
                 "Cannot have both id and texture defined at once. Only one of them should be present.");
         this.id = id;
         this.texture = texture;
+    }
+
+    public static ExposureIdentifier fromJson(@Nullable JsonElement element) {
+
     }
 
     public static ExposureIdentifier id(@NotNull String id) {

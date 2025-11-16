@@ -2,11 +2,10 @@ package io.github.mortuusars.exposure.world.inventory;
 
 import com.google.common.base.Preconditions;
 import io.github.mortuusars.exposure.Exposure;
-import net.minecraft.core.component.DataComponents;
-import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.SharedConstants;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.util.StringUtil;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -48,7 +47,7 @@ public class ItemRenameMenu extends AbstractContainerMenu {
         });
     }
 
-    public static ItemRenameMenu fromBuffer(int containerId, Inventory playerInventory, RegistryFriendlyByteBuf buffer) {
+    public static ItemRenameMenu fromBuffer(int containerId, Inventory playerInventory, FriendlyByteBuf buffer) {
         return new ItemRenameMenu(containerId, playerInventory, buffer.readInt());
     }
 
@@ -70,10 +69,10 @@ public class ItemRenameMenu extends AbstractContainerMenu {
         ItemStack itemStack = getSlot(0).getItem();
         ItemStack itemStack2 = itemStack.copy();
 
-        if (StringUtil.isBlank(itemName)) {
-            itemStack2.remove(DataComponents.CUSTOM_NAME);
+        if (itemName.isBlank()) {
+            itemStack2.setHoverName(null);
         } else if (!itemName.equals(itemStack.getHoverName().getString())) {
-            itemStack2.set(DataComponents.CUSTOM_NAME, Component.literal(itemName));
+            itemStack2.setHoverName(Component.literal(itemName));
         }
 
         getSlot(0).set(itemStack2);
@@ -97,8 +96,10 @@ public class ItemRenameMenu extends AbstractContainerMenu {
     }
 
     @Nullable
+
+
     public String validateName(String itemName) {
-        String string = StringUtil.filterText(itemName);
+        String string = SharedConstants.filterText(itemName);
         if (string.length() <= MAX_NAME_LENGTH) {
             return string;
         }

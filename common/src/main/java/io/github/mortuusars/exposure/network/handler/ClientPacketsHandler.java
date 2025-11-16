@@ -61,7 +61,7 @@ public class ClientPacketsHandler {
 
         List<ItemAndStack<PhotographItem>> photographs = new ArrayList<>(packet.frames().stream().map(frame -> {
             ItemStack photographStack = new ItemStack(Exposure.Items.PHOTOGRAPH.get());
-            photographStack.set(Exposure.DataComponents.PHOTOGRAPH_FRAME, frame);
+            Exposure.DataComponents.setPhotographFrame(photographStack, frame);
             return new ItemAndStack<PhotographItem>(photographStack);
         }).toList());
         Collections.reverse(photographs);

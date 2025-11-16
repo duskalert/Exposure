@@ -4,14 +4,7 @@ package io.github.mortuusars.exposure.data;
 import com.google.common.base.Preconditions;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import io.github.mortuusars.exposure.Exposure;
 import io.github.mortuusars.exposure.util.color.Color;
-import io.netty.buffer.ByteBuf;
-import net.minecraft.core.Holder;
-import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.codec.ByteBufCodecs;
-import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.resources.RegistryFixedCodec;
 
 import java.util.Arrays;
 import java.util.List;

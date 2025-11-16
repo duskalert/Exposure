@@ -5,8 +5,6 @@ import com.google.common.base.Preconditions;
 import io.github.mortuusars.exposure.Exposure;
 import io.github.mortuusars.exposure.client.ExposureRequester;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.codec.ByteBufCodecs;
-import net.minecraft.network.codec.StreamCodec;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
@@ -19,12 +17,6 @@ public class RequestedPalettedExposure {
     public static final RequestedPalettedExposure INVALID_ID = status(RequestedExposureStatus.INVALID_ID);
     public static final RequestedPalettedExposure NOT_FOUND = status(RequestedExposureStatus.NOT_FOUND);
     public static final RequestedPalettedExposure CANNOT_LOAD = status(RequestedExposureStatus.CANNOT_LOAD);
-
-    public static final StreamCodec<FriendlyByteBuf, RequestedPalettedExposure> STREAM_CODEC = StreamCodec.composite(
-            ByteBufCodecs.optional(ExposureData.STREAM_CODEC), RequestedPalettedExposure::getData,
-            RequestedExposureStatus.STREAM_CODEC, RequestedPalettedExposure::getStatus,
-            RequestedPalettedExposure::fromOptional
-    );
 
     public void toPacket(FriendlyByteBuf buf){
         buf.writeOptional(getData(),(buf1, exposureData) -> exposureData.toPacket(buf1));

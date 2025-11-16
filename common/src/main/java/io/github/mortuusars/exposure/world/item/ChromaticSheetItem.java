@@ -10,7 +10,6 @@ import io.github.mortuusars.exposure.network.Packets;
 import io.github.mortuusars.exposure.network.packet.clientbound.CreateChromaticExposureS2CP;
 import io.github.mortuusars.exposure.world.camera.ColorChannel;
 import net.minecraft.ChatFormatting;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
@@ -19,7 +18,6 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
@@ -114,7 +112,7 @@ public class ChromaticSheetItem extends Item {
         ItemStack photographStack = new ItemStack(Exposure.Items.PHOTOGRAPH.get());
         Exposure.DataComponents.setPhotographFrame(photographStack,frameData);
 
-        photographStack.set(Exposure.DataComponents.PHOTOGRAPH_TYPE, ExposureType.COLOR);
+        Exposure.DataComponents.setPhotographType(photographStack, ExposureType.COLOR);
         return photographStack;
     }
 }

@@ -98,7 +98,7 @@ public class PhotographPrintingCategory implements IRecipeCategory<PhotographPri
                 .setSlotName("Black");
 
         ItemStack resultItemStack = new ItemStack(Exposure.Items.PHOTOGRAPH.get());
-        resultItemStack.set(Exposure.DataComponents.PHOTOGRAPH_TYPE, recipe.getExposureType());
+        Exposure.DataComponents.setPhotographType(resultItemStack, recipe.getExposureType());
         builder.addSlot(RecipeIngredientRole.OUTPUT, 144, 55).addItemStack(resultItemStack);
     }
 

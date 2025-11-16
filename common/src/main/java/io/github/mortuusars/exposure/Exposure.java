@@ -55,7 +55,6 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.stats.StatFormatter;
 import net.minecraft.tags.TagKey;
-import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.inventory.MenuType;
@@ -257,11 +256,11 @@ public class Exposure {
     public static class DataComponents {
         // Camera State
 
-        static Boolean getBoolean(ItemStack stack,String key) {//booleans are bytes internally
+        public static Boolean getBoolean(ItemStack stack,String key) {//booleans are bytes internally
             return stack.hasTag() && stack.getTag().contains(key, Tag.TAG_BYTE) ? stack.getTag().getBoolean(key) : null;
         }
 
-        static void setBoolean(ItemStack stack,String key,Boolean value) {
+        public static void setBoolean(ItemStack stack, String key, Boolean value) {
             if (value == null) {
                 stack.removeTagKey(key);
             } else {
@@ -290,6 +289,30 @@ public class Exposure {
                 stack.removeTagKey(key);
             } else {
                 stack.getOrCreateTag().putLong(key,value);
+            }
+        }
+
+        public static Float getFloat(ItemStack stack,String key) {
+            return stack.hasTag() && stack.getTag().contains(key,Tag.TAG_FLOAT) ? stack.getTag().getFloat(key) : null;
+        }
+
+        public static void setFloat(ItemStack stack, String key, Float value) {
+            if (value == null) {
+                stack.removeTagKey(key);
+            } else {
+                stack.getOrCreateTag().putFloat(key,value);
+            }
+        }
+
+        public static Double getDouble(ItemStack stack,String key) {
+            return stack.hasTag() && stack.getTag().contains(key,Tag.TAG_DOUBLE) ? stack.getTag().getDouble(key) : null;
+        }
+
+        public static void setDouble(ItemStack stack, String key, Double value) {
+            if (value == null) {
+                stack.removeTagKey(key);
+            } else {
+                stack.getOrCreateTag().putDouble(key,value);
             }
         }
 
@@ -462,30 +485,37 @@ public class Exposure {
 
         // Settings
 
-        public static ShutterSpeed getShutterSpeed(ItemStack stack) {
-            return getValue(stack,"shutter_speed",ShutterSpeed.CODEC);
+        public static ShutterSpeed getShutterSpeed(ItemStack stack,String key) {
+            return getValue(stack,key,ShutterSpeed.CODEC);
         }
 
-        public static final DataComponentType<ShutterSpeed> SHUTTER_SPEED = Register.dataComponentType("camera_shutter_speed",
-                arg -> arg.persistent(ShutterSpeed.CODEC).networkSynchronized(ShutterSpeed.STREAM_CODEC));
+        public static void setShutterSpeed(ItemStack stack,String key,ShutterSpeed value) {
+            setValue(stack,key,value,ShutterSpeed.CODEC);
+        }
 
-        public static final DataComponentType<CompositionGuide> COMPOSITION_GUIDE = Register.dataComponentType("camera_composition_guide",
-                arg -> arg.persistent(CompositionGuide.CODEC).networkSynchronized(CompositionGuide.STREAM_CODEC));
+        public static CompositionGuide getCompositionGuide(ItemStack stack,String key) {
+            return getValue(stack,key,CompositionGuide.CODEC);
+        }
 
-        public static final DataComponentType<SelfTimer> SELF_TIMER = Register.dataComponentType("camera_self_timer",
-                arg -> arg.persistent(SelfTimer.CODEC).networkSynchronized(SelfTimer.STREAM_CODEC));
+        public static void setCompositionGuide(ItemStack stack,String key,CompositionGuide value) {
+            setValue(stack,key,value,CompositionGuide.CODEC);
+        }
 
-        public static final DataComponentType<Float> ZOOM = Register.dataComponentType("camera_zoom",
-                arg -> arg.persistent(Codec.FLOAT).networkSynchronized(ByteBufCodecs.FLOAT));
+        public static void setSelfTimer(ItemStack stack,String key,SelfTimer selfTimer) {
+            setEnum(stack,selfTimer,key);
+        }
 
-        public static final DataComponentType<Double> SELFIE_ROTATION_X = Register.dataComponentType("camera_selfie_rotation_x",
-                arg -> arg.persistent(Codec.DOUBLE).networkSynchronized(ByteBufCodecs.DOUBLE));
+        public static SelfTimer getSelfTimer(ItemStack stack,String key) {
+            return getEnum(stack,key,SelfTimer.class);
+        }
 
-        public static final DataComponentType<Double> SELFIE_ROTATION_Y = Register.dataComponentType("camera_selfie_rotation_y",
-                arg -> arg.persistent(Codec.DOUBLE).networkSynchronized(ByteBufCodecs.DOUBLE));
+        public static void setFlashMode(ItemStack stack,String key,FlashMode flashMode) {
+            setEnum(stack,flashMode,key);
+        }
 
-        public static final DataComponentType<FlashMode> FLASH_MODE = Register.dataComponentType("camera_flash_mode",
-                arg -> arg.persistent(FlashMode.CODEC).networkSynchronized(FlashMode.STREAM_CODEC));
+        public static FlashMode getFlashMode(ItemStack stack,String key) {
+            return getEnum(stack,key,FlashMode.class);
+        }
 
         // Attachments
 
@@ -512,9 +542,6 @@ public class Exposure {
             Integer filmFrameCount = getInt(stack, "film_frame_count");
             return filmFrameCount == null ? fallback : filmFrameCount;
         }
-
-        public static final DataComponentType<Integer> FILM_FRAME_COUNT = Register.dataComponentType("film_frame_count",
-                arg -> arg.persistent(ExtraCodecs.intRange(1, 256)).networkSynchronized(ByteBufCodecs.VAR_INT));
 
 
         public static Integer getFilmFrameSize(ItemStack stack) {
@@ -601,10 +628,6 @@ public class Exposure {
         }
 
 
-
-        public static final DataComponentType<ExposureType> PHOTOGRAPH_TYPE = Register.dataComponentType("photograph_type",
-                arg -> arg.persistent(ExposureType.CODEC).networkSynchronized(ExposureType.STREAM_CODEC));
-
         public static Integer getPhotographGeneration(ItemStack stack) {
             return getInt(stack,"photograph_generation");
         }
@@ -618,13 +641,18 @@ public class Exposure {
             setInt(stack,"photograph_generation",integer);
         }
 
-        public static final DataComponentType<Integer> PHOTOGRAPH_GENERATION = Register.dataComponentType("photograph_generation",
-                arg -> arg.persistent(ExtraCodecs.intRange(0, 3)).networkSynchronized(ByteBufCodecs.VAR_INT));
+        public static List<ItemAndStack<PhotographItem>> getStackedPhotographs(ItemStack stack) {
+            return getValue(stack,"stacked_photographs",StackedPhotographsItem.PHOTOGRAPH_ITEM_AND_STACK_CODEC.listOf());
+        }
 
-        public static final DataComponentType<List<ItemAndStack<PhotographItem>>> STACKED_PHOTOGRAPHS =
-                Register.dataComponentType("stacked_photographs",
-                        arg -> arg.persistent(StackedPhotographsItem.PHOTOGRAPH_ITEM_AND_STACK_CODEC.listOf(0, 64))
-                                .networkSynchronized(StackedPhotographsItem.PHOTOGRAPH_ITEM_AND_STACK_STREAM_CODEC.apply(ByteBufCodecs.list())));
+        public static List<ItemAndStack<PhotographItem>> getStackedPhotographs(ItemStack stack,List<ItemAndStack<PhotographItem>> fallback) {
+            List<ItemAndStack<PhotographItem>> list = getStackedPhotographs(stack);
+            return list == null ? fallback : list;
+        }
+
+        public static void setStackedPhotographs(ItemStack stack,List<ItemAndStack<PhotographItem>> value) {
+            setValue(stack,"stacked_photographs",value,StackedPhotographsItem.PHOTOGRAPH_ITEM_AND_STACK_CODEC.listOf());
+        }
 
         // Album
 
@@ -670,15 +698,14 @@ public class Exposure {
             setEnum(stack,mode,"interplanar_projector_mode");
         }
 
-        public static final DataComponentType<String> INTERPLANAR_PROJECTOR_ERROR_CODE =
-                Register.dataComponentType("interplanar_projector_error_code",
-                        arg -> arg.persistent(Codec.STRING).networkSynchronized(ByteBufCodecs.STRING_UTF8));
+        public static String getInterplanarProjectorErrorCode(ItemStack stack,String fallback) {
+            String interplanarProjectorErrorCode = getString(stack, "interplanar_projector_error_code");
+            return interplanarProjectorErrorCode == null ? fallback : interplanarProjectorErrorCode;
+        }
 
-        public static final DataComponentType<List<Frame>> CHROMATIC_SHEET_LAYERS =
-                Register.dataComponentType("chromatic_layers",
-                        arg -> arg.persistent(Frame.CODEC.listOf(0, 3))
-                                .networkSynchronized(Frame.STREAM_CODEC.apply(ByteBufCodecs.list())));
-
+        public static void setInterplanarProjectorErrorCode(ItemStack stack,String code) {
+            setString(stack,"interplanar_projector_error_code",code);
+        }
 
 
         public static void setChromaticLayers(ItemStack stack,List<Frame> state) {
@@ -702,20 +729,19 @@ public class Exposure {
         public static final Supplier<EntityType<PhotographFrameEntity>> PHOTOGRAPH_FRAME = Register.entityType("photograph_frame",
                 PhotographFrameEntity::new, MobCategory.MISC, false, builder -> builder
                         .sized(0.5f, 0.5f)
-                        .updateInterval(Integer.MAX_VALUE)
-                        .eyeHeight(0));
+                        .updateInterval(Integer.MAX_VALUE));
 
         public static final Supplier<EntityType<GlassPhotographFrameEntity>> CLEAR_PHOTOGRAPH_FRAME = Register.entityType("glass_photograph_frame",
                 GlassPhotographFrameEntity::new, MobCategory.MISC, false, builder -> builder
                         .sized(0.5f, 0.5f)
-                        .updateInterval(Integer.MAX_VALUE)
-                        .eyeHeight(0));
+                        .updateInterval(Integer.MAX_VALUE));
 
         public static final Supplier<EntityType<CameraStandEntity>> CAMERA_STAND = Register.entityType("camera_stand",
                 CameraStandEntity::new, MobCategory.MISC, false, builder -> builder
                         .sized(0.7f, 1.6f)
                         .updateInterval(3)
-                        .eyeHeight(1.40625f));
+        //                .eyeHeight(1.40625f)
+        );
 
         static void init() {
         }
@@ -834,7 +860,7 @@ public class Exposure {
     public static class CriteriaTriggers {
         public static Supplier<FrameExposedTrigger> FRAME_EXPOSED = Register.criterionTrigger("frame_exposed", FrameExposedTrigger::new);
         public static Supplier<FramePrintedTrigger> FRAME_PRINTED = Register.criterionTrigger("frame_printed", FramePrintedTrigger::new);
-        public static Supplier<PlayerTrigger> PHOTOGRAPH_ENDERMAN_EYES = Register.criterionTrigger("photograph_enderman_eyes", PlayerTrigger::new);
+        public static Supplier<PlayerTrigger> PHOTOGRAPH_ENDERMAN_EYES = Register.criterionTrigger("photograph_enderman_eyes", () -> new PlayerTrigger());
         public static Supplier<PlayerTrigger> SUCCESSFULLY_PROJECT_IMAGE = Register.criterionTrigger("successfully_project_image", PlayerTrigger::new);
 
         public static void init() {
@@ -857,16 +883,11 @@ public class Exposure {
     }
 
     public static class LootTables {
-        public static final ResourceKey<LootTable> SIMPLE_DUNGEON_INJECT =
-                ResourceKey.create(net.minecraft.core.registries.Registries.LOOT_TABLE, Exposure.resource("chests/simple_dungeon"));
-        public static final ResourceKey<LootTable> ABANDONED_MINESHAFT_INJECT =
-                ResourceKey.create(net.minecraft.core.registries.Registries.LOOT_TABLE, Exposure.resource("chests/abandoned_mineshaft"));
-        public static final ResourceKey<LootTable> STRONGHOLD_CROSSING_INJECT =
-                ResourceKey.create(net.minecraft.core.registries.Registries.LOOT_TABLE, Exposure.resource("chests/stronghold_crossing"));
-        public static final ResourceKey<LootTable> VILLAGE_PLAINS_HOUSE_INJECT =
-                ResourceKey.create(net.minecraft.core.registries.Registries.LOOT_TABLE, Exposure.resource("chests/village_plains_house"));
-        public static final ResourceKey<LootTable> SHIPWRECK_MAP_INJECT =
-                ResourceKey.create(net.minecraft.core.registries.Registries.LOOT_TABLE, Exposure.resource("chests/shipwreck_map"));
+        public static final ResourceLocation SIMPLE_DUNGEON_INJECT = Exposure.resource("chests/simple_dungeon");
+        public static final ResourceLocation ABANDONED_MINESHAFT_INJECT =Exposure.resource("chests/abandoned_mineshaft");
+        public static final ResourceLocation STRONGHOLD_CROSSING_INJECT =Exposure.resource("chests/stronghold_crossing");
+        public static final ResourceLocation VILLAGE_PLAINS_HOUSE_INJECT = Exposure.resource("chests/village_plains_house");
+        public static final ResourceLocation SHIPWRECK_MAP_INJECT = Exposure.resource("chests/shipwreck_map");
     }
 
     public static class Tags {
