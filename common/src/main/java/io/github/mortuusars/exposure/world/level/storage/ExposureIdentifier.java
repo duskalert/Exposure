@@ -2,13 +2,18 @@ package io.github.mortuusars.exposure.world.level.storage;
 
 import com.google.common.base.Preconditions;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonNull;
+import com.google.gson.JsonObject;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.DynamicOps;
+import com.mojang.serialization.JsonOps;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import io.github.mortuusars.exposure.Exposure;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.GsonHelper;
 import net.minecraft.util.StringUtil;
 import net.minecraft.world.entity.Entity;
 import org.jetbrains.annotations.Contract;
@@ -82,7 +87,13 @@ public class ExposureIdentifier {
     }
 
     public static ExposureIdentifier fromJson(@Nullable JsonElement element) {
+        if (element == null || element== JsonNull.INSTANCE) {
+            return null;
+        }
 
+        JsonObject jsonObj = GsonHelper.convertToJsonObject(element, "identifier");
+
+        return CODEC.decode(JsonOps.INSTANCE,jsonObj).resultOrPartial(Exposure.LOGGER::error).get().getFirst();
     }
 
     public static ExposureIdentifier id(@NotNull String id) {

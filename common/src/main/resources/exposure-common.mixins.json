@@ -36,10 +36,10 @@
     "LivingEntityMixin",
     "MinecraftServerMixin",
     "PlayerMixin",
-    "PotionContentsMixin",
     "ServerEntityMixin",
     "ServerGamePacketListenerMixin",
-    "ServerPlayerMixin"
+    "ServerPlayerMixin",
+    "WrittenBookItemMixin"
   ],
   "injectors": {
     "defaultRequire": 1

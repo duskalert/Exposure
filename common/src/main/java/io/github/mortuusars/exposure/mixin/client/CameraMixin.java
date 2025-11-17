@@ -15,7 +15,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(Camera.class)
 public abstract class CameraMixin {
     @Shadow
-    protected abstract void move(float zoom, float dy, float dx);
+    protected abstract void move(double zoom, double dy, double dx);
+
     @Shadow
     protected abstract void setRotation(float yRot, float xRot);
     @Shadow
@@ -24,7 +25,7 @@ public abstract class CameraMixin {
     private float yRot;
 
     @Inject(method = "getMaxZoom", at = @At(value = "RETURN"), cancellable = true)
-    private void getMaxZoom(float maxZoom, CallbackInfoReturnable<Float> cir) {
+    private void getMaxZoom(double startingDistance, CallbackInfoReturnable<Double> cir) {
         if (CameraClient.viewfinder() != null && CameraClient.viewfinder().isLookingThrough()) {
             cir.setReturnValue(Math.min(CameraClient.viewfinder().selfie().getMaxCameraDistance(), cir.getReturnValue()));
         }

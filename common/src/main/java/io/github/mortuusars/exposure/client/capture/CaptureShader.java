@@ -80,7 +80,7 @@ public class CaptureShader {
      */
     public static void process(@NotNull PostChain shader, @NotNull RenderTarget renderTarget) {
         try {
-            ResourceLocation shaderLocation = ResourceLocation.parse(shader.getName());
+            ResourceLocation shaderLocation = new ResourceLocation(shader.getName());
 
             PostChain tempShader = new PostChain(Minecrft.get().getTextureManager(), Minecrft.get().getResourceManager(),
                     renderTarget, shaderLocation);

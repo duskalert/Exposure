@@ -19,11 +19,6 @@ public record TamedPredicate(boolean isTamed) implements EntitySubPredicate {
     );
 
     @Override
-    public @NotNull MapCodec<? extends EntitySubPredicate> codec() {
-        return CODEC;
-    }
-
-    @Override
     public boolean matches(Entity entity, ServerLevel level, @Nullable Vec3 position) {
         return entity instanceof TamableAnimal animal && animal.isTame() == isTamed;
     }

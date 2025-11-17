@@ -29,7 +29,7 @@ public class PathCaptureTask extends Task<Result<Image>> {
 
     @Override
     public CompletableFuture<Result<Image>> execute() {
-        if (StringUtil.isBlank(path)) {
+        if (path.isBlank()) {
             return CompletableFuture.completedFuture(Result.error(ERROR_PATH_EMPTY));
         }
 

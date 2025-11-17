@@ -84,7 +84,7 @@ public class ExposureJeiPlugin implements IModPlugin {
 
     @Override
     public void registerVanillaCategoryExtensions(IVanillaCategoryExtensionRegistration registration) {
-        registration.getCraftingCategory().addExtension(ComponentTransferringRecipe.class, new ComponentTransferringShapelessExtension());
+        registration.getCraftingCategory().addCategoryExtension(ComponentTransferringRecipe.class,o -> true, ComponentTransferringShapelessExtension::new);
     }
 
     @Override

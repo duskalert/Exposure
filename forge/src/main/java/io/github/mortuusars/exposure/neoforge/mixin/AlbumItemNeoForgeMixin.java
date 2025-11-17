@@ -2,13 +2,13 @@ package io.github.mortuusars.exposure.neoforge.mixin;
 
 import io.github.mortuusars.exposure.world.item.AlbumItem;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.common.extensions.IItemExtension;
+import net.minecraftforge.common.extensions.IForgeItem;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(value = AlbumItem.class, remap = false)
-public abstract class AlbumItemNeoForgeMixin implements IItemExtension {
+public abstract class AlbumItemNeoForgeMixin implements IForgeItem {
     @Shadow
     abstract boolean shouldPlayEquipAnimation(ItemStack oldStack, ItemStack newStack);
 

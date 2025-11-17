@@ -29,3 +29,4 @@ accessible method net/minecraft/client/gui/screens/inventory/AbstractContainerSc
 
 accessible method net/minecraft/world/entity/monster/EnderMan isLookingAtMe (Lnet/minecraft/world/entity/player/Player;)Z
 accessible method net/minecraft/world/item/ItemStackLinkedSet hashStackAndTag (Lnet/minecraft/world/item/ItemStack;)I
+accessible method net/minecraft/advancements/CriteriaTriggers register (Lnet/minecraft/advancements/CriterionTrigger;)Lnet/minecraft/advancements/CriterionTrigger;

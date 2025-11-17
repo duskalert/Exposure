@@ -37,8 +37,10 @@ import java.util.List;
 public class FilmFrameInspectScreen extends Screen {
     public static final ResourceLocation TEXTURE = Exposure.resource("textures/gui/film_frame_inspect.png");
 
+    public static final ResourceLocation WIDGETS_TEXTURE = Exposure.resource("textures/gui/widgets.png");
     public static final int BG_SIZE = 78;
     public static final int FRAME_SIZE = 54;
+    public static final int BUTTON_SIZE = 16;
 
     protected final Pager pager = new Pager()
             .setChangeSound(new SoundEffect(Exposure.SoundEvents.CAMERA_LENS_RING_CLICK))
@@ -88,7 +90,7 @@ public class FilmFrameInspectScreen extends Screen {
 
         zoomFactor = ((float) height / BG_SIZE) / (float)zoom.getZoomPerStep();
 
-        ImageButton previousButton = new ImageButton(0, (int) (height / 2f - 16 / 2f), 16, 16,
+        /*ImageButton previousButton = new ImageButton(0, (int) (height / 2f - 16 / 2f), 16, 16,
                 Widgets.PREVIOUS_BUTTON_SPRITES,
                 button -> pager.changePage(PagingDirection.PREVIOUS), Component.translatable("gui.exposure.previous_page"));
         addRenderableWidget(previousButton);
@@ -96,7 +98,12 @@ public class FilmFrameInspectScreen extends Screen {
         ImageButton nextButton = new ImageButton(width - 16, (int) (height / 2f - 16 / 2f), 16, 16,
                 Widgets.NEXT_BUTTON_SPRITES,
                 button -> pager.changePage(PagingDirection.NEXT), Component.translatable("gui.exposure.next_page"));
-        addRenderableWidget(nextButton);
+        addRenderableWidget(nextButton);*/
+
+        ImageButton previousButton = new ImageButton(0, (int) (height / 2f - BUTTON_SIZE / 2f), BUTTON_SIZE, BUTTON_SIZE,
+                0, 0, BUTTON_SIZE, WIDGETS_TEXTURE, button -> pager.changePage(PagingDirection.PREVIOUS));
+        ImageButton nextButton = new ImageButton(width - BUTTON_SIZE, (int) (height / 2f - BUTTON_SIZE / 2f), BUTTON_SIZE, BUTTON_SIZE,
+                16, 0, BUTTON_SIZE, WIDGETS_TEXTURE,button -> pager.changePage(PagingDirection.NEXT));
 
         pager.setPagesCount(frames.size())
                 .setPreviousPageButton(previousButton)

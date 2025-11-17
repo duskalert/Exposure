@@ -3,11 +3,15 @@ package io.github.mortuusars.exposure.world.item.crafting.recipe;
 import io.github.mortuusars.exposure.Exposure;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
+import net.minecraft.core.RegistryAccess;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,8 +21,8 @@ public class ComponentTransferringRecipe extends CustomRecipe {
     private final NonNullList<Ingredient> ingredients;
     private final ItemStack result;
 
-    public ComponentTransferringRecipe(CraftingBookCategory category, Ingredient sourceIngredient, NonNullList<Ingredient> ingredients, ItemStack result) {
-        super(category);
+    public ComponentTransferringRecipe(ResourceLocation id,CraftingBookCategory category, Ingredient sourceIngredient, NonNullList<Ingredient> ingredients, ItemStack result) {
+        super(id,category);
         this.sourceIngredient = sourceIngredient;
         this.ingredients = ingredients;
         this.result = result;
@@ -39,7 +43,7 @@ public class ComponentTransferringRecipe extends CustomRecipe {
     }
 
     @Override
-    public @NotNull ItemStack getResultItem(HolderLookup.Provider registries) {
+    public @NotNull ItemStack getResultItem(RegistryAccess registries) {
         return getResult();
     }
 
@@ -79,20 +83,26 @@ public class ComponentTransferringRecipe extends CustomRecipe {
     }
 
     @Override
-    public @NotNull ItemStack assemble(CraftingInput input, HolderLookup.Provider registries) {
-        for (int index = 0; index < input.size(); index++) {
+    public @NotNull ItemStack assemble(CraftingContainer input, RegistryAccess registries) {
+        for (int index = 0; index < input.getContainerSize(); index++) {
             ItemStack itemStack = input.getItem(index);
 
             if (getSourceIngredient().test(itemStack)) {
-                return transferComponents(itemStack, getResultItem(registries).copy());
+                return transferNbt(itemStack, getResultItem(registries).copy());
             }
         }
 
         return getResultItem(registries);
     }
 
-    public @NotNull ItemStack transferComponents(ItemStack transferIngredientStack, ItemStack recipeResultStack) {
-        recipeResultStack.applyComponents(transferIngredientStack.getComponents());
+    public @NotNull ItemStack transferNbt(ItemStack transferIngredientStack, ItemStack recipeResultStack) {
+        @Nullable CompoundTag transferTag = transferIngredientStack.getTag();
+        if (transferTag != null) {
+            if (recipeResultStack.getTag() != null)
+                recipeResultStack.getTag().merge(transferTag);
+            else
+                recipeResultStack.setTag(transferTag.copy());
+        }
         return recipeResultStack;
     }
 

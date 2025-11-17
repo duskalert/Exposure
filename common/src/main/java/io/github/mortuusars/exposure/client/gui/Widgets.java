@@ -2,7 +2,7 @@ package io.github.mortuusars.exposure.client.gui;
 
 import com.google.common.base.Preconditions;
 import io.github.mortuusars.exposure.Exposure;
-import net.minecraft.client.gui.components.WidgetSprites;
+import io.github.mortuusars.exposure.ModWidgetSprites;
 import net.minecraft.resources.ResourceLocation;
 
 import java.util.HashMap;
@@ -11,37 +11,33 @@ import java.util.Map;
 import java.util.function.Function;
 
 public class Widgets {
-    public static final WidgetSprites PREVIOUS_BUTTON_SPRITES =
+    public static final ModWidgetSprites PREVIOUS_BUTTON_SPRITES =
             threeStateSprites(Exposure.resource("widgets/previous_button"));
-    public static final WidgetSprites NEXT_BUTTON_SPRITES =
+    public static final ModWidgetSprites NEXT_BUTTON_SPRITES =
             threeStateSprites(Exposure.resource("widgets/next_button"));
-    public static final WidgetSprites CONFIRM_BUTTON_SPRITES =
-            threeStateSprites(Exposure.resource("widgets/confirm_button"));
-    public static final WidgetSprites CANCEL_BUTTON_SPRITES =
-            threeStateSprites(Exposure.resource("widgets/cancel_button"));
 
     public static ResourceLocation empty() {
         return Exposure.resource("empty");
     }
 
-    public static WidgetSprites normalAndHighlighted(ResourceLocation base) {
-        return new WidgetSprites(base, base,
-                ResourceLocation.fromNamespaceAndPath(base.getNamespace(), base.getPath() + "_highlighted"));
+    public static ModWidgetSprites normalAndHighlighted(ResourceLocation base) {
+        return new ModWidgetSprites(base, base,
+                new ResourceLocation(base.getNamespace(), base.getPath() + "_highlighted"));
     }
 
-    public static WidgetSprites normalAndHighlighted(ResourceLocation normal, ResourceLocation highlighted) {
-        return new WidgetSprites(normal, normal, highlighted);
+    public static ModWidgetSprites normalAndHighlighted(ResourceLocation normal, ResourceLocation highlighted) {
+        return new ModWidgetSprites(normal, normal, highlighted);
     }
 
-    public static WidgetSprites threeStateSprites(ResourceLocation base) {
-        return new WidgetSprites(base,
-                ResourceLocation.fromNamespaceAndPath(base.getNamespace(), base.getPath() + "_disabled"),
-                ResourceLocation.fromNamespaceAndPath(base.getNamespace(), base.getPath() + "_highlighted"));
+    public static ModWidgetSprites threeStateSprites(ResourceLocation base) {
+        return new ModWidgetSprites(base,
+                new ResourceLocation(base.getNamespace(), base.getPath() + "_disabled"),
+                new ResourceLocation(base.getNamespace(), base.getPath() + "_highlighted"));
     }
 
-    public static <T> Map<T, WidgetSprites> createMap(List<T> values, Function<T, WidgetSprites> convertFunc) {
+    public static <T> Map<T, ModWidgetSprites> createMap(List<T> values, Function<T, ModWidgetSprites> convertFunc) {
         Preconditions.checkArgument(!values.isEmpty(), "values list must not be empty.");
-        Map<T, WidgetSprites> map = new HashMap<>();
+        Map<T, ModWidgetSprites> map = new HashMap<>();
         for (T value : values) {
             map.put(value, convertFunc.apply(value));
         }

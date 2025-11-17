@@ -104,11 +104,6 @@ public class Register {
         throw new AssertionError();
     }
 
-    @ExpectPlatform
-    public static <T extends CriterionTrigger<?>> Supplier<T> criterionTrigger(String name, Supplier<T> supplier) {
-        throw new AssertionError();
-    }
-
     /*@ExpectPlatform
     public static <T extends ItemSubPredicate.Type<?>> Supplier<T> itemSubPredicate(String name, Supplier<T> supplier) {
         throw new AssertionError();

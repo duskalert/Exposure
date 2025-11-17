@@ -20,7 +20,7 @@ public class SetPostEffectAction implements CaptureAction {
     public void beforeCapture() {
         PostChain currentEffect = Minecrft.get().gameRenderer.currentEffect();
         if (currentEffect != null) {
-            this.currentEffect = ResourceLocation.parse(currentEffect.getName());
+            this.currentEffect = new ResourceLocation(currentEffect.getName());
         }
         this.effectActive = Minecrft.get().gameRenderer.effectActive;
 

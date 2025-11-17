@@ -1,13 +1,17 @@
 package io.github.mortuusars.exposure.advancements.predicate;
 
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.JsonOps;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import io.github.mortuusars.exposure.Exposure;
 import io.github.mortuusars.exposure.Stuff;
 import io.github.mortuusars.exposure.world.camera.frame.Frame;
 import io.github.mortuusars.exposure.world.level.storage.ExposureIdentifier;
 import net.minecraft.advancements.critereon.ItemPredicate;
 import net.minecraft.advancements.critereon.MinMaxBounds;
+import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
@@ -45,9 +49,9 @@ public record FramePredicate(Optional<ExposureIdentifier> identifier,
         if (json == null || json.isJsonNull())
             return ANY;
 
-        ExposureIdentifier exposureIdentifier = ExposureIdentifier.fromJson();
+        JsonObject jsonObj = GsonHelper.convertToJsonObject(json, "frame");
 
-        return new FramePredicate();
+        return CODEC.decode(JsonOps.INSTANCE,jsonObj).resultOrPartial(Exposure.LOGGER::error).get().getFirst();
     }
 
 

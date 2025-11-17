@@ -14,16 +14,19 @@ import io.github.mortuusars.exposure.client.input.KeyBindings;
 import io.github.mortuusars.exposure.client.util.Minecrft;
 import io.github.mortuusars.exposure.network.Packets;
 import io.github.mortuusars.exposure.network.packet.serverbound.AlbumSyncNoteC2SP;
-import io.github.mortuusars.exposure.world.item.PhotographItem;
-import io.github.mortuusars.exposure.world.item.component.album.AlbumPage;
-import io.github.mortuusars.exposure.world.inventory.AlbumMenu;
-import io.github.mortuusars.exposure.world.inventory.slot.AlbumPlayerInventorySlot;
 import io.github.mortuusars.exposure.util.PagingDirection;
 import io.github.mortuusars.exposure.util.Side;
+import io.github.mortuusars.exposure.world.inventory.AlbumMenu;
+import io.github.mortuusars.exposure.world.inventory.slot.AlbumPlayerInventorySlot;
+import io.github.mortuusars.exposure.world.item.PhotographItem;
+import io.github.mortuusars.exposure.world.item.component.album.AlbumPage;
 import io.github.mortuusars.exposure.world.sound.SoundEffect;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.components.*;
+import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.ImageButton;
+import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.Rect2i;
@@ -31,6 +34,7 @@ import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.Slot;
@@ -38,12 +42,14 @@ import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import java.util.function.Consumer;
 
 public class AlbumScreen extends AbstractContainerScreen<AlbumMenu> {
-    public static final WidgetSprites SIGN_BUTTON_SPRITES = new WidgetSprites(
-            Exposure.resource("album/sign"), Exposure.resource("album/sign_disabled"), Exposure.resource("album/sign_highlighted"));
+
+    public static final ResourceLocation TEXTURE = Exposure.resource("textures/gui/album.png");
 
     protected final Pager pager = new Pager()
             .setChangeSound(new SoundEffect(() -> SoundEvents.BOOK_PAGE_TURN))
@@ -83,7 +89,8 @@ public class AlbumScreen extends AbstractContainerScreen<AlbumMenu> {
         pages.add(leftPage);
 
         ImageButton previousPageButton = new ImageButton(leftPos + 12, topPos + 164, 13, 15,
-                AlbumGUI.PREVIOUS_PAGE_BUTTON_SPRITES, button -> pager.changePage(PagingDirection.PREVIOUS), Component.translatable("gui.exposure.previous_page"));
+                216, 188, 15, TEXTURE, 512, 512,
+                button -> pager.changePage(PagingDirection.PREVIOUS), Component.translatable("gui.exposure.previous_page"));
         previousPageButton.setTooltip(Tooltip.create(Component.translatable("gui.exposure.previous_page")));
         addRenderableWidget(previousPageButton);
 
@@ -92,17 +99,52 @@ public class AlbumScreen extends AbstractContainerScreen<AlbumMenu> {
         pages.add(rightPage);
 
         ImageButton nextPageButton = new ImageButton(leftPos + 273, topPos + 164, 13, 15,
-                AlbumGUI.NEXT_PAGE_BUTTON_SPRITES, button -> pager.changePage(PagingDirection.NEXT), Component.translatable("gui.exposure.next_page"));
+                229, 188, 15, TEXTURE, 512, 512,
+                button -> pager.changePage(PagingDirection.NEXT), Component.translatable("gui.exposure.next_page"));
         nextPageButton.setTooltip(Tooltip.create(Component.translatable("gui.exposure.next_page")));
         addRenderableWidget(nextPageButton);
 
         // MISC:
         if (getMenu().isAlbumEditable()) {
-            enterSignModeButton = new ImageButton(leftPos - 23, topPos + 17, 22, 22,
-                    SIGN_BUTTON_SPRITES, b -> enterSignMode(), Component.translatable("gui.exposure.album.sign"));
+            enterSignModeButton = new ImageButton(leftPos - 23, topPos + 17, 22, 22,242,188,
+                    22, TEXTURE, 512, 512,
+                    b -> enterSignMode(), Component.translatable("gui.exposure.album.sign"));
             enterSignModeButton.setTooltip(Tooltip.create(Component.translatable("gui.exposure.album.sign")));
             addRenderableWidget(enterSignModeButton);
         }
+
+        /*
+
+        // LEFT:
+        Page leftPage = createPage(Side.LEFT, 0);
+        pages.add(leftPage);
+
+        ImageButton previousButton = new ImageButton(leftPos + 12, topPos + 164, 13, 15,
+                216, 188, 15, TEXTURE, 512, 512,
+                button -> pager.changePage(PagingDirection.PREVIOUS), Component.translatable("gui.exposure.previous_page"));
+        previousButton.setTooltip(Tooltip.create(Component.translatable("gui.exposure.previous_page")));
+        addRenderableWidget(previousButton);
+
+        // RIGHT:
+        Page rightPage = createPage(Side.RIGHT, 140);
+        pages.add(rightPage);
+
+        ImageButton nextButton = new ImageButton(leftPos + 273, topPos + 164, 13, 15,
+                229, 188, 15, TEXTURE, 512, 512,
+                button -> pager.changePage(PagingDirection.NEXT), Component.translatable("gui.exposure.next_page"));
+        nextButton.setTooltip(Tooltip.create(Component.translatable("gui.exposure.next_page")));
+        addRenderableWidget(nextButton);
+
+        // MISC:
+        if (getMenu().isAlbumEditable()) {
+            enterSignModeButton = new ImageButton(leftPos - 23, topPos + 17, 22, 22, 242, 188,
+                    22, TEXTURE, 512, 512,
+                    b -> enterSignMode(), Component.translatable("gui.exposure.album.sign"));
+            enterSignModeButton.setTooltip(Tooltip.create(Component.translatable("gui.exposure.album.sign")));
+            addRenderableWidget(enterSignModeButton);
+        }
+
+         */
 
         int spreadsCount = (int) Math.ceil(getMenu().getPages().size() / 2f);
         pager.setPagesCount(spreadsCount)
@@ -197,6 +239,7 @@ public class AlbumScreen extends AbstractContainerScreen<AlbumMenu> {
 
         inventoryLabelY = isInAddingMode() ? getMenu().getPlayerInventorySlots().getFirst().y - 12 : -999;
 
+        renderBackground(guiGraphics);
         super.render(guiGraphics, mouseX, mouseY, partialTick);
         renderTooltip(guiGraphics, mouseX, mouseY);
 
@@ -234,12 +277,6 @@ public class AlbumScreen extends AbstractContainerScreen<AlbumMenu> {
         if (enterSignModeButton != null) {
             enterSignModeButton.visible = getMenu().canSignAlbum();
         }
-    }
-
-    @Override
-    public void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        renderTransparentBackground(guiGraphics);
-        renderBg(guiGraphics, partialTick, mouseX, mouseY);
     }
 
     @Override
@@ -323,8 +360,12 @@ public class AlbumScreen extends AbstractContainerScreen<AlbumMenu> {
             @Nullable Side pageBeingAddedTo = getMenu().getSideBeingAddedTo();
             for (Page page : pages) {
                 if (page.side == pageBeingAddedTo) {
-                    guiGraphics.blitSprite(PhotographSlotWidget.EMPTY_SPRITES.enabledFocused(),
-                            page.photoArea.getX(), page.photoArea.getY(), page.photoArea.getWidth(), page.photoArea.getHeight());
+
+                    guiGraphics.blit(TEXTURE, page.photoArea.getX(), page.photoArea.getY(), 10, 0, 296,
+                            page.photoArea.getWidth(), page.photoArea.getHeight(), 512, 512);
+
+                 //   guiGraphics.blitSprite(PhotographSlotWidget.EMPTY_SPRITES.enabledFocused(),
+                 //           page.photoArea.getX(), page.photoArea.getY(), page.photoArea.getWidth(), page.photoArea.getHeight());
                 }
             }
         }
@@ -552,7 +593,7 @@ public class AlbumScreen extends AbstractContainerScreen<AlbumMenu> {
             clickButton(AlbumMenu.CANCEL_ADDING_PHOTO_BUTTON);
         }
 
-        Minecrft.get().setScreen(new AlbumSigningScreen(this));
+        Minecrft.get().setScreen(new AlbumSigningScreen(this,TEXTURE,512,512));
     }
 
     protected boolean isInAddingMode() {

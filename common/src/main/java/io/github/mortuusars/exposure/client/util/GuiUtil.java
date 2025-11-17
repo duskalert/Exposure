@@ -50,12 +50,14 @@ public class GuiUtil {
 
         Matrix4f matrix = poseStack.last().pose();
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
-        BufferBuilder bufferBuilder = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
-        bufferBuilder.addVertex(matrix, minX, maxY, zOffset).setUv(minU, maxV);
-        bufferBuilder.addVertex(matrix, maxX, maxY, zOffset).setUv(maxU, maxV);
-        bufferBuilder.addVertex(matrix, maxX, minY, zOffset).setUv(maxU, minV);
-        bufferBuilder.addVertex(matrix, minX, minY, zOffset).setUv(minU, minV);
-        BufferUploader.drawWithShader(bufferBuilder.buildOrThrow());
+        Tesselator tesselator = Tesselator.getInstance();
+        BufferBuilder bufferBuilder = tesselator.getBuilder();
+        bufferBuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
+        bufferBuilder.vertex(matrix, minX, maxY, zOffset).uv(minU, maxV).endVertex();
+        bufferBuilder.vertex(matrix, maxX, maxY, zOffset).uv(maxU, maxV).endVertex();
+        bufferBuilder.vertex(matrix, maxX, minY, zOffset).uv(maxU, minV).endVertex();
+        bufferBuilder.vertex(matrix, minX, minY, zOffset).uv(minU, minV).endVertex();
+        BufferUploader.drawWithShader(bufferBuilder.end());
     }
 
     // --
@@ -83,12 +85,13 @@ public class GuiUtil {
 
         Matrix4f matrix = poseStack.last().pose();
         RenderSystem.setShader(GameRenderer::getPositionColorShader);
-        BufferBuilder bufferBuilder = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
-        bufferBuilder.addVertex(matrix, minX, maxY, 0).setColor(color);
-        bufferBuilder.addVertex(matrix, maxX, maxY, 0).setColor(color);
-        bufferBuilder.addVertex(matrix, maxX, minY, 0).setColor(color);
-        bufferBuilder.addVertex(matrix, minX, minY, 0).setColor(color);
-        BufferUploader.drawWithShader(bufferBuilder.buildOrThrow());
+        BufferBuilder bufferBuilder = Tesselator.getInstance().getBuilder();
+        bufferBuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
+        bufferBuilder.vertex(matrix, minX, maxY, 0).color(color).endVertex();
+        bufferBuilder.vertex(matrix, maxX, maxY, 0).color(color).endVertex();
+        bufferBuilder.vertex(matrix, maxX, minY, 0).color(color).endVertex();
+        bufferBuilder.vertex(matrix, minX, minY, 0).color(color).endVertex();
+        BufferUploader.drawWithShader(bufferBuilder.end());
     }
 
     // --

@@ -26,8 +26,7 @@ public class S2CPackets {
                 map.put((Class<T>)ExposureDataResponseS2CP.class, buf -> (T)ExposureDataResponseS2CP.fromPacket(buf));
                 map.put((Class<T>)CaptureStartS2CP.class, buf -> (T)CaptureStartS2CP.fromPacket(buf));
                 map.put((Class<T>)CaptureStartDebugRGBS2CP.class,buf -> (T)CaptureStartDebugRGBS2CP.fromPacket(buf));
-                map.put((Class<T>)ExportS2CP.class, buf -> (T)ExportS2CP.STREAM_CODEC);
-                map.put((Class<T>)ExportStopS2CP.class, buf -> (T)ExportStopS2CP.STREAM_CODEC);
+                map.put((Class<T>)ExportS2CP.class, buf -> (T)ExportS2CP.fromPacket(buf));
         return map;
     }
 }

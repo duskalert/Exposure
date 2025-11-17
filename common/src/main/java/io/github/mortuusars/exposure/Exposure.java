@@ -41,6 +41,7 @@ import io.github.mortuusars.exposure.world.item.crafting.recipe.PhotographAgingR
 import io.github.mortuusars.exposure.world.item.crafting.recipe.PhotographCopyingRecipe;
 import io.github.mortuusars.exposure.world.item.crafting.recipe.serializer.ComponentTransferringRecipeSerializer;
 import io.github.mortuusars.exposure.world.item.util.ItemAndStack;
+import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.advancements.critereon.PlayerTrigger;
 import net.minecraft.commands.synchronization.ArgumentTypeInfo;
 import net.minecraft.commands.synchronization.SingletonArgumentInfo;
@@ -65,7 +66,6 @@ import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.MapColor;
-import net.minecraft.world.level.storage.loot.LootTable;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 
@@ -89,7 +89,7 @@ public class Exposure {
         Items.init();
         CreativeTabs.init();
         DataComponents.init();
-        CriteriaTriggers.init();
+        ExposureCriteriaTriggers.init();
         ItemSubPredicates.init();
         EntitySubPredicates.init();
         MenuTypes.init();
@@ -434,12 +434,17 @@ public class Exposure {
             setBoolean(stack, "exposure:camera_selfie_mode", selfieMode);
         }
 
-        public static void setShutterState(ItemStack stack,ShutterState state) {
+        public static void setCameraShutterState(ItemStack stack,ShutterState state) {
             setValue(stack,"exposure:camera_shutter_state",state,ShutterState.CODEC);
         }
 
         public static ShutterState getCameraShutterState(ItemStack stack) {
             return getValue(stack,"exposure:camera_shutter_state",ShutterState.CODEC);
+        }
+
+        public static ShutterState getCameraShutterState(ItemStack stack,ShutterState shutterState) {
+            ShutterState value = getCameraShutterState(stack);
+            return value == null ? shutterState : value;
         }
 
         public static Long getTimerStartTick(ItemStack stack) {
@@ -761,14 +766,21 @@ public class Exposure {
     }
 
     public static class RecipeSerializers {
-        public static final Supplier<RecipeSerializer<?>> FILM_DEVELOPING =
-                registerTransferring("film_developing", "film", FilmDevelopingRecipe::new);
-        public static final Supplier<RecipeSerializer<?>> PHOTOGRAPH_COPYING =
-                registerTransferring("photograph_copying", "photograph", PhotographCopyingRecipe::new);
-        public static final Supplier<RecipeSerializer<?>> PHOTOGRAPH_AGING =
-                registerTransferring("photograph_aging", "photograph", PhotographAgingRecipe::new);
-        public static final Supplier<RecipeSerializer<?>> COMPONENT_TRANSFERRING =
-                registerTransferring("component_transferring", "source", ComponentTransferringRecipe::new);
+      //  public static final Supplier<RecipeSerializer<?>> FILM_DEVELOPING =
+     //           registerTransferring("film_developing", "film", FilmDevelopingRecipe::new);
+    //    public static final Supplier<RecipeSerializer<?>> PHOTOGRAPH_COPYING =
+     //           registerTransferring("photograph_copying", "photograph", PhotographCopyingRecipe::new);
+      //  public static final Supplier<RecipeSerializer<?>> PHOTOGRAPH_AGING =
+      //          registerTransferring("photograph_aging", "photograph", PhotographAgingRecipe::new);
+      //  public static final Supplier<RecipeSerializer<?>> COMPONENT_TRANSFERRING =
+      //          registerTransferring("component_transferring", "source", ComponentTransferringRecipe::new);
+
+        public static final Supplier<RecipeSerializer<?>> FILM_DEVELOPING = Register.recipeSerializer("film_developing",
+                FilmDevelopingRecipe.Serializer::new);
+        public static final Supplier<RecipeSerializer<?>> PHOTOGRAPH_COPYING = Register.recipeSerializer("photograph_copying",
+                PhotographCopyingRecipe.Serializer::new);
+        public static final Supplier<RecipeSerializer<?>> PHOTOGRAPH_AGING = Register.recipeSerializer("photograph_aging",
+                PhotographAgingRecipe.Serializer::new);
 
         private static <T extends ComponentTransferringRecipe> Supplier<RecipeSerializer<?>> registerTransferring(
                 String name, String sourceName, ComponentTransferringRecipeSerializer.RecipeConstructor<T> recipeConstructor) {
@@ -857,8 +869,8 @@ public class Exposure {
         }
     }
 
-    public static class CriteriaTriggers {
-        public static Supplier<FrameExposedTrigger> FRAME_EXPOSED = Register.criterionTrigger("frame_exposed", FrameExposedTrigger::new);
+    public static class ExposureCriteriaTriggers {
+        public static FrameExposedTrigger FRAME_EXPOSED = CriteriaTriggers.register(new FrameExposedTrigger());
         public static Supplier<FramePrintedTrigger> FRAME_PRINTED = Register.criterionTrigger("frame_printed", FramePrintedTrigger::new);
         public static Supplier<PlayerTrigger> PHOTOGRAPH_ENDERMAN_EYES = Register.criterionTrigger("photograph_enderman_eyes", () -> new PlayerTrigger());
         public static Supplier<PlayerTrigger> SUCCESSFULLY_PROJECT_IMAGE = Register.criterionTrigger("successfully_project_image", PlayerTrigger::new);

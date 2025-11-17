@@ -474,7 +474,7 @@ public class LightroomBlockEntity extends BaseContainerBlockEntity implements Wo
         }
 
         if (getLastOrClosestPlayer() instanceof ServerPlayer player) {
-            Exposure.CriteriaTriggers.FRAME_PRINTED.get().trigger(player, getBlockPos(), frame, result);
+            Exposure.ExposureCriteriaTriggers.FRAME_PRINTED.get().trigger(player, getBlockPos(), frame, result);
         }
 
         if (advanceFrame) {

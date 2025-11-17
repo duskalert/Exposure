@@ -1,17 +1,9 @@
 package io.github.mortuusars.exposure.neoforge.integration.kubejs;
 
-import dev.latvian.mods.kubejs.event.EventGroupRegistry;
-import dev.latvian.mods.kubejs.plugin.KubeJSPlugin;
-import dev.latvian.mods.kubejs.script.ScriptType;
-import io.github.mortuusars.exposure.neoforge.api.event.ModifyEntityInFrameDataEvent;
-import io.github.mortuusars.exposure.neoforge.api.event.FrameAddedEvent;
-import io.github.mortuusars.exposure.neoforge.api.event.ModifyFrameExtraDataEvent;
-import io.github.mortuusars.exposure.neoforge.integration.kubejs.event.*;
-import net.neoforged.bus.api.EventPriority;
-import net.neoforged.neoforge.common.NeoForge;
+import dev.latvian.mods.kubejs.KubeJSPlugin;
 
-public class ExposureKubeJSPlugin implements KubeJSPlugin {
-    @Override
+public class ExposureKubeJSPlugin extends KubeJSPlugin {
+   /* @Override
     public void registerEvents(EventGroupRegistry registry) {
         registry.register(ExposureJSEvents.GROUP);
     }
@@ -22,9 +14,9 @@ public class ExposureKubeJSPlugin implements KubeJSPlugin {
     }
 
     private void subscribeToNeoForgeEvents() {
-        NeoForge.EVENT_BUS.addListener(EventPriority.LOW, this::postAddEntityInFrameDataEvent);
-        NeoForge.EVENT_BUS.addListener(EventPriority.LOW, this::postModifyFrameDataEvent);
-        NeoForge.EVENT_BUS.addListener(EventPriority.LOW, this::postFrameAddedEvent);
+        MinecraftForge.EVENT_BUS.addListener(EventPriority.LOW, this::postAddEntityInFrameDataEvent);
+        MinecraftForge.EVENT_BUS.addListener(EventPriority.LOW, this::postModifyFrameDataEvent);
+        MinecraftForge.EVENT_BUS.addListener(EventPriority.LOW, this::postFrameAddedEvent);
     }
 
     // --
@@ -43,5 +35,5 @@ public class ExposureKubeJSPlugin implements KubeJSPlugin {
     private void postFrameAddedEvent(FrameAddedEvent event) {
         ExposureJSEvents.FRAME_ADDED.post(ScriptType.SERVER,
                 new FrameAddedEventJS(event.getCameraHolder(), event.getCamera(), event.getFrame(), event.getPositionsInFrame(), event.getEntitiesInFrame()));
-    }
+    }*/
 }

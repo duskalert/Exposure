@@ -9,7 +9,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 
 public enum ActionS2CP implements Packet {
-    CLEAR_RENDERING_CACHE,SHUTTER_OPENED;
+    CLEAR_RENDERING_CACHE,SHUTTER_OPENED,EXPORT_STOPPED;
 
     public static final ResourceLocation ID = Exposure.resource("clear_rendering_cache");
 
@@ -27,6 +27,7 @@ public enum ActionS2CP implements Packet {
         switch (this){
             case CLEAR_RENDERING_CACHE -> ClientPacketsHandler.clearRenderingCache();
             case SHUTTER_OPENED -> ClientPacketsHandler.shutterOpened();
+            case EXPORT_STOPPED -> ClientPacketsHandler.stopExportTask();
         }
         ;
         return true;
