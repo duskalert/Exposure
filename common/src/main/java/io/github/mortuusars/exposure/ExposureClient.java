@@ -3,6 +3,11 @@ package io.github.mortuusars.exposure;
 import io.github.mortuusars.exposure.client.animation.CameraModelPoses;
 import io.github.mortuusars.exposure.client.animation.CameraPoses;
 import io.github.mortuusars.exposure.client.capture.template.*;
+import io.github.mortuusars.exposure.client.gui.screen.ItemRenameScreen;
+import io.github.mortuusars.exposure.client.gui.screen.LightroomScreen;
+import io.github.mortuusars.exposure.client.gui.screen.album.AlbumScreen;
+import io.github.mortuusars.exposure.client.gui.screen.album.LecternAlbumScreen;
+import io.github.mortuusars.exposure.client.gui.screen.camera.CameraAttachmentsScreen;
 import io.github.mortuusars.exposure.client.task.ClearStaleRenderedImagesIndefiniteTask;
 import io.github.mortuusars.exposure.client.RenderedExposures;
 import io.github.mortuusars.exposure.client.camera.viewfinder.*;
@@ -21,6 +26,7 @@ import io.github.mortuusars.exposure.world.item.AlbumItem;
 import io.github.mortuusars.exposure.world.item.camera.CameraItem;
 import io.github.mortuusars.exposure.world.item.ChromaticSheetItem;
 import io.github.mortuusars.exposure.world.item.StackedPhotographsItem;
+import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.resources.ResourceLocation;
@@ -54,6 +60,13 @@ public class ExposureClient {
                 ImageEffect.AGED));
 
         cycles().addParallelTask(new ClearStaleRenderedImagesIndefiniteTask());
+
+        MenuScreens.register(Exposure.MenuTypes.CAMERA_IN_HAND.get(), CameraAttachmentsScreen::new);
+        MenuScreens.register(Exposure.MenuTypes.CAMERA_ON_STAND.get(), CameraAttachmentsScreen::new);
+        MenuScreens.register(Exposure.MenuTypes.ALBUM.get(), AlbumScreen::new);
+        MenuScreens.register(Exposure.MenuTypes.LECTERN_ALBUM.get(), LecternAlbumScreen::new);
+        MenuScreens.register(Exposure.MenuTypes.LIGHTROOM.get(), LightroomScreen::new);
+        MenuScreens.register(Exposure.MenuTypes.ITEM_RENAME.get(), ItemRenameScreen::new);
 
         registerItemModelProperties();
     }

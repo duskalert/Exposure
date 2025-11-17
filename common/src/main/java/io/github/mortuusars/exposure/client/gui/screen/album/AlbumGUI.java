@@ -1,13 +1,13 @@
 package io.github.mortuusars.exposure.client.gui.screen.album;
 
 import io.github.mortuusars.exposure.Exposure;
-import net.minecraft.client.gui.components.WidgetSprites;
+import io.github.mortuusars.exposure.ModWidgetSprites;
 import net.minecraft.resources.ResourceLocation;
 
 public class AlbumGUI {
-    public static final WidgetSprites PREVIOUS_PAGE_BUTTON_SPRITES = new WidgetSprites(
+    public static final ModWidgetSprites PREVIOUS_PAGE_BUTTON_SPRITES = new ModWidgetSprites(
             Exposure.resource("album/previous_page"), Exposure.resource("album/previous_page_highlighted"));
-    public static final WidgetSprites NEXT_PAGE_BUTTON_SPRITES = new WidgetSprites(
+    public static final ModWidgetSprites NEXT_PAGE_BUTTON_SPRITES = new ModWidgetSprites(
             Exposure.resource("album/next_page"), Exposure.resource("album/next_page_highlighted"));
 
     public static final ResourceLocation TEXTURE = Exposure.resource("textures/gui/album.png");

@@ -2,17 +2,17 @@ package io.github.mortuusars.exposure.client.gui.screen.camera.button;
 
 import io.github.mortuusars.exposure.Config;
 import io.github.mortuusars.exposure.ModWidgetSprites;
+import io.github.mortuusars.exposure.client.gui.BetterImageButton;
 import io.github.mortuusars.exposure.client.util.Minecrft;
 import io.github.mortuusars.exposure.util.Fov;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.components.ImageButton;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import org.jetbrains.annotations.NotNull;
 
-public class FocalLengthButton extends ImageButton {
+public class FocalLengthButton extends BetterImageButton {
     protected final int secondaryFontColor;
     protected final int mainFontColor;
 
@@ -40,7 +40,7 @@ public class FocalLengthButton extends ImageButton {
     protected double getCurrentFov() {
         return Minecrft.get().gameRenderer.getFov(
                 Minecrft.get().gameRenderer.getMainCamera(),
-                Minecrft.get().getTimer().getGameTimeDeltaTicks(),
+                Minecrft.get().getDeltaFrameTime(),
                 true);
     }
 }

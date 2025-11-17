@@ -5,7 +5,6 @@ import com.mojang.blaze3d.pipeline.RenderTarget;
 import com.mojang.blaze3d.systems.RenderSystem;
 import io.github.mortuusars.exposure.Exposure;
 import io.github.mortuusars.exposure.client.util.Minecrft;
-import io.github.mortuusars.exposure.client.util.Shader;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.PostChain;
 import net.minecraft.resources.ResourceLocation;
@@ -56,7 +55,7 @@ public class CaptureShader {
             RenderSystem.disableBlend();
             RenderSystem.disableDepthTest();
             RenderSystem.resetTextureMatrix();
-            shader.process(Minecrft.get().getTimer().getGameTimeDeltaTicks());
+            shader.process(Minecrft.get().getDeltaFrameTime());
         }
     }
 
@@ -89,7 +88,7 @@ public class CaptureShader {
             RenderSystem.disableBlend();
             RenderSystem.disableDepthTest();
             RenderSystem.resetTextureMatrix();
-            tempShader.process(Minecrft.get().getTimer().getGameTimeDeltaTicks());
+            tempShader.process(Minecrft.get().getDeltaFrameTime());
             tempShader.close();
         } catch (IOException e) {
             Exposure.LOGGER.warn("Failed to load shader: {}", shader.getName(), e);

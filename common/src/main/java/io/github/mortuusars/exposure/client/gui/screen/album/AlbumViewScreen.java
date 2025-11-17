@@ -4,6 +4,7 @@ import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.systems.RenderSystem;
 import io.github.mortuusars.exposure.Config;
 import io.github.mortuusars.exposure.Exposure;
+import io.github.mortuusars.exposure.client.gui.BetterImageButton;
 import io.github.mortuusars.exposure.client.gui.screen.element.Pager;
 import io.github.mortuusars.exposure.client.gui.screen.element.TextBlock;
 import io.github.mortuusars.exposure.client.gui.screen.element.textbox.HorizontalAlignment;
@@ -21,7 +22,8 @@ import io.github.mortuusars.exposure.world.item.util.ItemAndStack;
 import io.github.mortuusars.exposure.world.sound.SoundEffect;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.components.*;
+import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
@@ -82,7 +84,7 @@ public class AlbumViewScreen extends Screen {
         Page leftPage = createPage(Side.LEFT, 0);
         pages.add(leftPage);
 
-        ImageButton previousPageButton = new ImageButton(leftPos + 12, topPos + 164, 13, 15,
+        BetterImageButton previousPageButton = new BetterImageButton(leftPos + 12, topPos + 164, 13, 15,
                 AlbumGUI.PREVIOUS_PAGE_BUTTON_SPRITES, button -> pager.changePage(PagingDirection.PREVIOUS), Component.translatable("gui.exposure.previous_page"));
         previousPageButton.setTooltip(Tooltip.create(Component.translatable("gui.exposure.previous_page")));
         addRenderableWidget(previousPageButton);
@@ -91,7 +93,7 @@ public class AlbumViewScreen extends Screen {
         Page rightPage = createPage(Side.RIGHT, 140);
         pages.add(rightPage);
 
-        ImageButton nextPageButton = new ImageButton(leftPos + 273, topPos + 164, 13, 15,
+        BetterImageButton nextPageButton = new BetterImageButton(leftPos + 273, topPos + 164, 13, 15,
                 AlbumGUI.NEXT_PAGE_BUTTON_SPRITES, button -> pager.changePage(PagingDirection.NEXT), Component.translatable("gui.exposure.next_page"));
         nextPageButton.setTooltip(Tooltip.create(Component.translatable("gui.exposure.next_page")));
         addRenderableWidget(nextPageButton);
@@ -158,6 +160,7 @@ public class AlbumViewScreen extends Screen {
     @Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
         super.render(guiGraphics, mouseX, mouseY, partialTick);
+        renderBackground(guiGraphics,mouseX,mouseY,partialTick);
         renderTooltip(guiGraphics, mouseX, mouseY);
 
         for (Page page : pages) {
@@ -179,9 +182,8 @@ public class AlbumViewScreen extends Screen {
         }
     }
 
-    @Override
     public void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        renderTransparentBackground(guiGraphics);
+        renderBackground(guiGraphics);
 
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);

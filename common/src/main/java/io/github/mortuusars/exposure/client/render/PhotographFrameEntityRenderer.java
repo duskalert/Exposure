@@ -14,7 +14,6 @@ import io.github.mortuusars.exposure.world.camera.frame.Frame;
 import io.github.mortuusars.exposure.world.entity.PhotographFrameEntity;
 import io.github.mortuusars.exposure.world.item.PhotographItem;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Font;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -26,18 +25,13 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.core.Direction;
-import net.minecraft.core.component.DataComponents;
-import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.EntityAttachment;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.phys.EntityHitResult;
-import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
-import org.joml.Matrix4f;
 
 public class PhotographFrameEntityRenderer<T extends PhotographFrameEntity> extends EntityRenderer<T> {
     protected final BlockRenderDispatcher blockRenderer;
@@ -191,7 +185,7 @@ public class PhotographFrameEntityRenderer<T extends PhotographFrameEntity> exte
         return Math.min(255, shadedBrightness + lightUp);
     }
 
-    @Override
+    /*@Override
     protected void renderNameTag(T entity, Component displayName, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, float partialTick) {
         double d = this.entityRenderDispatcher.distanceToSqr(entity);
         if (!(d > 4096.0)) {
@@ -224,11 +218,11 @@ public class PhotographFrameEntityRenderer<T extends PhotographFrameEntity> exte
                 poseStack.popPose();
             }
         }
-    }
+    }*/
 
     @Override
     protected boolean shouldShowName(T entity) {
-        if (Minecraft.renderNames() && (!entity.getItem().isEmpty() && entity.getItem().has(DataComponents.CUSTOM_NAME)
+        if (Minecraft.renderNames() && (!entity.getItem().isEmpty() && entity.getItem().hasCustomHoverName()
                 && Minecraft.getInstance().crosshairPickEntity == entity)) {
             double distSqr = Minecraft.getInstance().crosshairPickEntity.distanceToSqr(entity);
             float showRangeSqr = entity.isDiscrete() ? 32.0f : 64.0f;

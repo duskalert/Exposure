@@ -4,7 +4,6 @@ import io.github.mortuusars.exposure.Config;
 import io.github.mortuusars.exposure.client.util.Minecrft;
 import io.github.mortuusars.exposure.world.entity.CameraStandEntity;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.tooltip.TooltipRenderUtil;
@@ -15,7 +14,7 @@ import net.minecraft.world.phys.EntityHitResult;
 import java.util.List;
 
 public class CameraStandTooltip {
-    public static void render(GuiGraphics guiGraphics, DeltaTracker partialTick) {
+    public static void render(GuiGraphics guiGraphics, float partialTick) {
         if (!Config.Client.CAMERA_STAND_TOOLTIP.get()) return;
 
         Minecraft minecraft = Minecrft.get();

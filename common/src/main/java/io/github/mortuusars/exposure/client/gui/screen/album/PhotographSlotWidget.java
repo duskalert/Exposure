@@ -4,13 +4,13 @@ import com.google.common.collect.Lists;
 import com.mojang.blaze3d.platform.InputConstants;
 import io.github.mortuusars.exposure.Exposure;
 import io.github.mortuusars.exposure.ExposureClient;
+import io.github.mortuusars.exposure.ModWidgetSprites;
 import io.github.mortuusars.exposure.client.render.photograph.PhotographStyle;
 import io.github.mortuusars.exposure.client.util.Minecrft;
 import io.github.mortuusars.exposure.world.item.PhotographItem;
 import io.github.mortuusars.exposure.world.item.util.ItemAndStack;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
-import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.gui.narration.NarratedElementType;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.navigation.CommonInputs;
@@ -29,9 +29,9 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public class PhotographSlotWidget extends AbstractWidget {
-    public static final WidgetSprites SPRITES = new WidgetSprites(
+    public static final ModWidgetSprites SPRITES = new ModWidgetSprites(
             Exposure.resource("album/photograph_slot"), Exposure.resource("album/photograph_slot_highlighted"));
-    public static final WidgetSprites EMPTY_SPRITES = new WidgetSprites(
+    public static final ModWidgetSprites EMPTY_SPRITES = new ModWidgetSprites(
             Exposure.resource("album/photograph_slot_empty"), Exposure.resource("album/photograph_slot_empty_highlighted"));
 
     private final Screen parent;
@@ -113,12 +113,12 @@ public class PhotographSlotWidget extends AbstractWidget {
             hasPhotograph = false;
         }
 
-        WidgetSprites sprites = hasPhotograph ? SPRITES : EMPTY_SPRITES;
+        ModWidgetSprites sprites = hasPhotograph ? SPRITES : EMPTY_SPRITES;
         ResourceLocation resourceLocation = sprites.get(isActive(), isHoveredOrFocused());
         if (!editable && !hasPhotograph) {
             resourceLocation = sprites.get(isActive(), false);
         }
-        guiGraphics.blitSprite(resourceLocation, getX(), getY(), width, height);
+        guiGraphics.blit(resourceLocation, getX(), getY(),0,0, width, height);
     }
 
     public void renderTooltip(GuiGraphics guiGraphics, int mouseX, int mouseY) {

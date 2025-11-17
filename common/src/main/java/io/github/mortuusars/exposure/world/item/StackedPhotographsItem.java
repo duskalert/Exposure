@@ -37,11 +37,6 @@ public class StackedPhotographsItem extends Item {
         }
     }, ItemAndStack::getItemStack);
 
-    public static final StreamCodec<RegistryFriendlyByteBuf, ItemAndStack<PhotographItem>> PHOTOGRAPH_ITEM_AND_STACK_STREAM_CODEC =
-            ItemStack.STREAM_CODEC.map(
-                    ItemAndStack::new, ItemAndStack::getItemStack
-            );
-
     public StackedPhotographsItem(Properties properties) {
         super(properties);
     }
