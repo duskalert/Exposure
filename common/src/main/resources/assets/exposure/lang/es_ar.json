@@ -111,7 +111,7 @@
   "exposure.configuration.censor_all_photographs_made_by_others": "Censurar todas las fotos ajenas",
   "exposure.configuration.censor_projected_photographs_made_by_others": "Censurar fotos ajenas proyectadas",
   "exposure.configuration.cleanup_timed_out_expected_uploads": "Limpiar datos de subida vencidos",
-  "exposure.configuration.create_deployer_stand_hotswap": "Intercambio en caliente del soporte del Deployer"
+  "exposure.configuration.create_deployer_stand_hotswap": "Intercambio en caliente del soporte del Deployer",
   "exposure.configuration.debug": "Depuración",
   "exposure.configuration.default_focal_range": "Rango focal predeterminado",
   "exposure.configuration.default_frame_size": "Tamaño de marco predeterminado",
@@ -136,7 +136,7 @@
   "exposure.configuration.font_secondary_color": "Color secundario de fuente",
   "exposure.configuration.force_direct_capture": "Forzar captura directa",
   "exposure.configuration.force_direct_capture_mods": "Mods de captura directa",
-  "exposure.configuration.hide_hud_while_in_viewfinder": "Ocultar el resto del HUD cuando esté activo"
+  "exposure.configuration.hide_hud_while_in_viewfinder": "Ocultar el resto del HUD cuando esté activo",
   "exposure.configuration.increase_interplanar_projector_name_limit": "Nombres más largos para el proyector interplanar",
   "exposure.configuration.integration": "Integración",
   "exposure.configuration.jei_information": "Agregar info a JEI",
@@ -167,7 +167,7 @@
   "exposure.configuration.signed_album_glint": "Brillo en álbum firmado",
   "exposure.configuration.stacked_photographs_size": "Tamaño de pila de fotos",
   "exposure.configuration.status_icon_offset_x": "Desplazamiento en X del ícono de estado",
-  "exposure.configuration.status_icon_offset_y": "Desplazamiento en Y del ícono de estado"
+  "exposure.configuration.status_icon_offset_y": "Desplazamiento en Y del ícono de estado",
   "exposure.configuration.timer_attention_radius": "Radio de atención del temporizador",
   "exposure.configuration.timer_attracts_mob_attention": "El temporizador atrae mobs",
   "exposure.configuration.tutorial": "Tutorial",
@@ -374,7 +374,7 @@
   "tag.item.exposure.photo_agers": "Envejecedores de Fotos",
   "tag.item.exposure.photo_papers": "Papeles Fotográficos",
   "tag.item.exposure.red_filters": "Filtros Rojos",
-  "tag.item.exposure.yellow_printing_dyes": "Tintas de Impresión Amarillas"
+  "tag.item.exposure.yellow_printing_dyes": "Tintas de Impresión Amarillas",
   "task.exposure.export.already_running": "Ya hay una exportación en curso.",
   "task.exposure.export.error": "Error al exportar '%s': %s",
   "task.exposure.export.error.not_received": "No se recibió la exposición '%s'.",
