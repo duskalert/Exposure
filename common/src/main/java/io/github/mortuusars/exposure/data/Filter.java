@@ -3,6 +3,7 @@ package io.github.mortuusars.exposure.data;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import io.github.mortuusars.exposure.Exposure;
+import io.github.mortuusars.exposure.Stuff;
 import io.github.mortuusars.exposure.util.color.Color;
 import net.minecraft.advancements.critereon.ItemPredicate;
 import net.minecraft.core.Holder;
@@ -18,7 +19,7 @@ public record Filter(ItemPredicate predicate,
     public static final Codec<Holder<Filter>> HOLDER_CODEC = RegistryFixedCodec.create(Exposure.Registries.FILTER);
 
     public static final Codec<Filter> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-            ItemPredicate.CODEC.fieldOf("predicate").forGetter(Filter::predicate),
+            Stuff.ITEM_PREDICATE_CODEC.fieldOf("predicate").forGetter(Filter::predicate),
             ResourceLocation.CODEC.fieldOf("shader").forGetter(Filter::shader),
             ResourceLocation.CODEC.optionalFieldOf("attachment_texture", DEFAULT_GLASS_TEXTURE).forGetter(Filter::attachmentTexture),
             Color.HEX_STRING_CODEC.optionalFieldOf("attachment_tint", Color.WHITE).forGetter(Filter::attachmentTintColor)

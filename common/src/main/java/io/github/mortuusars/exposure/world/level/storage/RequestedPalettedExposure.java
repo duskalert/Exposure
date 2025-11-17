@@ -64,7 +64,7 @@ public class RequestedPalettedExposure {
 //            case NOT_REQUESTED -> NOT_REQUESTED;
             case AWAITING -> AWAITING;
             case TIMED_OUT -> TIMED_OUT;
-            case null, default -> throw new IllegalArgumentException(status + " is unexpected.");
+            default -> throw new IllegalArgumentException(status + " is unexpected.");
         };
     }
 

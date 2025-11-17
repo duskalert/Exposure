@@ -1,21 +1,14 @@
 package io.github.mortuusars.exposure.world.item;
 
 import io.github.mortuusars.exposure.Exposure;
-import io.github.mortuusars.exposure.client.render.CameraStandEntityRenderer;
 import io.github.mortuusars.exposure.world.entity.CameraStandEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
-import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MobSpawnType;
-import net.minecraft.world.entity.decoration.ArmorStand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.vehicle.Boat;
 import net.minecraft.world.item.Item;
@@ -51,7 +44,7 @@ public class CameraStandItem extends Item {
         if (level instanceof ServerLevel serverLevel) {
             Consumer<CameraStandEntity> consumer = EntityType.createDefaultStackConfig(serverLevel, itemStack, context.getPlayer());
             CameraStandEntity cameraStand = Exposure.EntityTypes.CAMERA_STAND.get()
-                    .create(serverLevel, consumer, blockPos, MobSpawnType.SPAWN_EGG, true, true);
+                    .create(serverLevel,null, consumer, blockPos, MobSpawnType.SPAWN_EGG, true, true);
             if (cameraStand == null) {
                 return InteractionResult.FAIL;
             }
@@ -78,7 +71,7 @@ public class CameraStandItem extends Item {
         if (player.level() instanceof ServerLevel serverLevel) {
             Consumer<CameraStandEntity> consumer = EntityType.createDefaultStackConfig(serverLevel, itemStack, player);
             CameraStandEntity cameraStand = Exposure.EntityTypes.CAMERA_STAND.get()
-                    .create(serverLevel, consumer, boat.blockPosition(), MobSpawnType.SPAWN_EGG, true, true);
+                    .create(serverLevel,null, consumer, boat.blockPosition(), MobSpawnType.SPAWN_EGG, true, true);
             if (cameraStand == null) {
                 return InteractionResult.FAIL;
             }

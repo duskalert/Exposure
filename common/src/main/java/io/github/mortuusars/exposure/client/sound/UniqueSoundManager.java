@@ -60,6 +60,6 @@ public class UniqueSoundManager {
 
     private static SoundInstance createEntityBoundInstance(Entity entity, SoundEvent soundEvent, SoundSource source,
                                                            float volume, float pitch) {
-        return new EntityBoundSoundInstance(soundEvent, source, volume, pitch, entity, entity.getRandom().nextLong());
+        return new EntityBoundSoundInstance(soundEvent, source, volume, pitch, entity, entity.level().getRandom().nextLong());
     }
 }

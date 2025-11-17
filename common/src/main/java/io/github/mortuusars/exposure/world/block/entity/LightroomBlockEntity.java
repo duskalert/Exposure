@@ -473,8 +473,9 @@ public class LightroomBlockEntity extends BaseContainerBlockEntity implements Wo
                             exposure.withTag(ExposureData.Tag::setPrinted)));
         }
 
-        if (getLastOrClosestPlayer() instanceof ServerPlayer player) {
-            Exposure.ExposureCriteriaTriggers.FRAME_PRINTED.get().trigger(player, getBlockPos(), frame, result);
+        ServerPlayer player = getLastOrClosestPlayer();
+        if (player != null) {
+            Exposure.ExposureCriteriaTriggers.FRAME_PRINTED.trigger(player, getBlockPos(), frame, result);
         }
 
         if (advanceFrame) {

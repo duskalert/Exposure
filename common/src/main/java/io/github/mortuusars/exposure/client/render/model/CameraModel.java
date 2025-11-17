@@ -49,7 +49,7 @@ public class CameraModel {
         }
 
         if (!models.isEmpty()) {
-            models.addFirst(original);
+            models.add(0,original);
             return new CompositeModel(models);
         }
 

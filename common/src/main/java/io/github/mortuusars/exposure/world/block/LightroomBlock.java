@@ -10,6 +10,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Containers;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -98,19 +99,23 @@ public class LightroomBlock extends Block implements EntityBlock {
     }
 
     @Override
-    protected @NotNull InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
-        if (!(level.getBlockEntity(pos) instanceof LightroomBlockEntity lightroomBlockEntity))
-            return super.useWithoutItem(state, level, pos, player, hitResult);
+    public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+        ItemStack stack = player.getItemInHand(hand);
+        if (stack.isEmpty()) {
+            if (!(level.getBlockEntity(pos) instanceof LightroomBlockEntity lightroomBlockEntity))
+                return super.use(state, level, pos, player,hand, hit);
 
-        player.awardStat(Exposure.Stats.INTERACT_WITH_LIGHTROOM);
+            player.awardStat(Exposure.Stats.INTERACT_WITH_LIGHTROOM);
 
-        if (player instanceof ServerPlayer serverPlayer) {
-            lightroomBlockEntity.setLastPlayer(serverPlayer);
-            lightroomBlockEntity.setChanged(); // Updates state for client. Without this GUI buttons have some problems. (PrintButton active state)
-            PlatformHelper.openMenu(serverPlayer, lightroomBlockEntity, buffer -> buffer.writeBlockPos(pos));
+            if (player instanceof ServerPlayer serverPlayer) {
+                lightroomBlockEntity.setLastPlayer(serverPlayer);
+                lightroomBlockEntity.setChanged(); // Updates state for client. Without this GUI buttons have some problems. (PrintButton active state)
+                PlatformHelper.openMenu(serverPlayer, lightroomBlockEntity, buffer -> buffer.writeBlockPos(pos));
+            }
+
+            return InteractionResult.sidedSuccess(level.isClientSide);
         }
-
-        return InteractionResult.sidedSuccess(level.isClientSide);
+        return super.use(state, level, pos, player, hand, hit);
     }
 
     @Override

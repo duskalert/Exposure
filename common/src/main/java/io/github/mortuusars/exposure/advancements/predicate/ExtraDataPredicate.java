@@ -1,9 +1,10 @@
 package io.github.mortuusars.exposure.advancements.predicate;
 
 import com.mojang.serialization.Codec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
 import io.github.mortuusars.exposure.util.ExtraData;
-import net.minecraft.nbt.*;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtUtils;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
 import org.jetbrains.annotations.Nullable;
 
@@ -34,13 +35,14 @@ public record ExtraDataPredicate(ExtraData data) {
             return true;
         } else if (other == null) {
             return false;
-        } else if (data instanceof CompoundTag compoundTag) {
+        } else {
+
             CompoundTag compoundTag2 = (CompoundTag)other;
-            if (compoundTag2.size() < compoundTag.size()) {
+            if (compoundTag2.size() < data.size()) {
                 return false;
             } else {
-                for (String string : compoundTag.getAllKeys()) {
-                    Tag tag2 = compoundTag.get(string);
+                for (String string : data.getAllKeys()) {
+                    Tag tag2 = data.get(string);
                     if (!NbtUtils.compareNbt(tag2, compoundTag2.get(string), true)) {
                         return false;
                     }
@@ -48,8 +50,6 @@ public record ExtraDataPredicate(ExtraData data) {
 
                 return true;
             }
-        } else {
-            return data.equals(other);
         }
     }
 }

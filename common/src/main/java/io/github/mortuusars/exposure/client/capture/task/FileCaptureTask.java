@@ -4,12 +4,12 @@ package io.github.mortuusars.exposure.client.capture.task;
 import com.google.common.io.Files;
 import com.mojang.logging.LogUtils;
 import io.github.mortuusars.exposure.Config;
+import io.github.mortuusars.exposure.Stuff;
 import io.github.mortuusars.exposure.client.capture.task.file.ImageFileLoader;
 import io.github.mortuusars.exposure.client.image.Image;
+import io.github.mortuusars.exposure.util.TranslatableError;
 import io.github.mortuusars.exposure.util.cycles.task.Result;
 import io.github.mortuusars.exposure.util.cycles.task.Task;
-import io.github.mortuusars.exposure.util.TranslatableError;
-import net.minecraft.SharedConstants;
 import net.minecraft.util.StringUtil;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
@@ -65,7 +65,7 @@ public class FileCaptureTask extends Task<Result<Image>> {
 
             return ImageFileLoader.chooseFitting(file).load(file);
         }).completeOnTimeout(Result.error(ERROR_TIMED_OUT),
-                Config.Server.PROJECT_TIMEOUT_TICKS.get() * SharedConstants.MILLIS_PER_TICK, TimeUnit.MILLISECONDS);
+                Config.Server.PROJECT_TIMEOUT_TICKS.get() * Stuff.MILLIS_PER_TICK, TimeUnit.MILLISECONDS);
     }
 
     private static Result<File> validateFilepath(File file) {

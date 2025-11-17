@@ -1,6 +1,5 @@
 package io.github.mortuusars.exposure.forge.integration.kubejs.event;
 
-import dev.latvian.mods.kubejs.entity.KubeEntityEvent;
 import io.github.mortuusars.exposure.forge.api.event.ModifyFrameExtraDataEvent;
 import io.github.mortuusars.exposure.util.ExtraData;
 import io.github.mortuusars.exposure.world.camera.capture.CaptureParameters;
@@ -12,13 +11,13 @@ import net.minecraft.world.item.ItemStack;
 
 import java.util.List;
 
-public class ModifyFrameExtraDataEventJS extends ModifyFrameExtraDataEvent implements KubeEntityEvent {
+public class ModifyFrameExtraDataEventJS extends ModifyFrameExtraDataEvent /*implements KubeEntityEvent */{
     public ModifyFrameExtraDataEventJS(CameraHolder cameraHolder, ItemStack stack, CaptureParameters captureParameters,
                                        List<BlockPos> positionsInFrame, List<LivingEntity> entitiesInFrame, ExtraData data) {
         super(cameraHolder, stack, captureParameters, positionsInFrame, entitiesInFrame, data);
     }
 
-    @Override
+    //@Override
     public Entity getEntity() {
         return getCameraHolderEntity();
     }

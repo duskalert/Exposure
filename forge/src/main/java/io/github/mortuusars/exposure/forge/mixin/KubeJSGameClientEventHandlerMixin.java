@@ -1,21 +1,14 @@
 package io.github.mortuusars.exposure.forge.mixin;
 
-import io.github.mortuusars.exposure.client.capture.task.BackgroundScreenshotCaptureTask;
-import net.minecraftforge.client.event.RenderLevelStageEvent;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-
 /**
  * Fixes only sky rendering with KubeJS installed.
  */
-@Mixin(KubeJSGameClientEventHandler.class)
+//@Mixin(KubeJSGameClientEventHandler.class)
 public class KubeJSGameClientEventHandlerMixin {
-    @Inject(method = "worldRender", at = @At("RETURN"))
+   /* @Inject(method = "worldRender", at = @At("RETURN"))
     private static void onWorldRender(RenderLevelStageEvent event, CallbackInfo ci) {
         if (BackgroundScreenshotCaptureTask.isCapturing()) {
             BackgroundScreenshotCaptureTask.getRenderTarget().bindWrite(false);
         }
-    }
+    }*/
 }

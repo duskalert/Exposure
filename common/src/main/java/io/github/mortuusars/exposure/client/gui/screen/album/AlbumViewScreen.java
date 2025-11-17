@@ -288,14 +288,15 @@ public class AlbumViewScreen extends Screen {
         }
 
         public static AlbumAccess fromItem(ItemStack stack) {
-            if (Exposure.DataComponents.getAlbumContent(stack) instanceof AlbumContent content) {
+            AlbumContent content = Exposure.DataComponents.getAlbumContent(stack);
+            if (content != null) {
                 return new AlbumAccess(content.pages().stream().map(PageContent::new).toList());
             }
 
-            if (Exposure.DataComponents.getSignedAlbumContent(stack) instanceof SignedAlbumContent content) {
-                return new AlbumAccess(content.pages().stream().map(PageContent::new).toList());
+            SignedAlbumContent signedAlbumContent =Exposure.DataComponents.getSignedAlbumContent(stack);
+            if (signedAlbumContent != null){
+                return new AlbumAccess(signedAlbumContent.pages().stream().map(PageContent::new).toList());
             }
-
             return EMPTY;
         }
     }

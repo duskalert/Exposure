@@ -33,8 +33,10 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.*;
-import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -470,7 +472,7 @@ public class CameraStandEntity extends Entity implements CameraHolder {
 
     protected void malfunction() {
         if (getCamera().isEmpty()) return;
-        if (Config.Server.CAMERA_STAND_RANGE_MALFUNCTION.isFalse()) return;
+        if (!Config.Server.CAMERA_STAND_RANGE_MALFUNCTION.get()) return;
         stopControlling();
         setMalfunctioned(true);
         playSound(Exposure.SoundEvents.CAMERA_GENERIC_CLICK.get());

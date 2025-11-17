@@ -106,7 +106,7 @@ public class ItemListScreen extends Screen {
         int left = leftPos;
         int top = topPos;
 
-        renderTransparentBackground(guiGraphics);
+        renderBackground(guiGraphics);
 
         guiGraphics.pose().pushPose();
         guiGraphics.pose().translate((width / 2f), (height / 2f), 0.0f);
@@ -143,10 +143,6 @@ public class ItemListScreen extends Screen {
         renderTooltip(guiGraphics, mouseX, mouseY);
     }
 
-    @Override
-    public void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-
-    }
 
     protected void renderBg(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
         RenderSystem.setShader(GameRenderer::getPositionTexShader);

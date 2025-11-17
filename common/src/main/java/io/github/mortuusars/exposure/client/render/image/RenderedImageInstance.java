@@ -15,9 +15,9 @@ import net.minecraft.client.renderer.RenderStateShard;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.renderer.texture.SpriteContents;
+import net.minecraft.client.resources.metadata.animation.AnimationMetadataSection;
 import net.minecraft.client.resources.metadata.animation.FrameSize;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.packs.resources.ResourceMetadata;
 import org.joml.Matrix4f;
 
 import java.util.function.Function;
@@ -99,7 +99,7 @@ public class RenderedImageInstance implements AutoCloseable {
             texture.setFilter(false, true);
             TextureUtil.prepareImage(texture.getId(), mipmapLevel, width, height);
             SpriteContents spriteContents = new SpriteContents(this.textureLocation,
-                    new FrameSize(width, height), texture.getPixels(), ResourceMetadata.EMPTY);
+                    new FrameSize(width, height), texture.getPixels(), AnimationMetadataSection.EMPTY);
 
             spriteContents.increaseMipLevel(mipmapLevel);
             spriteContents.uploadFirstFrame(0, 0);
@@ -117,10 +117,10 @@ public class RenderedImageInstance implements AutoCloseable {
 
         Matrix4f matrix4f = poseStack.last().pose();
         VertexConsumer vertexConsumer = bufferSource.getBuffer(this.renderType);
-        vertexConsumer.addVertex(matrix4f, minX, maxY, 0).setColor(r, g, b, a).setUv(minU, maxV).setLight(packedLight);
-        vertexConsumer.addVertex(matrix4f, maxX, maxY, 0).setColor(r, g, b, a).setUv(maxU, maxV).setLight(packedLight);
-        vertexConsumer.addVertex(matrix4f, maxX, minY, 0).setColor(r, g, b, a).setUv(maxU, minV).setLight(packedLight);
-        vertexConsumer.addVertex(matrix4f, minX, minY, 0).setColor(r, g, b, a).setUv(minU, minV).setLight(packedLight);
+        vertexConsumer.vertex(matrix4f, minX, maxY, 0).color(r, g, b, a).uv(minU, maxV).uv2(packedLight).endVertex();
+        vertexConsumer.vertex(matrix4f, maxX, maxY, 0).color(r, g, b, a).uv(maxU, maxV).uv2(packedLight).endVertex();
+        vertexConsumer.vertex(matrix4f, maxX, minY, 0).color(r, g, b, a).uv(maxU, minV).uv2(packedLight).endVertex();
+        vertexConsumer.vertex(matrix4f, minX, minY, 0).color(r, g, b, a).uv(minU, minV).uv2(packedLight).endVertex();
     }
 
     public void close() {

@@ -27,7 +27,7 @@ public class ComponentTransferringShapelessExtension implements ICraftingCategor
                 .map(ingredient -> List.of(ingredient.getItems()))
                 .collect(Collectors.toList());
 
-        inputs.addFirst(List.of(recipe.getSourceIngredient().getItems()));
+        inputs.add(0,List.of(recipe.getSourceIngredient().getItems()));
 
         ItemStack resultItem = recipe.getResult();
 

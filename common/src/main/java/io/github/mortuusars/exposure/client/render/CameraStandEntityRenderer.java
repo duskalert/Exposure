@@ -22,7 +22,7 @@ import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 public class CameraStandEntityRenderer <T extends CameraStandEntity> extends EntityRenderer<T> {
-    public static final ResourceLocation TEXTURE_LOCATION = ResourceLocation.withDefaultNamespace("textures/item/camera.png");
+    public static final ResourceLocation TEXTURE_LOCATION = new ResourceLocation("textures/item/camera.png");
     public static final float MOUNT_SCALE = 0.9f;
 
     protected final BlockRenderDispatcher blockRenderer;

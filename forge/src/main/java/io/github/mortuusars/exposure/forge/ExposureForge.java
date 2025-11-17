@@ -2,7 +2,6 @@ package io.github.mortuusars.exposure.forge;
 
 import com.google.common.base.Preconditions;
 import com.mojang.serialization.Codec;
-import com.mojang.serialization.MapCodec;
 import io.github.mortuusars.exposure.Config;
 import io.github.mortuusars.exposure.Exposure;
 import io.github.mortuusars.exposure.forge.loot.ConfigurableAddTableLootModifier;
@@ -42,8 +41,8 @@ public class ExposureForge {
         RegisterImpl.MENU_TYPES.register(modEventBus);
         RegisterImpl.RECIPE_TYPES.register(modEventBus);
         RegisterImpl.RECIPE_SERIALIZERS.register(modEventBus);
-        RegisterImpl.ITEM_SUB_PREDICATES.register(modEventBus);
-        RegisterImpl.ENTITY_SUB_PREDICATES.register(modEventBus);
+       // RegisterImpl.ITEM_SUB_PREDICATES.register(modEventBus);
+       // RegisterImpl.ENTITY_SUB_PREDICATES.register(modEventBus);
         RegisterImpl.SOUND_EVENTS.register(modEventBus);
         RegisterImpl.COMMAND_ARGUMENT_TYPES.register(modEventBus);
         RegisterImpl.WORLD_GEN_FEATURES.register(modEventBus);
@@ -60,7 +59,7 @@ public class ExposureForge {
         private static final DeferredRegister<Codec<? extends IGlobalLootModifier>> LOOT_MODIFIERS =
                 DeferredRegister.create(ForgeRegistries.Keys.GLOBAL_LOOT_MODIFIER_SERIALIZERS, Exposure.ID);
 
-        public static final RegistryObject<MapCodec<ConfigurableAddTableLootModifier>> ADD_TABLE =
+        public static final RegistryObject<Codec<ConfigurableAddTableLootModifier>> ADD_TABLE =
                 LOOT_MODIFIERS.register("add_table", () -> ConfigurableAddTableLootModifier.CODEC);
     }
 }

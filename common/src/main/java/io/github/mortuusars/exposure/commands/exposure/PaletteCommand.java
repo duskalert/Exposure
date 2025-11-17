@@ -173,7 +173,7 @@ public class PaletteCommand {
     }
 
     private static void savePaletteAsJson(ColorPalette palette, File file) throws IOException {
-        JsonElement jsonElement = ColorPalette.CODEC.encodeStart(JsonOps.INSTANCE, palette).getOrThrow();
+        JsonElement jsonElement = ColorPalette.CODEC.encodeStart(JsonOps.INSTANCE, palette).get().orThrow();
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         String json = gson.toJson(jsonElement);
 
@@ -198,7 +198,7 @@ public class PaletteCommand {
     private static ColorPalette loadPaletteFromJson(File file) throws IOException {
         try (FileReader reader = new FileReader(file)) {
             JsonObject jsonObject = new Gson().fromJson(reader, JsonObject.class);
-            return ColorPalette.CODEC.decode(JsonOps.INSTANCE, jsonObject).getOrThrow().getFirst();
+            return ColorPalette.CODEC.decode(JsonOps.INSTANCE, jsonObject).get().orThrow().getFirst();
         }
     }
 

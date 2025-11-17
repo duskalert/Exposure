@@ -33,3 +33,18 @@ accessible method net/minecraft/advancements/CriteriaTriggers register (Lnet/min
 
 accessible method net/minecraft/client/gui/screens/MenuScreens register (Lnet/minecraft/world/inventory/MenuType;Lnet/minecraft/client/gui/screens/MenuScreens$ScreenConstructor;)V
 accessible class net/minecraft/client/gui/screens/MenuScreens$ScreenConstructor
+
+accessible field net/minecraft/advancements/critereon/EnchantmentPredicate enchantment Lnet/minecraft/world/item/enchantment/Enchantment;
+accessible field net/minecraft/advancements/critereon/EnchantmentPredicate level Lnet/minecraft/advancements/critereon/MinMaxBounds$Ints;
+accessible field net/minecraft/advancements/critereon/NbtPredicate tag Lnet/minecraft/nbt/CompoundTag;
+
+accessible field net/minecraft/advancements/critereon/ItemPredicate tag Lnet/minecraft/tags/TagKey;
+accessible field net/minecraft/advancements/critereon/ItemPredicate items Ljava/util/Set;
+accessible field net/minecraft/advancements/critereon/ItemPredicate count Lnet/minecraft/advancements/critereon/MinMaxBounds$Ints;
+accessible field net/minecraft/advancements/critereon/ItemPredicate durability Lnet/minecraft/advancements/critereon/MinMaxBounds$Ints;
+accessible field net/minecraft/advancements/critereon/ItemPredicate potion Lnet/minecraft/world/item/alchemy/Potion;
+accessible field net/minecraft/advancements/critereon/ItemPredicate enchantments [Lnet/minecraft/advancements/critereon/EnchantmentPredicate;
+accessible field net/minecraft/advancements/critereon/ItemPredicate storedEnchantments [Lnet/minecraft/advancements/critereon/EnchantmentPredicate;
+accessible field net/minecraft/advancements/critereon/ItemPredicate nbt Lnet/minecraft/advancements/critereon/NbtPredicate;
+
+mutable field net/minecraft/advancements/critereon/EntitySubPredicate$Types TYPES Lcom/google/common/collect/BiMap;

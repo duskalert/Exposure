@@ -237,7 +237,7 @@ public class AlbumScreen extends AbstractContainerScreen<AlbumMenu> {
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
         updateWidgetVisibility();
 
-        inventoryLabelY = isInAddingMode() ? getMenu().getPlayerInventorySlots().getFirst().y - 12 : -999;
+        inventoryLabelY = isInAddingMode() ? getMenu().getPlayerInventorySlots().get(0).y - 12 : -999;
 
         renderBackground(guiGraphics);
         super.render(guiGraphics, mouseX, mouseY, partialTick);
@@ -352,7 +352,7 @@ public class AlbumScreen extends AbstractContainerScreen<AlbumMenu> {
         drawPageNumbers(guiGraphics, currentSpreadIndex);
 
         if (isInAddingMode()) {
-            AlbumPlayerInventorySlot firstSlot = getMenu().getPlayerInventorySlots().getFirst();
+            AlbumPlayerInventorySlot firstSlot = getMenu().getPlayerInventorySlots().get(0);
             int x = firstSlot.x - 8;
             int y = firstSlot.y - 18;
             guiGraphics.blit(AlbumGUI.TEXTURE, leftPos + x, topPos + y, 10, 0, 188, 176, 100, 512, 512);
@@ -494,7 +494,7 @@ public class AlbumScreen extends AbstractContainerScreen<AlbumMenu> {
             return false;
         }
 
-        AlbumPlayerInventorySlot firstSlot = getMenu().getPlayerInventorySlots().getFirst();
+        AlbumPlayerInventorySlot firstSlot = getMenu().getPlayerInventorySlots().get(0);
         int x = firstSlot.x - 8;
         int y = firstSlot.y - 18;
         return isHovering(x, y, 176, 100, mouseX, mouseY);

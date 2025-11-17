@@ -45,7 +45,7 @@ public class ExposureFrameHistory extends SavedData {
         List<Frame> list = frames.compute(uuid, (id, framesList) ->
                 framesList == null ? new ArrayList<>() : new ArrayList<>(framesList));
         while (list.size() >= LIMIT) {
-            list.removeFirst();
+            list.remove(0);
         }
         list.add(frame);
         setDirty();

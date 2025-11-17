@@ -29,7 +29,7 @@ public interface ToastIcon {
 
         public void render(GuiGraphics guiGraphics, int x, int y) {
             RenderSystem.enableBlend();
-            guiGraphics.blitSprite(this.sprite, x, y, 20, 20);
+            guiGraphics.blit(this.sprite, x, y,0,0, 20, 20);
         }
     }
 

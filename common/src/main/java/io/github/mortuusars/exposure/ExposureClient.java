@@ -100,7 +100,7 @@ public class ExposureClient {
             return true;
         }
 
-        return Config.Client.FORCE_DIRECT_CAPTURE.isTrue()
+        return Config.Client.FORCE_DIRECT_CAPTURE.get()
                 || Config.Client.FORCE_DIRECT_CAPTURE_MODS.get().stream().anyMatch(PlatformHelper::isModLoaded);
     }
 

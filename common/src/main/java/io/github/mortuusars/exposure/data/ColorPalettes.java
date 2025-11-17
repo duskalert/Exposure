@@ -21,8 +21,7 @@ public class ColorPalettes {
     }
 
     public static Holder<ColorPalette> get(RegistryAccess registryAccess, ResourceLocation key) {
-        Registry<ColorPalette> registry = registryAccess.registryOrThrow(Exposure.Registries.COLOR_PALETTE);
-        return registry.getHolder(key).or(() -> registry.getHolder(DEFAULT)).orElseThrow();
+        return get(registryAccess,createKey(key));
     }
 
     public static Holder<ColorPalette> getDefault(RegistryAccess registryAccess) {

@@ -7,6 +7,7 @@ import io.github.mortuusars.exposure.ExposureClient;
 import io.github.mortuusars.exposure.client.capture.Capture;
 import io.github.mortuusars.exposure.client.capture.action.CaptureAction;
 import io.github.mortuusars.exposure.client.capture.palettizer.Palettizer;
+import io.github.mortuusars.exposure.client.gui.component.FutureCheckbox;
 import io.github.mortuusars.exposure.client.image.Image;
 import io.github.mortuusars.exposure.client.image.modifier.ImageEffect;
 import io.github.mortuusars.exposure.client.image.renderable.RenderableImage;
@@ -15,12 +16,14 @@ import io.github.mortuusars.exposure.client.util.Minecrft;
 import io.github.mortuusars.exposure.data.ColorPalettes;
 import io.github.mortuusars.exposure.util.UnixTimestamp;
 import io.github.mortuusars.exposure.util.color.Color;
-import io.github.mortuusars.exposure.world.camera.film.properties.Levels;
 import io.github.mortuusars.exposure.world.camera.component.ShutterSpeed;
+import io.github.mortuusars.exposure.world.camera.film.properties.Levels;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.components.*;
+import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.MultiLineTextWidget;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -65,8 +68,8 @@ public class TestImageScreen extends Screen {
     protected Slider brightnessSlider;
 
     protected Slider noiseSlider;
-    protected Checkbox bw;
-    protected Checkbox aged;
+    protected FutureCheckbox bw;
+    protected FutureCheckbox aged;
 
     protected float rightPaneScroll = 0f;
     protected long applyEditsAt = -1;
@@ -251,15 +254,15 @@ public class TestImageScreen extends Screen {
         y += shadowsSlider.getHeight();
         y += spacingBetweenGroups;
 
-        bw = Checkbox.builder(Component.literal("BW"), font)
+        bw = FutureCheckbox.builder(Component.literal("BW"), font)
                 .pos(x, y)
                 .onValueChange((checkbox, bl) -> onChanged())
                 .build();
         addRenderableWidget(bw);
         rightPaneWidgets.add(bw);
 
-        aged = Checkbox.builder(Component.literal("AGED"), font)
-                .pos(x + bw.getWidth() + Button.DEFAULT_SPACING, y)
+        aged = FutureCheckbox.builder(Component.literal("AGED"), font)
+                .pos(x + bw.getWidth() + 8, y)
                 .onValueChange((checkbox, bl) -> onChanged())
                 .build();
         addRenderableWidget(aged);
@@ -403,10 +406,10 @@ public class TestImageScreen extends Screen {
         if (mouseX > width - 100 && !rightPaneWidgets.isEmpty()) {
             int yChange = value * 14;
 
-            if (yChange > 0 && rightPaneWidgets.getFirst().getY() >= 5) {
+            if (yChange > 0 && rightPaneWidgets.get(0).getY() >= 5) {
                 return true;
             }
-            if (yChange < 0 && rightPaneWidgets.getLast().getY() + rightPaneWidgets.getLast().getHeight() <= height - 5) {
+            if (yChange < 0 && rightPaneWidgets.get(rightPaneWidgets.size()-1).getY() + rightPaneWidgets.get(rightPaneWidgets.size()-1).getHeight() <= height - 5) {
                 return true;
             }
 

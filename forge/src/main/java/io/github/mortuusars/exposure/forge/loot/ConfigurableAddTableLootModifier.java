@@ -1,15 +1,13 @@
 package io.github.mortuusars.exposure.forge.loot;
 
-import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import io.github.mortuusars.exposure.Config;
 import io.github.mortuusars.exposure.forge.ExposureForge;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.loot.LootContext;
-import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.minecraftforge.common.loot.IGlobalLootModifier;
 import org.jetbrains.annotations.NotNull;
@@ -18,12 +16,12 @@ import org.jetbrains.annotations.NotNull;
  * Basically a copy of AddTableLootModifier just to allow disabling it through config.
  */
 public class ConfigurableAddTableLootModifier extends AddTableLootModifier {
-    public static final MapCodec<ConfigurableAddTableLootModifier> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+    public static final Codec<ConfigurableAddTableLootModifier> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                     IGlobalLootModifier.LOOT_CONDITIONS_CODEC.fieldOf("conditions").forGetter(glm -> glm.conditions),
-                    ResourceKey.codec(Registries.LOOT_TABLE).fieldOf("table").forGetter(ConfigurableAddTableLootModifier::table))
+                    ResourceLocation.CODEC.fieldOf("table").forGetter(ConfigurableAddTableLootModifier::table))
             .apply(instance, ConfigurableAddTableLootModifier::new));
 
-    public ConfigurableAddTableLootModifier(LootItemCondition[] conditions, ResourceKey<LootTable> table) {
+    public ConfigurableAddTableLootModifier(LootItemCondition[] conditions, ResourceLocation table) {
         super(conditions, table);
     }
 
@@ -37,7 +35,7 @@ public class ConfigurableAddTableLootModifier extends AddTableLootModifier {
     }
 
     @Override
-    public @NotNull MapCodec<? extends IGlobalLootModifier> codec() {
+    public @NotNull Codec<ConfigurableAddTableLootModifier> codec() {
         return ExposureForge.LootModifiers.ADD_TABLE.get();
     }
 }

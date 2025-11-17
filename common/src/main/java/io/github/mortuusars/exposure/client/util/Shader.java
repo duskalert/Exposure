@@ -23,7 +23,7 @@ public class Shader {
      */
     public static void process(@NotNull PostChain shader, @NotNull RenderTarget renderTarget) {
         try {
-            ResourceLocation shaderLocation = ResourceLocation.parse(shader.getName());
+            ResourceLocation shaderLocation = new ResourceLocation(shader.getName());
 
             PostChain tempShader = new PostChain(Minecrft.get().getTextureManager(), Minecrft.get().getResourceManager(),
                     renderTarget, shaderLocation);
@@ -32,7 +32,7 @@ public class Shader {
             RenderSystem.disableBlend();
             RenderSystem.disableDepthTest();
             RenderSystem.resetTextureMatrix();
-            tempShader.process(Minecrft.get().getTimer().getGameTimeDeltaTicks());
+            tempShader.process(Minecrft.get().getDeltaFrameTime());
         } catch (IOException e) {
             Exposure.LOGGER.warn("Failed to load shader: {}", shader.getName(), e);
         } catch (JsonSyntaxException e) {

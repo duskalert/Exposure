@@ -89,9 +89,9 @@ public class Bugger {
         guiGraphics.pose().pushPose();
         guiGraphics.pose().scale(scale, scale, scale);
         List<String> leftLines = collectLeftLines().stream().skip(scroll).toList();
-        ((BuggerScreenRenderLinesInvoker) Minecraft.getInstance().getDebugOverlay()).drawLines(guiGraphics, leftLines, true);
+        ((BuggerScreenRenderLinesInvoker) Minecraft.getInstance().debugRenderer).drawLines(guiGraphics, leftLines, true);
         List<String> rightLines = collectRightLines().stream().skip(scroll).toList();
-        ((BuggerScreenRenderLinesInvoker) Minecraft.getInstance().getDebugOverlay()).drawLines(guiGraphics, rightLines, false);
+        ((BuggerScreenRenderLinesInvoker) Minecraft.getInstance().debugRenderer).drawLines(guiGraphics, rightLines, false);
         guiGraphics.pose().popPose();
     }
 
@@ -136,7 +136,7 @@ public class Bugger {
 
         guiGraphics.pose().pushPose();
         guiGraphics.pose().scale(scale, scale, scale);
-        ((BuggerScreenRenderLinesInvoker) Minecrft.get().getDebugOverlay()).drawLines(guiGraphics, lines, true);
+        ((BuggerScreenRenderLinesInvoker) Minecrft.get().debugRenderer).drawLines(guiGraphics, lines, true);
         guiGraphics.pose().popPose();
     }
 
@@ -151,14 +151,14 @@ public class Bugger {
             jsonString = JsonSyntaxHighlighter.highlight(jsonString);
 
             List<String> lines = new ArrayList<>(Arrays.stream(jsonString.split("\n")).toList());
-            lines.addFirst("");
-            lines.addFirst(itemInHand.getHoverName().getString());
+            lines.add(0,"");
+            lines.add(0,itemInHand.getHoverName().getString());
             return lines;
         } else if (hitResult instanceof BlockHitResult blockHitResult) {
             BlockPos blockPos = blockHitResult.getBlockPos();
             @Nullable BlockEntity blockEntity = Minecrft.level().getBlockEntity(blockPos);
             if (blockEntity != null) {
-                CompoundTag beTag = blockEntity.saveWithFullMetadata(Minecrft.level().registryAccess());
+                CompoundTag beTag = blockEntity.saveWithFullMetadata();
                 JsonElement json = CompoundTag.CODEC.encodeStart(JsonOps.INSTANCE, beTag).result().orElse(new JsonObject());
 
                 String jsonString = new GsonBuilder().setPrettyPrinting().create().toJson(json);
@@ -166,8 +166,8 @@ public class Bugger {
                 jsonString = JsonSyntaxHighlighter.highlight(jsonString);
 
                 List<String> lines = new ArrayList<>(Arrays.stream(jsonString.split("\n")).toList());
-                lines.addFirst("");
-                lines.addFirst(blockEntity.getBlockState().getBlock().getName().getString());
+                lines.add(0,"");
+                lines.add(0,blockEntity.getBlockState().getBlock().getName().getString());
                 return lines;
             } else {
                 return List.of(Minecrft.level().getBlockState(blockPos).getBlock().getName().getString());
@@ -185,8 +185,8 @@ public class Bugger {
             jsonString = JsonSyntaxHighlighter.highlight(jsonString);
 
             List<String> lines = new ArrayList<>(Arrays.stream(jsonString.split("\n")).toList());
-            lines.addFirst("");
-            lines.addFirst(entity.getName().getString());
+            lines.add(0,"");
+            lines.add(0,entity.getName().getString());
             return lines;
         }
 

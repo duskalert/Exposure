@@ -118,12 +118,12 @@ public record Frame(ExposureIdentifier identifier,
     }
 
     private static <V> V getCommonValueOrDefault(List<Frame> objects, Function<Frame, V> propertyGetter) {
-        V referenceValue = propertyGetter.apply(objects.getFirst());
+        V referenceValue = propertyGetter.apply(objects.get(0));
         return objects.stream().allMatch(data -> propertyGetter.apply(data) == referenceValue) ? referenceValue : propertyGetter.apply(EMPTY);
     }
 
     private static <T, V> V getCommonValueOrElse(List<T> objects, Function<T, V> propertyGetter, V fallbackValue) {
-        V referenceValue = propertyGetter.apply(objects.getFirst());
+        V referenceValue = propertyGetter.apply(objects.get(0));
         return objects.stream().allMatch(data -> propertyGetter.apply(data) == referenceValue) ? referenceValue : fallbackValue;
     }
 

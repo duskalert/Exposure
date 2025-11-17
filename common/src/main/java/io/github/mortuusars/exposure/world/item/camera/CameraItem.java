@@ -925,7 +925,7 @@ public class CameraItem extends Item {
                 .ifPresent(player -> {
                     ServerPlayer serverPlayer = (ServerPlayer) player;
                     serverPlayer.awardStat(Exposure.Stats.FILM_FRAMES_EXPOSED);
-                    Exposure.ExposureCriteriaTriggers.FRAME_EXPOSED.get().trigger(
+                    Exposure.ExposureCriteriaTriggers.FRAME_EXPOSED.trigger(
                             serverPlayer, holder, stack, frame, positionsInFrame, entitiesInFrame);
                 });
 
@@ -940,7 +940,7 @@ public class CameraItem extends Item {
                 // I wanted to implement this in a predicate,
                 // but it's tricky because EntitySubPredicates do not get the player in their 'match' method.
                 // So it's just easier to hardcode it like this.
-                Exposure.ExposureCriteriaTriggers.PHOTOGRAPH_ENDERMAN_EYES.get().trigger(player);
+                Exposure.ExposureCriteriaTriggers.PHOTOGRAPH_ENDERMAN_EYES.trigger(player);
             }
         }
     }
@@ -979,7 +979,7 @@ public class CameraItem extends Item {
         if (projectionState == CameraInstance.ProjectionState.SUCCESSFUL) {
             RandomSource randomSource = level.random;
             holder.getServerPlayerAwardedForExposure()
-                    .ifPresent(player -> Exposure.ExposureCriteriaTriggers.SUCCESSFULLY_PROJECT_IMAGE.get().trigger(player));
+                    .ifPresent(player -> Exposure.ExposureCriteriaTriggers.SUCCESSFULLY_PROJECT_IMAGE.trigger(player));
             Sound.play(entity, Exposure.SoundEvents.INTERPLANAR_PROJECT.get(), entity.getSoundSource(), 0.8f, 1.1f);
             for (int i = 0; i < 16; i++) {
                 level.sendParticles(ParticleTypes.PORTAL, entity.getX(), entity.getY() + 1.2, entity.getZ(), 2,

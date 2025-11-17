@@ -1,6 +1,5 @@
 package io.github.mortuusars.exposure.client.sound.instance;
 
-import io.github.mortuusars.exposure.Exposure;
 import io.github.mortuusars.exposure.world.camera.CameraId;
 import io.github.mortuusars.exposure.world.camera.CameraInHand;
 import io.github.mortuusars.exposure.world.entity.CameraHolder;
@@ -24,7 +23,7 @@ public class ShutterTickingSoundInstance extends EntityBoundSoundInstance {
 
     public ShutterTickingSoundInstance(Entity entity, CameraId cameraId, SoundEvent soundEvent,
                                        SoundSource soundSource, float volume, float pitch, int durationTicks) {
-        super(soundEvent, soundSource, volume, pitch, entity, entity.getRandom().nextLong());
+        super(soundEvent, soundSource, volume, pitch, entity, entity.level().getRandom().nextLong());
         this.entity = entity;
         this.cameraId = cameraId;
         this.fullVolume = volume;

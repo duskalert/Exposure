@@ -4,7 +4,6 @@ import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.systems.RenderSystem;
 import io.github.mortuusars.exposure.Exposure;
 import io.github.mortuusars.exposure.ExposureClient;
-import io.github.mortuusars.exposure.client.gui.Widgets;
 import io.github.mortuusars.exposure.client.gui.component.SteppedZoom;
 import io.github.mortuusars.exposure.client.gui.screen.element.Pager;
 import io.github.mortuusars.exposure.client.image.modifier.ImageEffect;
@@ -111,7 +110,7 @@ public class FilmFrameInspectScreen extends Screen {
     }
 
     protected Frame getCurrentFrame() {
-        return frames.getFirst();
+        return frames.get(0);
     }
 
     protected void pageChanged(int oldPage, int newPage) {

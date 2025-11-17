@@ -69,13 +69,13 @@ public class FlashBlock extends Block implements /*EntityBlock,*/ SimpleWaterlog
     }
 
     @Override
-    protected void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean movedByPiston) {
+    public void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean movedByPiston) {
         super.onPlace(state, level, pos, oldState, movedByPiston);
         level.scheduleTick(pos, this, LIFETIME_TICKS);
     }
 
     @Override
-    protected void tick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
+    public void tick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
         BlockState newState = state.getValue(FlashBlock.WATERLOGGED)
                 ? Blocks.WATER.defaultBlockState()
                 : Blocks.AIR.defaultBlockState();

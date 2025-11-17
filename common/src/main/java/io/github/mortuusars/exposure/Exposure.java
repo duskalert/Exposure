@@ -1,47 +1,48 @@
 package io.github.mortuusars.exposure;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
 import com.mojang.logging.LogUtils;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.Dynamic;
-import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.JsonOps;
 import io.github.mortuusars.exposure.advancements.predicate.TamedPredicate;
 import io.github.mortuusars.exposure.advancements.trigger.FrameExposedTrigger;
 import io.github.mortuusars.exposure.advancements.trigger.FramePrintedTrigger;
+import io.github.mortuusars.exposure.commands.argument.*;
+import io.github.mortuusars.exposure.data.ColorPalette;
+import io.github.mortuusars.exposure.data.Filter;
+import io.github.mortuusars.exposure.data.Lens;
 import io.github.mortuusars.exposure.util.supporter.Supporters;
 import io.github.mortuusars.exposure.world.block.FlashBlock;
 import io.github.mortuusars.exposure.world.block.LightroomBlock;
 import io.github.mortuusars.exposure.world.block.entity.LightroomBlockEntity;
-import io.github.mortuusars.exposure.commands.argument.*;
 import io.github.mortuusars.exposure.world.camera.CameraId;
-import io.github.mortuusars.exposure.world.camera.film.properties.FilmStyle;
-import io.github.mortuusars.exposure.world.camera.component.CompositionGuide;
-import io.github.mortuusars.exposure.world.camera.component.FlashMode;
 import io.github.mortuusars.exposure.world.camera.ExposureType;
 import io.github.mortuusars.exposure.world.camera.capture.DitherMode;
+import io.github.mortuusars.exposure.world.camera.component.CompositionGuide;
+import io.github.mortuusars.exposure.world.camera.component.FlashMode;
 import io.github.mortuusars.exposure.world.camera.component.SelfTimer;
 import io.github.mortuusars.exposure.world.camera.component.ShutterSpeed;
-import io.github.mortuusars.exposure.data.ColorPalette;
-import io.github.mortuusars.exposure.data.Filter;
-import io.github.mortuusars.exposure.data.Lens;
+import io.github.mortuusars.exposure.world.camera.film.properties.FilmStyle;
+import io.github.mortuusars.exposure.world.camera.frame.Frame;
 import io.github.mortuusars.exposure.world.entity.CameraStandEntity;
 import io.github.mortuusars.exposure.world.entity.GlassPhotographFrameEntity;
 import io.github.mortuusars.exposure.world.entity.PhotographFrameEntity;
-import io.github.mortuusars.exposure.world.camera.frame.Frame;
 import io.github.mortuusars.exposure.world.inventory.*;
 import io.github.mortuusars.exposure.world.item.*;
 import io.github.mortuusars.exposure.world.item.camera.CameraItem;
+import io.github.mortuusars.exposure.world.item.camera.ShutterState;
 import io.github.mortuusars.exposure.world.item.component.StoredItemStack;
 import io.github.mortuusars.exposure.world.item.component.album.AlbumContent;
 import io.github.mortuusars.exposure.world.item.component.album.SignedAlbumContent;
-import io.github.mortuusars.exposure.world.item.camera.ShutterState;
-import io.github.mortuusars.exposure.world.item.crafting.recipe.ComponentTransferringRecipe;
 import io.github.mortuusars.exposure.world.item.crafting.recipe.FilmDevelopingRecipe;
 import io.github.mortuusars.exposure.world.item.crafting.recipe.PhotographAgingRecipe;
 import io.github.mortuusars.exposure.world.item.crafting.recipe.PhotographCopyingRecipe;
-import io.github.mortuusars.exposure.world.item.crafting.recipe.serializer.ComponentTransferringRecipeSerializer;
 import io.github.mortuusars.exposure.world.item.util.ItemAndStack;
 import net.minecraft.advancements.CriteriaTriggers;
+import net.minecraft.advancements.critereon.EntitySubPredicate;
 import net.minecraft.advancements.critereon.PlayerTrigger;
 import net.minecraft.commands.synchronization.ArgumentTypeInfo;
 import net.minecraft.commands.synchronization.SingletonArgumentInfo;
@@ -59,7 +60,10 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.inventory.MenuType;
-import net.minecraft.world.item.*;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
@@ -782,11 +786,6 @@ public class Exposure {
         public static final Supplier<RecipeSerializer<?>> PHOTOGRAPH_AGING = Register.recipeSerializer("photograph_aging",
                 PhotographAgingRecipe.Serializer::new);
 
-        private static <T extends ComponentTransferringRecipe> Supplier<RecipeSerializer<?>> registerTransferring(
-                String name, String sourceName, ComponentTransferringRecipeSerializer.RecipeConstructor<T> recipeConstructor) {
-            return Register.recipeSerializer(name, () -> new ComponentTransferringRecipeSerializer<>(name, sourceName, recipeConstructor));
-        }
-
         static void init() {
         }
     }
@@ -871,16 +870,16 @@ public class Exposure {
 
     public static class ExposureCriteriaTriggers {
         public static FrameExposedTrigger FRAME_EXPOSED = CriteriaTriggers.register(new FrameExposedTrigger());
-        public static Supplier<FramePrintedTrigger> FRAME_PRINTED = Register.criterionTrigger("frame_printed", FramePrintedTrigger::new);
-        public static Supplier<PlayerTrigger> PHOTOGRAPH_ENDERMAN_EYES = Register.criterionTrigger("photograph_enderman_eyes", () -> new PlayerTrigger());
-        public static Supplier<PlayerTrigger> SUCCESSFULLY_PROJECT_IMAGE = Register.criterionTrigger("successfully_project_image", PlayerTrigger::new);
+        public static FramePrintedTrigger FRAME_PRINTED = CriteriaTriggers.register(new FramePrintedTrigger());
+        public static PlayerTrigger PHOTOGRAPH_ENDERMAN_EYES = CriteriaTriggers.register( new PlayerTrigger(resource("photograph_enderman_eyes")));
+        public static PlayerTrigger SUCCESSFULLY_PROJECT_IMAGE = CriteriaTriggers.register(new PlayerTrigger(resource("successfully_project_image")));
 
         public static void init() {
         }
     }
 
     public static class ItemSubPredicates {
-        /*  public static Supplier<ItemSubPredicate.Type<FramePredicate>> FRAME = Register.itemSubPredicate("frame",
+     /*     public static Supplier<ItemSubPredicate.Type<FramePredicate>> FRAME = Register.itemSubPredicate("frame",
                 () -> new ItemSubPredicate.Type<>(FramePredicate.CODEC));
 */
         public static void init() {
@@ -888,9 +887,16 @@ public class Exposure {
     }
 
     public static class EntitySubPredicates {
-        public static final Supplier<MapCodec<TamedPredicate>> TAMED = Register.entitySubPredicate("tamed", () -> TamedPredicate.CODEC);
+        public static final EntitySubPredicate.Type TAMED = register("tamed",TamedPredicate.CODEC);
 
         public static void init() {
+        }
+
+        public static EntitySubPredicate.Type register(String name,Codec<? extends EntitySubPredicate> codec) {
+            BiMap<String, EntitySubPredicate.Type> types = HashBiMap.create(EntitySubPredicate.Types.TYPES);
+            EntitySubPredicate.Type type = jsonObject -> codec.decode(JsonOps.INSTANCE,jsonObject).get().orThrow().getFirst();
+            types.put(name,type);
+            return type;
         }
     }
 

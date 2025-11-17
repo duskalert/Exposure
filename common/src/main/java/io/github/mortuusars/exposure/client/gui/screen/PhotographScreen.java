@@ -7,26 +7,26 @@ import io.github.mortuusars.exposure.Config;
 import io.github.mortuusars.exposure.Exposure;
 import io.github.mortuusars.exposure.ExposureClient;
 import io.github.mortuusars.exposure.client.export.ImageExporter;
+import io.github.mortuusars.exposure.client.gui.BetterImageButton;
 import io.github.mortuusars.exposure.client.gui.Widgets;
-import io.github.mortuusars.exposure.client.gui.screen.element.Pager;
 import io.github.mortuusars.exposure.client.gui.component.SteppedZoom;
+import io.github.mortuusars.exposure.client.gui.screen.element.Pager;
 import io.github.mortuusars.exposure.client.image.modifier.ImageEffect;
 import io.github.mortuusars.exposure.client.input.Key;
 import io.github.mortuusars.exposure.client.input.KeyBindings;
 import io.github.mortuusars.exposure.client.input.Modifier;
 import io.github.mortuusars.exposure.client.render.photograph.PhotographStyle;
 import io.github.mortuusars.exposure.client.util.Minecrft;
+import io.github.mortuusars.exposure.util.PagingDirection;
 import io.github.mortuusars.exposure.world.camera.ExposureType;
-import io.github.mortuusars.exposure.world.item.StackedPhotographsItem;
-import io.github.mortuusars.exposure.world.photograph.PhotographType;
 import io.github.mortuusars.exposure.world.camera.frame.Frame;
 import io.github.mortuusars.exposure.world.item.PhotographItem;
+import io.github.mortuusars.exposure.world.item.StackedPhotographsItem;
 import io.github.mortuusars.exposure.world.item.util.ItemAndStack;
-import io.github.mortuusars.exposure.util.PagingDirection;
+import io.github.mortuusars.exposure.world.photograph.PhotographType;
 import io.github.mortuusars.exposure.world.sound.SoundEffect;
 import net.minecraft.Util;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.components.ImageButton;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -111,12 +111,12 @@ public class PhotographScreen extends Screen {
     protected void init() {
         super.init();
 
-        ImageButton previousButton = new ImageButton(0, (int) (height / 2f - 16 / 2f), 16, 16,
+        BetterImageButton previousButton = new BetterImageButton(0, (int) (height / 2f - 16 / 2f), 16, 16,
                 Widgets.PREVIOUS_BUTTON_SPRITES,
                 button -> pager.changePage(PagingDirection.PREVIOUS), Component.translatable("gui.exposure.previous_page"));
         addRenderableWidget(previousButton);
 
-        ImageButton nextButton = new ImageButton(width - 16, (int) (height / 2f - 16 / 2f), 16, 16,
+        BetterImageButton nextButton = new BetterImageButton(width - 16, (int) (height / 2f - 16 / 2f), 16, 16,
                 Widgets.NEXT_BUTTON_SPRITES,
                 button -> pager.changePage(PagingDirection.NEXT), Component.translatable("gui.exposure.next_page"));
         addRenderableWidget(nextButton);
@@ -138,7 +138,7 @@ public class PhotographScreen extends Screen {
     }
 
     public ItemAndStack<PhotographItem> getCurrentPhotograph() {
-        return photographs.getFirst();
+        return photographs.get(0);
     }
 
     protected void pageChanged(int oldPage, int newPage) {
@@ -155,7 +155,7 @@ public class PhotographScreen extends Screen {
         RenderSystem.defaultBlendFunc();
         RenderSystem.disableDepthTest();
 
-        renderTransparentBackground(guiGraphics);
+        renderBackground(guiGraphics);
 
         guiGraphics.pose().pushPose();
         guiGraphics.pose().translate(x, y, 0);
@@ -185,7 +185,7 @@ public class PhotographScreen extends Screen {
         }
     }
 
-    @Override
+    //@Override
     public void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
         // Background is rendered manually in #render method.
         // Otherwise, background will be rendered on top of a photograph.
@@ -302,13 +302,11 @@ public class PhotographScreen extends Screen {
                 .map(PhotographItem::getFrame)
                 .identifier()
                 .mapId(id -> {
-                    if (savedExposureFiles.get(id) instanceof File file) {
+                    File file = savedExposureFiles.get(id) ;
                         Minecrft.get().keyboardHandler.setClipboard(file.getAbsolutePath());
                         Minecrft.player().displayClientMessage(
                                 Component.translatable("gui.exposure.photograph_screen.copied_message", file.getAbsolutePath()), false);
                         return true;
-                    }
-                    return false;
                 }).orElse(false);
     }
 
@@ -317,11 +315,9 @@ public class PhotographScreen extends Screen {
                 .map(PhotographItem::getFrame)
                 .identifier()
                 .mapId(id -> {
-                    if (savedExposureFiles.get(id) instanceof File file) {
+                    File file = savedExposureFiles.get(id);
                         Util.getPlatform().openFile(file);
                         return true;
-                    }
-                    return false;
                 }).orElse(false);
     }
 

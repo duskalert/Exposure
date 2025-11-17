@@ -9,6 +9,8 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec2;
 import org.jetbrains.annotations.Nullable;
@@ -58,7 +60,7 @@ public enum LightroomComponentProvider implements IBlockComponentProvider, IServ
                 tooltip.append(helper.item(stack));
         }
 
-        tooltip.append(helper.progress(tag.getFloat("Progress")));
+       // tooltip.append(helper.progress(tag.getFloat("Progress")));todo
 
         tooltip.append(helper.item(ItemStack.of(tag.getCompound("Result"))));
 
@@ -93,27 +95,17 @@ public enum LightroomComponentProvider implements IBlockComponentProvider, IServ
     }
 
     @Override
-    public boolean shouldRequestData(BlockAccessor accessor) {
-        return true;
-    }
-
-    @Override
     public ResourceLocation getUid() {
         return ExposureJadePlugin.LIGHTROOM;
     }
 
-    public static class EmptyItemStackExtensionProvider implements IServerExtensionProvider<ItemStack>, IClientExtensionProvider<ItemStack, ItemView> {
+    public static class EmptyItemStackExtensionProvider implements IServerExtensionProvider<ItemStack,ItemView>, IClientExtensionProvider<ItemStack, ItemView> {
         public static final ResourceLocation ID = Exposure.resource("empty");
 
         public static final EmptyItemStackExtensionProvider INSTANCE = new EmptyItemStackExtensionProvider();
 
         private EmptyItemStackExtensionProvider() {
 
-        }
-
-        @Override
-        public @Nullable List<ViewGroup<ItemStack>> getGroups(Accessor<?> accessor) {
-            return Collections.emptyList();
         }
 
         @Override
@@ -124,6 +116,11 @@ public enum LightroomComponentProvider implements IBlockComponentProvider, IServ
         @Override
         public List<ClientViewGroup<ItemView>> getClientGroups(Accessor<?> accessor, List<ViewGroup<ItemStack>> list) {
             return Collections.emptyList();
+        }
+
+        @Override
+        public @Nullable List<ViewGroup<ItemView>> getGroups(ServerPlayer serverPlayer, ServerLevel serverLevel, ItemStack object, boolean b) {
+            return List.of();
         }
     }
 }

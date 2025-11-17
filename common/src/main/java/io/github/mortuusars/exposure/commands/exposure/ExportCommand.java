@@ -11,6 +11,7 @@ import io.github.mortuusars.exposure.commands.argument.SizeMultiplierArgument;
 import io.github.mortuusars.exposure.commands.suggestion.ExposureIdSuggestionProvider;
 import io.github.mortuusars.exposure.data.export.ExportLook;
 import io.github.mortuusars.exposure.network.Packets;
+import io.github.mortuusars.exposure.network.packet.clientbound.ActionS2CP;
 import io.github.mortuusars.exposure.network.packet.clientbound.ExportS2CP;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.ClickEvent;
@@ -33,7 +34,7 @@ public class ExportCommand {
                 .then(all())
                 .then(literal("stop")
                         .executes(context -> {
-                            Packets.sendToClient(ExportStopS2CP.INSTANCE, context.getSource().getPlayerOrException());
+                            Packets.sendToClient(ActionS2CP.EXPORT_STOPPED, context.getSource().getPlayerOrException());
                             return 0;
                         }));
     }

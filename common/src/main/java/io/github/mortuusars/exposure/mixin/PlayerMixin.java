@@ -6,6 +6,7 @@ import io.github.mortuusars.exposure.world.entity.CameraHolder;
 import io.github.mortuusars.exposure.world.entity.CameraOperator;
 import io.github.mortuusars.exposure.world.item.camera.CameraItem;
 import net.minecraft.core.BlockPos;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -118,7 +119,7 @@ public abstract class PlayerMixin extends LivingEntity implements CameraHolder, 
         }
 
         int actionTime = (int) (level().getGameTime() - lastActionTime);
-        exposureCameraActionAnim = Math.clamp(actionTime / 10F, 0F, 1F);
+        exposureCameraActionAnim = Mth.clamp(actionTime / 10F, 0F, 1F);
     }
 
     @Inject(method = "blockActionRestricted", at = @At("HEAD"), cancellable = true)
