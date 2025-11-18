@@ -15,10 +15,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.alchemy.Potion;
 import net.minecraft.world.item.enchantment.Enchantment;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 public class Stuff {
 
@@ -44,19 +41,19 @@ public class Stuff {
             .create(itemPredicateInstance ->
                     itemPredicateInstance.group(
                                     TagKey.codec(Registries.ITEM).optionalFieldOf("tag").forGetter(i -> Optional.ofNullable(i.tag)),
-                                    BuiltInRegistries.ITEM.byNameCodec().listOf().optionalFieldOf("items").forGetter(i -> Optional.ofNullable(List.copyOf(i.items))),
-                                    INTS_CODEC.fieldOf("count").forGetter(i -> i.count),
-                                    INTS_CODEC.fieldOf("durability").forGetter(i -> i.durability),
-                                    ENCHANTMENT_PREDICATE_CODEC.listOf().fieldOf("enchantments").forGetter(i -> Arrays.asList(i.enchantments)),
-                                    ENCHANTMENT_PREDICATE_CODEC.listOf().fieldOf("stored_enchantments").forGetter(i -> Arrays.asList(i.storedEnchantments)),
+                                    BuiltInRegistries.ITEM.byNameCodec().listOf().optionalFieldOf("items",new ArrayList<>()).forGetter(i -> List.copyOf(i.items)),
+                                    INTS_CODEC.optionalFieldOf("count", MinMaxBounds.Ints.ANY).forGetter(i -> i.count),
+                                    INTS_CODEC.optionalFieldOf("durability", MinMaxBounds.Ints.ANY).forGetter(i -> i.durability),
+                                    ENCHANTMENT_PREDICATE_CODEC.listOf().optionalFieldOf("enchantments",new ArrayList<>()).forGetter(i -> Arrays.asList(i.enchantments)),
+                                    ENCHANTMENT_PREDICATE_CODEC.listOf().optionalFieldOf("stored_enchantments",new ArrayList<>()).forGetter(i -> Arrays.asList(i.storedEnchantments)),
                                     BuiltInRegistries.POTION.byNameCodec().optionalFieldOf("potion").forGetter(i -> Optional.ofNullable(i.potion)),
-                                    NBT_PREDICATE_CODEC.fieldOf("nbt").forGetter(i -> i.nbt)
+                                    NBT_PREDICATE_CODEC.optionalFieldOf("nbt",NbtPredicate.ANY).forGetter(i -> i.nbt)
                             ).apply(itemPredicateInstance, Stuff::fromCodec));
 
-    private static ItemPredicate fromCodec(Optional<TagKey<Item>> itemTagKey, Optional<List<Item>> items, MinMaxBounds.Ints ints,
+    private static ItemPredicate fromCodec(Optional<TagKey<Item>> itemTagKey, List<Item> items, MinMaxBounds.Ints ints,
                                            MinMaxBounds.Ints ints2, List<EnchantmentPredicate> enchantmentPredicates,
                                            List<EnchantmentPredicate> enchantmentPredicates2, Optional<Potion> potion, NbtPredicate nbtPredicate) {
-        return new ItemPredicate(itemTagKey.orElse(null),items.map(HashSet::new).orElse(null),ints,ints2,
+        return new ItemPredicate(itemTagKey.orElse(null),new HashSet<>(items),ints,ints2,
                 enchantmentPredicates.toArray(EnchantmentPredicate[]::new),enchantmentPredicates.toArray(EnchantmentPredicate[]::new),
                 potion.orElse(null),nbtPredicate);
     }

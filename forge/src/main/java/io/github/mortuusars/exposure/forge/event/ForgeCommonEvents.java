@@ -88,22 +88,7 @@ public class ForgeCommonEvents {
             }
         }
 
-        @SubscribeEvent
-        public static void onRegisterCapabilities(AttachCapabilitiesEvent<BlockEntity> event) {
-            BlockEntity object = event.getObject();
-            if (object instanceof LightroomBlockEntity lightroomBlockEntity) {
-                event.addCapability(Exposure.resource("lightroom"), new ICapabilityProvider() {
 
-                    @Override
-                    public @NotNull <T> LazyOptional<T> getCapability(@NotNull Capability<T> capability, @Nullable Direction side) {
-                        if (capability == ForgeCapabilities.ITEM_HANDLER) {
-                            return LazyOptional.of(() -> side == null ? new InvWrapper(lightroomBlockEntity) : new SidedInvWrapper(lightroomBlockEntity, side)).cast();
-                        }
-                        return LazyOptional.empty();
-                    }
-                });
-            }
-        }
     }
 
     public static <MSG extends Packet> BiConsumer<MSG, Supplier<NetworkEvent.Context>> wrapS2C() {
@@ -136,6 +121,23 @@ public class ForgeCommonEvents {
         @SubscribeEvent
         public static void registerCommands(RegisterCommandsEvent event) {
             CommonEvents.registerCommands(event.getDispatcher(), event.getBuildContext(), event.getCommandSelection());
+        }
+
+        @SubscribeEvent
+        public static void onRegisterCapabilities(AttachCapabilitiesEvent<BlockEntity> event) {
+            BlockEntity object = event.getObject();
+            if (object instanceof LightroomBlockEntity lightroomBlockEntity) {
+                event.addCapability(Exposure.resource("lightroom"), new ICapabilityProvider() {
+
+                    @Override
+                    public @NotNull <T> LazyOptional<T> getCapability(@NotNull Capability<T> capability, @Nullable Direction side) {
+                        if (capability == ForgeCapabilities.ITEM_HANDLER) {
+                            return LazyOptional.of(() -> side == null ? new InvWrapper(lightroomBlockEntity) : new SidedInvWrapper(lightroomBlockEntity, side)).cast();
+                        }
+                        return LazyOptional.empty();
+                    }
+                });
+            }
         }
     }
 }

@@ -1,9 +1,9 @@
 plugins {
-    id "dev.architectury.loom" version "1.7-SNAPSHOT" apply false
+    id "dev.architectury.loom" version "1.11-SNAPSHOT" apply false
     id "architectury-plugin" version "3.4-SNAPSHOT"
-    id 'com.github.johnrengelman.shadow' version '8.1.1' apply false
     id "me.modmuss50.mod-publish-plugin" version "0.8.4"
     id 'org.moddedmc.wiki.toolkit' version '0.2.6'
+    id 'com.gradleup.shadow' version '8.3.6' apply false
 }
 
 architectury {
@@ -105,8 +105,7 @@ subprojects {
         runs {
             client {
                 property 'item_asset_export.render.namespaces', 'exposure'
-               // vmArgs '-XX:+AllowEnhancedClassRedefinition', '-XX:HotswapAgent=core'
-                //  , '-Dmixin.debug.export=true'
+                vmArgs '-Dsodium.checks.issue2561=false'
             }
         }
     }
@@ -129,12 +128,15 @@ subprojects {
         // If you remove this line, sources will not be generated.
         withSourcesJar()
 
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
+        //sourceCompatibility = JavaVersion.VERSION_17
+        //targetCompatibility = JavaVersion.VERSION_17
     }
 
-    tasks.withType(JavaCompile).configureEach {
-        it.options.release = 17
+
+    tasks.withType(JavaCompile) {
+        options.encoding = "UTF-8"
+        options.release = 17
+        options.compilerArgs << "-Xmaxerrs" << "100000"
     }
 
     processResources {
@@ -233,20 +235,6 @@ def getLatestVersionChangelog() {
 }
 
 project.ext.changelog = getLatestVersionChangelog()
-
-
-allprojects {
-    repositories {
-        jcenter()
-    }
-
-    // Allow 400 errors.
-    gradle.projectsEvaluated {
-        tasks.withType(JavaCompile) {
-            options.compilerArgs << "-Xmaxerrs" << "100000"
-        }
-    }
-}
 
 task printLatestVersionChangelog {
     doLast {
