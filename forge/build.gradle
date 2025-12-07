@@ -75,13 +75,20 @@ loom {
 
             client()
         }
+        data {
+            data()
+            programArgs "--all"
+            programArgs "--mod", "${mod_id}"
+            programArgs "--output", file("src/generated/resources").absolutePath
+            programArgs "--existing", file("src/main/resources").absolutePath
+        }
     }
 }
 
-shadowJar {
-    configurations = [project.configurations.shadowBundle]
-    archiveClassifier = 'dev-shadow'
-}
+    shadowJar {
+        configurations = [project.configurations.shadowBundle]
+        archiveClassifier = 'dev-shadow'
+    }
 
 /*remapJar {
     injectAccessWidener = true
@@ -90,6 +97,6 @@ shadowJar {
     dependsOn shadowJar
 }*/
 
-remapJar {
-    inputFile.set shadowJar.archiveFile
-}
+    remapJar {
+        inputFile.set shadowJar.archiveFile
+    }

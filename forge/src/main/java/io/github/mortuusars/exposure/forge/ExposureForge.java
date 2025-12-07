@@ -4,6 +4,7 @@ import com.google.common.base.Preconditions;
 import com.mojang.serialization.Codec;
 import io.github.mortuusars.exposure.Config;
 import io.github.mortuusars.exposure.Exposure;
+import io.github.mortuusars.exposure.forge.datagen.ExposureDatagen;
 import io.github.mortuusars.exposure.forge.loot.ConfigurableAddTableLootModifier;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.loot.IGlobalLootModifier;
@@ -33,6 +34,7 @@ public class ExposureForge {
          IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
         Preconditions.checkNotNull(modEventBus);
 
+        modEventBus.addListener(ExposureDatagen::gather);
         RegisterImpl.BLOCKS.register(modEventBus);
         RegisterImpl.BLOCK_ENTITY_TYPES.register(modEventBus);
         RegisterImpl.ENTITY_TYPES.register(modEventBus);
