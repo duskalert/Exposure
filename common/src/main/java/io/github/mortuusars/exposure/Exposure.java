@@ -37,6 +37,7 @@ import io.github.mortuusars.exposure.world.item.camera.ShutterState;
 import io.github.mortuusars.exposure.world.item.component.StoredItemStack;
 import io.github.mortuusars.exposure.world.item.component.album.AlbumContent;
 import io.github.mortuusars.exposure.world.item.component.album.SignedAlbumContent;
+import io.github.mortuusars.exposure.world.item.crafting.recipe.ComponentTransferringRecipe;
 import io.github.mortuusars.exposure.world.item.crafting.recipe.FilmDevelopingRecipe;
 import io.github.mortuusars.exposure.world.item.crafting.recipe.PhotographAgingRecipe;
 import io.github.mortuusars.exposure.world.item.crafting.recipe.PhotographCopyingRecipe;
@@ -215,7 +216,7 @@ public class Exposure {
 
         public static final Supplier<PhotographFrameItem> PHOTOGRAPH_FRAME = Register.item("photograph_frame",
                 () -> new PhotographFrameItem(new Item.Properties()));
-        public static final Supplier<GlassPhotographFrameItem> CLEAR_PHOTOGRAPH_FRAME = Register.item("glass_photograph_frame",
+        public static final Supplier<GlassPhotographFrameItem> GLASS_PHOTOGRAPH_FRAME = Register.item("glass_photograph_frame",
                 () -> new GlassPhotographFrameItem(new Item.Properties()));
 
         public static final Supplier<CameraStandItem> CAMERA_STAND = Register.item("camera_stand",
@@ -247,7 +248,7 @@ public class Exposure {
                             output.accept(Items.STACKED_PHOTOGRAPHS.get());
                             output.accept(Items.ALBUM.get());
                             output.accept(Items.PHOTOGRAPH_FRAME.get());
-                            output.accept(Items.CLEAR_PHOTOGRAPH_FRAME.get());
+                            output.accept(Items.GLASS_PHOTOGRAPH_FRAME.get());
                             output.accept(Items.INTERPLANAR_PROJECTOR.get());
                             output.accept(Items.LIGHTROOM.get());
                         })
@@ -776,8 +777,8 @@ public class Exposure {
      //           registerTransferring("photograph_copying", "photograph", PhotographCopyingRecipe::new);
       //  public static final Supplier<RecipeSerializer<?>> PHOTOGRAPH_AGING =
       //          registerTransferring("photograph_aging", "photograph", PhotographAgingRecipe::new);
-      //  public static final Supplier<RecipeSerializer<?>> COMPONENT_TRANSFERRING =
-      //          registerTransferring("component_transferring", "source", ComponentTransferringRecipe::new);
+        public static final Supplier<RecipeSerializer<?>> COMPONENT_TRANSFERRING =
+                Register.recipeSerializer("component_transferring",ComponentTransferringRecipe.Serializer::new);
 
         public static final Supplier<RecipeSerializer<?>> FILM_DEVELOPING = Register.recipeSerializer("film_developing",
                 FilmDevelopingRecipe.Serializer::new);

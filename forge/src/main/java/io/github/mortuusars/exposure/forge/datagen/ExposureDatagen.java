@@ -8,11 +8,11 @@ import net.minecraft.data.PackOutput;
 import net.minecraft.data.loot.LootTableProvider;
 import net.minecraft.data.loot.packs.VanillaBlockLoot;
 import net.minecraft.data.loot.packs.VanillaChestLoot;
-import net.minecraft.data.loot.packs.VanillaEntityLoot;
 import net.minecraft.data.recipes.*;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.EntityType;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.storage.loot.BuiltInLootTables;
 import net.minecraft.world.level.storage.loot.LootTable;
@@ -28,7 +28,6 @@ import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
-import java.util.stream.Stream;
 
 public class ExposureDatagen {
 
@@ -61,11 +60,111 @@ public class ExposureDatagen {
 
         @Override
         protected void buildRecipes(Consumer<FinishedRecipe> writer) {
+
+            Ingredient ironIngot = Ingredient.of(Items.IRON_INGOT);
+            Ingredient goldIngot = Ingredient.of(Items.GOLD_INGOT);
+
             ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC,Exposure.Items.ALBUM.get())
                     .requires(Items.WRITABLE_BOOK)
                     .requires(Items.PHANTOM_MEMBRANE)
                     .unlockedBy(getHasName(Items.PHANTOM_MEMBRANE),has(Items.PHANTOM_MEMBRANE))
                     .save(writer);
+
+            ShapedRecipeBuilder.shaped(RecipeCategory.MISC,Exposure.Items.BLACK_AND_WHITE_FILM.get())
+                    .define('B',Items.BONE_MEAL)
+                    .define('G',Items.GUNPOWDER)
+                    .define('I',ironIngot)
+                    .define('K',Items.DRIED_KELP)
+                    .define('N',Items.IRON_NUGGET)
+                    .pattern("NBB")
+                    .pattern("IGG")
+                    .pattern("IKK")
+                    .unlockedBy(getHasName(Items.DRIED_KELP),has(Items.DRIED_KELP)).save(writer);
+
+            //todo this one needs to copy nbt
+            ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC,Exposure.Items.INTERPLANAR_PROJECTOR.get())
+                    .requires(Exposure.Items.BROKEN_INTERPLANAR_PROJECTOR.get())
+                    .requires(Items.ENDER_EYE)
+                    .unlockedBy(getHasName(Exposure.Items.BROKEN_INTERPLANAR_PROJECTOR.get()),has(Exposure.Items.INTERPLANAR_PROJECTOR.get()))
+                    .save(writer,Exposure.resource("broken_interplanar_projector_fixing"));
+
+            ShapedRecipeBuilder.shaped(RecipeCategory.MISC,Exposure.Items.CAMERA.get())
+                    .define('B', ItemTags.BUTTONS)
+                    .define('G',Items.GLASS_PANE)//glass_panes colorless
+                    .define('I',ironIngot)
+                    .define('L',Items.LEVER)
+                    .pattern("LIB")
+                    .pattern("IGI")
+                    .pattern("III")
+                    .unlockedBy(getHasName(Items.LEVER),has(Items.LEVER)).save(writer);
+
+            ShapedRecipeBuilder.shaped(RecipeCategory.MISC,Exposure.Items.CAMERA_STAND.get())
+                    .define('S',Items.STICK)
+                    .define('B', Items.SMOOTH_STONE_SLAB)
+                    .define('I',ironIngot)
+                    .pattern(" I ")
+                    .pattern("SSS")
+                    .pattern("BSB")
+                    .unlockedBy(getHasName(Items.SMOOTH_STONE_SLAB),has(Items.SMOOTH_STONE_SLAB)).save(writer);
+
+            ShapedRecipeBuilder.shaped(RecipeCategory.MISC,Exposure.Items.COLOR_FILM.get())
+                    .define('L',Items.LAPIS_LAZULI)
+                    .define('G',Items.GUNPOWDER)
+                    .define('I',goldIngot)
+                    .define('K',Items.DRIED_KELP)
+                    .define('N',Items.GOLD_NUGGET)
+                    .pattern("NLL")
+                    .pattern("IGG")
+                    .pattern("IKK")
+                    .unlockedBy(getHasName(Items.DRIED_KELP),has(Items.DRIED_KELP)).save(writer);
+
+            ShapedRecipeBuilder.shaped(RecipeCategory.MISC,Exposure.Items.GLASS_PHOTOGRAPH_FRAME.get())
+                    .define('P',Items.GLASS_PANE)
+                    .define('F',Exposure.Items.PHOTOGRAPH_FRAME.get())
+                    .pattern(" P ")
+                    .pattern("PFP")
+                    .pattern(" P ")
+                    .unlockedBy(getHasName(Exposure.Items.PHOTOGRAPH_FRAME.get()),has(Exposure.Items.PHOTOGRAPH_FRAME.get())).save(writer);
+
+            ShapedRecipeBuilder.shaped(RecipeCategory.MISC,Exposure.Items.HIGH_SENSITIVITY_BLACK_AND_WHITE_FILM.get())
+                    .define('B',Items.BONE_MEAL)
+                    .define('P',Items.PRISMARINE_CRYSTALS)
+                    .define('I',ironIngot)
+                    .define('K',Items.DRIED_KELP)
+                    .define('N',Items.IRON_NUGGET)
+                    .pattern("NBB")
+                    .pattern("IPP")
+                    .pattern("IKK")
+                    .unlockedBy(getHasName(Items.DRIED_KELP),has(Items.DRIED_KELP)).save(writer);
+
+            ShapedRecipeBuilder.shaped(RecipeCategory.MISC,Exposure.Items.HIGH_SENSITIVITY_COLOR_FILM.get())
+                    .define('L',Items.LAPIS_LAZULI)
+                    .define('P',Items.PRISMARINE_CRYSTALS)
+                    .define('I',goldIngot)
+                    .define('K',Items.DRIED_KELP)
+                    .define('N',Items.GOLD_NUGGET)
+                    .pattern("NLL")
+                    .pattern("IPP")
+                    .pattern("IKK")
+                    .unlockedBy(getHasName(Items.DRIED_KELP),has(Items.DRIED_KELP)).save(writer);
+
+            ShapedRecipeBuilder.shaped(RecipeCategory.MISC,Exposure.Items.INTERPLANAR_PROJECTOR.get())
+                    .define('P',Items.TINTED_GLASS)
+                    .define('R', Items.REDSTONE)
+                    .define('E',Items.ENDER_EYE)
+                    .pattern("PRP")
+                    .pattern("RER")
+                    .pattern("PRP")
+                    .unlockedBy(getHasName(Items.ENDER_EYE),has(Items.ENDER_EYE)).save(writer);
+
+            ShapedRecipeBuilder.shaped(RecipeCategory.MISC,Exposure.Items.LIGHTROOM.get())
+                    .define('I',Items.IRON_TRAPDOOR)
+                    .define('P', ItemTags.PLANKS)
+                    .define('T',Items.REDSTONE_TORCH)
+                    .pattern("IT")
+                    .pattern("PP")
+                    .pattern("PP")
+                    .unlockedBy(getHasName(Items.REDSTONE_TORCH),has(Items.REDSTONE_TORCH)).save(writer);
         }
     }
 
@@ -77,7 +176,7 @@ public class ExposureDatagen {
 
         public static LootTableProvider create(PackOutput pOutput) {
             return new LootTables(pOutput, BuiltInLootTables.all(),
-                    List.of(new SubProviderEntry(ChestLoot::new, LootContextParamSets.CHEST),
+                    List.of(//new SubProviderEntry(ChestLoot::new, LootContextParamSets.CHEST),
                             new SubProviderEntry(BlockLoot::new, LootContextParamSets.ENTITY)
                     ));
         }

@@ -1,11 +1,12 @@
 {
   "type": "minecraft:crafting_shaped",
+  "category": "misc",
   "key": {
-    "P": {
-      "item": "minecraft:glass_pane"
-    },
     "F": {
       "item": "exposure:photograph_frame"
+    },
+    "P": {
+      "item": "minecraft:glass_pane"
     }
   },
   "pattern": [
@@ -14,6 +15,7 @@
     " P "
   ],
   "result": {
-    "id": "exposure:glass_photograph_frame"
-  }
+    "item": "exposure:glass_photograph_frame"
+  },
+  "show_notification": true
 }

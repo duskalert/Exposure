@@ -1,12 +1,12 @@
 {
   "type": "minecraft:crafting_shaped",
-  "category": "equipment",
+  "category": "misc",
   "key": {
-    "P": {
-      "item": "minecraft:prismarine_crystals"
+    "G": {
+      "item": "minecraft:gunpowder"
     },
     "I": {
-      "tag": "c:ingots/gold"
+      "item": "minecraft:gold_ingot"
     },
     "K": {
       "item": "minecraft:dried_kelp"
@@ -15,15 +15,16 @@
       "item": "minecraft:lapis_lazuli"
     },
     "N": {
-      "tag": "c:nuggets/gold"
+      "item": "minecraft:gold_nugget"
     }
   },
   "pattern": [
     "NLL",
-    "IPP",
+    "IGG",
     "IKK"
   ],
   "result": {
-    "id": "exposure:high_sensitivity_color_film"
-  }
+    "item": "exposure:color_film"
+  },
+  "show_notification": true
 }

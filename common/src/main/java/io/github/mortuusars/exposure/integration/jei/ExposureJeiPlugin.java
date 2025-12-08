@@ -68,7 +68,7 @@ public class ExposureJeiPlugin implements IModPlugin {
 
         if (Config.Client.SHOW_JEI_INFORMATION.get()) {
             registration.addItemStackInfo(List.of(new ItemStack(Exposure.Items.PHOTOGRAPH_FRAME.get()),
-                            new ItemStack(Exposure.Items.CLEAR_PHOTOGRAPH_FRAME.get())),
+                            new ItemStack(Exposure.Items.GLASS_PHOTOGRAPH_FRAME.get())),
                     Component.translatable("exposure.jei.info.photograph_frame"));
         }
 

@@ -1,16 +1,15 @@
 {
   "type": "minecraft:crafting_shaped",
-  "category": "equipment",
-  "group": "camera",
+  "category": "misc",
   "key": {
     "B": {
       "tag": "minecraft:buttons"
     },
     "G": {
-      "tag": "c:glass_panes/colorless"
+      "item": "minecraft:glass_pane"
     },
     "I": {
-      "tag": "c:ingots/iron"
+      "item": "minecraft:iron_ingot"
     },
     "L": {
       "item": "minecraft:lever"
@@ -22,6 +21,7 @@
     "III"
   ],
   "result": {
-    "id": "exposure:camera"
-  }
+    "item": "exposure:camera"
+  },
+  "show_notification": true
 }
