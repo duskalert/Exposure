@@ -2,6 +2,7 @@ package io.github.mortuusars.exposure;
 
 import com.mojang.brigadier.arguments.ArgumentType;
 import dev.architectury.injectables.annotations.ExpectPlatform;
+import io.github.mortuusars.exposure.world.item.crafting.recipe.serializer.ComponentTransferringRecipeSerializer;
 import net.minecraft.commands.synchronization.ArgumentTypeInfo;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleOptions;
@@ -97,7 +98,7 @@ public class Register {
     }
 
     @ExpectPlatform
-    public static Supplier<RecipeSerializer<?>> recipeSerializer(String name, Supplier<RecipeSerializer<?>> supplier) {
+    public static Supplier<ComponentTransferringRecipeSerializer<?>> recipeSerializer(String name, Supplier<RecipeSerializer<?>> supplier) {
         throw new AssertionError();
     }
 

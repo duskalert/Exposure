@@ -37,10 +37,10 @@ import io.github.mortuusars.exposure.world.item.camera.ShutterState;
 import io.github.mortuusars.exposure.world.item.component.StoredItemStack;
 import io.github.mortuusars.exposure.world.item.component.album.AlbumContent;
 import io.github.mortuusars.exposure.world.item.component.album.SignedAlbumContent;
-import io.github.mortuusars.exposure.world.item.crafting.recipe.ComponentTransferringRecipe;
 import io.github.mortuusars.exposure.world.item.crafting.recipe.FilmDevelopingRecipe;
 import io.github.mortuusars.exposure.world.item.crafting.recipe.PhotographAgingRecipe;
 import io.github.mortuusars.exposure.world.item.crafting.recipe.PhotographCopyingRecipe;
+import io.github.mortuusars.exposure.world.item.crafting.recipe.serializer.ComponentTransferringRecipeSerializer;
 import io.github.mortuusars.exposure.world.item.util.ItemAndStack;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.advancements.critereon.EntitySubPredicate;
@@ -777,15 +777,16 @@ public class Exposure {
      //           registerTransferring("photograph_copying", "photograph", PhotographCopyingRecipe::new);
       //  public static final Supplier<RecipeSerializer<?>> PHOTOGRAPH_AGING =
       //          registerTransferring("photograph_aging", "photograph", PhotographAgingRecipe::new);
-        public static final Supplier<RecipeSerializer<?>> COMPONENT_TRANSFERRING =
-                Register.recipeSerializer("component_transferring",ComponentTransferringRecipe.Serializer::new);
+        public static final Supplier<ComponentTransferringRecipeSerializer<?>> COMPONENT_TRANSFERRING =
+                Register.recipeSerializer("component_transferring",() ->
+                        new ComponentTransferringRecipeSerializer<>("source", ComponentTransferringRecipeSerializer.COMPONENT_TRANSFERRING));
 
-        public static final Supplier<RecipeSerializer<?>> FILM_DEVELOPING = Register.recipeSerializer("film_developing",
-                FilmDevelopingRecipe.Serializer::new);
-        public static final Supplier<RecipeSerializer<?>> PHOTOGRAPH_COPYING = Register.recipeSerializer("photograph_copying",
-                PhotographCopyingRecipe.Serializer::new);
-        public static final Supplier<RecipeSerializer<?>> PHOTOGRAPH_AGING = Register.recipeSerializer("photograph_aging",
-                PhotographAgingRecipe.Serializer::new);
+        public static final Supplier<ComponentTransferringRecipeSerializer<?>> FILM_DEVELOPING = Register.recipeSerializer("film_developing",
+                () -> new ComponentTransferringRecipeSerializer<>("film",ComponentTransferringRecipeSerializer.FILM_DEVELOPING));
+        public static final Supplier<ComponentTransferringRecipeSerializer<?>> PHOTOGRAPH_COPYING = Register.recipeSerializer("photograph_copying",
+                () -> new ComponentTransferringRecipeSerializer<>("photograph",ComponentTransferringRecipeSerializer.PHOTOGRAPH_COPYING));
+        public static final Supplier<ComponentTransferringRecipeSerializer<?>> PHOTOGRAPH_AGING = Register.recipeSerializer("photograph_aging",
+                () -> new ComponentTransferringRecipeSerializer<>("photograph",ComponentTransferringRecipeSerializer.PHOTOGRAPH_AGING));
 
         static void init() {
         }

@@ -1,7 +1,6 @@
-// 1.20.1	2025-12-07T21:19:47.3489511	Recipes
+// 1.20.1	2025-12-08T00:08:07.38419	Recipes
 4f0635bec51ce72426e764bdd2d19dfea2b9a417 data/exposure/advancements/recipes/misc/album.json
 1838d794ee6de57f538a1f7269dfe764176d4c2e data/exposure/advancements/recipes/misc/black_and_white_film.json
-e3745b267839f6eacfc623c77e6db2ef480a47df data/exposure/advancements/recipes/misc/broken_interplanar_projector_fixing.json
 ea3f1ead16697c088ce9abf41d659367c51f0a22 data/exposure/advancements/recipes/misc/camera.json
 39b2b94b8e94d6c3983bc502c0431b7c2a33380b data/exposure/advancements/recipes/misc/camera_stand.json
 a1a8b7b485dc3bae011859ba3feee24561b4253a data/exposure/advancements/recipes/misc/color_film.json
@@ -12,7 +11,7 @@ f08b4078e11620c078a1972794eda89370026fc8 data/exposure/advancements/recipes/misc
 46043fe08ad96e427448c226cb07d1fa19cb7ed5 data/exposure/advancements/recipes/misc/lightroom.json
 ba8bb9a4cfa7f99083b2a90b351031f43ae07c24 data/exposure/recipes/album.json
 3e351105cf49fa1cdbbdfdea1ba011f52c4aba98 data/exposure/recipes/black_and_white_film.json
-d1ac737ba9feddfff3f1f7cd4062ce4ba2d02212 data/exposure/recipes/broken_interplanar_projector_fixing.json
+eac01944083859f43373f6f029e118026206269d data/exposure/recipes/broken_interplanar_projector_fixing.json
 46fc0f433ae8c368be9daa983d4feee17907d06e data/exposure/recipes/camera.json
 11b122d3b9b9e01116f01850849dd4394f2346d3 data/exposure/recipes/camera_stand.json
 d6ff21b8cc3f4245a04d164eeb7ca4761417f2c1 data/exposure/recipes/color_film.json

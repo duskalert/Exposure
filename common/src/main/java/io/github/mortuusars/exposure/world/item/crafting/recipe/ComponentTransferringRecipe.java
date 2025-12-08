@@ -1,14 +1,10 @@
 package io.github.mortuusars.exposure.world.item.crafting.recipe;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
+import io.github.mortuusars.exposure.Exposure;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.GsonHelper;
 import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.*;
@@ -33,7 +29,7 @@ public class ComponentTransferringRecipe extends CustomRecipe {
 
     @Override
     public @NotNull RecipeSerializer<?> getSerializer() {
-        return null;
+        return Exposure.RecipeSerializers.COMPONENT_TRANSFERRING.get();
     }
 
     public @NotNull Ingredient getSourceIngredient() {
@@ -107,57 +103,6 @@ public class ComponentTransferringRecipe extends CustomRecipe {
                 recipeResultStack.setTag(transferTag.copy());
         }
         return recipeResultStack;
-    }
-
-    public static class Serializer implements RecipeSerializer<ComponentTransferringRecipe> {
-        @Override
-        public @NotNull ComponentTransferringRecipe fromJson(ResourceLocation recipeId, JsonObject serializedRecipe) {
-            Ingredient filmIngredient = Ingredient.fromJson(GsonHelper.getNonNull(serializedRecipe, "source"));
-            NonNullList<Ingredient> ingredients = getIngredients(GsonHelper.getAsJsonArray(serializedRecipe, "ingredients"));
-            ItemStack result = ShapedRecipe.itemStackFromJson(GsonHelper.getAsJsonObject(serializedRecipe, "result"));
-
-            if (filmIngredient.isEmpty())
-                throw new JsonParseException("Recipe should have 'source' ingredient.");
-
-            return new ComponentTransferringRecipe(recipeId,CraftingBookCategory.MISC, filmIngredient, ingredients, result);
-        }
-
-        @Override
-        public @NotNull ComponentTransferringRecipe fromNetwork(ResourceLocation recipeId, FriendlyByteBuf buffer) {
-            Ingredient transferredIngredient = Ingredient.fromNetwork(buffer);
-            int ingredientsCount = buffer.readVarInt();
-            NonNullList<Ingredient> ingredients = NonNullList.withSize(ingredientsCount, Ingredient.EMPTY);
-            ingredients.replaceAll(ignored -> Ingredient.fromNetwork(buffer));
-            ItemStack result = buffer.readItem();
-
-            return new ComponentTransferringRecipe(recipeId,CraftingBookCategory.MISC, transferredIngredient, ingredients, result);
-        }
-
-        @Override
-        public void toNetwork(FriendlyByteBuf buffer,ComponentTransferringRecipe recipe) {
-            recipe.getSourceIngredient().toNetwork(buffer);
-            buffer.writeVarInt(recipe.getIngredients().size());
-            for (Ingredient ingredient : recipe.getIngredients()) {
-                ingredient.toNetwork(buffer);
-            }
-            buffer.writeItem(recipe.getResult());
-        }
-
-        private NonNullList<Ingredient> getIngredients(JsonArray jsonArray) {
-            NonNullList<Ingredient> ingredients = NonNullList.create();
-
-            for (int i = 0; i < jsonArray.size(); ++i) {
-                Ingredient ingredient = Ingredient.fromJson(jsonArray.get(i));
-                if (!ingredient.isEmpty())
-                    ingredients.add(ingredient);
-            }
-
-            if (ingredients.isEmpty())
-                throw new JsonParseException("No ingredients for a recipe.");
-            else if (ingredients.size() > 3 * 3)
-                throw new JsonParseException("Too many ingredients for a recipe. The maximum is 9.");
-            return ingredients;
-        }
     }
 
     @Override

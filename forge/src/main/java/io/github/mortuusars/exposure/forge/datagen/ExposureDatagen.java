@@ -82,10 +82,11 @@ public class ExposureDatagen {
                     .unlockedBy(getHasName(Items.DRIED_KELP),has(Items.DRIED_KELP)).save(writer);
 
             //todo this one needs to copy nbt
-            ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC,Exposure.Items.INTERPLANAR_PROJECTOR.get())
-                    .requires(Exposure.Items.BROKEN_INTERPLANAR_PROJECTOR.get())
-                    .requires(Items.ENDER_EYE)
-                    .unlockedBy(getHasName(Exposure.Items.BROKEN_INTERPLANAR_PROJECTOR.get()),has(Exposure.Items.INTERPLANAR_PROJECTOR.get()))
+            ExposureRecipeBuilder.exposure(Exposure.RecipeSerializers.COMPONENT_TRANSFERRING.get(),
+                            Exposure.Items.BROKEN_INTERPLANAR_PROJECTOR.get(),
+                            Exposure.Items.INTERPLANAR_PROJECTOR.get())
+                    .with(Items.ENDER_EYE)
+                    //.unlockedBy(getHasName(Exposure.Items.BROKEN_INTERPLANAR_PROJECTOR.get()),has(Exposure.Items.INTERPLANAR_PROJECTOR.get()))
                     .save(writer,Exposure.resource("broken_interplanar_projector_fixing"));
 
             ShapedRecipeBuilder.shaped(RecipeCategory.MISC,Exposure.Items.CAMERA.get())
