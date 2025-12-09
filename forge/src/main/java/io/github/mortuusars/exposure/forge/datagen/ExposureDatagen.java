@@ -9,9 +9,13 @@ import net.minecraft.data.loot.LootTableProvider;
 import net.minecraft.data.loot.packs.VanillaBlockLoot;
 import net.minecraft.data.loot.packs.VanillaChestLoot;
 import net.minecraft.data.recipes.*;
+import net.minecraft.data.tags.EntityTypeTagsProvider;
 import net.minecraft.data.tags.ItemTagsProvider;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.EntityTypeTags;
 import net.minecraft.tags.ItemTags;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.block.Block;
@@ -43,9 +47,10 @@ public class ExposureDatagen {
         generator.addProvider(true,new Recipes(packOutput));
         generator.addProvider(true,LootTables.create(packOutput));
 
-        BlockTagsProvider blockTagsProvider = new BlockTags(packOutput,lookupProvider,existingFileHelper);
+        BlockTagsProvider blockTagsProvider = new ModBlockTags(packOutput,lookupProvider,existingFileHelper);
         generator.addProvider(true,blockTagsProvider);
         generator.addProvider(true,new ModItemTags(packOutput,lookupProvider,blockTagsProvider.contentsGetter(),existingFileHelper));
+        generator.addProvider(true,new ModEntityTypeTags(packOutput,lookupProvider,existingFileHelper));
     }
 
     static class Blockstates extends BlockStateProvider {
@@ -67,17 +72,35 @@ public class ExposureDatagen {
         @Override
         protected void addTags(HolderLookup.Provider provider) {
             tag(Exposure.Tags.Items.PHOTO_AGERS).add(Items.BROWN_DYE).addOptional(new ResourceLocation("supplementaries:antique_ink"));
+            tag(ItemTags.BOOKSHELF_BOOKS).add(Exposure.Items.ALBUM.get(),Exposure.Items.SIGNED_ALBUM.get());
+            tag(ItemTags.LECTERN_BOOKS).add(Exposure.Items.ALBUM.get(),Exposure.Items.SIGNED_ALBUM.get());
         }
     }
 
-    static class BlockTags extends BlockTagsProvider {
-        public BlockTags(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider, @Nullable ExistingFileHelper existingFileHelper) {
+    static class ModEntityTypeTags extends EntityTypeTagsProvider {
+        public ModEntityTypeTags(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider, @Nullable ExistingFileHelper existingFileHelper) {
             super(output, lookupProvider,Exposure.ID, existingFileHelper);
         }
 
         @Override
         protected void addTags(HolderLookup.Provider provider) {
+            tag(Exposure.Tags.Entities.IGNORES_CAMERA).add(
+                    EntityType.WARDEN,
+                    EntityType.WITHER,
+                    EntityType.ENDER_DRAGON,
+                    EntityType.ELDER_GUARDIAN,
+                    EntityType.PHANTOM);
+        }
+    }
 
+    static class ModBlockTags extends BlockTagsProvider {
+        public ModBlockTags(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider, @Nullable ExistingFileHelper existingFileHelper) {
+            super(output, lookupProvider,Exposure.ID, existingFileHelper);
+        }
+
+        @Override
+        protected void addTags(HolderLookup.Provider provider) {
+            tag(BlockTags.MINEABLE_WITH_AXE).add(Exposure.Blocks.LIGHTROOM.get());
         }
     }
 
