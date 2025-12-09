@@ -9,6 +9,7 @@ import net.minecraft.data.loot.LootTableProvider;
 import net.minecraft.data.loot.packs.VanillaBlockLoot;
 import net.minecraft.data.loot.packs.VanillaChestLoot;
 import net.minecraft.data.recipes.*;
+import net.minecraft.data.tags.ItemTagsProvider;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.Items;
@@ -19,8 +20,10 @@ import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.ValidationContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraftforge.client.model.generators.BlockStateProvider;
+import net.minecraftforge.common.data.BlockTagsProvider;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.data.event.GatherDataEvent;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Map;
@@ -39,6 +42,10 @@ public class ExposureDatagen {
         generator.addProvider(true,new Blockstates(packOutput,existingFileHelper));
         generator.addProvider(true,new Recipes(packOutput));
         generator.addProvider(true,LootTables.create(packOutput));
+
+        BlockTagsProvider blockTagsProvider = new BlockTags(packOutput,lookupProvider,existingFileHelper);
+        generator.addProvider(true,blockTagsProvider);
+        generator.addProvider(true,new ModItemTags(packOutput,lookupProvider,blockTagsProvider.contentsGetter(),existingFileHelper));
     }
 
     static class Blockstates extends BlockStateProvider {
@@ -49,6 +56,28 @@ public class ExposureDatagen {
 
         @Override
         protected void registerStatesAndModels() {
+        }
+    }
+
+    static class ModItemTags extends ItemTagsProvider {
+        public ModItemTags(PackOutput arg, CompletableFuture<HolderLookup.Provider> completableFuture, CompletableFuture<TagLookup<Block>> completableFuture2, @Nullable ExistingFileHelper existingFileHelper) {
+            super(arg, completableFuture, completableFuture2, Exposure.ID, existingFileHelper);
+        }
+
+        @Override
+        protected void addTags(HolderLookup.Provider provider) {
+            tag(Exposure.Tags.Items.PHOTO_AGERS).add(Items.BROWN_DYE).addOptional(new ResourceLocation("supplementaries:antique_ink"));
+        }
+    }
+
+    static class BlockTags extends BlockTagsProvider {
+        public BlockTags(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider, @Nullable ExistingFileHelper existingFileHelper) {
+            super(output, lookupProvider,Exposure.ID, existingFileHelper);
+        }
+
+        @Override
+        protected void addTags(HolderLookup.Provider provider) {
+
         }
     }
 
@@ -184,7 +213,7 @@ public class ExposureDatagen {
                     .save(writer);
 
             ShapedRecipeBuilder.shaped(RecipeCategory.MISC,Exposure.Items.PHOTOGRAPH_FRAME.get())
-                    .define('P',ItemTags.PLANKS)
+                    .define('P', ItemTags.PLANKS)
                     .define('F',Items.ITEM_FRAME)
                     .define('S',Items.STICK)
                     .pattern("SPS")
