@@ -81,7 +81,6 @@ public class ExposureDatagen {
                     .pattern("IKK")
                     .unlockedBy(getHasName(Items.DRIED_KELP),has(Items.DRIED_KELP)).save(writer);
 
-            //todo this one needs to copy nbt
             ExposureRecipeBuilder.exposure(Exposure.RecipeSerializers.COMPONENT_TRANSFERRING.get(),
                             Exposure.Items.BROKEN_INTERPLANAR_PROJECTOR.get(),
                             Exposure.Items.INTERPLANAR_PROJECTOR.get())
@@ -166,6 +165,32 @@ public class ExposureDatagen {
                     .pattern("PP")
                     .pattern("PP")
                     .unlockedBy(getHasName(Items.REDSTONE_TORCH),has(Items.REDSTONE_TORCH)).save(writer);
+
+            ExposureRecipeBuilder.exposure(Exposure.RecipeSerializers.PHOTOGRAPH_AGING.get(),
+                            Exposure.Items.PHOTOGRAPH.get(),
+                            Exposure.Items.AGED_PHOTOGRAPH.get())
+                    .with(Exposure.Tags.Items.PHOTO_AGERS)
+                    .with(Items.BRUSH)
+                    .save(writer);
+
+            ExposureRecipeBuilder.exposure(Exposure.RecipeSerializers.PHOTOGRAPH_COPYING.get(),
+                            Exposure.Items.PHOTOGRAPH.get(),
+                            Exposure.Items.PHOTOGRAPH.get())
+                    .with(Exposure.Tags.Items.PHOTO_PAPERS)
+                    .with(Exposure.Tags.Items.BLACK_PRINTING_DYES)
+                    .with(Exposure.Tags.Items.YELLOW_PRINTING_DYES)
+                    .with(Exposure.Tags.Items.CYAN_PRINTING_DYES)
+                    .with(Exposure.Tags.Items.MAGENTA_PRINTING_DYES)
+                    .save(writer);
+
+            ShapedRecipeBuilder.shaped(RecipeCategory.MISC,Exposure.Items.PHOTOGRAPH_FRAME.get())
+                    .define('P',ItemTags.PLANKS)
+                    .define('F',Items.ITEM_FRAME)
+                    .define('S',Items.STICK)
+                    .pattern("SPS")
+                    .pattern("PFP")
+                    .pattern("SPS")
+                    .unlockedBy(getHasName(Items.ITEM_FRAME),has(Items.ITEM_FRAME)).save(writer);
         }
     }
 

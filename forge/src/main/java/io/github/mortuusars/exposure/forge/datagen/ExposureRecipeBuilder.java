@@ -8,6 +8,7 @@ import net.minecraft.core.NonNullList;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.recipes.*;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.crafting.CraftingBookCategory;
 import net.minecraft.world.item.crafting.Ingredient;
@@ -37,12 +38,16 @@ public class ExposureRecipeBuilder extends CraftingRecipeBuilder implements Reci
         return null;
     }
 
-    public RecipeBuilder with(Ingredient ingredient) {
+    public ExposureRecipeBuilder with(Ingredient ingredient) {
         ingredients.add(ingredient);
         return this;
     }
 
-    public RecipeBuilder with(ItemLike ingredient) {
+    public ExposureRecipeBuilder with(ItemLike ingredient) {
+        return with(Ingredient.of(ingredient));
+    }
+
+    public ExposureRecipeBuilder with(TagKey<Item> ingredient) {
         return with(Ingredient.of(ingredient));
     }
 

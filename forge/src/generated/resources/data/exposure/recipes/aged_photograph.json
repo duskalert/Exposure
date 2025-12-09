@@ -1,0 +1,18 @@
+{
+  "type": "exposure:photograph_aging",
+  "category": "misc",
+  "ingredients": [
+    {
+      "tag": "exposure:photo_agers"
+    },
+    {
+      "item": "minecraft:brush"
+    }
+  ],
+  "photograph": {
+    "item": "exposure:photograph"
+  },
+  "result": {
+    "item": "exposure:aged_photograph"
+  }
+}

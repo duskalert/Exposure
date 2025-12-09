@@ -1,0 +1,27 @@
+{
+  "type": "exposure:photograph_copying",
+  "category": "misc",
+  "ingredients": [
+    {
+      "tag": "exposure:photo_papers"
+    },
+    {
+      "tag": "exposure:black_printing_dyes"
+    },
+    {
+      "tag": "exposure:yellow_printing_dyes"
+    },
+    {
+      "tag": "exposure:cyan_printing_dyes"
+    },
+    {
+      "tag": "exposure:magenta_printing_dyes"
+    }
+  ],
+  "photograph": {
+    "item": "exposure:photograph"
+  },
+  "result": {
+    "item": "exposure:photograph"
+  }
+}
