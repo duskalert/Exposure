@@ -75,11 +75,11 @@ public class ForgeCommonEvents {
             int i = 0;
             for (Map.Entry<Class<Packet>, Function<FriendlyByteBuf, Packet>> definition : S2CPackets.getDefinitions().entrySet()) {
                 registrar.registerMessage(i++,definition.getKey(), Packet::toPacket, definition.getValue(),
-                        ForgeCommonEvents.wrapC2S());
+                        ForgeCommonEvents.wrapS2C());
             }
 
             for (Map.Entry<Class<Packet>, Function<FriendlyByteBuf, Packet>> definition : C2SPackets.getDefinitions().entrySet()) {
-                registrar.registerMessage(i++,definition.getKey(),Packet::toPacket,definition.getValue(), ForgeCommonEvents.wrapS2C());
+                registrar.registerMessage(i++,definition.getKey(),Packet::toPacket,definition.getValue(), ForgeCommonEvents.wrapC2S());
             }
 
             for (Map.Entry<Class<Packet>, Function<FriendlyByteBuf, Packet>> definition : CommonPackets.getDefinitions().entrySet()) {

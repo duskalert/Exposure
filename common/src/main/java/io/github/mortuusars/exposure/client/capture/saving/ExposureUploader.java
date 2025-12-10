@@ -15,7 +15,7 @@ public class ExposureUploader {
     public static void upload(String id, ExposureData exposure) {
         Preconditions.checkArgument(!id.isBlank(), "Cannot upload exposure with null or empty id.");
 
-        LOGGER.debug("Sending exposure '{}' to server...", id);
+        LOGGER.info("Sending exposure '{}' to server...", id);
         Packets.sendToServer(new ExposureDataC2SP(id, exposure));
     }
 

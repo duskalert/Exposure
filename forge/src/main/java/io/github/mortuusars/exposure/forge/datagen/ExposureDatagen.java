@@ -1,6 +1,11 @@
 package io.github.mortuusars.exposure.forge.datagen;
 
 import io.github.mortuusars.exposure.Exposure;
+import io.github.mortuusars.exposure.util.ExtraData;
+import io.github.mortuusars.exposure.world.camera.ExposureType;
+import io.github.mortuusars.exposure.world.camera.frame.Frame;
+import io.github.mortuusars.exposure.world.camera.frame.Photographer;
+import io.github.mortuusars.exposure.world.level.storage.ExposureIdentifier;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.DataGenerator;
@@ -16,19 +21,31 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.EntityTypeTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.storage.loot.BuiltInLootTables;
+import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.ValidationContext;
+import net.minecraft.world.level.storage.loot.entries.EmptyLootItem;
+import net.minecraft.world.level.storage.loot.entries.LootItem;
+import net.minecraft.world.level.storage.loot.functions.EnchantRandomlyFunction;
+import net.minecraft.world.level.storage.loot.functions.SetItemCountFunction;
+import net.minecraft.world.level.storage.loot.functions.SetNbtFunction;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
+import net.minecraft.world.level.storage.loot.predicates.LootItemRandomChanceCondition;
+import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
+import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
 import net.minecraftforge.client.model.generators.BlockStateProvider;
 import net.minecraftforge.common.data.BlockTagsProvider;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.data.event.GatherDataEvent;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -254,7 +271,7 @@ public class ExposureDatagen {
 
         public static LootTableProvider create(PackOutput pOutput) {
             return new LootTables(pOutput, BuiltInLootTables.all(),
-                    List.of(//new SubProviderEntry(ChestLoot::new, LootContextParamSets.CHEST),
+                    List.of(new SubProviderEntry(ChestLoot::new, LootContextParamSets.CHEST),
                             new SubProviderEntry(BlockLoot::new, LootContextParamSets.ENTITY)
                     ));
         }
@@ -279,6 +296,19 @@ public class ExposureDatagen {
             @Override
             public void generate(BiConsumer<ResourceLocation, LootTable.Builder> biConsumer) {
 
+                ItemStack stack = Exposure.Items.PHOTOGRAPH.get().getDefaultInstance();
+
+                Exposure.DataComponents.setPhotographFrame(stack,new Frame(ExposureIdentifier.texture(
+                        Exposure.resource("textures/exposure/dungeon/skull_on_fire.png")),
+                        ExposureType.COLOR,
+                        Photographer.EMPTY,
+                        Collections.emptyList(),
+                        ExtraData.EMPTY));
+
+                biConsumer.accept(Exposure.LootTables.SIMPLE_DUNGEON_INJECT,
+                        LootTable.lootTable().withPool(LootPool.lootPool().setRolls(ConstantValue.exactly(1.0F))
+                        .add(LootItem.lootTableItem(Exposure.Items.PHOTOGRAPH.get()).when(LootItemRandomChanceCondition.randomChance(.1f))
+                                .apply(SetNbtFunction.setTag(stack.getTag())))));
             }
         }
 

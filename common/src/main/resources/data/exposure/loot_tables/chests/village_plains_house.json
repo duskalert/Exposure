@@ -9,8 +9,8 @@
           "name": "exposure:aged_photograph",
           "functions": [
             {
-              "function": "minecraft:set_components",
-              "components": {
+              "function": "minecraft:set_nbt",
+              "tag": {
                 "exposure:photograph_frame": {
                   "identifier": {
                     "texture": "exposure:textures/exposure/village/attack_1.png"
@@ -25,8 +25,8 @@
           "name": "exposure:aged_photograph",
           "functions": [
             {
-              "function": "minecraft:set_components",
-              "components": {
+              "function": "minecraft:set_nbt",
+              "tag": {
                 "exposure:photograph_frame": {
                   "identifier": {
                     "texture": "exposure:textures/exposure/village/attack_2.png"
@@ -52,8 +52,8 @@
           "name": "exposure:aged_photograph",
           "functions": [
             {
-              "function": "minecraft:set_components",
-              "components": {
+              "function": "minecraft:set_nbt",
+              "tag": {
                 "exposure:photograph_frame": {
                   "identifier": {
                     "texture": "exposure:textures/exposure/village/village_1.png"
@@ -68,8 +68,8 @@
           "name": "exposure:aged_photograph",
           "functions": [
             {
-              "function": "minecraft:set_components",
-              "components": {
+              "function": "minecraft:set_nbt",
+              "tag": {
                 "exposure:photograph_frame": {
                   "identifier": {
                     "texture": "exposure:textures/exposure/village/village_2.png"
@@ -84,8 +84,8 @@
           "name": "exposure:aged_photograph",
           "functions": [
             {
-              "function": "minecraft:set_components",
-              "components": {
+              "function": "minecraft:set_nbt",
+              "tag": {
                 "exposure:photograph_frame": {
                   "identifier": {
                     "texture": "exposure:textures/exposure/village/village_3.png"
@@ -100,8 +100,8 @@
           "name": "exposure:aged_photograph",
           "functions": [
             {
-              "function": "minecraft:set_components",
-              "components": {
+              "function": "minecraft:set_nbt",
+              "tag": {
                 "exposure:photograph_frame": {
                   "identifier": {
                     "texture": "exposure:textures/exposure/village/village_4.png"
