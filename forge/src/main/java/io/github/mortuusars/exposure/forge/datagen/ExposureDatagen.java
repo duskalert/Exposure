@@ -295,20 +295,435 @@ public class ExposureDatagen {
 
             @Override
             public void generate(BiConsumer<ResourceLocation, LootTable.Builder> biConsumer) {
+                {
+                    ItemStack stack = Exposure.Items.PHOTOGRAPH.get().getDefaultInstance();
 
-                ItemStack stack = Exposure.Items.PHOTOGRAPH.get().getDefaultInstance();
+                    Exposure.DataComponents.setPhotographFrame(stack, new Frame(ExposureIdentifier.texture(
+                            Exposure.resource("textures/exposure/dungeon/skull_on_fire.png")),
+                            ExposureType.COLOR,
+                            Photographer.EMPTY,
+                            Collections.emptyList(),
+                            ExtraData.EMPTY));
 
-                Exposure.DataComponents.setPhotographFrame(stack,new Frame(ExposureIdentifier.texture(
-                        Exposure.resource("textures/exposure/dungeon/skull_on_fire.png")),
-                        ExposureType.COLOR,
-                        Photographer.EMPTY,
-                        Collections.emptyList(),
-                        ExtraData.EMPTY));
+                    biConsumer.accept(Exposure.LootTables.SIMPLE_DUNGEON_INJECT,
+                            LootTable.lootTable().withPool(LootPool.lootPool()
+                                            .setRolls(ConstantValue.exactly(1.0F))
+                                            .add(LootItem.lootTableItem(Exposure.Items.PHOTOGRAPH.get())
+                                                    .apply(SetNbtFunction.setTag(stack.getTag()))
+                                    )
+                                    .when(LootItemRandomChanceCondition.randomChance(.1f)
+                                    )
+                            )
+                    );
+                }
+                {
+                    ItemStack stack1 = Exposure.Items.PHOTOGRAPH.get().getDefaultInstance();
 
-                biConsumer.accept(Exposure.LootTables.SIMPLE_DUNGEON_INJECT,
-                        LootTable.lootTable().withPool(LootPool.lootPool().setRolls(ConstantValue.exactly(1.0F))
-                        .add(LootItem.lootTableItem(Exposure.Items.PHOTOGRAPH.get()).when(LootItemRandomChanceCondition.randomChance(.1f))
-                                .apply(SetNbtFunction.setTag(stack.getTag())))));
+                    Exposure.DataComponents.setPhotographFrame(stack1, new Frame(ExposureIdentifier.texture(
+                            Exposure.resource("textures/exposure/mineshaft/tunnel.png")),
+                            ExposureType.COLOR,
+                            Photographer.EMPTY,
+                            Collections.emptyList(),
+                            ExtraData.EMPTY));
+
+                    ItemStack stack2 = Exposure.Items.PHOTOGRAPH.get().getDefaultInstance();
+
+                    Exposure.DataComponents.setPhotographFrame(stack2, new Frame(ExposureIdentifier.texture(
+                            Exposure.resource("textures/exposure/mineshaft/skeleton.png")),
+                            ExposureType.COLOR,
+                            Photographer.EMPTY,
+                            Collections.emptyList(),
+                            ExtraData.EMPTY));
+
+                    ItemStack stack3 = Exposure.Items.PHOTOGRAPH.get().getDefaultInstance();
+
+                    Exposure.DataComponents.setPhotographFrame(stack3, new Frame(ExposureIdentifier.texture(
+                            Exposure.resource("textures/exposure/mineshaft/skeleton_smirk.png")),
+                            ExposureType.COLOR,
+                            Photographer.EMPTY,
+                            Collections.emptyList(),
+                            ExtraData.EMPTY));
+
+                    biConsumer.accept(Exposure.LootTables.ABANDONED_MINESHAFT_INJECT,
+                            LootTable.lootTable().withPool(LootPool.lootPool()
+                                    .setRolls(ConstantValue.exactly(1.0F))
+                                    .add(LootItem.lootTableItem(Exposure.Items.PHOTOGRAPH.get())
+                                            .apply(SetNbtFunction.setTag(stack1.getTag())).setWeight(3)
+                                    )
+                                    .add(LootItem.lootTableItem(Exposure.Items.PHOTOGRAPH.get())
+                                            .apply(SetNbtFunction.setTag(stack2.getTag())).setWeight(3)
+                                    )
+                                    .add(LootItem.lootTableItem(Exposure.Items.PHOTOGRAPH.get())
+                                            .apply(SetNbtFunction.setTag(stack3.getTag())).setWeight(1)
+                                    )
+                                    .when(LootItemRandomChanceCondition.randomChance(.2f)
+                                    )
+                            )
+                    );
+                }
+                {
+                    ItemStack stack = Exposure.Items.AGED_PHOTOGRAPH.get().getDefaultInstance();
+
+                    Exposure.DataComponents.setPhotographFrame(stack, new Frame(ExposureIdentifier.texture(
+                            Exposure.resource("textures/exposure/dungeon/skull_on_fire.png")),
+                            ExposureType.COLOR,
+                            Photographer.EMPTY,
+                            Collections.emptyList(),
+                            ExtraData.EMPTY));
+
+                    biConsumer.accept(Exposure.LootTables.SHIPWRECK_MAP_INJECT,
+                            LootTable.lootTable().withPool(LootPool.lootPool()
+                                    .setRolls(ConstantValue.exactly(1.0F))
+                                    .add(LootItem.lootTableItem(Exposure.Items.PHOTOGRAPH.get())
+                                            .apply(SetNbtFunction.setTag(stack.getTag()))
+                                    )
+                                    .when(LootItemRandomChanceCondition.randomChance(.1f)
+                                    )
+                            )
+                    );
+                    //{
+                    //  "type": "minecraft:chest",
+                    //  "pools": [
+                    //    {
+                    //      "rolls": 1,
+                    //      "entries": [
+                    //        {
+                    //          "type": "minecraft:item",
+                    //          "name": "exposure:aged_photograph",
+                    //          "functions": [
+                    //            {
+                    //              "function": "minecraft:set_components",
+                    //              "components": {
+                    //                "exposure:photograph_frame": {
+                    //                  "identifier": {
+                    //                    "texture": "exposure:textures/exposure/shipwreck/ship_dock_1.png"
+                    //                  }
+                    //                }
+                    //              }
+                    //            }
+                    //          ]
+                    //        },
+                    //        {
+                    //          "type": "minecraft:item",
+                    //          "name": "exposure:aged_photograph",
+                    //          "functions": [
+                    //            {
+                    //              "function": "minecraft:set_components",
+                    //              "components": {
+                    //                "exposure:photograph_frame": {
+                    //                  "identifier": {
+                    //                    "texture": "exposure:textures/exposure/shipwreck/ship_dock_2.png"
+                    //                  }
+                    //                }
+                    //              }
+                    //            }
+                    //          ]
+                    //        }
+                    //      ],
+                    //      "conditions": [
+                    //        {
+                    //          "condition": "minecraft:random_chance",
+                    //          "chance": 0.1
+                    //        }
+                    //      ]
+                    //    },
+                    //    {
+                    //      "rolls": 1,
+                    //      "entries": [
+                    //        {
+                    //          "type": "minecraft:item",
+                    //          "name": "exposure:aged_photograph",
+                    //          "functions": [
+                    //            {
+                    //              "function": "minecraft:set_components",
+                    //              "components": {
+                    //                "exposure:photograph_frame": {
+                    //                  "identifier": {
+                    //                    "texture": "exposure:textures/exposure/shipwreck/ship_dock_3.png"
+                    //                  }
+                    //                }
+                    //              }
+                    //            }
+                    //          ]
+                    //        },
+                    //        {
+                    //          "type": "minecraft:item",
+                    //          "name": "exposure:aged_photograph",
+                    //          "functions": [
+                    //            {
+                    //              "function": "minecraft:set_components",
+                    //              "components": {
+                    //                "exposure:photograph_frame": {
+                    //                  "identifier": {
+                    //                    "texture": "exposure:textures/exposure/shipwreck/ship_dock_4.png"
+                    //                  }
+                    //                }
+                    //              }
+                    //            }
+                    //          ]
+                    //        }
+                    //      ],
+                    //      "conditions": [
+                    //        {
+                    //          "condition": "minecraft:random_chance",
+                    //          "chance": 0.1
+                    //        }
+                    //      ]
+                    //    },
+                    //    {
+                    //      "rolls": 1,
+                    //      "entries": [
+                    //        {
+                    //          "type": "minecraft:item",
+                    //          "name": "exposure:black_and_white_film",
+                    //          "functions": [
+                    //            {
+                    //              "function": "minecraft:set_components",
+                    //              "components": {
+                    //                "exposure:film_frame_size": 56,
+                    //                "exposure:film_frames": [
+                    //                  {
+                    //                    "identifier": {
+                    //                      "texture": "exposure:textures/exposure/shipwreck/chromatic/cargo_crates_r.png"
+                    //                    },
+                    //                    "type": "black_and_white",
+                    //                    "extra_data": {
+                    //                      "color_channel": "red"
+                    //                    }
+                    //                  },
+                    //                  {
+                    //                    "identifier": {
+                    //                      "texture": "exposure:textures/exposure/shipwreck/chromatic/cargo_crates_g.png"
+                    //                    },
+                    //                    "type": "black_and_white",
+                    //                    "extra_data": {
+                    //                      "color_channel": "green"
+                    //                    }
+                    //                  },
+                    //                  {
+                    //                    "identifier": {
+                    //                      "texture": "exposure:textures/exposure/shipwreck/chromatic/cargo_crates_b.png"
+                    //                    },
+                    //                    "type": "black_and_white",
+                    //                    "extra_data": {
+                    //                      "color_channel": "blue"
+                    //                    }
+                    //                  },
+                    //                  {
+                    //                    "identifier": {
+                    //                      "texture": "exposure:textures/exposure/shipwreck/chromatic/deck_sunset_1_r.png"
+                    //                    },
+                    //                    "type": "black_and_white",
+                    //                    "extra_data": {
+                    //                      "color_channel": "red"
+                    //                    }
+                    //                  },
+                    //                  {
+                    //                    "identifier": {
+                    //                      "texture": "exposure:textures/exposure/shipwreck/chromatic/deck_sunset_1_g.png"
+                    //                    },
+                    //                    "type": "black_and_white",
+                    //                    "extra_data": {
+                    //                      "color_channel": "green"
+                    //                    }
+                    //                  },
+                    //                  {
+                    //                    "identifier": {
+                    //                      "texture": "exposure:textures/exposure/shipwreck/chromatic/deck_sunset_1_b.png"
+                    //                    },
+                    //                    "type": "black_and_white",
+                    //                    "extra_data": {
+                    //                      "color_channel": "blue"
+                    //                    }
+                    //                  },
+                    //                  {
+                    //                    "identifier": {
+                    //                      "texture": "exposure:textures/exposure/shipwreck/chromatic/deck_sunset_2_r.png"
+                    //                    },
+                    //                    "type": "black_and_white",
+                    //                    "extra_data": {
+                    //                      "color_channel": "red"
+                    //                    }
+                    //                  },
+                    //                  {
+                    //                    "identifier": {
+                    //                      "texture": "exposure:textures/exposure/shipwreck/chromatic/deck_sunset_2_g.png"
+                    //                    },
+                    //                    "type": "black_and_white",
+                    //                    "extra_data": {
+                    //                      "color_channel": "green"
+                    //                    }
+                    //                  },
+                    //                  {
+                    //                    "identifier": {
+                    //                      "texture": "exposure:textures/exposure/shipwreck/chromatic/deck_sunset_2_b.png"
+                    //                    },
+                    //                    "type": "black_and_white",
+                    //                    "extra_data": {
+                    //                      "color_channel": "blue"
+                    //                    }
+                    //                  }
+                    //                ]
+                    //              }
+                    //            }
+                    //          ]
+                    //        },
+                    //        {
+                    //          "type": "minecraft:item",
+                    //          "name": "exposure:black_and_white_film",
+                    //          "functions": [
+                    //            {
+                    //              "function": "minecraft:set_components",
+                    //              "components": {
+                    //                "exposure:film_frame_size": 56,
+                    //                "exposure:film_frames": [
+                    //                  {
+                    //                    "identifier": {
+                    //                      "texture": "exposure:textures/exposure/shipwreck/chromatic/cargo_gold_1_r.png"
+                    //                    },
+                    //                    "type": "black_and_white",
+                    //                    "extra_data": {
+                    //                      "color_channel": "red"
+                    //                    }
+                    //                  },
+                    //                  {
+                    //                    "identifier": {
+                    //                      "texture": "exposure:textures/exposure/shipwreck/chromatic/cargo_gold_1_g.png"
+                    //                    },
+                    //                    "type": "black_and_white",
+                    //                    "extra_data": {
+                    //                      "color_channel": "green"
+                    //                    }
+                    //                  },
+                    //                  {
+                    //                    "identifier": {
+                    //                      "texture": "exposure:textures/exposure/shipwreck/chromatic/cargo_gold_1_b.png"
+                    //                    },
+                    //                    "type": "black_and_white",
+                    //                    "extra_data": {
+                    //                      "color_channel": "blue"
+                    //                    }
+                    //                  },
+                    //                  {
+                    //                    "identifier": {
+                    //                      "texture": "exposure:textures/exposure/shipwreck/chromatic/cargo_gold_2_r.png"
+                    //                    },
+                    //                    "type": "black_and_white",
+                    //                    "extra_data": {
+                    //                      "color_channel": "red"
+                    //                    }
+                    //                  },
+                    //                  {
+                    //                    "identifier": {
+                    //                      "texture": "exposure:textures/exposure/shipwreck/chromatic/cargo_gold_2_g.png"
+                    //                    },
+                    //                    "type": "black_and_white",
+                    //                    "extra_data": {
+                    //                      "color_channel": "green"
+                    //                    }
+                    //                  },
+                    //                  {
+                    //                    "identifier": {
+                    //                      "texture": "exposure:textures/exposure/shipwreck/chromatic/cargo_gold_2_b.png"
+                    //                    },
+                    //                    "type": "black_and_white",
+                    //                    "extra_data": {
+                    //                      "color_channel": "blue"
+                    //                    }
+                    //                  },
+                    //                  {
+                    //                    "identifier": {
+                    //                      "texture": "exposure:textures/exposure/shipwreck/chromatic/deck_sunset_3_r.png"
+                    //                    },
+                    //                    "type": "black_and_white",
+                    //                    "extra_data": {
+                    //                      "color_channel": "red"
+                    //                    }
+                    //                  },
+                    //                  {
+                    //                    "identifier": {
+                    //                      "texture": "exposure:textures/exposure/shipwreck/chromatic/deck_sunset_3_g.png"
+                    //                    },
+                    //                    "type": "black_and_white",
+                    //                    "extra_data": {
+                    //                      "color_channel": "green"
+                    //                    }
+                    //                  },
+                    //                  {
+                    //                    "identifier": {
+                    //                      "texture": "exposure:textures/exposure/shipwreck/chromatic/deck_sunset_3_b.png"
+                    //                    },
+                    //                    "type": "black_and_white",
+                    //                    "extra_data": {
+                    //                      "color_channel": "blue"
+                    //                    }
+                    //                  },
+                    //                  {
+                    //                    "identifier": {
+                    //                      "texture": "exposure:textures/exposure/shipwreck/chromatic/deck_sunset_4_r.png"
+                    //                    },
+                    //                    "type": "black_and_white",
+                    //                    "extra_data": {
+                    //                      "color_channel": "red"
+                    //                    }
+                    //                  },
+                    //                  {
+                    //                    "identifier": {
+                    //                      "texture": "exposure:textures/exposure/shipwreck/chromatic/deck_sunset_4_g.png"
+                    //                    },
+                    //                    "type": "black_and_white",
+                    //                    "extra_data": {
+                    //                      "color_channel": "green"
+                    //                    }
+                    //                  },
+                    //                  {
+                    //                    "identifier": {
+                    //                      "texture": "exposure:textures/exposure/shipwreck/chromatic/deck_sunset_4_b.png"
+                    //                    },
+                    //                    "type": "black_and_white",
+                    //                    "extra_data": {
+                    //                      "color_channel": "blue"
+                    //                    }
+                    //                  }
+                    //                ]
+                    //              }
+                    //            }
+                    //          ]
+                    //        }
+                    //      ],
+                    //      "conditions": [
+                    //        {
+                    //          "condition": "minecraft:random_chance",
+                    //          "chance": 0.15
+                    //        }
+                    //      ]
+                    //    },
+                    //    {
+                    //      "rolls": 2,
+                    //      "entries": [
+                    //        {
+                    //          "type": "minecraft:item",
+                    //          "name": "minecraft:red_stained_glass_pane"
+                    //        },
+                    //        {
+                    //          "type": "minecraft:item",
+                    //          "name": "minecraft:green_stained_glass_pane"
+                    //        },
+                    //        {
+                    //          "type": "minecraft:item",
+                    //          "name": "minecraft:blue_stained_glass_pane"
+                    //        }
+                    //      ],
+                    //      "conditions": [
+                    //        {
+                    //          "condition": "minecraft:random_chance",
+                    //          "chance": 0.3
+                    //        }
+                    //      ]
+                    //    }
+                    //  ]
+                    //}
+                }
             }
         }
 
