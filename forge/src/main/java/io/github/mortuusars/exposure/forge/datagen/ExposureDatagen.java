@@ -16,39 +16,31 @@ import net.minecraft.data.loot.packs.VanillaChestLoot;
 import net.minecraft.data.recipes.*;
 import net.minecraft.data.tags.EntityTypeTagsProvider;
 import net.minecraft.data.tags.ItemTagsProvider;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
-import net.minecraft.tags.EntityTypeTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.storage.loot.BuiltInLootTables;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.ValidationContext;
-import net.minecraft.world.level.storage.loot.entries.EmptyLootItem;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
-import net.minecraft.world.level.storage.loot.functions.EnchantRandomlyFunction;
-import net.minecraft.world.level.storage.loot.functions.SetItemCountFunction;
 import net.minecraft.world.level.storage.loot.functions.SetNbtFunction;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraft.world.level.storage.loot.predicates.LootItemRandomChanceCondition;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
-import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
 import net.minecraftforge.client.model.generators.BlockStateProvider;
 import net.minecraftforge.common.data.BlockTagsProvider;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.data.event.GatherDataEvent;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -362,114 +354,95 @@ public class ExposureDatagen {
                     );
                 }
                 {
-                    ItemStack stack = Exposure.Items.AGED_PHOTOGRAPH.get().getDefaultInstance();
+                    ItemStack stack1 = Exposure.Items.AGED_PHOTOGRAPH.get().getDefaultInstance();
 
-                    Exposure.DataComponents.setPhotographFrame(stack, new Frame(ExposureIdentifier.texture(
-                            Exposure.resource("textures/exposure/dungeon/skull_on_fire.png")),
+                    Exposure.DataComponents.setPhotographFrame(stack1, new Frame(ExposureIdentifier.texture(
+                            Exposure.resource("textures/exposure/shipwreck/ship_dock_1.png")),
                             ExposureType.COLOR,
                             Photographer.EMPTY,
                             Collections.emptyList(),
                             ExtraData.EMPTY));
 
+                    ItemStack stack2 = Exposure.Items.AGED_PHOTOGRAPH.get().getDefaultInstance();
+
+                    Exposure.DataComponents.setPhotographFrame(stack2, new Frame(ExposureIdentifier.texture(
+                            Exposure.resource("textures/exposure/shipwreck/ship_dock_2.png")),
+                            ExposureType.COLOR,
+                            Photographer.EMPTY,
+                            Collections.emptyList(),
+                            ExtraData.EMPTY));
+
+                    ItemStack stack3 = Exposure.Items.AGED_PHOTOGRAPH.get().getDefaultInstance();
+
+                    Exposure.DataComponents.setPhotographFrame(stack3, new Frame(ExposureIdentifier.texture(
+                            Exposure.resource("textures/exposure/shipwreck/ship_dock_3.png")),
+                            ExposureType.COLOR,
+                            Photographer.EMPTY,
+                            Collections.emptyList(),
+                            ExtraData.EMPTY));
+
+                    ItemStack stack4 = Exposure.Items.AGED_PHOTOGRAPH.get().getDefaultInstance();
+
+                    Exposure.DataComponents.setPhotographFrame(stack4, new Frame(ExposureIdentifier.texture(
+                            Exposure.resource("textures/exposure/shipwreck/ship_dock_4.png")),
+                            ExposureType.COLOR,
+                            Photographer.EMPTY,
+                            Collections.emptyList(),
+                            ExtraData.EMPTY));
+
+                    ItemStack film1Stack = film1();
+                    ItemStack film2Stack = film2();
+
                     biConsumer.accept(Exposure.LootTables.SHIPWRECK_MAP_INJECT,
-                            LootTable.lootTable().withPool(LootPool.lootPool()
+                            LootTable.lootTable()
+                                    .withPool(LootPool.lootPool()
                                     .setRolls(ConstantValue.exactly(1.0F))
-                                    .add(LootItem.lootTableItem(Exposure.Items.PHOTOGRAPH.get())
-                                            .apply(SetNbtFunction.setTag(stack.getTag()))
+                                    .add(LootItem.lootTableItem(Exposure.Items.AGED_PHOTOGRAPH.get())
+                                            .apply(SetNbtFunction.setTag(stack1.getTag()))
+                                    )
+                                    .add(LootItem.lootTableItem(Exposure.Items.AGED_PHOTOGRAPH.get())
+                                            .apply(SetNbtFunction.setTag(stack2.getTag()))
                                     )
                                     .when(LootItemRandomChanceCondition.randomChance(.1f)
                                     )
                             )
+                                    .withPool(LootPool.lootPool()
+                                    .setRolls(ConstantValue.exactly(1.0F))
+                                    .add(LootItem.lootTableItem(Exposure.Items.AGED_PHOTOGRAPH.get())
+                                            .apply(SetNbtFunction.setTag(stack3.getTag()))
+                                    )
+                                    .add(LootItem.lootTableItem(Exposure.Items.AGED_PHOTOGRAPH.get())
+                                            .apply(SetNbtFunction.setTag(stack4.getTag()))
+                                    )
+                                    .when(LootItemRandomChanceCondition.randomChance(.1f)
+                                    )
+                            )
+                                    .withPool(LootPool.lootPool()
+                                            .setRolls(ConstantValue.exactly(1.0F))
+                                            .add(LootItem.lootTableItem(Exposure.Items.BLACK_AND_WHITE_FILM.get())
+                                                    .apply(SetNbtFunction.setTag(film1Stack.getTag()))
+                                            )
+                                            .add(LootItem.lootTableItem(Exposure.Items.BLACK_AND_WHITE_FILM.get())
+                                                    .apply(SetNbtFunction.setTag(film2Stack.getTag()))
+                                            )
+                                            .when(LootItemRandomChanceCondition.randomChance(.15f)
+                                            )
+                                    )
+                                    .withPool(LootPool.lootPool()
+                                            .setRolls(ConstantValue.exactly(2))
+                                            .add(LootItem.lootTableItem(Items.RED_STAINED_GLASS_PANE)
+                                            )
+                                            .add(LootItem.lootTableItem(Items.GREEN_STAINED_GLASS_PANE)
+                                            )
+                                            .add(LootItem.lootTableItem(Items.BLUE_STAINED_GLASS_PANE)
+                                            )
+                                            .when(LootItemRandomChanceCondition.randomChance(.3f)
+                                            )
+                                    )
                     );
                     //{
                     //  "type": "minecraft:chest",
                     //  "pools": [
-                    //    {
-                    //      "rolls": 1,
-                    //      "entries": [
-                    //        {
-                    //          "type": "minecraft:item",
-                    //          "name": "exposure:aged_photograph",
-                    //          "functions": [
-                    //            {
-                    //              "function": "minecraft:set_components",
-                    //              "components": {
-                    //                "exposure:photograph_frame": {
-                    //                  "identifier": {
-                    //                    "texture": "exposure:textures/exposure/shipwreck/ship_dock_1.png"
-                    //                  }
-                    //                }
-                    //              }
-                    //            }
-                    //          ]
-                    //        },
-                    //        {
-                    //          "type": "minecraft:item",
-                    //          "name": "exposure:aged_photograph",
-                    //          "functions": [
-                    //            {
-                    //              "function": "minecraft:set_components",
-                    //              "components": {
-                    //                "exposure:photograph_frame": {
-                    //                  "identifier": {
-                    //                    "texture": "exposure:textures/exposure/shipwreck/ship_dock_2.png"
-                    //                  }
-                    //                }
-                    //              }
-                    //            }
-                    //          ]
-                    //        }
-                    //      ],
-                    //      "conditions": [
-                    //        {
-                    //          "condition": "minecraft:random_chance",
-                    //          "chance": 0.1
-                    //        }
-                    //      ]
-                    //    },
-                    //    {
-                    //      "rolls": 1,
-                    //      "entries": [
-                    //        {
-                    //          "type": "minecraft:item",
-                    //          "name": "exposure:aged_photograph",
-                    //          "functions": [
-                    //            {
-                    //              "function": "minecraft:set_components",
-                    //              "components": {
-                    //                "exposure:photograph_frame": {
-                    //                  "identifier": {
-                    //                    "texture": "exposure:textures/exposure/shipwreck/ship_dock_3.png"
-                    //                  }
-                    //                }
-                    //              }
-                    //            }
-                    //          ]
-                    //        },
-                    //        {
-                    //          "type": "minecraft:item",
-                    //          "name": "exposure:aged_photograph",
-                    //          "functions": [
-                    //            {
-                    //              "function": "minecraft:set_components",
-                    //              "components": {
-                    //                "exposure:photograph_frame": {
-                    //                  "identifier": {
-                    //                    "texture": "exposure:textures/exposure/shipwreck/ship_dock_4.png"
-                    //                  }
-                    //                }
-                    //              }
-                    //            }
-                    //          ]
-                    //        }
-                    //      ],
-                    //      "conditions": [
-                    //        {
-                    //          "condition": "minecraft:random_chance",
-                    //          "chance": 0.1
-                    //        }
-                    //      ]
-                    //    },
                     //    {
                     //      "rolls": 1,
                     //      "entries": [
@@ -725,7 +698,71 @@ public class ExposureDatagen {
                     //}
                 }
             }
+            protected ItemStack film1() {
+                ItemStack filmStack = Exposure.Items.BLACK_AND_WHITE_FILM.get().getDefaultInstance();
+                Exposure.DataComponents.setFilmFrameSize(filmStack,56);
+
+                List<Frame> frames = new ArrayList<>();
+
+                frames.addAll(colorSet("textures/exposure/shipwreck/chromatic/cargo_crates"));
+                frames.addAll(colorSet("textures/exposure/shipwreck/chromatic/deck_sunset_1"));
+                frames.addAll(colorSet("textures/exposure/shipwreck/chromatic/deck_sunset_2"));
+
+                Exposure.DataComponents.setFilmFrames(filmStack, frames);
+                return filmStack;
+            }
+
+            protected ItemStack film2() {
+                ItemStack filmStack = Exposure.Items.BLACK_AND_WHITE_FILM.get().getDefaultInstance();
+                Exposure.DataComponents.setFilmFrameSize(filmStack,56);
+
+                List<Frame> frames = new ArrayList<>();
+
+                frames.addAll(colorSet("textures/exposure/shipwreck/chromatic/cargo_gold_1"));
+                frames.addAll(colorSet("textures/exposure/shipwreck/chromatic/cargo_gold_2"));
+                frames.addAll(colorSet("textures/exposure/shipwreck/chromatic/deck_sunset_3"));
+                frames.addAll(colorSet("textures/exposure/shipwreck/chromatic/deck_sunset_4"));
+
+                Exposure.DataComponents.setFilmFrames(filmStack, frames);
+                return filmStack;
+            }
+
+            List<Frame> colorSet(String s) {
+                List<Frame> frames = new ArrayList<>();
+                CompoundTag tagR = new CompoundTag();
+                tagR.putString("color_channel","red");
+
+                CompoundTag tagG = new CompoundTag();
+                tagG.putString("color_channel","green");
+
+                CompoundTag tagB = new CompoundTag();
+                tagB.putString("color_channel","blue");
+                frames.add(new Frame(
+                        ExposureIdentifier.texture(Exposure.resource(s+"_r.png")),
+                        ExposureType.BLACK_AND_WHITE,
+                        Photographer.EMPTY,
+                        Collections.emptyList(),
+                        new ExtraData(tagR)));
+
+                frames.add(new Frame(
+                        ExposureIdentifier.texture(Exposure.resource(s+"_g.png")),
+                        ExposureType.BLACK_AND_WHITE,
+                        Photographer.EMPTY,
+                        Collections.emptyList(),
+                        new ExtraData(tagG)));
+
+                frames.add(new Frame(
+                        ExposureIdentifier.texture(Exposure.resource(s+"_b.png")),
+                        ExposureType.BLACK_AND_WHITE,
+                        Photographer.EMPTY,
+                        Collections.emptyList(),
+                        new ExtraData(tagB)));
+                return frames;
+            }
+
         }
+
+
 
         @Override
         protected void validate(Map<ResourceLocation, LootTable> map, ValidationContext validationtracker) {

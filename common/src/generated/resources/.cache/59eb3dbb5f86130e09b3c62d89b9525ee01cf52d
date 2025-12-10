@@ -1,4 +1,5 @@
-// 1.20.1	2025-12-09T21:07:10.4084009	Loot Tables
+// 1.20.1	2025-12-09T23:56:10.2738878	Loot Tables
 7457f744cf066c960997302e1a4fca20da9687ed data/exposure/loot_tables/blocks/lightroom.json
 9567849aa58371c101e29f60a9331148e8919d27 data/exposure/loot_tables/chests/abandoned_mineshaft.json
+5103ccd4af15a2425249cfe50bdd0b9808893eb8 data/exposure/loot_tables/chests/shipwreck_map.json
 6e8c70a36761208e33c516fca850c0ccf049c029 data/exposure/loot_tables/chests/simple_dungeon.json

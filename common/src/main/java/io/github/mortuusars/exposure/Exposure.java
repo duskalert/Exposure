@@ -558,6 +558,10 @@ public class Exposure {
             return getInt(stack,"film_frame_size");
         }
 
+        public static void setFilmFrameSize(ItemStack stack,int filmFrameSize) {
+            setInt(stack,"film_frame_size",filmFrameSize);
+        }
+
         public static int getFilmFrameSize(ItemStack stack,int fallback) {
             Integer filmFrameSize = getInt(stack, "film_frame_size");
             return filmFrameSize == null ? fallback : filmFrameSize;
