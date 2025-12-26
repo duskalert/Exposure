@@ -440,263 +440,164 @@ public class ExposureDatagen {
                                             )
                                     )
                     );
-                    //{
-                    //  "type": "minecraft:chest",
-                    //  "pools": [
-                    //    {
-                    //      "rolls": 1,
-                    //      "entries": [
-                    //        {
-                    //          "type": "minecraft:item",
-                    //          "name": "exposure:black_and_white_film",
-                    //          "functions": [
-                    //            {
-                    //              "function": "minecraft:set_components",
-                    //              "components": {
-                    //                "exposure:film_frame_size": 56,
-                    //                "exposure:film_frames": [
-                    //                  {
-                    //                    "identifier": {
-                    //                      "texture": "exposure:textures/exposure/shipwreck/chromatic/cargo_crates_r.png"
-                    //                    },
-                    //                    "type": "black_and_white",
-                    //                    "extra_data": {
-                    //                      "color_channel": "red"
-                    //                    }
-                    //                  },
-                    //                  {
-                    //                    "identifier": {
-                    //                      "texture": "exposure:textures/exposure/shipwreck/chromatic/cargo_crates_g.png"
-                    //                    },
-                    //                    "type": "black_and_white",
-                    //                    "extra_data": {
-                    //                      "color_channel": "green"
-                    //                    }
-                    //                  },
-                    //                  {
-                    //                    "identifier": {
-                    //                      "texture": "exposure:textures/exposure/shipwreck/chromatic/cargo_crates_b.png"
-                    //                    },
-                    //                    "type": "black_and_white",
-                    //                    "extra_data": {
-                    //                      "color_channel": "blue"
-                    //                    }
-                    //                  },
-                    //                  {
-                    //                    "identifier": {
-                    //                      "texture": "exposure:textures/exposure/shipwreck/chromatic/deck_sunset_1_r.png"
-                    //                    },
-                    //                    "type": "black_and_white",
-                    //                    "extra_data": {
-                    //                      "color_channel": "red"
-                    //                    }
-                    //                  },
-                    //                  {
-                    //                    "identifier": {
-                    //                      "texture": "exposure:textures/exposure/shipwreck/chromatic/deck_sunset_1_g.png"
-                    //                    },
-                    //                    "type": "black_and_white",
-                    //                    "extra_data": {
-                    //                      "color_channel": "green"
-                    //                    }
-                    //                  },
-                    //                  {
-                    //                    "identifier": {
-                    //                      "texture": "exposure:textures/exposure/shipwreck/chromatic/deck_sunset_1_b.png"
-                    //                    },
-                    //                    "type": "black_and_white",
-                    //                    "extra_data": {
-                    //                      "color_channel": "blue"
-                    //                    }
-                    //                  },
-                    //                  {
-                    //                    "identifier": {
-                    //                      "texture": "exposure:textures/exposure/shipwreck/chromatic/deck_sunset_2_r.png"
-                    //                    },
-                    //                    "type": "black_and_white",
-                    //                    "extra_data": {
-                    //                      "color_channel": "red"
-                    //                    }
-                    //                  },
-                    //                  {
-                    //                    "identifier": {
-                    //                      "texture": "exposure:textures/exposure/shipwreck/chromatic/deck_sunset_2_g.png"
-                    //                    },
-                    //                    "type": "black_and_white",
-                    //                    "extra_data": {
-                    //                      "color_channel": "green"
-                    //                    }
-                    //                  },
-                    //                  {
-                    //                    "identifier": {
-                    //                      "texture": "exposure:textures/exposure/shipwreck/chromatic/deck_sunset_2_b.png"
-                    //                    },
-                    //                    "type": "black_and_white",
-                    //                    "extra_data": {
-                    //                      "color_channel": "blue"
-                    //                    }
-                    //                  }
-                    //                ]
-                    //              }
-                    //            }
-                    //          ]
-                    //        },
-                    //        {
-                    //          "type": "minecraft:item",
-                    //          "name": "exposure:black_and_white_film",
-                    //          "functions": [
-                    //            {
-                    //              "function": "minecraft:set_components",
-                    //              "components": {
-                    //                "exposure:film_frame_size": 56,
-                    //                "exposure:film_frames": [
-                    //                  {
-                    //                    "identifier": {
-                    //                      "texture": "exposure:textures/exposure/shipwreck/chromatic/cargo_gold_1_r.png"
-                    //                    },
-                    //                    "type": "black_and_white",
-                    //                    "extra_data": {
-                    //                      "color_channel": "red"
-                    //                    }
-                    //                  },
-                    //                  {
-                    //                    "identifier": {
-                    //                      "texture": "exposure:textures/exposure/shipwreck/chromatic/cargo_gold_1_g.png"
-                    //                    },
-                    //                    "type": "black_and_white",
-                    //                    "extra_data": {
-                    //                      "color_channel": "green"
-                    //                    }
-                    //                  },
-                    //                  {
-                    //                    "identifier": {
-                    //                      "texture": "exposure:textures/exposure/shipwreck/chromatic/cargo_gold_1_b.png"
-                    //                    },
-                    //                    "type": "black_and_white",
-                    //                    "extra_data": {
-                    //                      "color_channel": "blue"
-                    //                    }
-                    //                  },
-                    //                  {
-                    //                    "identifier": {
-                    //                      "texture": "exposure:textures/exposure/shipwreck/chromatic/cargo_gold_2_r.png"
-                    //                    },
-                    //                    "type": "black_and_white",
-                    //                    "extra_data": {
-                    //                      "color_channel": "red"
-                    //                    }
-                    //                  },
-                    //                  {
-                    //                    "identifier": {
-                    //                      "texture": "exposure:textures/exposure/shipwreck/chromatic/cargo_gold_2_g.png"
-                    //                    },
-                    //                    "type": "black_and_white",
-                    //                    "extra_data": {
-                    //                      "color_channel": "green"
-                    //                    }
-                    //                  },
-                    //                  {
-                    //                    "identifier": {
-                    //                      "texture": "exposure:textures/exposure/shipwreck/chromatic/cargo_gold_2_b.png"
-                    //                    },
-                    //                    "type": "black_and_white",
-                    //                    "extra_data": {
-                    //                      "color_channel": "blue"
-                    //                    }
-                    //                  },
-                    //                  {
-                    //                    "identifier": {
-                    //                      "texture": "exposure:textures/exposure/shipwreck/chromatic/deck_sunset_3_r.png"
-                    //                    },
-                    //                    "type": "black_and_white",
-                    //                    "extra_data": {
-                    //                      "color_channel": "red"
-                    //                    }
-                    //                  },
-                    //                  {
-                    //                    "identifier": {
-                    //                      "texture": "exposure:textures/exposure/shipwreck/chromatic/deck_sunset_3_g.png"
-                    //                    },
-                    //                    "type": "black_and_white",
-                    //                    "extra_data": {
-                    //                      "color_channel": "green"
-                    //                    }
-                    //                  },
-                    //                  {
-                    //                    "identifier": {
-                    //                      "texture": "exposure:textures/exposure/shipwreck/chromatic/deck_sunset_3_b.png"
-                    //                    },
-                    //                    "type": "black_and_white",
-                    //                    "extra_data": {
-                    //                      "color_channel": "blue"
-                    //                    }
-                    //                  },
-                    //                  {
-                    //                    "identifier": {
-                    //                      "texture": "exposure:textures/exposure/shipwreck/chromatic/deck_sunset_4_r.png"
-                    //                    },
-                    //                    "type": "black_and_white",
-                    //                    "extra_data": {
-                    //                      "color_channel": "red"
-                    //                    }
-                    //                  },
-                    //                  {
-                    //                    "identifier": {
-                    //                      "texture": "exposure:textures/exposure/shipwreck/chromatic/deck_sunset_4_g.png"
-                    //                    },
-                    //                    "type": "black_and_white",
-                    //                    "extra_data": {
-                    //                      "color_channel": "green"
-                    //                    }
-                    //                  },
-                    //                  {
-                    //                    "identifier": {
-                    //                      "texture": "exposure:textures/exposure/shipwreck/chromatic/deck_sunset_4_b.png"
-                    //                    },
-                    //                    "type": "black_and_white",
-                    //                    "extra_data": {
-                    //                      "color_channel": "blue"
-                    //                    }
-                    //                  }
-                    //                ]
-                    //              }
-                    //            }
-                    //          ]
-                    //        }
-                    //      ],
-                    //      "conditions": [
-                    //        {
-                    //          "condition": "minecraft:random_chance",
-                    //          "chance": 0.15
-                    //        }
-                    //      ]
-                    //    },
-                    //    {
-                    //      "rolls": 2,
-                    //      "entries": [
-                    //        {
-                    //          "type": "minecraft:item",
-                    //          "name": "minecraft:red_stained_glass_pane"
-                    //        },
-                    //        {
-                    //          "type": "minecraft:item",
-                    //          "name": "minecraft:green_stained_glass_pane"
-                    //        },
-                    //        {
-                    //          "type": "minecraft:item",
-                    //          "name": "minecraft:blue_stained_glass_pane"
-                    //        }
-                    //      ],
-                    //      "conditions": [
-                    //        {
-                    //          "condition": "minecraft:random_chance",
-                    //          "chance": 0.3
-                    //        }
-                    //      ]
-                    //    }
-                    //  ]
-                    //}
                 }
+
+                ItemStack photoCorridor1 = Exposure.Items.AGED_PHOTOGRAPH.get().getDefaultInstance();
+
+                Exposure.DataComponents.setPhotographFrame(photoCorridor1,new Frame(ExposureIdentifier.texture(
+                    Exposure.resource("textures/exposure/stronghold/corridor_1.png")),
+                    ExposureType.COLOR,
+                    Photographer.EMPTY,
+                    Collections.emptyList(),
+                    ExtraData.EMPTY));
+
+                ItemStack photoCorridor2 = Exposure.Items.AGED_PHOTOGRAPH.get().getDefaultInstance();
+
+                Exposure.DataComponents.setPhotographFrame(photoCorridor2,new Frame(ExposureIdentifier.texture(
+                        Exposure.resource("textures/exposure/stronghold/corridor_2.png")),
+                        ExposureType.COLOR,
+                        Photographer.EMPTY,
+                        Collections.emptyList(),
+                        ExtraData.EMPTY));
+
+                ItemStack photoCorridor3 = Exposure.Items.AGED_PHOTOGRAPH.get().getDefaultInstance();
+
+                Exposure.DataComponents.setPhotographFrame(photoCorridor3,new Frame(ExposureIdentifier.texture(
+                        Exposure.resource("textures/exposure/stronghold/corridor_3.png")),
+                        ExposureType.COLOR,
+                        Photographer.EMPTY,
+                        Collections.emptyList(),
+                        ExtraData.EMPTY));
+
+                ItemStack photoCorridor4 = Exposure.Items.AGED_PHOTOGRAPH.get().getDefaultInstance();
+
+                Exposure.DataComponents.setPhotographFrame(photoCorridor4,new Frame(ExposureIdentifier.texture(
+                        Exposure.resource("textures/exposure/stronghold/corridor_4.png")),
+                        ExposureType.COLOR,
+                        Photographer.EMPTY,
+                        Collections.emptyList(),
+                        ExtraData.EMPTY));
+
+                biConsumer.accept(Exposure.LootTables.STRONGHOLD_CROSSING_INJECT,
+                        LootTable.lootTable().withPool(LootPool.lootPool()
+                                .setRolls(ConstantValue.exactly(1.0F))
+                                .add(
+                                        LootItem.lootTableItem(photoCorridor1.getItem())
+                                        .apply(SetNbtFunction.setTag(photoCorridor1.getTag()))
+                                )
+                                .add(
+                                        LootItem.lootTableItem(photoCorridor2.getItem())
+                                                .apply(SetNbtFunction.setTag(photoCorridor2.getTag()))
+                                )
+                                .add(
+                                        LootItem.lootTableItem(photoCorridor3.getItem())
+                                                .apply(SetNbtFunction.setTag(photoCorridor3.getTag()))
+                                )
+                                .add(
+                                        LootItem.lootTableItem(photoCorridor4.getItem())
+                                                .apply(SetNbtFunction.setTag(photoCorridor4.getTag()))
+                                )
+                                .when(LootItemRandomChanceCondition.randomChance(.3f)
+                                )
+                        )
+                );
+
+
+                ItemStack photoVillageAttack1 = Exposure.Items.AGED_PHOTOGRAPH.get().getDefaultInstance();
+
+                Exposure.DataComponents.setPhotographFrame(photoVillageAttack1,new Frame(ExposureIdentifier.texture(
+                        Exposure.resource("textures/exposure/village/attack_1.png")),
+                        ExposureType.COLOR,
+                        Photographer.EMPTY,
+                        Collections.emptyList(),
+                        ExtraData.EMPTY));
+
+                ItemStack photoVillageAttack2 = Exposure.Items.AGED_PHOTOGRAPH.get().getDefaultInstance();
+
+                Exposure.DataComponents.setPhotographFrame(photoVillageAttack2,new Frame(ExposureIdentifier.texture(
+                        Exposure.resource("textures/exposure/village/attack_2.png")),
+                        ExposureType.COLOR,
+                        Photographer.EMPTY,
+                        Collections.emptyList(),
+                        ExtraData.EMPTY));
+
+                //////////
+
+                ItemStack photoVillage1 = Exposure.Items.AGED_PHOTOGRAPH.get().getDefaultInstance();
+
+                Exposure.DataComponents.setPhotographFrame(photoVillage1,new Frame(ExposureIdentifier.texture(
+                        Exposure.resource("textures/exposure/village/village_1.png")),
+                        ExposureType.COLOR,
+                        Photographer.EMPTY,
+                        Collections.emptyList(),
+                        ExtraData.EMPTY));
+
+                ItemStack photoVillage2 = Exposure.Items.AGED_PHOTOGRAPH.get().getDefaultInstance();
+
+                Exposure.DataComponents.setPhotographFrame(photoVillage2,new Frame(ExposureIdentifier.texture(
+                        Exposure.resource("textures/exposure/village/village_2.png")),
+                        ExposureType.COLOR,
+                        Photographer.EMPTY,
+                        Collections.emptyList(),
+                        ExtraData.EMPTY));
+
+
+                ItemStack photoVillage3 = Exposure.Items.AGED_PHOTOGRAPH.get().getDefaultInstance();
+
+                Exposure.DataComponents.setPhotographFrame(photoVillage3,new Frame(ExposureIdentifier.texture(
+                        Exposure.resource("textures/exposure/village/village_3.png")),
+                        ExposureType.COLOR,
+                        Photographer.EMPTY,
+                        Collections.emptyList(),
+                        ExtraData.EMPTY));
+
+                ItemStack photoVillage4 = Exposure.Items.AGED_PHOTOGRAPH.get().getDefaultInstance();
+
+                Exposure.DataComponents.setPhotographFrame(photoVillage4,new Frame(ExposureIdentifier.texture(
+                        Exposure.resource("textures/exposure/village/village_4.png")),
+                        ExposureType.COLOR,
+                        Photographer.EMPTY,
+                        Collections.emptyList(),
+                        ExtraData.EMPTY));
+
+                biConsumer.accept(Exposure.LootTables.VILLAGE_PLAINS_HOUSE_INJECT,
+                        LootTable.lootTable().withPool(LootPool.lootPool()
+                                .setRolls(ConstantValue.exactly(1.0F))
+                                .add(
+                                        LootItem.lootTableItem(photoVillage1.getItem())
+                                                .apply(SetNbtFunction.setTag(photoVillage1.getTag()))
+                                )
+                                .add(
+                                        LootItem.lootTableItem(photoVillage2.getItem())
+                                                .apply(SetNbtFunction.setTag(photoVillage2.getTag()))
+                                )
+                                .add(
+                                        LootItem.lootTableItem(photoVillage3.getItem())
+                                                .apply(SetNbtFunction.setTag(photoVillage3.getTag()))
+                                )
+                                .add(
+                                        LootItem.lootTableItem(photoVillage4.getItem())
+                                                .apply(SetNbtFunction.setTag(photoVillage4.getTag()))
+                                )
+                                .when(LootItemRandomChanceCondition.randomChance(.3f)
+                                )
+                        )
+                                .withPool(
+                                        LootPool.lootPool()
+                                                .setRolls(ConstantValue.exactly(1.0F))
+                                                .add(
+                                                        LootItem.lootTableItem(photoVillageAttack1.getItem())
+                                                                .apply(SetNbtFunction.setTag(photoVillageAttack1.getTag()))
+                                                )
+                                                .add(
+                                                        LootItem.lootTableItem(photoVillageAttack2.getItem())
+                                                                .apply(SetNbtFunction.setTag(photoVillageAttack2.getTag()))
+                                                )
+                                                .when(LootItemRandomChanceCondition.randomChance(.15f)
+                                                )
+                                )
+                );
+
             }
             protected ItemStack film1() {
                 ItemStack filmStack = Exposure.Items.BLACK_AND_WHITE_FILM.get().getDefaultInstance();

@@ -1,0 +1,58 @@
+{
+  "type": "minecraft:chest",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "chance": 0.3,
+          "condition": "minecraft:random_chance"
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{\"exposure:photograph_frame\":{identifier:{texture:\"exposure:textures/exposure/stronghold/corridor_1.png\"}}}"
+            }
+          ],
+          "name": "exposure:aged_photograph"
+        },
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{\"exposure:photograph_frame\":{identifier:{texture:\"exposure:textures/exposure/stronghold/corridor_2.png\"}}}"
+            }
+          ],
+          "name": "exposure:aged_photograph"
+        },
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{\"exposure:photograph_frame\":{identifier:{texture:\"exposure:textures/exposure/stronghold/corridor_3.png\"}}}"
+            }
+          ],
+          "name": "exposure:aged_photograph"
+        },
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{\"exposure:photograph_frame\":{identifier:{texture:\"exposure:textures/exposure/stronghold/corridor_4.png\"}}}"
+            }
+          ],
+          "name": "exposure:aged_photograph"
+        }
+      ],
+      "rolls": 1.0
+    }
+  ],
+  "random_sequence": "exposure:chests/stronghold_crossing"
+}
