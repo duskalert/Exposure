@@ -13,7 +13,6 @@
     "client.EntityMixin",
     "client.ExposureLightTextureMixin",
     "client.GameRendererMixin",
-    "client.GuiMixin",
     "client.HumanoidModelMixin",
     "client.ItemFrameRendererMixin",
     "client.ItemInHandRendererMixin",
