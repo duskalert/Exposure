@@ -39,19 +39,19 @@ import java.util.function.Function;
 
 public class ViewfinderCameraControlsScreen extends Screen {
     public static final ModWidgetSprites SHUTTER_SPEED_SPRITES = ModWidgetSprites.withPrefix(
-            Exposure.resource("camera_controls/shutter_speed_dial.png"),
-            Exposure.resource("camera_controls/shutter_speed_dial_disabled.png"),
-            Exposure.resource("camera_controls/shutter_speed_dial_highlighted.png"));
+            Exposure.resource("camera_controls/shutter_speed_dial"),
+            Exposure.resource("camera_controls/shutter_speed_dial_disabled"),
+            Exposure.resource("camera_controls/shutter_speed_dial_highlighted"),69,12);
 
     public static final ModWidgetSprites FOCAL_LENGTH_SPRITES = ModWidgetSprites.withPrefix(
-            Exposure.resource("camera_controls/focal_length.png"),
-            Exposure.resource("camera_controls/focal_length_disabled.png"),
-            Exposure.resource("camera_controls/focal_length_highlighted.png"));
+            Exposure.resource("camera_controls/focal_length"),
+            Exposure.resource("camera_controls/focal_length_disabled"),
+            Exposure.resource("camera_controls/focal_length_highlighted"),49,18);
 
     public static final ModWidgetSprites FRAME_COUNTER_SPRITES = ModWidgetSprites.withPrefix(
-            Exposure.resource("camera_controls/frame_counter.png"),
-            Exposure.resource("camera_controls/frame_counter_disabled.png"),
-            Exposure.resource("camera_controls/frame_counter_highlighted.png"));
+            Exposure.resource("camera_controls/frame_counter"),
+            Exposure.resource("camera_controls/frame_counter_disabled"),
+            Exposure.resource("camera_controls/frame_counter_highlighted"),49,18);
 
     public static final ResourceLocation SEPARATOR_SPRITE = Exposure.resource("textures/gui/sprites/camera_controls/button_separator.png");
 
@@ -181,7 +181,7 @@ public class ViewfinderCameraControlsScreen extends Screen {
         List<SelfTimer> values = Arrays.asList(SelfTimer.values());
         SelfTimer currentValue = camera.map(CameraSettings.SELF_TIMER::getOrDefault, SelfTimer.OFF);
         Function<SelfTimer, ModWidgetSprites> spritesFunc = mode -> Widgets.threeStateSprites(
-                Exposure.resource("textures/gui/sprites/camera_controls/self_timer/timer_" + mode.getSerializedName()+".png"));
+                Exposure.resource("camera_controls/self_timer/timer_" + mode.getSerializedName()));
 
         return new CycleButton<>(0, 0, BUTTON_WIDTH, BUTTON_HEIGHT, values, currentValue, spritesFunc)
                 .setDefaultTooltip(Tooltip.create(Component.translatable("gui.exposure.camera_controls.self_timer.tooltip")))

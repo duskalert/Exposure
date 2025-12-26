@@ -5,10 +5,10 @@ import io.github.mortuusars.exposure.ModWidgetSprites;
 import net.minecraft.resources.ResourceLocation;
 
 public class AlbumGUI {
-    public static final ModWidgetSprites PREVIOUS_PAGE_BUTTON_SPRITES = new ModWidgetSprites(
-            Exposure.resource("album/previous_page"), Exposure.resource("album/previous_page_highlighted"));
-    public static final ModWidgetSprites NEXT_PAGE_BUTTON_SPRITES = new ModWidgetSprites(
-            Exposure.resource("album/next_page"), Exposure.resource("album/next_page_highlighted"));
+    public static final ModWidgetSprites PREVIOUS_PAGE_BUTTON_SPRITES = ModWidgetSprites.withPrefix(
+            Exposure.resource("album/previous_page"), Exposure.resource("album/previous_page_highlighted"),13,15);
+    public static final ModWidgetSprites NEXT_PAGE_BUTTON_SPRITES = ModWidgetSprites.withPrefix(
+            Exposure.resource("album/next_page"), Exposure.resource("album/next_page_highlighted"),13,15);
 
     public static final ResourceLocation TEXTURE = Exposure.resource("textures/gui/album.png");
 }

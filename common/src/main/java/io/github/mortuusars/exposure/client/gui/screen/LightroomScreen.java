@@ -58,18 +58,18 @@ public class LightroomScreen extends AbstractContainerScreen<LightroomMenu> {
     public static final ResourceLocation MAIN_TEXTURE = Exposure.resource("textures/gui/lightroom.png");
     public static final ResourceLocation FILM_OVERLAYS_TEXTURE = Exposure.resource("textures/gui/lightroom_film_overlays.png");
 
-    public static final ModWidgetSprites PRINT_BUTTON_SPRITES = new ModWidgetSprites(
+    public static final ModWidgetSprites PRINT_BUTTON_SPRITES = ModWidgetSprites.withPrefix(
             Exposure.resource("lightroom/print_button"),
             Exposure.resource("lightroom/print_button_disabled"),
-            Exposure.resource("lightroom/print_button_highlighted"));
+            Exposure.resource("lightroom/print_button_highlighted"),22,22);
 
-    public static final ModWidgetSprites PRINTING_MODE_TOGGLE_REGULAR_SPRITES = new ModWidgetSprites(
+    public static final ModWidgetSprites PRINTING_MODE_TOGGLE_REGULAR_SPRITES = ModWidgetSprites.withPrefix(
             Exposure.resource("lightroom/printing_mode_regular"),
-            Exposure.resource("lightroom/printing_mode_regular_highlighted"));
+            Exposure.resource("lightroom/printing_mode_regular_highlighted"),18,18);
 
-    public static final ModWidgetSprites PRINTING_MODE_TOGGLE_CHROMATIC_SPRITES = new ModWidgetSprites(
+    public static final ModWidgetSprites PRINTING_MODE_TOGGLE_CHROMATIC_SPRITES = ModWidgetSprites.withPrefix(
             Exposure.resource("lightroom/printing_mode_chromatic"),
-            Exposure.resource("lightroom/printing_mode_chromatic_highlighted"));
+            Exposure.resource("lightroom/printing_mode_chromatic_highlighted"),18,18);
 
     public static final int FRAME_SIZE = 54;
 

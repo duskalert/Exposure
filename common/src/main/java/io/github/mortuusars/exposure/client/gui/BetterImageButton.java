@@ -28,6 +28,6 @@ public class BetterImageButton  extends Button {
 
         public void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
             ResourceLocation resourceLocation = this.sprites.get(this.isActive(), this.isHoveredOrFocused());
-            guiGraphics.blit(resourceLocation, this.getX(), this.getY(),0,0, this.width, this.height);
+            guiGraphics.blit(resourceLocation, this.getX(), this.getY(),0,0, this.width, this.height,width,height);
         }
     }

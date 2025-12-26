@@ -20,19 +20,10 @@ public class Widgets {
         return Exposure.resource("empty");
     }
 
-    public static ModWidgetSprites normalAndHighlighted(ResourceLocation base) {
-        return new ModWidgetSprites(base, base,
-                new ResourceLocation(base.getNamespace(), base.getPath() + "_highlighted"));
-    }
-
-    public static ModWidgetSprites normalAndHighlighted(ResourceLocation normal, ResourceLocation highlighted) {
-        return new ModWidgetSprites(normal, normal, highlighted);
-    }
-
     public static ModWidgetSprites threeStateSprites(ResourceLocation base) {
-        return new ModWidgetSprites(base,
+        return ModWidgetSprites.withPrefix(base,
                 new ResourceLocation(base.getNamespace(), base.getPath() + "_disabled"),
-                new ResourceLocation(base.getNamespace(), base.getPath() + "_highlighted"));
+                new ResourceLocation(base.getNamespace(), base.getPath() + "_highlighted"),15,18);
     }
 
     public static <T> Map<T, ModWidgetSprites> createMap(List<T> values, Function<T, ModWidgetSprites> convertFunc) {

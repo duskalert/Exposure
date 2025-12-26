@@ -29,10 +29,10 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public class PhotographSlotWidget extends AbstractWidget {
-    public static final ModWidgetSprites SPRITES = new ModWidgetSprites(
-            Exposure.resource("album/photograph_slot"), Exposure.resource("album/photograph_slot_highlighted"));
-    public static final ModWidgetSprites EMPTY_SPRITES = new ModWidgetSprites(
-            Exposure.resource("album/photograph_slot_empty"), Exposure.resource("album/photograph_slot_empty_highlighted"));
+    public static final ModWidgetSprites SPRITES = ModWidgetSprites.withPrefix(
+            Exposure.resource("album/photograph_slot"), Exposure.resource("album/photograph_slot_highlighted"),108,108);
+    public static final ModWidgetSprites EMPTY_SPRITES = ModWidgetSprites.withPrefix(
+            Exposure.resource("album/photograph_slot_empty"), Exposure.resource("album/photograph_slot_empty_highlighted"),108,108);
 
     private final Screen parent;
     protected final Supplier<ItemStack> photographSupplier;
