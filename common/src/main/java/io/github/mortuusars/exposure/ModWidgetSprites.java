@@ -11,6 +11,12 @@ public record ModWidgetSprites(ResourceLocation enabled, ResourceLocation disabl
         this(p_296152_, p_296020_, p_296073_, p_296020_);
     }
 
+    public static ModWidgetSprites withPrefix(ResourceLocation p_296152_, ResourceLocation p_296020_, ResourceLocation p_296073_) {
+        return new ModWidgetSprites(p_296152_.withPrefix("textures/gui/sprites/"),
+                p_296020_.withPrefix("textures/gui/sprites/"),
+                p_296073_.withPrefix("textures/gui/sprites/"));
+    }
+
     public ResourceLocation get(boolean enabled, boolean focused) {
         if (enabled) {
             return focused ? this.enabledFocused : this.enabled;
