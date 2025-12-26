@@ -6,6 +6,7 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.Sheets;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.resources.model.ModelResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
 public class GlassPhotographFrameEntityRenderer extends PhotographFrameEntityRenderer<GlassPhotographFrameEntity> {
@@ -14,7 +15,7 @@ public class GlassPhotographFrameEntityRenderer extends PhotographFrameEntityRen
     }
 
     @Override
-    public ModelResourceLocation getModelLocation(GlassPhotographFrameEntity entity, int size) {
+    public ResourceLocation getModelLocation(GlassPhotographFrameEntity entity, int size) {
         return switch (size) {
             case 0 -> ExposureClient.Models.CLEAR_PHOTOGRAPH_FRAME_SMALL;
             case 1 -> ExposureClient.Models.CLEAR_PHOTOGRAPH_FRAME_MEDIUM;

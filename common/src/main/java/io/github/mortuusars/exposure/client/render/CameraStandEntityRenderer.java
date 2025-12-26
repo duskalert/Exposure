@@ -68,7 +68,7 @@ public class CameraStandEntityRenderer <T extends CameraStandEntity> extends Ent
 
         poseStack.translate(-0.5f, 0f, -0.5f);
 
-        ModelResourceLocation modelLocation = ExposureClient.Models.CAMERA_STAND;
+        ResourceLocation modelLocation = ExposureClient.Models.CAMERA_STAND;
         BakedModel model = PlatformHelperClient.getModel(modelLocation);
         blockRenderer.getModelRenderer().renderModel(poseStack.last(), bufferSource.getBuffer(RenderType.solid()),
                 null, model, 1.0f, 1.0f, 1.0f, packedLight, OverlayTexture.NO_OVERLAY);
@@ -90,7 +90,7 @@ public class CameraStandEntityRenderer <T extends CameraStandEntity> extends Ent
         }
 
         poseStack.translate(-0.5f, 0f, -0.5f);
-        ModelResourceLocation mountModelLocation = ExposureClient.Models.CAMERA_STAND_MOUNT;
+        ResourceLocation mountModelLocation = ExposureClient.Models.CAMERA_STAND_MOUNT;
         BakedModel mountModel = PlatformHelperClient.getModel(mountModelLocation);
         blockRenderer.getModelRenderer().renderModel(poseStack.last(), bufferSource.getBuffer(RenderType.solid()),
                 null, mountModel, 1.0f, 1.0f, 1.0f, packedLight, OverlayTexture.NO_OVERLAY);

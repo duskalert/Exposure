@@ -46,7 +46,7 @@ public class PhotographFrameEntityRenderer<T extends PhotographFrameEntity> exte
         return InventoryMenu.BLOCK_ATLAS;
     }
 
-    public ModelResourceLocation getModelLocation(T entity, int size) {
+    public ResourceLocation getModelLocation(T entity, int size) {
         return switch (size) {
             case 0 -> ExposureClient.Models.PHOTOGRAPH_FRAME_SMALL;
             case 1 -> ExposureClient.Models.PHOTOGRAPH_FRAME_MEDIUM;
@@ -110,7 +110,7 @@ public class PhotographFrameEntityRenderer<T extends PhotographFrameEntity> exte
                              int packedLight, int size) {
         poseStack.pushPose();
         poseStack.translate(-0.5f, -0.5f, -0.5f);
-        ModelResourceLocation modelLocation = getModelLocation(entity, size);
+        ResourceLocation modelLocation = getModelLocation(entity, size);
         BakedModel model = PlatformHelperClient.getModel(modelLocation);
         blockRenderer.getModelRenderer().renderModel(poseStack.last(), bufferSource.getBuffer(getRenderType()),
                 null, model, 1.0f, 1.0f, 1.0f, packedLight, OverlayTexture.NO_OVERLAY);

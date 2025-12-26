@@ -7,7 +7,7 @@ import net.minecraft.resources.ResourceLocation;
 
 public class PlatformHelperClient {
     @ExpectPlatform
-    public static BakedModel getModel(ModelResourceLocation model) {
+    public static BakedModel getModel(ResourceLocation model) {
         throw new AssertionError();
     }
 }
