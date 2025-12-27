@@ -118,7 +118,7 @@ public class PhotographSlotWidget extends AbstractWidget {
         if (!editable && !hasPhotograph) {
             resourceLocation = sprites.get(isActive(), false);
         }
-        guiGraphics.blit(resourceLocation, getX(), getY(),0,0, width, height);
+        guiGraphics.blit(resourceLocation, getX(), getY(),0,0,width,height, sprites.width(), sprites.height());
     }
 
     public void renderTooltip(GuiGraphics guiGraphics, int mouseX, int mouseY) {

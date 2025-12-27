@@ -141,6 +141,7 @@ public class CameraAttachmentsScreen extends AbstractContainerScreen<AbstractCam
 
     @Override
     public void render(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+        this.renderBackground(guiGraphics);
         super.render(guiGraphics, mouseX, mouseY, partialTick);
 
         // Disabled slot overlay

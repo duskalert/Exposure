@@ -5,6 +5,8 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.datafixers.util.Either;
 import io.github.mortuusars.exposure.Config;
 import io.github.mortuusars.exposure.Exposure;
+import io.github.mortuusars.exposure.ModWidgetSprites;
+import io.github.mortuusars.exposure.client.gui.BetterImageButton;
 import io.github.mortuusars.exposure.client.gui.screen.element.Pager;
 import io.github.mortuusars.exposure.client.gui.screen.element.TextBlock;
 import io.github.mortuusars.exposure.client.gui.screen.element.textbox.HorizontalAlignment;
@@ -51,6 +53,9 @@ public class AlbumScreen extends AbstractContainerScreen<AlbumMenu> {
 
     public static final ResourceLocation TEXTURE = Exposure.resource("textures/gui/album.png");
 
+    public static final ModWidgetSprites SIGN_BUTTON_SPRITES = ModWidgetSprites.withPrefix(
+            Exposure.resource("album/sign"), Exposure.resource("album/sign_disabled"), Exposure.resource("album/sign_highlighted"),22,22);
+
     protected final Pager pager = new Pager()
             .setChangeSound(new SoundEffect(() -> SoundEvents.BOOK_PAGE_TURN))
             .onPageChanged((oldPage, newPage) -> clickButton(PagingDirection.fromChange(oldPage, newPage).ordinal()));
@@ -88,8 +93,8 @@ public class AlbumScreen extends AbstractContainerScreen<AlbumMenu> {
         Page leftPage = createPage(Side.LEFT, 0);
         pages.add(leftPage);
 
-        ImageButton previousPageButton = new ImageButton(leftPos + 12, topPos + 164, 13, 15,
-                216, 188, 15, TEXTURE, 512, 512,
+        BetterImageButton previousPageButton = new BetterImageButton(leftPos + 12, topPos + 164, 13, 15,
+                AlbumGUI.PREVIOUS_PAGE_BUTTON_SPRITES,
                 button -> pager.changePage(PagingDirection.PREVIOUS), Component.translatable("gui.exposure.previous_page"));
         previousPageButton.setTooltip(Tooltip.create(Component.translatable("gui.exposure.previous_page")));
         addRenderableWidget(previousPageButton);
@@ -98,16 +103,16 @@ public class AlbumScreen extends AbstractContainerScreen<AlbumMenu> {
         Page rightPage = createPage(Side.RIGHT, 140);
         pages.add(rightPage);
 
-        ImageButton nextPageButton = new ImageButton(leftPos + 273, topPos + 164, 13, 15,
-                229, 188, 15, TEXTURE, 512, 512,
+        BetterImageButton nextPageButton = new BetterImageButton(leftPos + 273, topPos + 164, 13, 15,
+                AlbumGUI.NEXT_PAGE_BUTTON_SPRITES,
                 button -> pager.changePage(PagingDirection.NEXT), Component.translatable("gui.exposure.next_page"));
         nextPageButton.setTooltip(Tooltip.create(Component.translatable("gui.exposure.next_page")));
         addRenderableWidget(nextPageButton);
 
         // MISC:
         if (getMenu().isAlbumEditable()) {
-            enterSignModeButton = new ImageButton(leftPos - 23, topPos + 17, 22, 22,242,188,
-                    22, TEXTURE, 512, 512,
+            enterSignModeButton = new BetterImageButton(leftPos - 23, topPos + 17, 22, 22,
+                    SIGN_BUTTON_SPRITES,
                     b -> enterSignMode(), Component.translatable("gui.exposure.album.sign"));
             enterSignModeButton.setTooltip(Tooltip.create(Component.translatable("gui.exposure.album.sign")));
             addRenderableWidget(enterSignModeButton);
