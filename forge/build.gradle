@@ -58,13 +58,18 @@ dependencies {
     //runtimeOnly("curse.maven:refined-storage-243076:6391989")
     //runtimeOnly("maven.modrinth:DistantHorizons:2.3.0-b-1.21.1")
 
-    common(project(path: ":common", configuration: "namedElements")) { transitive false }
+    //common(project(path: ":common", configuration: "namedElements")) { transitive false }
+    common(project(path: ':common', configuration: 'namedElements')) { transitive = false }
     //shadowCommon(project(path: ":common", configuration: "transformProductionForge")) { transitive = false }
     shadowBundle project(path: ':common', configuration: 'transformProductionForge')
 }
 
 loom {
     accessWidenerPath.set(project(":common").loom.accessWidenerPath)
+    forge {
+        mixinConfig "exposure-common.mixins.json"
+        mixinConfig "exposure-forge.mixins.json"
+    }
 
     runs {
         create("client2") {
@@ -98,5 +103,8 @@ shadowJar {
 }*/
 
 remapJar {
+    injectAccessWidener = true
+    atAccessWideners.add(loom.accessWidenerPath.get().asFile.name)
     inputFile.set shadowJar.archiveFile
+    dependsOn shadowJar
 }

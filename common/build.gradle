@@ -9,11 +9,8 @@ loom {
 configurations {
     create("junit")
 }
-sourceSets {
-    main {
-        resources.srcDir file("src/generated/resources")
-    }
-}
+
+sourceSets.main.resources.srcDir 'src/generated/resources'
 
 dependencies {
     // We depend on Fabric Loader here to use the Fabric @Environment annotations,
