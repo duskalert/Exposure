@@ -1,11 +1,9 @@
 {
   "type": "exposure:photograph_copying",
   "photograph": {
-    "type": "neoforge:components",
-    "items": "exposure:photograph",
-    "components": {
-      "exposure:photograph_type": "black_and_white"
-    }
+    "type": "forge:partial_nbt",
+    "item": "exposure:photograph",
+    "nbt": "{Type:\"black_and_white\"}"
   },
   "ingredients": [
     {
@@ -16,6 +14,6 @@
     }
   ],
   "result": {
-    "id": "exposure:photograph"
+    "item": "exposure:photograph"
   }
 }

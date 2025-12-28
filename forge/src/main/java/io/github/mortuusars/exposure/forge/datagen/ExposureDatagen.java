@@ -242,7 +242,7 @@ public class ExposureDatagen {
                     .with(Exposure.Tags.Items.YELLOW_PRINTING_DYES)
                     .with(Exposure.Tags.Items.CYAN_PRINTING_DYES)
                     .with(Exposure.Tags.Items.MAGENTA_PRINTING_DYES)
-                    .save(writer);
+                    .save(writer,Exposure.resource("photograph_copying"));
 
             ShapedRecipeBuilder.shaped(RecipeCategory.MISC,Exposure.Items.PHOTOGRAPH_FRAME.get())
                     .define('P', ItemTags.PLANKS)
