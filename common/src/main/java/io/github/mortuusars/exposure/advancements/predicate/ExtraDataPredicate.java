@@ -16,6 +16,8 @@ public record ExtraDataPredicate(ExtraData data) {
     public static final Codec<ExtraDataPredicate> CODEC = ExtraData.CODEC.xmap(ExtraDataPredicate::new, ExtraDataPredicate::data);/*TagParser.LENIENT_CODEC.xmap(
             tag -> new ExtraDataPredicate(new ExtraData(tag)),
             predicate -> predicate.data);*/
+
+    public static final ExtraDataPredicate ANY = new ExtraDataPredicate(null);
     public void toPacket(FriendlyByteBuf buf) {
         data.toPacket(buf);
     }

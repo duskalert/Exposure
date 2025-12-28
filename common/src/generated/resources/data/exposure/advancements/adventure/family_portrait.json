@@ -1,22 +1,12 @@
 {
   "parent": "exposure:adventure/exposure",
   "criteria": {
-    "take_selfie": {
+    "captured_entities": {
       "conditions": {
         "frame": {
           "day_time": {},
-          "entities_in_frame": [
-            {
-              "type": "minecraft:player"
-            }
-          ],
-          "entities_in_frame_count": {
-            "max": 1,
-            "min": 1
-          },
-          "extra_data": {
-            "selfie": 1
-          },
+          "entities_in_frame": [],
+          "entities_in_frame_count": {},
           "focal_length": {},
           "light_level": {}
         }
@@ -27,21 +17,21 @@
   "display": {
     "announce_to_chat": true,
     "description": {
-      "translate": "advancement.exposure.spotlight.description"
+      "translate": "advancement.exposure.family_portrait.description"
     },
     "frame": "task",
     "hidden": false,
     "icon": {
-      "item": "minecraft:player_head"
+      "item": "exposure:photograph"
     },
     "show_toast": true,
     "title": {
-      "translate": "advancement.exposure.spotlight.title"
+      "translate": "advancement.exposure.family_portrait.title"
     }
   },
   "requirements": [
     [
-      "take_selfie"
+      "captured_entities"
     ]
   ],
   "sends_telemetry_event": true

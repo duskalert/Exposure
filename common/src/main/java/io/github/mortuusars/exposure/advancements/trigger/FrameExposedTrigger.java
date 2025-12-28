@@ -140,6 +140,15 @@ public class FrameExposedTrigger extends SimpleCriterionTrigger<FrameExposedTrig
             JsonObject jsonObject = super.serializeToJson(context);
             jsonObject.add("camera",camera.serializeToJson());
             jsonObject.add("frame",frame.serializeToJson());
+            jsonObject.add("location_in_frame",locationInFrame.serializeToJson());
+            if (!entitiesInFrame.isEmpty()) {
+                JsonArray jsonArray = new JsonArray();
+                for (ContextAwarePredicate contextAwarePredicate : entitiesInFrame) {
+                    jsonArray.add(contextAwarePredicate.toJson(context));
+                }
+                jsonObject.add("entities_in_frame",locationInFrame.serializeToJson());
+            }
+
             return jsonObject;
         }
 

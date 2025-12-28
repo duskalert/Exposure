@@ -18,6 +18,8 @@ public record ShutterSpeedPredicate(Optional<ShutterSpeed> min, Optional<Shutter
                 return DataResult.error(() -> predicate + " is not exact.");
             });
 
+    public static final ShutterSpeedPredicate ANY = new ShutterSpeedPredicate(Optional.empty(),Optional.empty());
+
     public static final Codec<ShutterSpeedPredicate> FULL_CODEC = RecordCodecBuilder.create(instance -> instance.group(
             ShutterSpeed.CODEC.optionalFieldOf("min").forGetter(ShutterSpeedPredicate::min),
             ShutterSpeed.CODEC.optionalFieldOf("max").forGetter(ShutterSpeedPredicate::max)

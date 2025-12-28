@@ -34,7 +34,7 @@ public class FramePrintedTrigger extends SimpleCriterionTrigger<FramePrintedTrig
         LocationPredicate location = LocationPredicate.fromJson(json.get("location"));
         FramePredicate framePredicate = FramePredicate.fromJson(json.get("frame"));
         ItemPredicate item = ItemPredicate.fromJson(json.get("item"));
-        return new TriggerInstance(predicate,location,framePredicate,item);
+        return new TriggerInstance(predicate, location, framePredicate, item);
     }
 
     @Override
@@ -58,14 +58,23 @@ public class FramePrintedTrigger extends SimpleCriterionTrigger<FramePrintedTrig
             this.item = item;
         }
 
-            public boolean matches(ServerPlayer player,
-                                   BlockPos pos,
-                                   Frame frame,
-                                   ItemStack result) {
-                return (location.matches(player.serverLevel(), pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5))
-                        && (this.frame.matches(frame))
-                        && (item.matches(result));
-            }
+        public boolean matches(ServerPlayer player,
+                               BlockPos pos,
+                               Frame frame,
+                               ItemStack result) {
+            return location.matches(player.serverLevel(), pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5)
+                    && this.frame.matches(frame)
+                    && item.matches(result);
+        }
+
+        @Override
+        public JsonObject serializeToJson(SerializationContext context) {
+            JsonObject jsonObject = super.serializeToJson(context);
+            jsonObject.add("location",location.serializeToJson());
+            jsonObject.add("frame",frame.serializeToJson());
+            jsonObject.add("item",item.serializeToJson());
+            return jsonObject;
+        }
 
         @Override
         public boolean equals(Object obj) {
@@ -89,6 +98,5 @@ public class FramePrintedTrigger extends SimpleCriterionTrigger<FramePrintedTrig
                     "frame=" + frame + ", " +
                     "item=" + item + ']';
         }
-
-        }
+    }
 }

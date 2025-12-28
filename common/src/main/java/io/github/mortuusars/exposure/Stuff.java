@@ -26,11 +26,11 @@ import java.util.stream.Collectors;
 public class Stuff {
 
     public static final Codec<MinMaxBounds.Ints> INTS_CODEC = RecordCodecBuilder.create(
-            intsInstance -> intsInstance.group(Codec.INT.fieldOf("min")
-                            .forGetter(MinMaxBounds::getMin),
-                    Codec.INT.fieldOf("max")
-                            .forGetter(MinMaxBounds::getMax)
-            ).apply(intsInstance, MinMaxBounds.Ints::between));
+            intsInstance -> intsInstance.group(Codec.INT.optionalFieldOf("min")
+                            .forGetter(object -> Optional.ofNullable(object.getMin())),
+                    Codec.INT.optionalFieldOf("max")
+                            .forGetter(ints -> Optional.ofNullable(ints.getMax()))
+            ).apply(intsInstance, (integer, integer2) -> new MinMaxBounds.Ints(integer.orElse(null),integer2.orElse(null))));
 
     public static final Codec<MinMaxBounds.Doubles> DOUBLES_CODEC = RecordCodecBuilder.create(
             intsInstance -> intsInstance.group(Codec.DOUBLE.fieldOf("min")
@@ -59,14 +59,15 @@ public class Stuff {
             .create(itemPredicateInstance ->
                     itemPredicateInstance.group(
                                     TagKey.codec(Registries.ITEM).optionalFieldOf("tag").forGetter(i -> Optional.ofNullable(i.tag)),
-                                    BuiltInRegistries.ITEM.byNameCodec().listOf().optionalFieldOf("items",new ArrayList<>()).forGetter(i -> List.copyOf(i.items)),
+                                    BuiltInRegistries.ITEM.byNameCodec().listOf().xmap(Set::copyOf, List::copyOf)
+                                            .optionalFieldOf("items").forGetter(i -> Optional.ofNullable(i.items)),
                                     INTS_CODEC.optionalFieldOf("count", MinMaxBounds.Ints.ANY).forGetter(i -> i.count),
                                     INTS_CODEC.optionalFieldOf("durability", MinMaxBounds.Ints.ANY).forGetter(i -> i.durability),
                                     ENCHANTMENT_PREDICATE_CODEC.listOf().optionalFieldOf("enchantments",new ArrayList<>()).forGetter(i -> Arrays.asList(i.enchantments)),
                                     ENCHANTMENT_PREDICATE_CODEC.listOf().optionalFieldOf("stored_enchantments",new ArrayList<>()).forGetter(i -> Arrays.asList(i.storedEnchantments)),
                                     BuiltInRegistries.POTION.byNameCodec().optionalFieldOf("potion").forGetter(i -> Optional.ofNullable(i.potion)),
                                     NBT_PREDICATE_CODEC.optionalFieldOf("nbt",NbtPredicate.ANY).forGetter(i -> i.nbt)
-                            ).apply(itemPredicateInstance, Stuff::fromCodec));
+                            ).apply(itemPredicateInstance, Stuff::fromItemCodec));
 
     public static final Codec<StatePropertiesPredicate.ExactPropertyMatcher> EXACT_VALUE_CODEC = RecordCodecBuilder.create(
             exactPropertyMatcherInstance -> exactPropertyMatcherInstance.group(
@@ -155,7 +156,7 @@ public class Stuff {
                 LIGHT_PREDICATE_CODEC.fieldOf("light").forGetter(l -> l.light),
                 BLOCK_PREDICATE_CODEC.fieldOf("block").forGetter(l -> l.block),
                 FLUID_PREDICATE_CODEC.fieldOf("fluid").forGetter(l -> l.fluid)
-        ).apply(locationPredicateInstance, (PositionPredicate t1, Optional<ResourceKey<Biome>> t2, Optional<ResourceKey<Structure>> t3, Optional<ResourceKey<Level>> t4, Optional<Boolean> t5, LightPredicate t6, BlockPredicate t7, FluidPredicate t8) -> fromLocationCodec(t1, t2, t3, t4, t5, t6, t7, t8));
+        ).apply(locationPredicateInstance, Stuff::fromLocationCodec);
     });
 
     private static LocationPredicate fromLocationCodec(PositionPredicate t1, Optional<ResourceKey<Biome>> t2, Optional<ResourceKey<Structure>> t3,
@@ -163,10 +164,10 @@ public class Stuff {
         return new LocationPredicate(t1.x,t1.y,t1.z,t2.orElse(null),t3.orElse(null),t4.orElse(null),t5.orElse(null),t6,t7,t8);
     }
 
-    private static ItemPredicate fromCodec(Optional<TagKey<Item>> itemTagKey, List<Item> items, MinMaxBounds.Ints ints,
+    private static ItemPredicate fromItemCodec(Optional<TagKey<Item>> itemTagKey, Optional<Set<Item>> items, MinMaxBounds.Ints ints,
                                            MinMaxBounds.Ints ints2, List<EnchantmentPredicate> enchantmentPredicates,
                                            List<EnchantmentPredicate> enchantmentPredicates2, Optional<Potion> potion, NbtPredicate nbtPredicate) {
-        return new ItemPredicate(itemTagKey.orElse(null),new HashSet<>(items),ints,ints2,
+        return new ItemPredicate(itemTagKey.orElse(null),items.orElse(null),ints,ints2,
                 enchantmentPredicates.toArray(EnchantmentPredicate[]::new),enchantmentPredicates.toArray(EnchantmentPredicate[]::new),
                 potion.orElse(null),nbtPredicate);
     }

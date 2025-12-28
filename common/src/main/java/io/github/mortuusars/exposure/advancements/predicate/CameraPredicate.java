@@ -4,7 +4,10 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.JsonOps;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import io.github.mortuusars.exposure.Exposure;
+import io.github.mortuusars.exposure.Stuff;
 import io.github.mortuusars.exposure.world.item.camera.Attachment;
 import io.github.mortuusars.exposure.world.item.camera.CameraItem;
 import net.minecraft.advancements.critereon.ItemPredicate;
@@ -24,6 +27,17 @@ public record CameraPredicate(ItemPredicate camera,
                               ItemPredicate lens,
                               ItemPredicate filter,
                               LocationPredicate location) {
+
+
+    public static final Codec<CameraPredicate> CODEC = RecordCodecBuilder.create(cameraPredicateInstance ->
+            cameraPredicateInstance.group(
+                    Stuff.ITEM_PREDICATE_CODEC.fieldOf("camera").forGetter(CameraPredicate::camera),
+                    Stuff.ITEM_PREDICATE_CODEC.fieldOf("film").forGetter(CameraPredicate::film),
+                    Stuff.ITEM_PREDICATE_CODEC.fieldOf("flash").forGetter(CameraPredicate::flash),
+                    Stuff.ITEM_PREDICATE_CODEC.fieldOf("lens").forGetter(CameraPredicate::lens),
+                    Stuff.ITEM_PREDICATE_CODEC.fieldOf("filter").forGetter(CameraPredicate::filter),
+                    Stuff.LOCATION_PREDICATE_CODEC.fieldOf("location").forGetter(CameraPredicate::location)
+            ).apply(cameraPredicateInstance,CameraPredicate::new));
 
     public static final CameraPredicate ANY = new CameraPredicate(ItemPredicate.ANY, ItemPredicate.ANY, ItemPredicate.ANY, ItemPredicate.ANY,
             ItemPredicate.ANY,LocationPredicate.ANY);
@@ -49,7 +63,7 @@ public record CameraPredicate(ItemPredicate camera,
         if (this == ANY) {
             return JsonNull.INSTANCE;
         } else {
-            return JsonNull.INSTANCE;
+            return CODEC.encodeStart(JsonOps.INSTANCE,this).resultOrPartial(Exposure.LOGGER::error).orElseThrow();
         }
     }
 

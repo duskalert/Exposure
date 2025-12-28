@@ -13,18 +13,18 @@
     }
   },
   "display": {
-    "frame": "task",
-    "hidden": false,
-    "show_toast": true,
     "announce_to_chat": true,
-    "icon": {
-      "id": "exposure:photograph"
-    },
-    "title": {
-      "translate": "advancement.exposure.moment_in_time.title"
-    },
     "description": {
       "translate": "advancement.exposure.moment_in_time.description"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "exposure:photograph"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancement.exposure.moment_in_time.title"
     }
   },
   "requirements": [
