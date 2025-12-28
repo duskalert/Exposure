@@ -136,6 +136,14 @@ public class FrameExposedTrigger extends SimpleCriterionTrigger<FrameExposedTrig
         }
 
         @Override
+        public JsonObject serializeToJson(SerializationContext context) {
+            JsonObject jsonObject = super.serializeToJson(context);
+            jsonObject.add("camera",camera.serializeToJson());
+            jsonObject.add("frame",frame.serializeToJson());
+            return jsonObject;
+        }
+
+        @Override
         public String toString() {
             return "TriggerInstance[" +
                     "camera=" + camera + ", " +

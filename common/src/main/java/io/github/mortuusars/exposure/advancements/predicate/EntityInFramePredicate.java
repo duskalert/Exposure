@@ -19,6 +19,8 @@ public record EntityInFramePredicate(Optional<ResourceLocation> type,
             Stuff.INTS_CODEC.optionalFieldOf("distance", MinMaxBounds.Ints.ANY).forGetter(EntityInFramePredicate::distance)
     ).apply(instance, EntityInFramePredicate::new));
 
+    public static final EntityInFramePredicate ANY = new EntityInFramePredicate(Optional.empty(),Optional.empty(), MinMaxBounds.Ints.ANY);
+
     public boolean matches(EntityInFrame entity) {
         if (type.isPresent() && !type.get().equals(entity.id())) return false;
         if (name.isPresent() && !name.get().equals(entity.name())) return false;

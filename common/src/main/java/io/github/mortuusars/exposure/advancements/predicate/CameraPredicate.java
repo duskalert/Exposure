@@ -1,6 +1,7 @@
 package io.github.mortuusars.exposure.advancements.predicate;
 
 import com.google.gson.JsonElement;
+import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -42,6 +43,14 @@ public record CameraPredicate(ItemPredicate camera,
                 ItemPredicate.fromJson(jsonObj.getAsJsonObject("filter")),
                 LocationPredicate.fromJson(jsonObj.getAsJsonObject("location"))
         );
+    }
+
+    public JsonElement serializeToJson() {
+        if (this == ANY) {
+            return JsonNull.INSTANCE;
+        } else {
+            return JsonNull.INSTANCE;
+        }
     }
 
     public boolean matches(ServerLevel level, ItemStack cameraStack, Vec3 cameraLocation) {

@@ -60,6 +60,8 @@ public class ExposureDatagen {
         generator.addProvider(true,blockTagsProvider);
         generator.addProvider(true,new ModItemTags(packOutput,lookupProvider,blockTagsProvider.contentsGetter(),existingFileHelper));
         generator.addProvider(true,new ModEntityTypeTags(packOutput,lookupProvider,existingFileHelper));
+
+        generator.addProvider(true,new ExposureAdvancements(packOutput,lookupProvider,existingFileHelper,List.of(new ExposureAdvancementGenerator())));
     }
 
     static class Blockstates extends BlockStateProvider {

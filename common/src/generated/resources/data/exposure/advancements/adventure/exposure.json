@@ -7,26 +7,25 @@
     }
   },
   "display": {
-    "frame": "task",
-    "hidden": false,
-    "show_toast": true,
     "announce_to_chat": true,
-    "icon": {
-      "id": "exposure:camera",
-      "components": {
-        "exposure:camera_active": true
-      }
-    },
-    "title": {
-      "translate": "advancement.exposure.exposure.title"
-    },
     "description": {
       "translate": "advancement.exposure.exposure.description"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "exposure:camera",
+      "nbt": "{\"exposure:camera_active\":1b}"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancement.exposure.exposure.title"
     }
   },
   "requirements": [
     [
       "expose_frame"
     ]
-  ]
+  ],
+  "sends_telemetry_event": true
 }

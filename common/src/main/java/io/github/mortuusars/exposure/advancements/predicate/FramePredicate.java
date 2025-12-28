@@ -1,6 +1,7 @@
 package io.github.mortuusars.exposure.advancements.predicate;
 
 import com.google.gson.JsonElement;
+import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.JsonOps;
@@ -52,6 +53,14 @@ public record FramePredicate(Optional<ExposureIdentifier> identifier,
         JsonObject jsonObj = GsonHelper.convertToJsonObject(json, "frame");
 
         return CODEC.decode(JsonOps.INSTANCE,jsonObj).resultOrPartial(Exposure.LOGGER::error).get().getFirst();
+    }
+
+    public JsonElement serializeToJson() {
+        if (this == ANY) {
+            return JsonNull.INSTANCE;
+        } else {
+            return CODEC.encodeStart(JsonOps.INSTANCE,this).resultOrPartial(Exposure.LOGGER::error).get();
+        }
     }
 
 

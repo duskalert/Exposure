@@ -1,4 +1,4 @@
-// 1.20.1	2025-12-09T16:42:02.6718651	Recipes
+// 1.20.1	2025-12-28T08:08:39.7916459	Recipes
 4f0635bec51ce72426e764bdd2d19dfea2b9a417 data/exposure/advancements/recipes/misc/album.json
 1838d794ee6de57f538a1f7269dfe764176d4c2e data/exposure/advancements/recipes/misc/black_and_white_film.json
 ea3f1ead16697c088ce9abf41d659367c51f0a22 data/exposure/advancements/recipes/misc/camera.json
@@ -22,5 +22,5 @@ dffe836a931e0b3211be912a3022496e88cd3398 data/exposure/recipes/high_sensitivity_
 4a77a41d29d8c437c5d963d2737a6c85075d7634 data/exposure/recipes/high_sensitivity_color_film.json
 f4020beb7f43fd8207567a142d3c5eddd5615afc data/exposure/recipes/interplanar_projector.json
 fe428ae1a57524c5a1fa93ac065a850118229a40 data/exposure/recipes/lightroom.json
-49e780e9bcda0ec1d2a20d71ab82feb48bb9c93b data/exposure/recipes/photograph.json
+49e780e9bcda0ec1d2a20d71ab82feb48bb9c93b data/exposure/recipes/photograph_copying.json
 21a575b1b9acc6ce17f9be67a701e73ef9da454e data/exposure/recipes/photograph_frame.json
