@@ -1,15 +1,7 @@
 package io.github.mortuusars.exposure.network.fabric;
 
-import io.github.mortuusars.exposure.network.packet.CommonPackets;
-import io.github.mortuusars.exposure.network.packet.Packet;
-import io.github.mortuusars.exposure.network.packet.S2CPackets;
-import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.minecraft.network.protocol.PacketFlow;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-
 public class FabricS2CPacketHandler {
-    @SuppressWarnings("unchecked")
-    public static void register() {
+    /*public static void register() {
         for (var definition : S2CPackets.getDefinitions()) {
             ClientPlayNetworking.registerGlobalReceiver(
                     (CustomPacketPayload.Type<Packet>) definition.type(), FabricS2CPacketHandler::handleClientboundPacket);
@@ -19,9 +11,25 @@ public class FabricS2CPacketHandler {
             ClientPlayNetworking.registerGlobalReceiver(
                     (CustomPacketPayload.Type<Packet>) definition.type(), FabricS2CPacketHandler::handleClientboundPacket);
         }
+
+        for (var definition : S2CPackets.getDefinitions().entrySet()) {
+            Function<FriendlyByteBuf, Packet> value = definition.getValue();
+            ClientPlayNetworking.registerGlobalReceiver(FabricC2SPackets.classToRL(definition.getKey()),(minecraft, clientPacketListener, friendlyByteBuf, packetSender) -> {
+                Packet packet = value.apply(friendlyByteBuf);
+                packet.handle(PacketFlow.CLIENTBOUND, minecraft.player);
+            });
+        }
+
+        for (var definition : CommonPackets.getDefinitions().entrySet()) {
+            Function<FriendlyByteBuf, Packet> value = definition.getValue();
+            ClientPlayNetworking.registerGlobalReceiver(FabricC2SPackets.classToRL(definition.getKey()),(minecraft, clientPacketListener, friendlyByteBuf, packetSender) -> {
+                Packet packet = value.apply(friendlyByteBuf);
+                packet.handle(PacketFlow.CLIENTBOUND, minecraft.player);
+            });
+        }
     }
 
     private static <T extends Packet> void handleClientboundPacket(T payload, ClientPlayNetworking.Context context) {
         payload.handle(PacketFlow.CLIENTBOUND, context.player());
-    }
+    }*/
 }

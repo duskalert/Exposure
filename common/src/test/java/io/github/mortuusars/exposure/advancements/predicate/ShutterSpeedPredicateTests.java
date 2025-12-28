@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class ShutterSpeedPredicateTests {
     @Test
     void decodesFromString() {
-        ShutterSpeedPredicate decodedPredicate = ShutterSpeedPredicate.CODEC.decode(JsonOps.INSTANCE, new JsonPrimitive("1/125")).getOrThrow().getFirst();
+        ShutterSpeedPredicate decodedPredicate = ShutterSpeedPredicate.CODEC.decode(JsonOps.INSTANCE, new JsonPrimitive("1/125")).get().orThrow().getFirst();
 
         assertEquals(ShutterSpeedPredicate.exact(new ShutterSpeed("1/125")), decodedPredicate);
     }
@@ -29,7 +29,7 @@ public class ShutterSpeedPredicateTests {
                 """;
 
         ShutterSpeedPredicate decodedPredicate = ShutterSpeedPredicate.CODEC.decode(JsonOps.INSTANCE, GsonHelper.parse(json))
-                .getOrThrow().getFirst();
+                .get().orThrow().getFirst();
 
         assertEquals(ShutterSpeedPredicate.between(new ShutterSpeed("1/125"), new ShutterSpeed("1/2")), decodedPredicate);
     }
@@ -45,14 +45,14 @@ public class ShutterSpeedPredicateTests {
 
         assertThrows(IllegalArgumentException.class, () -> {
             ShutterSpeedPredicate decodedPredicate = ShutterSpeedPredicate.CODEC.decode(JsonOps.INSTANCE, GsonHelper.parse(json))
-                    .getOrThrow().getFirst();
+                    .get().orThrow().getFirst();
         });
     }
 
     @Test
     void encodeToSimpleIfExact() {
         ShutterSpeedPredicate predicate = ShutterSpeedPredicate.exact(new ShutterSpeed("1/4"));
-        JsonPrimitive primitive = ShutterSpeedPredicate.CODEC.encodeStart(JsonOps.INSTANCE, predicate).getOrThrow().getAsJsonPrimitive();
+        JsonPrimitive primitive = ShutterSpeedPredicate.CODEC.encodeStart(JsonOps.INSTANCE, predicate).get().orThrow().getAsJsonPrimitive();
 
         assertEquals("1/4", primitive.getAsJsonPrimitive().getAsString());
     }
@@ -60,7 +60,7 @@ public class ShutterSpeedPredicateTests {
     @Test
     void encodeToFullIfFull() {
         ShutterSpeedPredicate predicate = ShutterSpeedPredicate.between(new ShutterSpeed("1/4"), new ShutterSpeed("1\""));
-        JsonObject jsonObject = ShutterSpeedPredicate.CODEC.encodeStart(JsonOps.INSTANCE, predicate).getOrThrow().getAsJsonObject();
+        JsonObject jsonObject = ShutterSpeedPredicate.CODEC.encodeStart(JsonOps.INSTANCE, predicate).get().orThrow().getAsJsonObject();
 
         String expectedJson = """
         {"min":"1/4","max":"1\\""}""";

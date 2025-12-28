@@ -9,7 +9,6 @@ import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.world.Container;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
@@ -18,9 +17,7 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
-import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -65,13 +62,6 @@ public class Register {
     }
 
     @ExpectPlatform
-    public static <T extends Entity> Supplier<EntityType<T>> entityType(String id, EntityType.EntityFactory<T> factory,
-                                                                        MobCategory category, float width, float height,
-                                                                        int clientTrackingRange, boolean velocityUpdates, int updateInterval) {
-        throw new AssertionError();
-    }
-
-    @ExpectPlatform
     public static <T extends Entity> Supplier<EntityType<T>> entityType(String id, EntityType.EntityFactory<T> factory, MobCategory category,
                                                                         boolean receiveVelocityUpdates, Consumer<EntityType.Builder<T>> typeBuilder) {
         throw new AssertionError();
@@ -90,11 +80,6 @@ public class Register {
     @FunctionalInterface
     public interface MenuTypeSupplier<T extends AbstractContainerMenu> {
         @NotNull T create(int windowId, Inventory playerInv, FriendlyByteBuf extraData);
-    }
-
-    @ExpectPlatform
-    public static <T extends Recipe<I>, I extends Container> Supplier<RecipeType<T>> recipeType(String name, Supplier<RecipeType<T>> supplier) {
-        throw new AssertionError();
     }
 
     @ExpectPlatform

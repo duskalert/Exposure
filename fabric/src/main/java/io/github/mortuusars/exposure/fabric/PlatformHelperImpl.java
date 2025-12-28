@@ -12,7 +12,7 @@ import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
@@ -44,16 +44,16 @@ public class PlatformHelperImpl {
         return stack.getItem() instanceof AxeItem;
     }
 
-    public static void openMenu(ServerPlayer serverPlayer, MenuProvider menuProvider, Consumer<RegistryFriendlyByteBuf> extraDataWriter) {
-        ExtendedScreenHandlerFactory<byte[]> extendedScreenHandlerFactory = new ExtendedScreenHandlerFactory<byte[]>() {
+    public static void openMenu(ServerPlayer serverPlayer, MenuProvider menuProvider, Consumer<FriendlyByteBuf> extraDataWriter) {
+        ExtendedScreenHandlerFactory extendedScreenHandlerFactory = new ExtendedScreenHandlerFactory() {
+
             @Override
-            public byte[] getScreenOpeningData(ServerPlayer player) {
-                RegistryFriendlyByteBuf buffer = new RegistryFriendlyByteBuf(PacketByteBufs.create(), player.registryAccess());
+            public void writeScreenOpeningData(ServerPlayer serverPlayer, FriendlyByteBuf friendlyByteBuf) {
+                FriendlyByteBuf buffer = PacketByteBufs.create();
                 extraDataWriter.accept(buffer);
-                byte[] bytes = ByteBufUtil.getBytes(buffer);
                 buffer.release();
-                return bytes;
             }
+
 
             @Nullable
             @Override

@@ -3,7 +3,10 @@ package io.github.mortuusars.exposure.network.fabric;
 import io.github.mortuusars.exposure.Exposure;
 import io.github.mortuusars.exposure.fabric.ExposureFabric;
 import io.github.mortuusars.exposure.network.packet.Packet;
+import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import org.jetbrains.annotations.NotNull;
@@ -17,7 +20,10 @@ public class PacketsImpl {
     }
 
     public static void sendToClient(Packet packet, ServerPlayer player) {
-        ServerPlayNetworking.send(player, packet);
+        ResourceLocation resourceLocation = FabricC2SPackets.classToRL(packet.getClass());
+        FriendlyByteBuf buf = PacketByteBufs.create();
+        packet.toPacket(buf);
+        ServerPlayNetworking.send(player,resourceLocation, buf);
     }
 
     public static void sendToClients(Packet packet, Predicate<ServerPlayer> filter) {

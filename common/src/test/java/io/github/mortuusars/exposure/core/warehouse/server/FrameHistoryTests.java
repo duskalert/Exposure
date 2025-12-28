@@ -24,7 +24,7 @@ public class FrameHistoryTests {
         ExposureFrameHistory history = new ExposureFrameHistory(new HashMap<>());
         history.add(randomUUID, Frame.EMPTY.toMutable().setIdentifier(ExposureIdentifier.id("test")).toImmutable());
 
-        CompoundTag tag = history.save(new CompoundTag(), HolderLookup.Provider.create(Stream.of()));
+        CompoundTag tag = history.save(new CompoundTag());
 
         String expected = "{" + randomUUID + ":[{identifier:\"test\"}]}";
         assertEquals(expected, tag.toString());
@@ -38,13 +38,13 @@ public class FrameHistoryTests {
 
         CompoundTag tag = new CompoundTag();
         ListTag listTag = new ListTag();
-        listTag.add(Frame.CODEC.encode(frame, NbtOps.INSTANCE, new CompoundTag()).getOrThrow());
+        listTag.add(Frame.CODEC.encode(frame, NbtOps.INSTANCE, new CompoundTag()).get().orThrow());
         tag.put(randomUUID.toString(), listTag);
 
-        ExposureFrameHistory decodedHistory = ExposureFrameHistory.load(tag, HolderLookup.Provider.create(Stream.of()));
+        ExposureFrameHistory decodedHistory = ExposureFrameHistory.load(tag);
         List<Frame> frames = decodedHistory.getFramesOf(randomUUID);
 
-        assertEquals("test", frames.getFirst().identifier().id());
+        assertEquals("test", frames.get(0).identifier().id());
     }
 
     @Test

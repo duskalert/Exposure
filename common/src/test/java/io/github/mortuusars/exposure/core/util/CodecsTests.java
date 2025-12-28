@@ -15,7 +15,7 @@ public class CodecsTests {
     void intArrayCodecJson() {
         int[] array = new int[]{-1, 0, 42, Integer.MAX_VALUE};
 
-        JsonArray jsonArray = Codecs.intArrayCodec(0, 256).encodeStart(JsonOps.INSTANCE, array).getOrThrow().getAsJsonArray();
+        JsonArray jsonArray = Codecs.intArrayCodec(0, 256).encodeStart(JsonOps.INSTANCE, array).get().orThrow().getAsJsonArray();
 
         assertEquals(-1, jsonArray.get(0).getAsInt());
         assertEquals(0, jsonArray.get(1).getAsInt());
@@ -28,7 +28,7 @@ public class CodecsTests {
     void intArrayCodecNbt() {
         int[] array = new int[]{-1, 0, 42, Integer.MAX_VALUE};
 
-        IntArrayTag tag = ((IntArrayTag) Codecs.intArrayCodec(0, 256).encodeStart(NbtOps.INSTANCE, array).getOrThrow());
+        IntArrayTag tag = ((IntArrayTag) Codecs.intArrayCodec(0, 256).encodeStart(NbtOps.INSTANCE, array).get().orThrow());
 
         assertEquals(-1, tag.get(0).getAsInt());
         assertEquals(0, tag.get(1).getAsInt());
@@ -41,7 +41,7 @@ public class CodecsTests {
     void byteArrayCodecJson() {
         byte[] array = new byte[]{-1, 0, 42, (byte) 0xFF};
 
-        JsonArray jsonArray = Codecs.byteArrayCodec(0, 256).encodeStart(JsonOps.INSTANCE, array).getOrThrow().getAsJsonArray();
+        JsonArray jsonArray = Codecs.byteArrayCodec(0, 256).encodeStart(JsonOps.INSTANCE, array).get().orThrow().getAsJsonArray();
 
         assertEquals(-1, jsonArray.get(0).getAsByte());
         assertEquals(0, jsonArray.get(1).getAsByte());
@@ -54,7 +54,7 @@ public class CodecsTests {
     void byteArrayCodecNbt() {
         byte[] array = new byte[]{-1, 0, 42, (byte) 0xFF};
 
-        ByteArrayTag tag = ((ByteArrayTag) Codecs.byteArrayCodec(0, 256).encodeStart(NbtOps.INSTANCE, array).getOrThrow());
+        ByteArrayTag tag = ((ByteArrayTag) Codecs.byteArrayCodec(0, 256).encodeStart(NbtOps.INSTANCE, array).get().orThrow());
 
         assertEquals(-1, tag.get(0).getAsByte());
         assertEquals(0, tag.get(1).getAsByte());

@@ -39,7 +39,7 @@ public class ExposureIdentifierTests {
         ExposureIdentifier id = ExposureIdentifier.id("test");
         DataResult<JsonElement> encodedResult = ExposureIdentifier.CODEC.encodeStart(JsonOps.INSTANCE, id);
 
-        String jsonString = new Gson().toJson(encodedResult.getOrThrow());
+        String jsonString = new Gson().toJson(encodedResult.get().orThrow());
 
         assertEquals("\"test\"", jsonString);
     }
@@ -49,7 +49,7 @@ public class ExposureIdentifierTests {
         ExposureIdentifier texture = ExposureIdentifier.texture(Exposure.resource("test"));
         DataResult<JsonElement> encodedResult = ExposureIdentifier.CODEC.encodeStart(JsonOps.INSTANCE, texture);
 
-        String jsonString = new Gson().toJson(encodedResult.getOrThrow());
+        String jsonString = new Gson().toJson(encodedResult.get().orThrow());
 
         assertEquals("{\"texture\":\"exposure:test\"}", jsonString);
     }
@@ -59,7 +59,7 @@ public class ExposureIdentifierTests {
         ExposureIdentifier empty = ExposureIdentifier.EMPTY;
         DataResult<JsonElement> encodedResult = ExposureIdentifier.CODEC.encodeStart(JsonOps.INSTANCE, empty);
 
-        String jsonString = new Gson().toJson(encodedResult.getOrThrow());
+        String jsonString = new Gson().toJson(encodedResult.get().orThrow());
 
         assertEquals("\"\"", jsonString);
     }
@@ -73,7 +73,7 @@ public class ExposureIdentifierTests {
         DataResult<Pair<ExposureIdentifier, JsonElement>> decodedResult =
                 ExposureIdentifier.CODEC.decode(JsonOps.INSTANCE, new Gson().fromJson(jsonString, JsonPrimitive.class));
 
-        ExposureIdentifier decodedId = decodedResult.getOrThrow().getFirst();
+        ExposureIdentifier decodedId = decodedResult.get().orThrow().getFirst();
 
         assertEquals(ExposureIdentifier.id("test"), decodedId);
     }
@@ -86,7 +86,7 @@ public class ExposureIdentifierTests {
         DataResult<Pair<ExposureIdentifier, JsonElement>> decodedResult =
                 ExposureIdentifier.CODEC.decode(JsonOps.INSTANCE, parse);
 
-        ExposureIdentifier decodedId = decodedResult.getOrThrow().getFirst();
+        ExposureIdentifier decodedId = decodedResult.get().orThrow().getFirst();
 
         assertEquals(ExposureIdentifier.id("test"), decodedId);
     }
@@ -99,7 +99,7 @@ public class ExposureIdentifierTests {
         DataResult<Pair<ExposureIdentifier, JsonElement>> decodedResult =
                 ExposureIdentifier.CODEC.decode(JsonOps.INSTANCE, parse);
 
-        ExposureIdentifier decodedId = decodedResult.getOrThrow().getFirst();
+        ExposureIdentifier decodedId = decodedResult.get().orThrow().getFirst();
 
         assertEquals(ExposureIdentifier.texture(Exposure.resource("test")), decodedId);
     }
