@@ -3,6 +3,41 @@
   "criteria": {
     "captured_entities": {
       "conditions": {
+        "entities_in_frame": [
+          [
+            {
+              "condition": "minecraft:entity_properties",
+              "entity": "this",
+              "predicate": {
+                "type": "minecraft:cat",
+                "type_specific": {
+                  "is_tamed": true
+                }
+              }
+            }
+          ],
+          [
+            {
+              "condition": "minecraft:entity_properties",
+              "entity": "this",
+              "predicate": {
+                "type": "minecraft:wolf",
+                "type_specific": {
+                  "is_tamed": true
+                }
+              }
+            }
+          ],
+          [
+            {
+              "condition": "minecraft:entity_properties",
+              "entity": "this",
+              "predicate": {
+                "type": "minecraft:player"
+              }
+            }
+          ]
+        ],
         "frame": {
           "day_time": {},
           "entities_in_frame": [],

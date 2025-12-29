@@ -146,7 +146,7 @@ public class FrameExposedTrigger extends SimpleCriterionTrigger<FrameExposedTrig
                 for (ContextAwarePredicate contextAwarePredicate : entitiesInFrame) {
                     jsonArray.add(contextAwarePredicate.toJson(context));
                 }
-                jsonObject.add("entities_in_frame",locationInFrame.serializeToJson());
+                jsonObject.add("entities_in_frame",jsonArray);
             }
 
             return jsonObject;

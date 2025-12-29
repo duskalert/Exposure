@@ -24,7 +24,9 @@ public record TamedPredicate(boolean isTamed) implements EntitySubPredicate {
 
     @Override
     public JsonObject serializeCustomData() {
-        return null;
+        JsonObject jsonObject = new JsonObject();
+        jsonObject.addProperty("is_tamed",isTamed);
+        return jsonObject;
     }
 
     @Override

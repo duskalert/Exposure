@@ -5,8 +5,8 @@
       "conditions": {
         "frame": {
           "day_time": {
-            "min": 13000,
-            "max": 23000
+            "max": 23000,
+            "min": 13000
           },
           "entities_in_frame": [
             {
@@ -16,25 +16,30 @@
               }
             }
           ],
-          "extra_data": "{flash:1b}"
+          "entities_in_frame_count": {},
+          "extra_data": {
+            "flash": 1
+          },
+          "focal_length": {},
+          "light_level": {}
         }
       },
       "trigger": "exposure:frame_exposed"
     }
   },
   "display": {
-    "frame": "task",
-    "hidden": true,
-    "show_toast": true,
     "announce_to_chat": true,
-    "icon": {
-      "id": "minecraft:jack_o_lantern"
-    },
-    "title": {
-      "translate": "advancement.exposure.exposed_paparazzi.title"
-    },
     "description": {
       "translate": "advancement.exposure.exposed_paparazzi.description"
+    },
+    "frame": "task",
+    "hidden": true,
+    "icon": {
+      "item": "minecraft:jack_o_lantern"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancement.exposure.exposed_paparazzi.title"
     }
   },
   "requirements": [
