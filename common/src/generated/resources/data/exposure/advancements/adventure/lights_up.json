@@ -4,13 +4,7 @@
     "flash_in_darkness": {
       "conditions": {
         "frame": {
-          "day_time": {},
-          "entities_in_frame": [],
-          "entities_in_frame_count": {},
-          "extra_data": {
-            "flash": 1
-          },
-          "focal_length": {},
+          "extra_data": "{flash:1b}",
           "light_level": {
             "max": 3
           }

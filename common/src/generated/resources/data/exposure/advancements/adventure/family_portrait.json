@@ -38,13 +38,7 @@
             }
           ]
         ],
-        "frame": {
-          "day_time": {},
-          "entities_in_frame": [],
-          "entities_in_frame_count": {},
-          "focal_length": {},
-          "light_level": {}
-        }
+        "frame": {}
       },
       "trigger": "exposure:frame_exposed"
     }

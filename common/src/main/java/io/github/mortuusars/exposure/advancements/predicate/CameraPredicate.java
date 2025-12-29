@@ -31,12 +31,12 @@ public record CameraPredicate(ItemPredicate camera,
 
     public static final Codec<CameraPredicate> CODEC = RecordCodecBuilder.create(cameraPredicateInstance ->
             cameraPredicateInstance.group(
-                    Stuff.ITEM_PREDICATE_CODEC.fieldOf("camera").forGetter(CameraPredicate::camera),
-                    Stuff.ITEM_PREDICATE_CODEC.fieldOf("film").forGetter(CameraPredicate::film),
-                    Stuff.ITEM_PREDICATE_CODEC.fieldOf("flash").forGetter(CameraPredicate::flash),
-                    Stuff.ITEM_PREDICATE_CODEC.fieldOf("lens").forGetter(CameraPredicate::lens),
-                    Stuff.ITEM_PREDICATE_CODEC.fieldOf("filter").forGetter(CameraPredicate::filter),
-                    Stuff.LOCATION_PREDICATE_CODEC.fieldOf("location").forGetter(CameraPredicate::location)
+                    Stuff.ITEM_PREDICATE_CODEC.optionalFieldOf("camera",ItemPredicate.ANY).forGetter(CameraPredicate::camera),
+                    Stuff.ITEM_PREDICATE_CODEC.optionalFieldOf("film",ItemPredicate.ANY).forGetter(CameraPredicate::film),
+                    Stuff.ITEM_PREDICATE_CODEC.optionalFieldOf("flash",ItemPredicate.ANY).forGetter(CameraPredicate::flash),
+                    Stuff.ITEM_PREDICATE_CODEC.optionalFieldOf("lens",ItemPredicate.ANY).forGetter(CameraPredicate::lens),
+                    Stuff.ITEM_PREDICATE_CODEC.optionalFieldOf("filter",ItemPredicate.ANY).forGetter(CameraPredicate::filter),
+                    Stuff.LOCATION_PREDICATE_CODEC.optionalFieldOf("location",LocationPredicate.ANY).forGetter(CameraPredicate::location)
             ).apply(cameraPredicateInstance,CameraPredicate::new));
 
     public static final CameraPredicate ANY = new CameraPredicate(ItemPredicate.ANY, ItemPredicate.ANY, ItemPredicate.ANY, ItemPredicate.ANY,

@@ -16,12 +16,7 @@
               }
             }
           ],
-          "entities_in_frame_count": {},
-          "extra_data": {
-            "flash": 1
-          },
-          "focal_length": {},
-          "light_level": {}
+          "extra_data": "{flash:1b}"
         }
       },
       "trigger": "exposure:frame_exposed"

@@ -4,22 +4,8 @@
     "photograph_in_end": {
       "conditions": {
         "camera": {
-          "camera": {},
-          "film": {},
-          "filter": {},
-          "flash": {},
-          "lens": {},
           "location": {
-            "block": {
-              "nbt": {},
-              "state": {}
-            },
-            "dimension": "minecraft:the_end",
-            "fluid": {
-              "state": {}
-            },
-            "light": {},
-            "location": {}
+            "dimension": "minecraft:the_end"
           }
         }
       },

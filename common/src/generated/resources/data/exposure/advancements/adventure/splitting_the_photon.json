@@ -4,7 +4,6 @@
     "expose_frame_with_rgb_filter": {
       "conditions": {
         "camera": {
-          "camera": {},
           "film": {
             "items": [
               "exposure:black_and_white_film"
@@ -16,19 +15,6 @@
               "minecraft:green_stained_glass_pane",
               "minecraft:blue_stained_glass_pane"
             ]
-          },
-          "flash": {},
-          "lens": {},
-          "location": {
-            "block": {
-              "nbt": {},
-              "state": {}
-            },
-            "fluid": {
-              "state": {}
-            },
-            "light": {},
-            "location": {}
           }
         }
       },

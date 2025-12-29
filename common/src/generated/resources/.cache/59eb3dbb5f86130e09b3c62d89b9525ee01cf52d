@@ -1,7 +1,7 @@
-// 1.20.1	2025-12-29T01:24:28.9130075	Loot Tables
+// 1.20.1	2025-12-29T12:38:24.0136947	Loot Tables
 7457f744cf066c960997302e1a4fca20da9687ed data/exposure/loot_tables/blocks/lightroom.json
 9567849aa58371c101e29f60a9331148e8919d27 data/exposure/loot_tables/chests/abandoned_mineshaft.json
-5103ccd4af15a2425249cfe50bdd0b9808893eb8 data/exposure/loot_tables/chests/shipwreck_map.json
+d76a3e7c377a6f3171ece4f216b9cf6689615736 data/exposure/loot_tables/chests/shipwreck_map.json
 6e8c70a36761208e33c516fca850c0ccf049c029 data/exposure/loot_tables/chests/simple_dungeon.json
 4773231d875d83fb05b7ba27c4b18bf58d224161 data/exposure/loot_tables/chests/stronghold_crossing.json
 96052777c26bb3af8a8a6c1dd0ac7d17a0e0b66e data/exposure/loot_tables/chests/village_plains_house.json

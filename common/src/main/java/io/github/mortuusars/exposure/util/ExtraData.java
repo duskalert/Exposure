@@ -2,12 +2,16 @@ package io.github.mortuusars.exposure.util;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonSyntaxException;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.serialization.Codec;
 import io.github.mortuusars.exposure.Exposure;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.*;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.GsonHelper;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.phys.Vec3;
 import org.apache.logging.log4j.util.TriConsumer;
@@ -23,7 +27,26 @@ import java.util.function.Function;
  * {@link Type} is meant to be stored in a static final field in appropriate places.
  */
 public class ExtraData extends CompoundTag {
-    public static final Codec<ExtraData> CODEC = CompoundTag.CODEC.xmap(ExtraData::new, Function.identity());
+    public static final Codec<ExtraData> CODEC = Codec.STRING.xmap(string -> new ExtraData(getNBT(string)),extraData -> extraData.toString());
+
+    //        private static JsonObject serializeStack(ItemStack stack) {
+    //            JsonObject jsonObject = new JsonObject();
+    //            jsonObject.addProperty("item",Registry.ITEM.getKey(stack.getItem()).toString());
+    //            jsonObject.addProperty("count",stack.getCount());
+    //            if (stack.hasTag()) {
+    //                jsonObject.addProperty("nbt",stack.getTag().toString());
+    //            }
+    //            return jsonObject;
+    //        }
+
+    public static CompoundTag getNBT(String element) {
+        try {
+            return TagParser.parseTag(element);
+        } catch (CommandSyntaxException var2) {
+            CommandSyntaxException e = var2;
+            throw new JsonSyntaxException("Invalid NBT Entry: " + e);
+        }
+    }
 
     public static final ExtraData EMPTY = new ExtraData(Collections.emptyMap());
     private final Map<String, Tag> tags;

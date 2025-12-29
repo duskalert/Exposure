@@ -147,15 +147,15 @@ public class Stuff {
 
     public static final Codec<LocationPredicate> LOCATION_PREDICATE_CODEC = RecordCodecBuilder.create(locationPredicateInstance -> {
         return locationPredicateInstance.group(
-                PositionPredicate.CODEC.fieldOf("location")
+                PositionPredicate.CODEC.optionalFieldOf("location",PositionPredicate.ANY)
                         .forGetter(locationPredicate -> new PositionPredicate(locationPredicate.x,locationPredicate.y,locationPredicate.z)),
                 ResourceKey.codec(Registries.BIOME).optionalFieldOf("biomes").forGetter(l -> Optional.ofNullable(l.biome)),
                 ResourceKey.codec(Registries.STRUCTURE).optionalFieldOf("structures").forGetter(l -> Optional.ofNullable(l.structure)),
                 ResourceKey.codec(Registries.DIMENSION).optionalFieldOf("dimension").forGetter(l -> Optional.ofNullable(l.dimension)),
                 Codec.BOOL.optionalFieldOf("smokey").forGetter(l -> Optional.ofNullable(l.smokey)),
-                LIGHT_PREDICATE_CODEC.fieldOf("light").forGetter(l -> l.light),
-                BLOCK_PREDICATE_CODEC.fieldOf("block").forGetter(l -> l.block),
-                FLUID_PREDICATE_CODEC.fieldOf("fluid").forGetter(l -> l.fluid)
+                LIGHT_PREDICATE_CODEC.optionalFieldOf("light",LightPredicate.ANY).forGetter(l -> l.light),
+                BLOCK_PREDICATE_CODEC.optionalFieldOf("block",BlockPredicate.ANY).forGetter(l -> l.block),
+                FLUID_PREDICATE_CODEC.optionalFieldOf("fluid",FluidPredicate.ANY).forGetter(l -> l.fluid)
         ).apply(locationPredicateInstance, Stuff::fromLocationCodec);
     });
 
@@ -187,6 +187,9 @@ public class Stuff {
     }
 
     public record PositionPredicate(MinMaxBounds.Doubles x, MinMaxBounds.Doubles y, MinMaxBounds.Doubles z) {
+
+        public static final PositionPredicate ANY = new PositionPredicate(MinMaxBounds.Doubles.ANY, MinMaxBounds.Doubles.ANY, MinMaxBounds.Doubles.ANY);
+
         public static final Codec<PositionPredicate> CODEC = RecordCodecBuilder.create(
                 p_337379_ -> p_337379_.group(
                                 DOUBLES_CODEC.optionalFieldOf("x", MinMaxBounds.Doubles.ANY).forGetter(PositionPredicate::x),
