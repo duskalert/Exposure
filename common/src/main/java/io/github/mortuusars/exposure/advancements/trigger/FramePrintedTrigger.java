@@ -70,9 +70,15 @@ public class FramePrintedTrigger extends SimpleCriterionTrigger<FramePrintedTrig
         @Override
         public JsonObject serializeToJson(SerializationContext context) {
             JsonObject jsonObject = super.serializeToJson(context);
-            jsonObject.add("location",location.serializeToJson());
-            jsonObject.add("frame",frame.serializeToJson());
-            jsonObject.add("item",item.serializeToJson());
+            if (location != LocationPredicate.ANY) {
+                jsonObject.add("location", location.serializeToJson());
+            }
+            if (frame != FramePredicate.ANY) {
+                jsonObject.add("frame", frame.serializeToJson());
+            }
+            if (item != ItemPredicate.ANY) {
+                jsonObject.add("item", item.serializeToJson());
+            }
             return jsonObject;
         }
 

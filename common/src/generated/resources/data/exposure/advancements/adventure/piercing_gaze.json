@@ -7,18 +7,18 @@
     }
   },
   "display": {
-    "frame": "task",
-    "hidden": false,
-    "show_toast": true,
     "announce_to_chat": true,
-    "icon": {
-      "id": "exposure:interplanar_projector"
-    },
-    "title": {
-      "translate": "advancement.exposure.piercing_gaze.title"
-    },
     "description": {
       "translate": "advancement.exposure.piercing_gaze.description"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "exposure:interplanar_projector"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancement.exposure.piercing_gaze.title"
     }
   },
   "requirements": [

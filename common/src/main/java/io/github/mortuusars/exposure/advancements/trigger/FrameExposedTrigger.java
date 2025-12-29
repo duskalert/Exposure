@@ -138,9 +138,15 @@ public class FrameExposedTrigger extends SimpleCriterionTrigger<FrameExposedTrig
         @Override
         public JsonObject serializeToJson(SerializationContext context) {
             JsonObject jsonObject = super.serializeToJson(context);
-            jsonObject.add("camera",camera.serializeToJson());
-            jsonObject.add("frame",frame.serializeToJson());
-            jsonObject.add("location_in_frame",locationInFrame.serializeToJson());
+            if (camera != CameraPredicate.ANY) {
+                jsonObject.add("camera", camera.serializeToJson());
+            }
+            if (frame != FramePredicate.ANY) {
+                jsonObject.add("frame", frame.serializeToJson());
+            }
+            if (locationInFrame != LocationPredicate.ANY) {
+                jsonObject.add("location_in_frame",locationInFrame.serializeToJson());
+            }
             if (!entitiesInFrame.isEmpty()) {
                 JsonArray jsonArray = new JsonArray();
                 for (ContextAwarePredicate contextAwarePredicate : entitiesInFrame) {
@@ -148,7 +154,6 @@ public class FrameExposedTrigger extends SimpleCriterionTrigger<FrameExposedTrig
                 }
                 jsonObject.add("entities_in_frame",jsonArray);
             }
-
             return jsonObject;
         }
 

@@ -35,12 +35,12 @@ public record FramePredicate(Optional<ExposureIdentifier> identifier,
             Codec.STRING.optionalFieldOf("type").forGetter(FramePredicate::type),
             Codec.STRING.optionalFieldOf("photographer").forGetter(FramePredicate::photographer),
             ShutterSpeedPredicate.CODEC.optionalFieldOf("shutter_speed").forGetter(FramePredicate::shutterSpeed),
-            Stuff.INTS_CODEC.fieldOf("focal_length").forGetter(FramePredicate::focalLength),
-            Stuff.INTS_CODEC.fieldOf("light_level").forGetter(FramePredicate::lightLevel),
-            Stuff.INTS_CODEC.fieldOf("day_time").forGetter(FramePredicate::dayTime),
-            Stuff.INTS_CODEC.fieldOf("entities_in_frame_count").forGetter(FramePredicate::entitiesInFrameCount),
-            EntityInFramePredicate.CODEC.listOf().fieldOf("entities_in_frame").forGetter(FramePredicate::entitiesInFrame),
-            ExtraDataPredicate.CODEC.fieldOf("extra_data").forGetter(FramePredicate::extraData)
+            Stuff.INTS_CODEC.optionalFieldOf("focal_length", MinMaxBounds.Ints.ANY).forGetter(FramePredicate::focalLength),
+            Stuff.INTS_CODEC.optionalFieldOf("light_level", MinMaxBounds.Ints.ANY).forGetter(FramePredicate::lightLevel),
+            Stuff.INTS_CODEC.optionalFieldOf("day_time", MinMaxBounds.Ints.ANY).forGetter(FramePredicate::dayTime),
+            Stuff.INTS_CODEC.optionalFieldOf("entities_in_frame_count", MinMaxBounds.Ints.ANY).forGetter(FramePredicate::entitiesInFrameCount),
+            EntityInFramePredicate.CODEC.listOf().optionalFieldOf("entities_in_frame",List.of()).forGetter(FramePredicate::entitiesInFrame),
+            ExtraDataPredicate.CODEC.optionalFieldOf("extra_data",ExtraDataPredicate.ANY).forGetter(FramePredicate::extraData)
     ).apply(instance, FramePredicate::new));
 
     public static final FramePredicate ANY = new FramePredicate(Optional.empty(),Optional.empty(),

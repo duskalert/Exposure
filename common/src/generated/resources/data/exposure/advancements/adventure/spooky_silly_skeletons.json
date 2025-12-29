@@ -9,13 +9,7 @@
               "exposure:photograph",
               "exposure:aged_photograph"
             ],
-            "predicates": {
-              "exposure:frame": {
-                "identifier": {
-                  "texture": "exposure:textures/exposure/mineshaft/skeleton_smirk.png"
-                }
-              }
-            }
+            "nbt": "{\"exposure:photograph_frame\":{identifier:{texture:\"exposure:textures/exposure/mineshaft/skeleton_smirk.png\"}}}"
           }
         ]
       },
@@ -23,18 +17,18 @@
     }
   },
   "display": {
-    "frame": "task",
-    "hidden": true,
-    "show_toast": true,
     "announce_to_chat": true,
-    "icon": {
-      "id": "minecraft:bone"
-    },
-    "title": {
-      "translate": "advancement.exposure.spooky_silly_skeletons.title"
-    },
     "description": {
       "translate": "advancement.exposure.spooky_silly_skeletons.description"
+    },
+    "frame": "task",
+    "hidden": true,
+    "icon": {
+      "item": "minecraft:bone"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancement.exposure.spooky_silly_skeletons.title"
     }
   },
   "requirements": [

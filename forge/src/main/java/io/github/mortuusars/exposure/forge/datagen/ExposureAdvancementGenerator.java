@@ -5,27 +5,30 @@ import io.github.mortuusars.exposure.advancements.predicate.*;
 import io.github.mortuusars.exposure.advancements.trigger.FrameExposedTrigger;
 import io.github.mortuusars.exposure.advancements.trigger.FramePrintedTrigger;
 import io.github.mortuusars.exposure.util.ExtraData;
+import io.github.mortuusars.exposure.world.camera.ExposureType;
 import io.github.mortuusars.exposure.world.camera.frame.Frame;
+import io.github.mortuusars.exposure.world.camera.frame.Photographer;
 import io.github.mortuusars.exposure.world.item.camera.CameraSetting;
 import io.github.mortuusars.exposure.world.item.camera.CameraSettings;
+import io.github.mortuusars.exposure.world.level.storage.ExposureIdentifier;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.FrameType;
 import net.minecraft.advancements.critereon.*;
 import net.minecraft.client.CameraType;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.predicates.LootItemEntityPropertyCondition;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.common.data.ForgeAdvancementProvider;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Consumer;
 
 public class ExposureAdvancementGenerator implements ForgeAdvancementProvider.AdvancementGenerator {
@@ -157,7 +160,7 @@ public class ExposureAdvancementGenerator implements ForgeAdvancementProvider.Ad
                         ItemPredicate.Builder.item().of(Exposure.Items.PHOTOGRAPH.get(),Exposure.Items.AGED_PHOTOGRAPH.get())
                                 .hasNbt(chromatic)
                                 .build()))
-                .save(consumer,Exposure.resource("adventure/complex_composite_shirt"),existingFileHelper);
+                .save(consumer,Exposure.resource("adventure/complex_composite_compound"),existingFileHelper);
 
         Advancement unforeseenConsequences = Advancement.Builder.advancement()
                 .parent(exposedPaparazzi)
@@ -175,10 +178,7 @@ public class ExposureAdvancementGenerator implements ForgeAdvancementProvider.Ad
                         null,FrameType.TASK,true,true,true)
                 .addCriterion("photograph_spider_man",
                         new FrameExposedTrigger.TriggerInstance(ContextAwarePredicate.ANY,CameraPredicate.ANY,
-                                new FramePredicate(Optional.empty(),Optional.empty(),
-                                        Optional.empty(),Optional.empty(), MinMaxBounds.Ints.ANY, MinMaxBounds.Ints.ANY,
-                                        MinMaxBounds.Ints.ANY, MinMaxBounds.Ints.ANY,
-                                        List.of(),ExtraDataPredicate.ANY),LocationPredicate.ANY,
+                                FramePredicate.ANY,LocationPredicate.ANY,
                                 List.of(
                                         ContextAwarePredicate.create(
                                                 LootItemEntityPropertyCondition.hasProperties(LootContext.EntityTarget.THIS,
@@ -188,6 +188,88 @@ public class ExposureAdvancementGenerator implements ForgeAdvancementProvider.Ad
                                         ).build()
                                                 ))))
                 .save(consumer,Exposure.resource("adventure/photos_of_spider_man"),existingFileHelper);
+
+        Advancement piercingGaze = Advancement.Builder.advancement()
+                .parent(root)
+                .display(Exposure.Items.INTERPLANAR_PROJECTOR.get(),Component.translatable("advancement.exposure.piercing_gaze.title"),
+                        Component.translatable("advancement.exposure.piercing_gaze.description"),
+                        null,FrameType.TASK,true,true,false)
+                .addCriterion("use_interplanar_projector",
+                        new PlayerTrigger.TriggerInstance(Exposure.ExposureCriteriaTriggers.SUCCESSFULLY_PROJECT_IMAGE.getId(), ContextAwarePredicate.ANY))
+                .save(consumer,Exposure.resource("adventure/piercing_gaze"),existingFileHelper);
+
+        ItemStack stack = Exposure.Items.PHOTOGRAPH.get().getDefaultInstance();
+        Exposure.DataComponents.setPhotographFrame(stack,new Frame(ExposureIdentifier.texture(
+                Exposure.resource("textures/exposure/mineshaft/skeleton_smirk.png")),
+                ExposureType.COLOR,
+                Photographer.EMPTY,
+                Collections.emptyList(),
+                ExtraData.EMPTY));
+
+        Advancement spookySillySkeletons = Advancement.Builder.advancement()
+                .parent(momentInTime)
+                .display(Items.BONE,Component.translatable("advancement.exposure.spooky_silly_skeletons.title"),
+                        Component.translatable("advancement.exposure.spooky_silly_skeletons.description"),
+                        null,FrameType.TASK,true,true,true)
+                .addCriterion("get_skeleton_smirk_photograph",
+                        InventoryChangeTrigger.TriggerInstance.hasItems(
+                                ItemPredicate.Builder.item().of(Exposure.Items.PHOTOGRAPH.get(),Exposure.Items.AGED_PHOTOGRAPH.get())
+                                        .hasNbt(stack.getTag())
+                                        .build()
+                ))
+                .save(consumer,Exposure.resource("adventure/spooky_silly_skeletons"),existingFileHelper);
+
+        Advancement voidA = Advancement.Builder.advancement()
+                .parent(lightsUp)
+                .display(Items.END_STONE_BRICKS,Component.translatable("advancement.exposure.void.title"),
+                        Component.translatable("advancement.exposure.void.description"),
+                        null,FrameType.TASK,true,true,true)
+                .addCriterion("photograph_in_end",
+                        new FrameExposedTrigger.TriggerInstance(ContextAwarePredicate.ANY,new CameraPredicate(
+                                ItemPredicate.ANY, ItemPredicate.ANY, ItemPredicate.ANY, ItemPredicate.ANY,
+                                ItemPredicate.ANY,LocationPredicate.inDimension(Level.END)
+                        ),
+                                FramePredicate.ANY,LocationPredicate.ANY,
+                                List.of()))
+                .save(consumer,Exposure.resource("adventure/void"),existingFileHelper);
+
+        Advancement.Builder wildLifeArchivist = Advancement.Builder.advancement()
+                .parent(root)
+                .display(Items.END_STONE_BRICKS,Component.translatable("advancement.exposure.wildlife_archivist.title"),
+                        Component.translatable("advancement.exposure.wildlife_archivist.description"),
+                        null,FrameType.TASK,true,true,false);
+
+        for (Map.Entry<String,FrameExposedTrigger.TriggerInstance> instanceEntry : buildCriteria(List.of(
+                EntityType.AXOLOTL,
+                EntityType.BAT,
+                EntityType.CAMEL,
+                EntityType.FROG,
+                EntityType.GLOW_SQUID,
+                EntityType.SQUID,
+                EntityType.OCELOT,EntityType.PARROT,EntityType.RABBIT,EntityType.SNIFFER,
+        EntityType.TURTLE,EntityType.BEE,EntityType.DOLPHIN,EntityType.FOX,EntityType.GOAT
+                ,EntityType.LLAMA,EntityType.PANDA,EntityType.POLAR_BEAR,EntityType.WOLF)).entrySet()) {
+           wildLifeArchivist.addCriterion(instanceEntry.getKey(),instanceEntry.getValue());
+        }
+        wildLifeArchivist.save(consumer,Exposure.resource("adventure/wildlife_archivist"),existingFileHelper);
+    }
+
+    static Map<String,FrameExposedTrigger.TriggerInstance> buildCriteria(List<EntityType<?>> entityTypes) {
+        Map<String,FrameExposedTrigger.TriggerInstance> map = new HashMap<>();
+        for (EntityType<?> entityType : entityTypes) {
+            String key = BuiltInRegistries.ENTITY_TYPE.getKey(entityType).toString();
+
+            FrameExposedTrigger.TriggerInstance villager = new FrameExposedTrigger.TriggerInstance(ContextAwarePredicate.ANY, CameraPredicate.ANY,
+                    new FramePredicate(Optional.empty(), Optional.empty(),
+                            Optional.empty(), Optional.empty(), MinMaxBounds.Ints.ANY, MinMaxBounds.Ints.ANY,
+                            MinMaxBounds.Ints.ANY, MinMaxBounds.Ints.ANY,
+                            List.of(
+                                    new EntityInFramePredicate(Optional.of(new ResourceLocation(key)),Optional.empty(), MinMaxBounds.Ints.ANY)
+                            ), ExtraDataPredicate.ANY), LocationPredicate.ANY,
+                    List.of());
+            map.put(key,villager);
+        }
+        return map;
     }
 
 }
