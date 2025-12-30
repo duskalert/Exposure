@@ -4,6 +4,7 @@
 - Capturing the image no longer sets the game to 'panoramic mode' by default.
   - Setting to enable it is added to config. Enable if world is not looking right in the photos.
   - This was done to fix conflict with other mods (specifically `Snapper`).
+- Fixed viewfinder reversing mouse sensitivity at low FOV settings. 
 - Updated localization files.
 
 ## 1.9.12 - 2025-10-30
