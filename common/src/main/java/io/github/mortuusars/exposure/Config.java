@@ -294,6 +294,7 @@ public class Config {
         public static final ModConfigSpec.BooleanValue FORCE_DIRECT_CAPTURE;
         public static final ModConfigSpec.ConfigValue<List<? extends String>> FORCE_DIRECT_CAPTURE_MODS;
         public static final ModConfigSpec.IntValue DIRECT_CAPTURE_DELAY_FRAMES;
+        public static final ModConfigSpec.BooleanValue BACKGROUND_CAPTURE_USE_PANORAMIC_MODE;
 
         // RENDER
         public static final ModConfigSpec.BooleanValue PIXEL_PERFECT_PHOTOGRAPH_FRAME;
@@ -429,6 +430,12 @@ public class Config {
                                 "Set to higher value when leftovers of GUI elements (such as nameplates) are visible on the images",
                                 "(some shaders have temporal effects that take several frames to disappear fully)")
                         .defineInRange("direct_capture_delay_frames", 0, 0, 100);
+                BACKGROUND_CAPTURE_USE_PANORAMIC_MODE = builder
+                      .comment("Sets the game to 'panoramic mode' when capturing the image with background capture method (default).",
+                            "Enabling this might fix some graphical issues, such as water being invisible.",
+                            "If captured images are still not looking properly - enable 'force_direct_capture'.",
+                            "Default: false")
+                      .define("background_capture_use_panoramic_mode", false);
                 builder.pop();
             }
 

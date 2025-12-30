@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.9.13 - 2025-12-30
+- Capturing the image no longer sets the game to 'panoramic mode' by default.
+  - Setting to enable it is added to config. Enable if world is not looking right in the photos.
+  - This was done to fix conflict with other mods (specifically `Snapper`).
+- Updated localization files.
+
 ## 1.9.12 - 2025-10-30
 - [NeoForge] Fixed crash with Create 6.0.7.
 
