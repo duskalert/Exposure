@@ -1,7 +1,7 @@
 {
   "type": "exposure:film_developing",
   "film": {
-    "item": "exposure:black_and_white_film"
+    "tag": "exposure:black_and_white_film_rolls"
   },
   "ingredients": [
     [

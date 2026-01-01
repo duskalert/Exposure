@@ -1,6 +1,8 @@
 {
   "predicate": {
-    "items": "minecraft:white_stained_glass_pane"
+    "items": [
+      "minecraft:white_stained_glass_pane"
+    ]
   },
   "shader": "exposure:shaders/post/white_tint.json"
 }

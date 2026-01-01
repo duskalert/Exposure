@@ -1,0 +1,9 @@
+{
+  "attachment_tint": "006689D3",
+  "predicate": {
+    "items": [
+      "minecraft:light_blue_stained_glass_pane"
+    ]
+  },
+  "shader": "exposure:shaders/post/light_blue_tint.json"
+}

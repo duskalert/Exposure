@@ -99,23 +99,19 @@ public class LightroomBlock extends Block implements EntityBlock {
     }
 
     @Override
-    public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
-        ItemStack stack = player.getItemInHand(hand);
-        if (stack.isEmpty()) {
-            if (!(level.getBlockEntity(pos) instanceof LightroomBlockEntity lightroomBlockEntity))
-                return super.use(state, level, pos, player,hand, hit);
+    public @NotNull InteractionResult use(@NotNull BlockState blockState, Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hitResult) {
+        if (!(level.getBlockEntity(pos) instanceof LightroomBlockEntity lightroomBlockEntity))
+            return InteractionResult.FAIL;
 
-            player.awardStat(Exposure.Stats.INTERACT_WITH_LIGHTROOM);
+        player.awardStat(Exposure.Stats.INTERACT_WITH_LIGHTROOM);
 
-            if (player instanceof ServerPlayer serverPlayer) {
-                lightroomBlockEntity.setLastPlayer(serverPlayer);
-                lightroomBlockEntity.setChanged(); // Updates state for client. Without this GUI buttons have some problems. (PrintButton active state)
-                PlatformHelper.openMenu(serverPlayer, lightroomBlockEntity, buffer -> buffer.writeBlockPos(pos));
-            }
-
-            return InteractionResult.sidedSuccess(level.isClientSide);
+        if (player instanceof ServerPlayer serverPlayer) {
+            lightroomBlockEntity.setLastPlayer(serverPlayer);
+            lightroomBlockEntity.setChanged(); // Updates state for client. Without this GUI buttons have some problems. (PrintButton active state)
+            PlatformHelper.openMenu(serverPlayer, lightroomBlockEntity, buffer -> buffer.writeBlockPos(pos));
         }
-        return super.use(state, level, pos, player, hand, hit);
+
+        return InteractionResult.sidedSuccess(level.isClientSide);
     }
 
     @Override

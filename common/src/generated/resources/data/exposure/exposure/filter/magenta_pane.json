@@ -1,0 +1,9 @@
+{
+  "attachment_tint": "00C354CD",
+  "predicate": {
+    "items": [
+      "minecraft:magenta_stained_glass_pane"
+    ]
+  },
+  "shader": "exposure:shaders/post/magenta_tint.json"
+}

@@ -1,0 +1,20 @@
+// 1.20.1	2025-12-31T17:15:40.6915511	Registries
+1edc879d513b8acdbb7c09d96b071d817193a2a8 data/exposure/exposure/filter/black_pane.json
+dc3524c94a4f78774f91943e41fafc3a1cfdb82b data/exposure/exposure/filter/blue_pane.json
+bc709d5a5833f813d28b7b66d0c02228ccbca1a2 data/exposure/exposure/filter/broken_interplanar_projector.json
+c83d80789106911c2597de1df018dcfab6484919 data/exposure/exposure/filter/brown_pane.json
+8193b8eef4eca9fff27c6078d4280a469b5b5a12 data/exposure/exposure/filter/cyan_pane.json
+9d923c53bcfda0e983a4b017db5bfd079984b05d data/exposure/exposure/filter/glass_pane.json
+f095a37a2e22dfd6bfd31e73b46838cd4a4a7aca data/exposure/exposure/filter/gray_pane.json
+39dc79901c17ca2859f6db5c1cebcd9e02654730 data/exposure/exposure/filter/green_pane.json
+78227b25ba7c9de933fbe34021cb83d5c8667bc1 data/exposure/exposure/filter/interplanar_projector.json
+9ffa7a7476a250266289a21864e089b99cee68c8 data/exposure/exposure/filter/light_blue_pane.json
+c03113ed9d24e04cfc0cff464a8bca2480729403 data/exposure/exposure/filter/light_gray_pane.json
+70246ae3d8ff077e15bd3377a5d125b3cef10495 data/exposure/exposure/filter/lime_pane.json
+ba44458c80c3b36b26f44f9e4df67d366db7e613 data/exposure/exposure/filter/magenta_pane.json
+9c9c8c71d0edbb301d7152ece2be9b39f29002bc data/exposure/exposure/filter/orange_pane.json
+55c32cfe120bfdbc25229a032fb8fcd7be5473ef data/exposure/exposure/filter/pink_pane.json
+70074f7f7b6c8e075c5839f3b7ba867b3cdb7e73 data/exposure/exposure/filter/purple_pane.json
+38ca7e12e5cc9c7efa58cf734bf1407292ccd588 data/exposure/exposure/filter/red_pane.json
+499dc2280514d4acb0c55df09166612f20f08235 data/exposure/exposure/filter/white_pane.json
+558b37962d643f67888ad4ab42242d2f65633394 data/exposure/exposure/filter/yellow_pane.json

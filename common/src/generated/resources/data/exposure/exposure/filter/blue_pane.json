@@ -1,0 +1,9 @@
+{
+  "attachment_tint": "00253192",
+  "predicate": {
+    "items": [
+      "minecraft:blue_stained_glass_pane"
+    ]
+  },
+  "shader": "exposure:shaders/post/blue_filter.json"
+}
