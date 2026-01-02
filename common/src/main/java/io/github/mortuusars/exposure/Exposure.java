@@ -37,10 +37,8 @@ import io.github.mortuusars.exposure.world.item.camera.ShutterState;
 import io.github.mortuusars.exposure.world.item.component.StoredItemStack;
 import io.github.mortuusars.exposure.world.item.component.album.AlbumContent;
 import io.github.mortuusars.exposure.world.item.component.album.SignedAlbumContent;
-import io.github.mortuusars.exposure.world.item.crafting.recipe.FilmDevelopingRecipe;
-import io.github.mortuusars.exposure.world.item.crafting.recipe.PhotographAgingRecipe;
-import io.github.mortuusars.exposure.world.item.crafting.recipe.PhotographCopyingRecipe;
 import io.github.mortuusars.exposure.world.item.crafting.recipe.serializer.ComponentTransferringRecipeSerializer;
+import io.github.mortuusars.exposure.world.item.interfaces.DefaultFilmStyle;
 import io.github.mortuusars.exposure.world.item.util.ItemAndStack;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.advancements.critereon.EntitySubPredicate;
@@ -65,7 +63,6 @@ import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -155,28 +152,26 @@ public class Exposure {
         public static final Supplier<FilmRollItem> BLACK_AND_WHITE_FILM = Register.item("black_and_white_film",
                 () -> new FilmRollItem(ExposureType.BLACK_AND_WHITE, FilmRollItem.BAR_BLACK_AND_WHITE,
                         new Item.Properties()
-                                .stacksTo(16)));
+                                .stacksTo(16),FilmStyle.EMPTY));
 
         public static final Supplier<FilmRollItem> COLOR_FILM = Register.item("color_film",
                 () -> new FilmRollItem(ExposureType.COLOR, FilmRollItem.BAR_COLOR,
                         new Item.Properties()
-                                .stacksTo(16)));
+                                .stacksTo(16),FilmStyle.EMPTY));
 
         public static final Supplier<FilmRollItem> HIGH_SENSITIVITY_BLACK_AND_WHITE_FILM = Register.item("high_sensitivity_black_and_white_film",
                 () -> new FilmRollItem(ExposureType.BLACK_AND_WHITE, FilmRollItem.BAR_BLACK_AND_WHITE,
                         new Item.Properties()
-                          /*      .component(DataComponents.FILM_STYLE, FilmStyle.create()
-                                        .withSensitivity(2f)
-                                        .withNoise(0.065f))*/
-                                .stacksTo(16)));
+                                .stacksTo(16), FilmStyle.create()
+                        .withSensitivity(2f)
+                        .withNoise(0.065f)));
 
         public static final Supplier<FilmRollItem> HIGH_SENSITIVITY_COLOR_FILM = Register.item("high_sensitivity_color_film",
                 () -> new FilmRollItem(ExposureType.COLOR, FilmRollItem.BAR_COLOR,
                         new Item.Properties()
-                              /*  .component(DataComponents.FILM_STYLE, FilmStyle.create()
-                                        .withSensitivity(2f)
-                                        .withNoise(0.065f))*/
-                                .stacksTo(16)));
+                                .stacksTo(16),FilmStyle.create()
+                        .withSensitivity(2f)
+                        .withNoise(0.065f)));
 
         public static final Supplier<DevelopedFilmItem> DEVELOPED_BLACK_AND_WHITE_FILM = Register.item("developed_black_and_white_film",
                 () -> new DevelopedFilmItem(ExposureType.BLACK_AND_WHITE, new Item.Properties()
@@ -572,7 +567,11 @@ public class Exposure {
         }
 
         public static FilmStyle getFilmStyle(ItemStack stack) {
-            return getValue(stack,"exposure:film_style",FilmStyle.CODEC);
+            FilmStyle value = getValue(stack, "exposure:film_style", FilmStyle.CODEC);
+            if (value == null && stack.getItem() instanceof DefaultFilmStyle defaultFilmStyle) {
+                return defaultFilmStyle.getDefaultFilmStyle();
+            }
+            return value;
         }
 
         public static FilmStyle getFilmStyle(ItemStack stack,FilmStyle fallback) {

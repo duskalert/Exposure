@@ -55,6 +55,9 @@ dependencies {
     modRuntimeOnly("dev.engine-room.flywheel:flywheel-forge-${minecraft_version}:${flywheel_version}")
     modImplementation("com.tterrag.registrate:Registrate:${registrate_version}")
 
+    modImplementation("curse.maven:embeddium-908741:5681725")
+    modImplementation ("curse.maven:oculus-581495:6020952")
+
     //runtimeOnly("curse.maven:refined-storage-243076:6391989")
     //runtimeOnly("maven.modrinth:DistantHorizons:2.3.0-b-1.21.1")
 
@@ -67,6 +70,8 @@ dependencies {
 loom {
     accessWidenerPath.set(project(":common").loom.accessWidenerPath)
     forge {
+        convertAccessWideners = true
+
         mixinConfig "exposure-common.mixins.json"
         mixinConfig "exposure-forge.mixins.json"
     }
@@ -91,8 +96,11 @@ loom {
 }
 
 shadowJar {
+    exclude "fabric.mod.json"
+    exclude "architectury.common.json"
+
     configurations = [project.configurations.shadowBundle]
-    archiveClassifier = 'dev-shadow'
+    archiveClassifier = "dev-shadow"
 }
 
 /*remapJar {
