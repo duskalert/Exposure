@@ -29,6 +29,19 @@ repositories {
         url 'https://maven.sinytra.org/'
     }
     maven { url = "https://maven.ithundxr.dev/mirror" } // Registrate
+
+    exclusiveContent {
+        forRepository {
+            maven {
+                name = "Modrinth"
+                url = uri("https://api.modrinth.com/maven")
+            }
+        }
+       // forRepositories(fg.repository) // Only add this if you're using ForgeGradle, otherwise remove this line
+        filter {
+            includeGroup("maven.modrinth")
+        }
+    }
 }
 
 dependencies {
@@ -46,7 +59,6 @@ dependencies {
     //modRuntimeOnly("curse.maven:jade-324717:${jade_neoforge_id}") //{ transitive = false }
     modRuntimeOnly("curse.maven:yeetusexperimentus-635427:5444189") { transitive = false }
 
-    modRuntimeOnly("curse.maven:embeddium-908741:6118392")
 
     // Create
     modImplementation("com.simibubi.create:create-${minecraft_version}:${create_version}:slim") { transitive = false }
@@ -55,9 +67,11 @@ dependencies {
     modRuntimeOnly("dev.engine-room.flywheel:flywheel-forge-${minecraft_version}:${flywheel_version}")
     modImplementation("com.tterrag.registrate:Registrate:${registrate_version}")
 
+    //modRuntimeOnly("curse.maven:embeddium-908741:6118392")
     modImplementation("curse.maven:embeddium-908741:5681725")
-    modImplementation ("curse.maven:oculus-581495:6020952")
-
+    //modImplementation ("curse.maven:oculus-581495:6020952")
+    modImplementation("maven.modrinth:oculus:1.20.1-1.8.0-forge")
+    forgeRuntimeLibrary ('org.anarres:jcpp:1.4.14')
     //runtimeOnly("curse.maven:refined-storage-243076:6391989")
     //runtimeOnly("maven.modrinth:DistantHorizons:2.3.0-b-1.21.1")
 

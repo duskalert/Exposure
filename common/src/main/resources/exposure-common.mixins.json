@@ -35,6 +35,7 @@
     "LivingEntityMixin",
     "MinecraftServerMixin",
     "PlayerMixin",
+    "PotionUtilsMixin",
     "ServerEntityMixin",
     "ServerGamePacketListenerMixin",
     "ServerPlayerMixin",
