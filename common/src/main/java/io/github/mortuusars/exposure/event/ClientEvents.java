@@ -29,7 +29,7 @@ public class ClientEvents {
 
     public static void login() {
         try {
-            preloadStuffToFixLagSpikes();
+           // preloadStuffToFixLagSpikes();
         } catch (Exception e) {
             Exposure.LOGGER.warn("Failed to preload stuff: {}", e.getMessage());
         }
