@@ -172,17 +172,12 @@ public class Viewfinder {
     }
 
     public double modifyMouseSensitivity(double original) {
-        if (!isLookingThrough())
+        if (!isLookingThrough()) {
             return original;
+        }
 
         double scale = original / Minecraft.getInstance().options.fov().get();
         double scaledSensitivity = zoom.getCurrentFov() * scale;
-
-        double normalizedDifference = Mth.map(original - scaledSensitivity, 0, original, 0, 1);
-        double influence = Config.Client.VIEWFINDER_ZOOM_SENSITIVITY_INFLUENCE.get();
-        double strength = 1f - normalizedDifference * influence;
-        strength *= strength; // more influence at smaller FOVs
-
-        return Mth.lerp(strength, scaledSensitivity, original);
+        return Mth.lerp(Config.Client.VIEWFINDER_ZOOM_SENSITIVITY_INFLUENCE.get(), original, scaledSensitivity);
     }
 }

@@ -3,6 +3,7 @@ package io.github.mortuusars.exposure.client.capture.task;
 import com.mojang.blaze3d.pipeline.RenderTarget;
 import com.mojang.blaze3d.pipeline.TextureTarget;
 import com.mojang.blaze3d.vertex.PoseStack;
+import io.github.mortuusars.exposure.Config;
 import io.github.mortuusars.exposure.Exposure;
 import io.github.mortuusars.exposure.ExposureClient;
 import io.github.mortuusars.exposure.client.capture.CaptureShader;
@@ -56,8 +57,11 @@ public class BackgroundScreenshotCaptureTask extends Task<Result<Image>> {
         try {
             capturing = true;
 
-            // For whatever reason setPanoramicMode makes water visible again. So we cannot omit it.
-            minecraft.gameRenderer.setPanoramicMode(true);
+            if (Config.Client.BACKGROUND_CAPTURE_USE_PANORAMIC_MODE.get()) {
+                // Panoramic mode was enabled by default before to make water visible on images, but it seems to not be needed anymore.
+                // But keeping this as a setting might not hurt.
+                minecraft.gameRenderer.setPanoramicMode(true);
+            }
 
             minecraft.gameRenderer.setRenderBlockOutline(false);
 
@@ -74,7 +78,9 @@ public class BackgroundScreenshotCaptureTask extends Task<Result<Image>> {
             Exposure.LOGGER.error("Couldn't capture image: ", e);
             return CompletableFuture.completedFuture(Result.error(Capture.ERROR_FAILED_GENERIC));
         } finally {
-            minecraft.gameRenderer.setPanoramicMode(false);
+            if (Config.Client.BACKGROUND_CAPTURE_USE_PANORAMIC_MODE.get()) {
+                minecraft.gameRenderer.setPanoramicMode(false);
+            }
             minecraft.gameRenderer.setRenderBlockOutline(true);
             renderTarget.destroyBuffers();
             renderTarget.unbindWrite();
