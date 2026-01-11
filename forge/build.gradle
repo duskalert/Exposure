@@ -70,7 +70,7 @@ dependencies {
     //modRuntimeOnly("curse.maven:embeddium-908741:6118392")
     modImplementation("curse.maven:embeddium-908741:5681725")
     //modImplementation ("curse.maven:oculus-581495:6020952")
-    modImplementation("maven.modrinth:oculus:1.20.1-1.8.0-forge")
+    // modImplementation("maven.modrinth:oculus:1.20.1-1.8.0-forge")
     forgeRuntimeLibrary ('org.anarres:jcpp:1.4.14')
     //runtimeOnly("curse.maven:refined-storage-243076:6391989")
     //runtimeOnly("maven.modrinth:DistantHorizons:2.3.0-b-1.21.1")

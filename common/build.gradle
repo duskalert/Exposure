@@ -25,7 +25,7 @@ dependencies {
 
     modCompileOnlyApi "mezz.jei:jei-${minecraft_version}-common-api:${jei_version}"
 
-    modCompileOnly("curse.maven:real-camera-851574:${realcamera_neoforge_id}")
+    modCompileOnly("curse.maven:real-camera-851574:${realcamera_forge_id}")
 
     testImplementation(platform("org.junit:junit-bom:${project.property("jupiterVersion")}"))
     testImplementation("org.junit.jupiter:junit-jupiter")

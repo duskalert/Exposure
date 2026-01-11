@@ -289,12 +289,12 @@ public class Config {
         public static final ForgeConfigSpec.IntValue VIEWFINDER_STATUS_ICON_OFFSET_Y;
 
         // CAPTURE
-        public static final ModConfigSpec.BooleanValue KEEP_POST_EFFECT;
-        public static final ModConfigSpec.IntValue FLASH_CAPTURE_DELAY_TICKS;
-        public static final ModConfigSpec.BooleanValue FORCE_DIRECT_CAPTURE;
-        public static final ModConfigSpec.ConfigValue<List<? extends String>> FORCE_DIRECT_CAPTURE_MODS;
-        public static final ModConfigSpec.IntValue DIRECT_CAPTURE_DELAY_FRAMES;
-        public static final ModConfigSpec.BooleanValue BACKGROUND_CAPTURE_USE_PANORAMIC_MODE;
+        public static final ForgeConfigSpec.BooleanValue KEEP_POST_EFFECT;
+        public static final ForgeConfigSpec.IntValue FLASH_CAPTURE_DELAY_TICKS;
+        public static final ForgeConfigSpec.BooleanValue FORCE_DIRECT_CAPTURE;
+        public static final ForgeConfigSpec.ConfigValue<List<? extends String>> FORCE_DIRECT_CAPTURE_MODS;
+        public static final ForgeConfigSpec.IntValue DIRECT_CAPTURE_DELAY_FRAMES;
+        public static final ForgeConfigSpec.BooleanValue BACKGROUND_CAPTURE_USE_PANORAMIC_MODE;
 
         // RENDER
         public static final ForgeConfigSpec.BooleanValue PIXEL_PERFECT_PHOTOGRAPH_FRAME;

@@ -238,7 +238,7 @@
     "frame": "task",
     "hidden": false,
     "icon": {
-      "item": "minecraft:end_stone_bricks"
+      "item": "minecraft:axolotl_bucket"
     },
     "show_toast": true,
     "title": {

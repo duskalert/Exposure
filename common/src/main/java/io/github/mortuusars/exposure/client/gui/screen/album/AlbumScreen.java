@@ -27,7 +27,6 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.gui.components.ImageButton;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.GameRenderer;
@@ -118,39 +117,6 @@ public class AlbumScreen extends AbstractContainerScreen<AlbumMenu> {
             addRenderableWidget(enterSignModeButton);
         }
 
-        /*
-
-        // LEFT:
-        Page leftPage = createPage(Side.LEFT, 0);
-        pages.add(leftPage);
-
-        ImageButton previousButton = new ImageButton(leftPos + 12, topPos + 164, 13, 15,
-                216, 188, 15, TEXTURE, 512, 512,
-                button -> pager.changePage(PagingDirection.PREVIOUS), Component.translatable("gui.exposure.previous_page"));
-        previousButton.setTooltip(Tooltip.create(Component.translatable("gui.exposure.previous_page")));
-        addRenderableWidget(previousButton);
-
-        // RIGHT:
-        Page rightPage = createPage(Side.RIGHT, 140);
-        pages.add(rightPage);
-
-        ImageButton nextButton = new ImageButton(leftPos + 273, topPos + 164, 13, 15,
-                229, 188, 15, TEXTURE, 512, 512,
-                button -> pager.changePage(PagingDirection.NEXT), Component.translatable("gui.exposure.next_page"));
-        nextButton.setTooltip(Tooltip.create(Component.translatable("gui.exposure.next_page")));
-        addRenderableWidget(nextButton);
-
-        // MISC:
-        if (getMenu().isAlbumEditable()) {
-            enterSignModeButton = new ImageButton(leftPos - 23, topPos + 17, 22, 22, 242, 188,
-                    22, TEXTURE, 512, 512,
-                    b -> enterSignMode(), Component.translatable("gui.exposure.album.sign"));
-            enterSignModeButton.setTooltip(Tooltip.create(Component.translatable("gui.exposure.album.sign")));
-            addRenderableWidget(enterSignModeButton);
-        }
-
-         */
-
         int spreadsCount = (int) Math.ceil(getMenu().getPages().size() / 2f);
         pager.setPagesCount(spreadsCount)
                 .setPreviousPageButton(previousPageButton)
@@ -238,6 +204,20 @@ public class AlbumScreen extends AbstractContainerScreen<AlbumMenu> {
 
     // RENDER
 
+    private void updateWidgetVisibility() {
+        // Note should be hidden when adding photograph because it's drawn over the slots. Blit offset does not help.
+        forEachPage(page -> page.getNoteWidget().visible = !isInAddingMode());
+
+        for (Page page : pages) {
+            page.photographWidget.visible = !getMenu().getPhotograph(page.side).isEmpty()
+                  || (!isInAddingMode() && getMenu().isAlbumEditable());
+        }
+
+        if (enterSignModeButton != null) {
+            enterSignModeButton.visible = getMenu().canSignAlbum();
+        }
+    }
+
     @Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
         updateWidgetVisibility();
@@ -246,7 +226,6 @@ public class AlbumScreen extends AbstractContainerScreen<AlbumMenu> {
 
         renderBackground(guiGraphics);
         super.render(guiGraphics, mouseX, mouseY, partialTick);
-        renderTooltip(guiGraphics, mouseX, mouseY);
 
         for (Page page : pages) {
             AbstractWidget noteWidget = page.getNoteWidget();
@@ -267,20 +246,44 @@ public class AlbumScreen extends AbstractContainerScreen<AlbumMenu> {
             RenderSystem.disableBlend();
         }
 
-        this.renderTooltip(guiGraphics, mouseX, mouseY);
+        renderTooltip(guiGraphics, mouseX, mouseY);
     }
 
-    private void updateWidgetVisibility() {
-        // Note should be hidden when adding photograph because it's drawn over the slots. Blit offset does not help.
-        forEachPage(page -> page.getNoteWidget().visible = !isInAddingMode());
+    @Override
+    protected void renderBg(GuiGraphics guiGraphics, float partialTick, int mouseX, int mouseY) {
+        RenderSystem.setShader(GameRenderer::getPositionTexShader);
+        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+        RenderSystem.enableBlend();
+        RenderSystem.enableDepthTest();
+        RenderSystem.defaultBlendFunc();
+        guiGraphics.blit(AlbumGUI.TEXTURE, leftPos, topPos, 0, 0, 0,
+              imageWidth, imageHeight, 512, 512);
 
-        for (Page page : pages) {
-            page.photographWidget.visible = !getMenu().getPhotograph(page.side).isEmpty()
-                    || (!isInAddingMode() && getMenu().isAlbumEditable());
+        if (enterSignModeButton != null && enterSignModeButton.visible) {
+            guiGraphics.blit(AlbumGUI.TEXTURE, leftPos - 27, topPos + 14, 447, 0,
+                  27, 28, 512, 512);
         }
 
-        if (enterSignModeButton != null) {
-            enterSignModeButton.visible = getMenu().canSignAlbum();
+        int currentSpreadIndex = getMenu().getCurrentSpreadIndex();
+        drawPageNumbers(guiGraphics, currentSpreadIndex);
+
+        if (isInAddingMode()) {
+            AlbumPlayerInventorySlot firstSlot = getMenu().getPlayerInventorySlots().get(0);
+            int x = firstSlot.x - 8;
+            int y = firstSlot.y - 18;
+            // Inventory BG
+            guiGraphics.blit(AlbumGUI.TEXTURE, leftPos + x, topPos + y, 10, 0, 188,
+                  176, 100, 512, 512);
+
+            @Nullable Side pageBeingAddedTo = getMenu().getSideBeingAddedTo();
+            for (Page page : pages) {
+                if (page.side == pageBeingAddedTo) {
+                    // Draw corners of the slot being added to, for clarity
+                    guiGraphics.blit(PhotographSlotWidget.EMPTY_SPRITES.enabledFocused(), page.photoArea.getX(), page.photoArea.getY(),
+                          0, 0, 0, page.photoArea.getWidth(), page.photoArea.getHeight(),
+                          PhotographSlotWidget.EMPTY_SPRITES.width(), PhotographSlotWidget.EMPTY_SPRITES.height());
+                }
+            }
         }
     }
 
@@ -337,43 +340,6 @@ public class AlbumScreen extends AbstractContainerScreen<AlbumMenu> {
             tooltipLines.add(Component.translatable("gui.exposure.album.left_click_to_add"));
         }
         return tooltipLines;
-    }
-
-    @Override
-    protected void renderBg(GuiGraphics guiGraphics, float partialTick, int mouseX, int mouseY) {
-        RenderSystem.setShader(GameRenderer::getPositionTexShader);
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-        RenderSystem.enableBlend();
-        RenderSystem.defaultBlendFunc();
-        guiGraphics.blit(AlbumGUI.TEXTURE, leftPos, topPos, 0, 0, 0,
-                imageWidth, imageHeight, 512, 512);
-
-        if (enterSignModeButton != null && enterSignModeButton.visible) {
-            guiGraphics.blit(AlbumGUI.TEXTURE, leftPos - 27, topPos + 14, 447, 0,
-                    27, 28, 512, 512);
-        }
-
-        int currentSpreadIndex = getMenu().getCurrentSpreadIndex();
-        drawPageNumbers(guiGraphics, currentSpreadIndex);
-
-        if (isInAddingMode()) {
-            AlbumPlayerInventorySlot firstSlot = getMenu().getPlayerInventorySlots().get(0);
-            int x = firstSlot.x - 8;
-            int y = firstSlot.y - 18;
-            guiGraphics.blit(AlbumGUI.TEXTURE, leftPos + x, topPos + y, 10, 0, 188, 176, 100, 512, 512);
-
-            @Nullable Side pageBeingAddedTo = getMenu().getSideBeingAddedTo();
-            for (Page page : pages) {
-                if (page.side == pageBeingAddedTo) {
-
-                    guiGraphics.blit(TEXTURE, page.photoArea.getX(), page.photoArea.getY(), 10, 0, 296,
-                            page.photoArea.getWidth(), page.photoArea.getHeight(), 512, 512);
-
-                 //   guiGraphics.blitSprite(PhotographSlotWidget.EMPTY_SPRITES.enabledFocused(),
-                 //           page.photoArea.getX(), page.photoArea.getY(), page.photoArea.getWidth(), page.photoArea.getHeight());
-                }
-            }
-        }
     }
 
     protected void drawPageNumbers(GuiGraphics guiGraphics, int currentSpreadIndex) {
@@ -582,7 +548,6 @@ public class AlbumScreen extends AbstractContainerScreen<AlbumMenu> {
 
         return keyBindings.keyReleased(keyCode, scanCode, modifiers) || super.keyReleased(keyCode, scanCode, modifiers);
     }
-
 
     // MISC:
 

@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.20.1 - 1.9.13 - 2026-01-11
+- Backported from 1.21.1 by Tfarcenim
+
 ## 1.9.13 - 2025-12-30
 - Capturing the image no longer sets the game to 'panoramic mode' by default.
   - Setting to enable it is added to config. Enable if world is not looking right in the photos.

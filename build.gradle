@@ -1,7 +1,7 @@
 plugins {
     id "dev.architectury.loom" version "1.13-SNAPSHOT" apply false
     id "architectury-plugin" version "3.4-SNAPSHOT"
-    id "me.modmuss50.mod-publish-plugin" version "0.8.4"
+    id "me.modmuss50.mod-publish-plugin" version "1.1.0"
     id 'org.moddedmc.wiki.toolkit' version '0.2.6'
     id 'com.gradleup.shadow' version '8.3.6' apply false
 }
@@ -119,7 +119,7 @@ subprojects {
         }
 
         modCompileOnlyApi("mezz.jei:jei-${minecraft_version}-common-api:${jei_version}")
-        modCompileOnlyApi("curse.maven:jade-324717:${jade_neoforge_id}")
+        modCompileOnlyApi("curse.maven:jade-324717:${jade_forge_id}")
     }
 
     java {
@@ -242,16 +242,16 @@ task printLatestVersionChangelog {
     }
 }
 
-/*publishMods {
+publishMods {
     changelog = project.ext.changelog
-    type = STABLE
+    type = BETA
     dryRun = providers.environmentVariable("CURSEFORGE_TOKEN").getOrNull() == null || providers.environmentVariable("MODRINTH_TOKEN").getOrNull() == null
 
     def cfOptions = curseforgeOptions {
         accessToken = providers.environmentVariable("CURSEFORGE_TOKEN")
         projectId = mod_curseforge_project_id
         minecraftVersions.add("${minecraft_version}")
-        javaVersions.add(JavaVersion.VERSION_21)
+        javaVersions.add(JavaVersion.VERSION_17)
         clientRequired = true
         serverRequired = true
     }
@@ -262,11 +262,11 @@ task printLatestVersionChangelog {
         minecraftVersions.add("${minecraft_version}")
     }
 
-    curseforge("curseforgeNeoForge") {
+    curseforge("curseforgeForge") {
         from cfOptions
-        file project(":neoforge")
-        modLoaders.add("neoforge")
-        displayName = "${mod_name} - NeoForge ${minecraft_version} - ${mod_version}"
+        file project(":forge")
+        modLoaders.add("forge")
+        displayName = "[Unnoficial] ${mod_name} - Forge ${minecraft_version} - ${mod_version}"
         optional("jei")
     }
 
@@ -274,17 +274,17 @@ task printLatestVersionChangelog {
         from cfOptions
         file project(":fabric")
         modLoaders.add("fabric")
-        displayName = "${mod_name} - Fabric ${minecraft_version} - ${mod_version}"
+        displayName = "[Unnoficial] ${mod_name} - Fabric ${minecraft_version} - ${mod_version}"
         requires("fabric-api")
         requires("forge-config-api-port")
         optional("jei")
     }
 
-    modrinth("modrinthNeoForge") {
+    modrinth("modrinthForge") {
         from mrOptions
-        file project(":neoforge")
-        modLoaders.add("neoforge")
-        displayName = "${mod_name} - ${mod_version}"
+        file project(":forge")
+        modLoaders.add("forge")
+        displayName = "[Unnoficial] ${mod_name} - ${mod_version}"
         optional("jei")
     }
 
@@ -292,9 +292,9 @@ task printLatestVersionChangelog {
         from mrOptions
         file project(":fabric")
         modLoaders.add("fabric")
-        displayName = "${mod_name} - ${mod_version}"
+        displayName = "[Unnoficial] ${mod_name} - ${mod_version}"
         requires("fabric-api")
         requires("forge-config-api-port")
         optional("jei")
     }
-}*/
+}

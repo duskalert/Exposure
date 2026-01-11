@@ -2,6 +2,7 @@ package io.github.mortuusars.exposure.client.gui.screen.album;
 
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.platform.InputConstants;
+import com.mojang.blaze3d.systems.RenderSystem;
 import io.github.mortuusars.exposure.Exposure;
 import io.github.mortuusars.exposure.ExposureClient;
 import io.github.mortuusars.exposure.ModWidgetSprites;
@@ -78,6 +79,7 @@ public class PhotographSlotWidget extends AbstractWidget {
 
     @Override
     protected void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+        RenderSystem.enableDepthTest();
         ItemStack photograph = getPhotograph();
 
         if (photograph.getItem() instanceof PhotographItem) {
@@ -118,6 +120,7 @@ public class PhotographSlotWidget extends AbstractWidget {
         if (!editable && !hasPhotograph) {
             resourceLocation = sprites.get(isActive(), false);
         }
+        RenderSystem.enableDepthTest();
         guiGraphics.blit(resourceLocation, getX(), getY(),0,0,width,height, sprites.width(), sprites.height());
     }
 
