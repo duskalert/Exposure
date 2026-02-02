@@ -60,7 +60,7 @@ public class ModelHooks {
     }
 
     public static boolean renderCrosshair() {
-        LocalPlayer player = Minecrft.player();
+        LocalPlayer player = (LocalPlayer) Minecrft.player();
         if (Config.Client.PHOTOGRAPH_IN_HAND_HIDE_CROSSHAIR.get() && player.getXRot() > 25f
                 && (player.getMainHandItem().getItem() instanceof PhotographItem || player.getMainHandItem().getItem() instanceof StackedPhotographsItem)
                 && player.getOffhandItem().isEmpty())

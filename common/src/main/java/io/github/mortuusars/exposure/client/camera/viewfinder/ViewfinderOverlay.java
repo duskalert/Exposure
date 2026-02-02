@@ -61,7 +61,7 @@ public class ViewfinderOverlay {
     protected long forceDrawShutterUntil = -1;
 
     public ViewfinderOverlay(Camera camera, Viewfinder viewfinder) {
-        this.player = Minecrft.player();
+        this.player = (LocalPlayer) Minecrft.player();
         this.camera = camera;
         this.viewfinder = viewfinder;
         this.backgroundColor = Config.getColor(Config.Client.VIEWFINDER_BACKGROUND_COLOR);
