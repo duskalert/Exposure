@@ -93,7 +93,7 @@ public class PhotographFrameEntityRenderer<T extends PhotographFrameEntity> exte
                 float scale = 0.65f + entity.getSize() * 0.5f;
                 poseStack.translate(0, 0, 0.46875);
                 poseStack.scale(scale, scale, scale * 0.75f);
-                poseStack.mulPose(Axis.ZP.rotationDegrees((entity.getItemRotation() * 360.0F / 4.0F)));
+                poseStack.mulPose(Axis.ZP.rotationDegrees((entity.getRotation() * 360.0F / 4.0F)));
                 Minecrft.get().getItemRenderer().renderStatic(item, ItemDisplayContext.FIXED, packedLight, OverlayTexture.NO_OVERLAY, poseStack, bufferSource, entity.level(), 0);
                 poseStack.popPose();
             }
@@ -128,7 +128,7 @@ public class PhotographFrameEntityRenderer<T extends PhotographFrameEntity> exte
         offsetFromCenter -= Config.Client.PHOTOGRAPH_FRAME_IMAGE_OFFSET.get();
         float desiredSize = size + 1 - frameBorderOffset * 2;
 
-        poseStack.mulPose(Axis.ZP.rotationDegrees((entity.getItemRotation() * 360.0F / 4.0F)));
+        poseStack.mulPose(Axis.ZP.rotationDegrees((entity.getRotation() * 360.0F / 4.0F)));
         poseStack.mulPose(Axis.ZP.rotationDegrees(180.0F));
         poseStack.translate(-0.5 * (size + 1) + frameBorderOffset, -0.5 * (size + 1) + frameBorderOffset, offsetFromCenter);
         poseStack.scale(desiredSize, desiredSize, 1);

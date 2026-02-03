@@ -1,6 +1,5 @@
 package io.github.mortuusars.exposure.world.entity;
 
-import com.google.common.base.Preconditions;
 import io.github.mortuusars.exposure.Config;
 import io.github.mortuusars.exposure.Exposure;
 import io.github.mortuusars.exposure.world.item.PhotographFrameItem;
@@ -18,7 +17,6 @@ import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.server.level.ServerEntity;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.DamageTypeTags;
@@ -27,14 +25,12 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.*;
-import net.minecraft.world.entity.decoration.HangingEntity;
+import net.minecraft.world.entity.decoration.ItemFrame;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.DiodeBlock;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
@@ -42,13 +38,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 
-public class PhotographFrameEntity extends HangingEntity {
+public class PhotographFrameEntity extends ItemFrame {
     public static final Logger LOGGER = Exposure.LOGGER;
 
     protected static final EntityDataAccessor<Integer> DATA_SIZE = SynchedEntityData.defineId(PhotographFrameEntity.class, EntityDataSerializers.INT);
     protected static final EntityDataAccessor<ItemStack> DATA_FRAME_ITEM = SynchedEntityData.defineId(PhotographFrameEntity.class, EntityDataSerializers.ITEM_STACK);
-    protected static final EntityDataAccessor<ItemStack> DATA_ITEM = SynchedEntityData.defineId(PhotographFrameEntity.class, EntityDataSerializers.ITEM_STACK);
-    protected static final EntityDataAccessor<Integer> DATA_ITEM_ROTATION = SynchedEntityData.defineId(PhotographFrameEntity.class, EntityDataSerializers.INT);
     protected static final EntityDataAccessor<Boolean> DATA_GLOWING = SynchedEntityData.defineId(PhotographFrameEntity.class, EntityDataSerializers.BOOLEAN);
 
     protected int size = 0;
@@ -62,8 +56,7 @@ public class PhotographFrameEntity extends HangingEntity {
     }
 
     protected PhotographFrameEntity(EntityType<? extends PhotographFrameEntity> entityType, Level level, BlockPos pos, Direction facingDirection) {
-        super(entityType, level, pos);
-        setDirection(facingDirection);
+        super(entityType, level, pos,facingDirection);
         setItem(ItemStack.EMPTY);
     }
 
@@ -86,9 +79,7 @@ public class PhotographFrameEntity extends HangingEntity {
     }
 
     public void onSyncedDataUpdated(EntityDataAccessor<?> key) {
-        if (key.equals(DATA_ITEM)) {
-            onItemChanged(getItem());
-        }
+        super.onSyncedDataUpdated(key);
         if (key.equals(DATA_SIZE)) {
             size = getEntityData().get(DATA_SIZE);
             recalculateBoundingBox();
@@ -105,8 +96,8 @@ public class PhotographFrameEntity extends HangingEntity {
         setDirection(Direction.from3DDataValue(direction));
     }
 
-    //@Override
-    public @NotNull Packet<ClientGamePacketListener> getAddEntityPacket(ServerEntity entity) {
+    @Override
+    public @NotNull Packet<ClientGamePacketListener> getAddEntityPacket() {
         int packedData = (size << 8) | direction.get3DDataValue();
         return new ClientboundAddEntityPacket(this, packedData, this.getPos());
     }
@@ -115,17 +106,13 @@ public class PhotographFrameEntity extends HangingEntity {
         super.addAdditionalSaveData(tag);
         ItemStack item = getItem();
         if (!item.isEmpty()) {
-            tag.put("Item", item.save(new CompoundTag()));
             tag.putBoolean("IsGlowing", this.isGlowing()); // "Glowing" is used in vanilla
-            tag.putByte("ItemRotation", (byte) this.getItemRotation());
         }
         ItemStack frameItem = getFrameItem();
         if (!frameItem.isEmpty())
             tag.put("FrameItem", frameItem.save(new CompoundTag()));
 
         tag.putByte("Size", (byte) getSize());
-        tag.putByte("Facing", (byte) direction.get3DDataValue());
-        tag.putBoolean("Invisible", isInvisible());
     }
 
     public void readAdditionalSaveData(@NotNull CompoundTag tag) {
@@ -141,12 +128,8 @@ public class PhotographFrameEntity extends HangingEntity {
             ItemStack itemstack = ItemStack.of(itemTag);//.orElse(ItemStack.EMPTY);
             setItem(itemstack);
             setGlowing(tag.getBoolean("IsGlowing")); // "Glowing" is used in vanilla
-            setItemRotation(tag.getByte("ItemRotation"));
         }
-
         setSize(tag.getByte("Size"));
-        setDirection(Direction.from3DDataValue(tag.getByte("Facing")));
-        setInvisible(tag.getBoolean("Invisible"));
     }
 
     @Override
@@ -211,7 +194,7 @@ public class PhotographFrameEntity extends HangingEntity {
     }
 
     @SuppressWarnings("deprecation")
-    @Override
+    /*@Override
     public boolean survives() {
         if (!level().noCollision(this))
             return false;
@@ -261,7 +244,7 @@ public class PhotographFrameEntity extends HangingEntity {
         xRotO = getXRot();
         yRotO = getYRot();
         recalculateBoundingBox();
-    }
+    }*/
 
     public int getSize() {
         return size;
@@ -283,28 +266,6 @@ public class PhotographFrameEntity extends HangingEntity {
 
     public void setFrameItem(ItemStack stack) {
         getEntityData().set(DATA_FRAME_ITEM, stack);
-    }
-
-    public ItemStack getItem() {
-        return getEntityData().get(DATA_ITEM);
-    }
-
-    public void setItem(ItemStack stack) {
-        getEntityData().set(DATA_ITEM, stack);
-    }
-
-    protected void onItemChanged(ItemStack itemStack) {
-        if (!itemStack.isEmpty()) {
-            itemStack.setEntityRepresentation(this);
-        }
-    }
-
-    public int getItemRotation() {
-        return getEntityData().get(DATA_ITEM_ROTATION);
-    }
-
-    public void setItemRotation(int rotation) {
-        getEntityData().set(DATA_ITEM_ROTATION, rotation % 4);
     }
 
     public boolean isGlowing() {
@@ -344,7 +305,7 @@ public class PhotographFrameEntity extends HangingEntity {
         if (!getItem().isEmpty()) {
             if (!level().isClientSide) {
                 playSound(getRotateSound(), 1.0F, level().getRandom().nextFloat() * 0.2f + 0.9f);
-                setItemRotation(getItemRotation() + 1);
+                setRotation(getRotation() + 1);
                 gameEvent(GameEvent.BLOCK_CHANGE, player);
             }
             return InteractionResult.SUCCESS;
@@ -398,10 +359,9 @@ public class PhotographFrameEntity extends HangingEntity {
 
     @Override
     protected void defineSynchedData() {
+        super.defineSynchedData();
         entityData.define(DATA_SIZE, 0);
         entityData.define(DATA_FRAME_ITEM, ItemStack.EMPTY);
-        entityData.define(DATA_ITEM, ItemStack.EMPTY);
-        entityData.define(DATA_ITEM_ROTATION, 0);
         entityData.define(DATA_GLOWING, false);
     }
 
