@@ -68,7 +68,7 @@ public class ExposureAdvancementGenerator implements ForgeAdvancementProvider.Ad
                     Component.translatable("advancement.exposure.splitting_the_photon.description"),
                     null, FrameType.TASK, true, true, false)
               .addCriterion("expose_frame_with_rgb_filter", new FrameExposedTrigger.TriggerInstance(ContextAwarePredicate.ANY,
-                    new CameraPredicate(ItemPredicate.ANY, ItemPredicate.Builder.item().of(Exposure.Items.BLACK_AND_WHITE_FILM.get()).build(),
+                    new CameraPredicate(ItemPredicate.ANY, ItemPredicate.Builder.item().of(Exposure.Items.BLACK_AND_WHITE_FILM.get(), Exposure.Items.HIGH_SENSITIVITY_BLACK_AND_WHITE_FILM.get()).build(),
                           ItemPredicate.ANY, ItemPredicate.ANY, ItemPredicate.Builder.item().of(Items.RED_STAINED_GLASS_PANE
                           , Items.GREEN_STAINED_GLASS_PANE, Items.BLUE_STAINED_GLASS_PANE).build(), LocationPredicate.ANY), FramePredicate.ANY, LocationPredicate.ANY, new ArrayList<>()))
               .save(consumer, Exposure.resource("adventure/splitting_the_photon"), existingFileHelper);
@@ -87,7 +87,7 @@ public class ExposureAdvancementGenerator implements ForgeAdvancementProvider.Ad
 
         Advancement familyPortrait = Advancement.Builder.advancement()
               .parent(root)
-              .display(Exposure.Items.PHOTOGRAPH.get(), Component.translatable("advancement.exposure.family_portrait.title"),
+              .display(Exposure.Items.CAMERA_STAND.get(), Component.translatable("advancement.exposure.family_portrait.title"),
                     Component.translatable("advancement.exposure.family_portrait.description"),
                     null, FrameType.TASK, true, true, false)
               .addCriterion("captured_entities",
@@ -151,9 +151,9 @@ public class ExposureAdvancementGenerator implements ForgeAdvancementProvider.Ad
         CompoundTag chromatic = new CompoundTag();
         CompoundTag extraData = new CompoundTag();
         CompoundTag p = new ExtraData();
-        p.putBoolean(Frame.CHROMATIC.key(),true);
-        extraData.put("extra_data",p);
-        chromatic.put("exposure:photograph_frame",extraData);
+        p.putBoolean(Frame.CHROMATIC.key(), true);
+        extraData.put("extra_data", p);
+        chromatic.put("photograph_frame", extraData);
 
         Advancement complexCompositeCompound = Advancement.Builder.advancement()
               .parent(splittingThePhoton)
@@ -245,15 +245,10 @@ public class ExposureAdvancementGenerator implements ForgeAdvancementProvider.Ad
                     null, FrameType.TASK, true, true, false);
 
         for (Map.Entry<String, FrameExposedTrigger.TriggerInstance> instanceEntry : buildCriteria(List.of(
-              EntityType.AXOLOTL,
-              EntityType.BAT,
-              EntityType.CAMEL,
-              EntityType.FROG,
-              EntityType.GLOW_SQUID,
-              EntityType.SQUID,
-              EntityType.OCELOT, EntityType.PARROT, EntityType.RABBIT, EntityType.SNIFFER,
-              EntityType.TURTLE, EntityType.BEE, EntityType.DOLPHIN, EntityType.FOX, EntityType.GOAT
-              , EntityType.LLAMA, EntityType.PANDA, EntityType.POLAR_BEAR, EntityType.WOLF)).entrySet()) {
+              EntityType.AXOLOTL, EntityType.BAT, EntityType.CAMEL, EntityType.FROG, EntityType.GLOW_SQUID,
+              EntityType.SQUID, EntityType.OCELOT, EntityType.PARROT, EntityType.RABBIT, EntityType.SNIFFER,
+              EntityType.TURTLE, EntityType.BEE, EntityType.DOLPHIN, EntityType.FOX, EntityType.GOAT,
+              EntityType.LLAMA, EntityType.PANDA, EntityType.POLAR_BEAR, EntityType.WOLF)).entrySet()) {
             wildLifeArchivist.addCriterion(instanceEntry.getKey(), instanceEntry.getValue());
         }
         wildLifeArchivist.save(consumer, Exposure.resource("adventure/wildlife_archivist"), existingFileHelper);

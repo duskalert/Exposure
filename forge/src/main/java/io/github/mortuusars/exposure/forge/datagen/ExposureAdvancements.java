@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 public class ExposureAdvancements extends ForgeAdvancementProvider {
-
     /**
      * Constructs an advancement provider using the generators to write the
      * advancements to a file.
@@ -23,6 +22,4 @@ public class ExposureAdvancements extends ForgeAdvancementProvider {
     public ExposureAdvancements(PackOutput output, CompletableFuture<HolderLookup.Provider> registries, ExistingFileHelper existingFileHelper, List<AdvancementGenerator> subProviders) {
         super(output, registries, existingFileHelper, subProviders);
     }
-
-
 }

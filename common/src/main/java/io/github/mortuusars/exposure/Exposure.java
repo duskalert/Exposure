@@ -116,19 +116,19 @@ public class Exposure {
 
     public static class Blocks {
         public static final Supplier<LightroomBlock> LIGHTROOM = Register.block("lightroom",
-                () -> new LightroomBlock(BlockBehaviour.Properties.of()
-                        .mapColor(MapColor.COLOR_BROWN)
-                        .strength(2.5f)
-                        .sound(SoundType.WOOD)));
+              () -> new LightroomBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_BROWN)
+                    .strength(2.5f)
+                    .sound(SoundType.WOOD)));
 
         public static final Supplier<FlashBlock> FLASH = Register.block("flash",
-                () -> new FlashBlock(BlockBehaviour.Properties.copy(net.minecraft.world.level.block.Blocks.AIR)
-                        .strength(-1.0F, 3600000.8F)
-                        .noLootTable()
-                        .mapColor(MapColor.NONE)
-                        .noOcclusion()
-                        .noCollission()
-                        .lightLevel(state -> 15)));
+              () -> new FlashBlock(BlockBehaviour.Properties.copy(net.minecraft.world.level.block.Blocks.AIR)
+                    .strength(-1.0F, 3600000.8F)
+                    .noLootTable()
+                    .mapColor(MapColor.NONE)
+                    .noOcclusion()
+                    .noCollission()
+                    .lightLevel(state -> 15)));
 
         static void init() {
         }
@@ -136,7 +136,7 @@ public class Exposure {
 
     public static class BlockEntityTypes {
         public static final Supplier<BlockEntityType<LightroomBlockEntity>> LIGHTROOM =
-                Register.blockEntityType("lightroom", () -> Register.newBlockEntityType(LightroomBlockEntity::new, Blocks.LIGHTROOM.get()));
+              Register.blockEntityType("lightroom", () -> Register.newBlockEntityType(LightroomBlockEntity::new, Blocks.LIGHTROOM.get()));
 
         static void init() {
         }
@@ -144,81 +144,81 @@ public class Exposure {
 
     public static class Items {
         public static final Supplier<CameraItem> CAMERA = Register.item("camera",
-                () -> new CameraItem(new Item.Properties()
-                        .stacksTo(1)
-                 //       .component(DataComponents.CAMERA_ACTIVE, false)
-                ));
+              () -> new CameraItem(new Item.Properties()
+                    .stacksTo(1)
+                    //       .component(DataComponents.CAMERA_ACTIVE, false)
+              ));
 
         public static final Supplier<FilmRollItem> BLACK_AND_WHITE_FILM = Register.item("black_and_white_film",
-                () -> new FilmRollItem(ExposureType.BLACK_AND_WHITE, FilmRollItem.BAR_BLACK_AND_WHITE,
-                        new Item.Properties()
-                                .stacksTo(16),FilmStyle.EMPTY));
+              () -> new FilmRollItem(ExposureType.BLACK_AND_WHITE, FilmRollItem.BAR_BLACK_AND_WHITE,
+                    new Item.Properties()
+                          .stacksTo(16), FilmStyle.EMPTY));
 
         public static final Supplier<FilmRollItem> COLOR_FILM = Register.item("color_film",
-                () -> new FilmRollItem(ExposureType.COLOR, FilmRollItem.BAR_COLOR,
-                        new Item.Properties()
-                                .stacksTo(16),FilmStyle.EMPTY));
+              () -> new FilmRollItem(ExposureType.COLOR, FilmRollItem.BAR_COLOR,
+                    new Item.Properties()
+                          .stacksTo(16), FilmStyle.EMPTY));
 
         public static final Supplier<FilmRollItem> HIGH_SENSITIVITY_BLACK_AND_WHITE_FILM = Register.item("high_sensitivity_black_and_white_film",
-                () -> new FilmRollItem(ExposureType.BLACK_AND_WHITE, FilmRollItem.BAR_BLACK_AND_WHITE,
-                        new Item.Properties()
-                                .stacksTo(16), FilmStyle.create()
-                        .withSensitivity(2f)
-                        .withNoise(0.065f)));
+              () -> new FilmRollItem(ExposureType.BLACK_AND_WHITE, FilmRollItem.BAR_BLACK_AND_WHITE,
+                    new Item.Properties()
+                          .stacksTo(16), FilmStyle.create()
+                    .withSensitivity(2f)
+                    .withNoise(0.065f)));
 
         public static final Supplier<FilmRollItem> HIGH_SENSITIVITY_COLOR_FILM = Register.item("high_sensitivity_color_film",
-                () -> new FilmRollItem(ExposureType.COLOR, FilmRollItem.BAR_COLOR,
-                        new Item.Properties()
-                                .stacksTo(16),FilmStyle.create()
-                        .withSensitivity(2f)
-                        .withNoise(0.065f)));
+              () -> new FilmRollItem(ExposureType.COLOR, FilmRollItem.BAR_COLOR,
+                    new Item.Properties()
+                          .stacksTo(16), FilmStyle.create()
+                    .withSensitivity(2f)
+                    .withNoise(0.065f)));
 
         public static final Supplier<DevelopedFilmItem> DEVELOPED_BLACK_AND_WHITE_FILM = Register.item("developed_black_and_white_film",
-                () -> new DevelopedFilmItem(ExposureType.BLACK_AND_WHITE, new Item.Properties()
-                        .stacksTo(1)));
+              () -> new DevelopedFilmItem(ExposureType.BLACK_AND_WHITE, new Item.Properties()
+                    .stacksTo(1)));
 
         public static final Supplier<DevelopedFilmItem> DEVELOPED_COLOR_FILM = Register.item("developed_color_film",
-                () -> new DevelopedFilmItem(ExposureType.COLOR, new Item.Properties()
-                        .stacksTo(1)));
+              () -> new DevelopedFilmItem(ExposureType.COLOR, new Item.Properties()
+                    .stacksTo(1)));
 
         public static final Supplier<PhotographItem> PHOTOGRAPH = Register.item("photograph",
-                () -> new PhotographItem(new Item.Properties()
-                        .stacksTo(1)));
+              () -> new PhotographItem(new Item.Properties()
+                    .stacksTo(1)));
 
         public static final Supplier<ChromaticSheetItem> CHROMATIC_SHEET = Register.item("chromatic_sheet",
-                () -> new ChromaticSheetItem(new Item.Properties()
-                        .stacksTo(1)));
+              () -> new ChromaticSheetItem(new Item.Properties()
+                    .stacksTo(1)));
 
         public static final Supplier<PhotographItem> AGED_PHOTOGRAPH = Register.item("aged_photograph",
-                () -> new AgedPhotographItem(new Item.Properties()
-                        .stacksTo(1)));
+              () -> new AgedPhotographItem(new Item.Properties()
+                    .stacksTo(1)));
 
         public static final Supplier<InterplanarProjectorItem> INTERPLANAR_PROJECTOR = Register.item("interplanar_projector",
-                () -> new InterplanarProjectorItem(new Item.Properties()));
+              () -> new InterplanarProjectorItem(new Item.Properties()));
         public static final Supplier<BrokenInterplanarProjectorItem> BROKEN_INTERPLANAR_PROJECTOR = Register.item("broken_interplanar_projector",
-                () -> new BrokenInterplanarProjectorItem(new Item.Properties()));
+              () -> new BrokenInterplanarProjectorItem(new Item.Properties()));
 
         public static final Supplier<StackedPhotographsItem> STACKED_PHOTOGRAPHS = Register.item("stacked_photographs",
-                () -> new StackedPhotographsItem(new Item.Properties()
-                        .stacksTo(1)));
+              () -> new StackedPhotographsItem(new Item.Properties()
+                    .stacksTo(1)));
 
         public static final Supplier<AlbumItem> ALBUM = Register.item("album",
-                () -> new AlbumItem(new Item.Properties()
-                        .stacksTo(1)));
+              () -> new AlbumItem(new Item.Properties()
+                    .stacksTo(1)));
         public static final Supplier<SignedAlbumItem> SIGNED_ALBUM = Register.item("signed_album",
-                () -> new SignedAlbumItem(new Item.Properties()
-                        .stacksTo(1)));
+              () -> new SignedAlbumItem(new Item.Properties()
+                    .stacksTo(1)));
 
         public static final Supplier<PhotographFrameItem> PHOTOGRAPH_FRAME = Register.item("photograph_frame",
-                () -> new PhotographFrameItem(new Item.Properties()));
+              () -> new PhotographFrameItem(new Item.Properties()));
         public static final Supplier<GlassPhotographFrameItem> GLASS_PHOTOGRAPH_FRAME = Register.item("glass_photograph_frame",
-                () -> new GlassPhotographFrameItem(new Item.Properties()));
+              () -> new GlassPhotographFrameItem(new Item.Properties()));
 
         public static final Supplier<CameraStandItem> CAMERA_STAND = Register.item("camera_stand",
-                () -> new CameraStandItem(new Item.Properties()));
+              () -> new CameraStandItem(new Item.Properties()));
 
         public static final Supplier<BlockItem> LIGHTROOM = Register.item("lightroom",
-                () -> new BlockItem(Blocks.LIGHTROOM.get(), new Item.Properties()));
+              () -> new BlockItem(Blocks.LIGHTROOM.get(), new Item.Properties()));
 
         static void init() {
         }
@@ -226,28 +226,28 @@ public class Exposure {
 
     public static class CreativeTabs {
         public static final Supplier<CreativeModeTab> EXPOSURE = Register.creativeTab("exposure", () ->
-                CreativeModeTab.builder(CreativeModeTab.Row.TOP, 0)
-                        .title(Component.translatable("itemGroup.exposure.exposure"))
-                        .icon(() -> new ItemStack(Items.CAMERA.get()))
-                        .displayItems((params, output) -> {
-                            output.accept(Items.CAMERA.get());
-                            output.accept(Items.CAMERA_STAND.get());
-                            output.accept(Items.BLACK_AND_WHITE_FILM.get());
-                            output.accept(Items.COLOR_FILM.get());
-                            output.accept(Items.HIGH_SENSITIVITY_BLACK_AND_WHITE_FILM.get());
-                            output.accept(Items.HIGH_SENSITIVITY_COLOR_FILM.get());
-                            output.accept(Items.DEVELOPED_BLACK_AND_WHITE_FILM.get());
-                            output.accept(Items.DEVELOPED_COLOR_FILM.get());
-                            output.accept(Items.PHOTOGRAPH.get());
-                            output.accept(Items.AGED_PHOTOGRAPH.get());
-                            output.accept(Items.STACKED_PHOTOGRAPHS.get());
-                            output.accept(Items.ALBUM.get());
-                            output.accept(Items.PHOTOGRAPH_FRAME.get());
-                            output.accept(Items.GLASS_PHOTOGRAPH_FRAME.get());
-                            output.accept(Items.INTERPLANAR_PROJECTOR.get());
-                            output.accept(Items.LIGHTROOM.get());
-                        })
-                        .build());
+              CreativeModeTab.builder(CreativeModeTab.Row.TOP, 0)
+                    .title(Component.translatable("itemGroup.exposure.exposure"))
+                    .icon(() -> new ItemStack(Items.CAMERA.get()))
+                    .displayItems((params, output) -> {
+                        output.accept(Items.CAMERA.get());
+                        output.accept(Items.CAMERA_STAND.get());
+                        output.accept(Items.BLACK_AND_WHITE_FILM.get());
+                        output.accept(Items.COLOR_FILM.get());
+                        output.accept(Items.HIGH_SENSITIVITY_BLACK_AND_WHITE_FILM.get());
+                        output.accept(Items.HIGH_SENSITIVITY_COLOR_FILM.get());
+                        output.accept(Items.DEVELOPED_BLACK_AND_WHITE_FILM.get());
+                        output.accept(Items.DEVELOPED_COLOR_FILM.get());
+                        output.accept(Items.PHOTOGRAPH.get());
+                        output.accept(Items.AGED_PHOTOGRAPH.get());
+                        output.accept(Items.STACKED_PHOTOGRAPHS.get());
+                        output.accept(Items.ALBUM.get());
+                        output.accept(Items.PHOTOGRAPH_FRAME.get());
+                        output.accept(Items.GLASS_PHOTOGRAPH_FRAME.get());
+                        output.accept(Items.INTERPLANAR_PROJECTOR.get());
+                        output.accept(Items.LIGHTROOM.get());
+                    })
+                    .build());
 
         static void init() {
         }
@@ -256,7 +256,7 @@ public class Exposure {
     public static class DataComponents {
         // Camera State
 
-        public static Boolean getBoolean(ItemStack stack,String key) {//booleans are bytes internally
+        public static Boolean getBoolean(ItemStack stack, String key) {//booleans are bytes internally
             return stack.hasTag() && stack.getTag().contains(key, Tag.TAG_BYTE) ? stack.getTag().getBoolean(key) : null;
         }
 
@@ -264,473 +264,469 @@ public class Exposure {
             if (value == null) {
                 stack.removeTagKey(key);
             } else {
-                stack.getOrCreateTag().putBoolean(key,value);
+                stack.getOrCreateTag().putBoolean(key, value);
             }
         }
 
-        static Integer getInt(ItemStack stack,String key) {
-            return stack.hasTag() && stack.getTag().contains(key,Tag.TAG_INT) ? stack.getTag().getInt(key) : null;
+        static Integer getInt(ItemStack stack, String key) {
+            return stack.hasTag() && stack.getTag().contains(key, Tag.TAG_INT) ? stack.getTag().getInt(key) : null;
         }
 
-        static void setInt(ItemStack stack,String key,Integer value) {
+        static void setInt(ItemStack stack, String key, Integer value) {
             if (value == null) {
                 stack.removeTagKey(key);
             } else {
-                stack.getOrCreateTag().putInt(key,value);
+                stack.getOrCreateTag().putInt(key, value);
             }
         }
 
-        static Long getLong(ItemStack stack,String key) {
-            return stack.hasTag() && stack.getTag().contains(key,Tag.TAG_LONG) ? stack.getTag().getLong(key) : null;
+        static Long getLong(ItemStack stack, String key) {
+            return stack.hasTag() && stack.getTag().contains(key, Tag.TAG_LONG) ? stack.getTag().getLong(key) : null;
         }
 
-        static void setLong(ItemStack stack,String key,Long value) {
+        static void setLong(ItemStack stack, String key, Long value) {
             if (value == null) {
                 stack.removeTagKey(key);
             } else {
-                stack.getOrCreateTag().putLong(key,value);
+                stack.getOrCreateTag().putLong(key, value);
             }
         }
 
-        public static Float getFloat(ItemStack stack,String key) {
-            return stack.hasTag() && stack.getTag().contains(key,Tag.TAG_FLOAT) ? stack.getTag().getFloat(key) : null;
+        public static Float getFloat(ItemStack stack, String key) {
+            return stack.hasTag() && stack.getTag().contains(key, Tag.TAG_FLOAT) ? stack.getTag().getFloat(key) : null;
         }
 
         public static void setFloat(ItemStack stack, String key, Float value) {
             if (value == null) {
                 stack.removeTagKey(key);
             } else {
-                stack.getOrCreateTag().putFloat(key,value);
+                stack.getOrCreateTag().putFloat(key, value);
             }
         }
 
-        public static Double getDouble(ItemStack stack,String key) {
-            return stack.hasTag() && stack.getTag().contains(key,Tag.TAG_DOUBLE) ? stack.getTag().getDouble(key) : null;
+        public static Double getDouble(ItemStack stack, String key) {
+            return stack.hasTag() && stack.getTag().contains(key, Tag.TAG_DOUBLE) ? stack.getTag().getDouble(key) : null;
         }
 
         public static void setDouble(ItemStack stack, String key, Double value) {
             if (value == null) {
                 stack.removeTagKey(key);
             } else {
-                stack.getOrCreateTag().putDouble(key,value);
+                stack.getOrCreateTag().putDouble(key, value);
             }
         }
 
-        static String getString(ItemStack stack,String key) {
-            return stack.hasTag() && stack.getTag().contains(key,Tag.TAG_STRING) ? stack.getTag().getString(key) : null;
+        static String getString(ItemStack stack, String key) {
+            return stack.hasTag() && stack.getTag().contains(key, Tag.TAG_STRING) ? stack.getTag().getString(key) : null;
         }
 
-        static void setString(ItemStack stack,String key,String value) {
+        static void setString(ItemStack stack, String key, String value) {
             if (value == null) {
                 stack.removeTagKey(key);
             } else {
-                stack.getOrCreateTag().putString(key,value);
+                stack.getOrCreateTag().putString(key, value);
             }
         }
 
 
         @Nullable
-        static <T> T getValue(ItemStack stack,String key,Codec<T> codec) {
+        static <T> T getValue(ItemStack stack, String key, Codec<T> codec) {
             if (!stack.hasTag()) return null;
             Tag tag = stack.getTag().get(key);
             if (tag == null) return null;
             return codec.parse(new Dynamic<>(NbtOps.INSTANCE, tag)).resultOrPartial(LOGGER::error).orElse(null);
         }
 
-        static<T> void setValue(ItemStack stack,String key,T value,Codec<T> codec) {
+        static <T> void setValue(ItemStack stack, String key, T value, Codec<T> codec) {
             if (value == null) {
                 stack.removeTagKey(key);
             } else {
-                codec.encodeStart(NbtOps.INSTANCE,value).resultOrPartial(LOGGER::error).ifPresent(tag -> stack.getOrCreateTag().put(key,tag));
+                codec.encodeStart(NbtOps.INSTANCE, value).resultOrPartial(LOGGER::error).ifPresent(tag -> stack.getOrCreateTag().put(key, tag));
             }
         }
 
-        static  <E extends Enum<E>> E getEnum(ItemStack stack,String key,Class<E> clazz) {
+        static <E extends Enum<E>> E getEnum(ItemStack stack, String key, Class<E> clazz) {
             E[] constants = clazz.getEnumConstants();
-            return stack.hasTag() && stack.getTag().contains(key,Tag.TAG_INT) ? constants[stack.getTag().getInt(key)] : null;
+            return stack.hasTag() && stack.getTag().contains(key, Tag.TAG_INT) ? constants[stack.getTag().getInt(key)] : null;
         }
 
-        static <E extends Enum<E>> void setEnum(ItemStack stack,E value,String key) {
+        static <E extends Enum<E>> void setEnum(ItemStack stack, E value, String key) {
             if (value == null) {
                 stack.removeTagKey(key);
             } else {
-                stack.getOrCreateTag().putInt(key,value.ordinal());
+                stack.getOrCreateTag().putInt(key, value.ordinal());
             }
         }
 
         @Nullable
         public static CameraId getCameraId(ItemStack stack) {
-            return getValue(stack,"exposure:camera_id",CameraId.CODEC);
+            return getValue(stack, "camera_id", CameraId.CODEC);
         }
 
-        public static void setCameraId(ItemStack stack,CameraId id) {
-            setValue(stack, "exposure:camera_id", id, CameraId.CODEC);
+        public static void setCameraId(ItemStack stack, CameraId id) {
+            setValue(stack, "camera_id", id, CameraId.CODEC);
         }
 
         public static Boolean getCameraGold(ItemStack stack) {
-            return getBoolean(stack,"exposure:camera_gold");
+            return getBoolean(stack, "camera_gold");
         }
 
-        public static boolean getCameraGold(ItemStack stack,boolean fallback) {
-            Boolean aBoolean = getBoolean(stack, "exposure:camera_gold");
+        public static boolean getCameraGold(ItemStack stack, boolean fallback) {
+            Boolean aBoolean = getBoolean(stack, "camera_gold");
             return aBoolean == null ? fallback : aBoolean;
         }
 
-        public static void setCameraGold(ItemStack stack,Boolean cameraGold) {
-            setBoolean(stack, "exposure:camera_gold", cameraGold);
+        public static void setCameraGold(ItemStack stack, Boolean cameraGold) {
+            setBoolean(stack, "camera_gold", cameraGold);
         }
 
 
         public static Boolean getCameraActive(ItemStack stack) {
-            return getBoolean(stack,"exposure:camera_active");
+            return getBoolean(stack, "camera_active");
         }
 
-        public static boolean getCameraActive(ItemStack stack,boolean fallback) {
-            Boolean aBoolean = getBoolean(stack, "exposure:camera_active");
+        public static boolean getCameraActive(ItemStack stack, boolean fallback) {
+            Boolean aBoolean = getBoolean(stack, "camera_active");
             return aBoolean == null ? fallback : aBoolean;
         }
 
-        public static void setCameraActive(ItemStack stack,Boolean cameraActive) {
-            setBoolean(stack, "exposure:camera_active", cameraActive);
+        public static void setCameraActive(ItemStack stack, Boolean cameraActive) {
+            setBoolean(stack, "camera_active", cameraActive);
         }
 
         public static Boolean getCameraDisassembled(ItemStack stack) {
-            return getBoolean(stack,"exposure:camera_disassembled");
+            return getBoolean(stack, "camera_disassembled");
         }
 
-        public static boolean getCameraDisassembled(ItemStack stack,boolean fallback) {
-            Boolean aBoolean = getBoolean(stack, "exposure:camera_disassembled");
+        public static boolean getCameraDisassembled(ItemStack stack, boolean fallback) {
+            Boolean aBoolean = getBoolean(stack, "camera_disassembled");
             return aBoolean == null ? fallback : aBoolean;
         }
 
-        public static void setCameraDisassembled(ItemStack stack,Boolean cameraDisassembled) {
-            setBoolean(stack, "exposure:camera_disassembled", cameraDisassembled);
+        public static void setCameraDisassembled(ItemStack stack, Boolean cameraDisassembled) {
+            setBoolean(stack, "camera_disassembled", cameraDisassembled);
         }
 
         public static Long getLastCameraActionTime(ItemStack stack) {
-            return getLong(stack,"camera_last_action_time");
+            return getLong(stack, "camera_last_action_time");
         }
 
-        public static long getLastCameraActionTime(ItemStack stack,long fallback) {
+        public static long getLastCameraActionTime(ItemStack stack, long fallback) {
             Long cameraLastActionTime = getLong(stack, "camera_last_action_time");
             return cameraLastActionTime == null ? fallback : cameraLastActionTime;
         }
 
-        public static void setCameraLastActionTime(ItemStack stack,Long lastCameraActionTime) {
-            setLong(stack,"camera_last_action_time",lastCameraActionTime);
+        public static void setCameraLastActionTime(ItemStack stack, Long lastCameraActionTime) {
+            setLong(stack, "camera_last_action_time", lastCameraActionTime);
         }
 
 
         public static Boolean getSelfieMode(ItemStack stack) {
-            return getBoolean(stack,"exposure:camera_selfie_mode");
+            return getBoolean(stack, "camera_selfie_mode");
         }
 
-        public static boolean getSelfieMode(ItemStack stack,boolean fallback) {
-            Boolean aBoolean = getBoolean(stack, "exposure:camera_selfie_mode");
+        public static boolean getSelfieMode(ItemStack stack, boolean fallback) {
+            Boolean aBoolean = getBoolean(stack, "camera_selfie_mode");
             return aBoolean == null ? fallback : aBoolean;
         }
 
-        public static void setSelfieMode(ItemStack stack,Boolean selfieMode) {
-            setBoolean(stack, "exposure:camera_selfie_mode", selfieMode);
+        public static void setSelfieMode(ItemStack stack, Boolean selfieMode) {
+            setBoolean(stack, "camera_selfie_mode", selfieMode);
         }
 
-        public static void setCameraShutterState(ItemStack stack,ShutterState state) {
-            setValue(stack,"exposure:camera_shutter_state",state,ShutterState.CODEC);
+        public static void setCameraShutterState(ItemStack stack, ShutterState state) {
+            setValue(stack, "camera_shutter_state", state, ShutterState.CODEC);
         }
 
         public static ShutterState getCameraShutterState(ItemStack stack) {
-            return getValue(stack,"exposure:camera_shutter_state",ShutterState.CODEC);
+            return getValue(stack, "camera_shutter_state", ShutterState.CODEC);
         }
 
-        public static ShutterState getCameraShutterState(ItemStack stack,ShutterState shutterState) {
+        public static ShutterState getCameraShutterState(ItemStack stack, ShutterState shutterState) {
             ShutterState value = getCameraShutterState(stack);
             return value == null ? shutterState : value;
         }
 
         public static Long getTimerStartTick(ItemStack stack) {
-            return getLong(stack,"camera_timer_start_tick");
+            return getLong(stack, "camera_timer_start_tick");
         }
 
-        public static long getTimerStartTick(ItemStack stack,long fallback) {
+        public static long getTimerStartTick(ItemStack stack, long fallback) {
             Long cameraLastActionTime = getLong(stack, "camera_timer_start_tick");
             return cameraLastActionTime == null ? fallback : cameraLastActionTime;
         }
 
-        public static void setTimerStartTick(ItemStack stack,Long timerStartTick) {
-            setLong(stack,"camera_timer_start_tick",timerStartTick);
+        public static void setTimerStartTick(ItemStack stack, Long timerStartTick) {
+            setLong(stack, "camera_timer_start_tick", timerStartTick);
         }
-
 
 
         public static Long getTimerEndTick(ItemStack stack) {
-            return getLong(stack,"camera_timer_end_tick");
+            return getLong(stack, "camera_timer_end_tick");
         }
 
-        public static long getTimerEndTick(ItemStack stack,long fallback) {
+        public static long getTimerEndTick(ItemStack stack, long fallback) {
             Long cameraLastActionTime = getLong(stack, "camera_timer_end_tick");
             return cameraLastActionTime == null ? fallback : cameraLastActionTime;
         }
 
-        public static void setTimerEndTick(ItemStack stack,Long timerEndTick) {
-            setLong(stack,"camera_timer_end_tick",timerEndTick);
+        public static void setTimerEndTick(ItemStack stack, Long timerEndTick) {
+            setLong(stack, "camera_timer_end_tick", timerEndTick);
         }
 
         public static Long getTimerLastReleaseTick(ItemStack stack) {
-            return getLong(stack,"camera_timer_last_release_tick");
+            return getLong(stack, "camera_timer_last_release_tick");
         }
 
-        public static long getTimerLastReleaseTick(ItemStack stack,long fallback) {
+        public static long getTimerLastReleaseTick(ItemStack stack, long fallback) {
             Long cameraLastActionTime = getLong(stack, "camera_timer_last_release_tick");
             return cameraLastActionTime == null ? fallback : cameraLastActionTime;
         }
 
-        public static void setTimerLastReleaseTick(ItemStack stack,Long timerLastReleaseTick) {
-            setLong(stack,"camera_timer_last_release_tick",timerLastReleaseTick);
+        public static void setTimerLastReleaseTick(ItemStack stack, Long timerLastReleaseTick) {
+            setLong(stack, "camera_timer_last_release_tick", timerLastReleaseTick);
         }
 
         // Settings
 
-        public static ShutterSpeed getShutterSpeed(ItemStack stack,String key) {
-            return getValue(stack,key,ShutterSpeed.CODEC);
+        public static ShutterSpeed getShutterSpeed(ItemStack stack, String key) {
+            return getValue(stack, key, ShutterSpeed.CODEC);
         }
 
-        public static void setShutterSpeed(ItemStack stack,String key,ShutterSpeed value) {
-            setValue(stack,key,value,ShutterSpeed.CODEC);
+        public static void setShutterSpeed(ItemStack stack, String key, ShutterSpeed value) {
+            setValue(stack, key, value, ShutterSpeed.CODEC);
         }
 
-        public static CompositionGuide getCompositionGuide(ItemStack stack,String key) {
-            return getValue(stack,key,CompositionGuide.CODEC);
+        public static CompositionGuide getCompositionGuide(ItemStack stack, String key) {
+            return getValue(stack, key, CompositionGuide.CODEC);
         }
 
-        public static void setCompositionGuide(ItemStack stack,String key,CompositionGuide value) {
-            setValue(stack,key,value,CompositionGuide.CODEC);
+        public static void setCompositionGuide(ItemStack stack, String key, CompositionGuide value) {
+            setValue(stack, key, value, CompositionGuide.CODEC);
         }
 
-        public static void setSelfTimer(ItemStack stack,String key,SelfTimer selfTimer) {
-            setEnum(stack,selfTimer,key);
+        public static void setSelfTimer(ItemStack stack, String key, SelfTimer selfTimer) {
+            setEnum(stack, selfTimer, key);
         }
 
-        public static SelfTimer getSelfTimer(ItemStack stack,String key) {
-            return getEnum(stack,key,SelfTimer.class);
+        public static SelfTimer getSelfTimer(ItemStack stack, String key) {
+            return getEnum(stack, key, SelfTimer.class);
         }
 
-        public static void setFlashMode(ItemStack stack,String key,FlashMode flashMode) {
-            setEnum(stack,flashMode,key);
+        public static void setFlashMode(ItemStack stack, String key, FlashMode flashMode) {
+            setEnum(stack, flashMode, key);
         }
 
-        public static FlashMode getFlashMode(ItemStack stack,String key) {
-            return getEnum(stack,key,FlashMode.class);
+        public static FlashMode getFlashMode(ItemStack stack, String key) {
+            return getEnum(stack, key, FlashMode.class);
         }
 
         // Attachments
 
-        public static StoredItemStack getStoredItemStack(ItemStack stack,String key) {
-            return getValue(stack,key,StoredItemStack.CODEC);
+        public static StoredItemStack getStoredItemStack(ItemStack stack, String key) {
+            return getValue(stack, key, StoredItemStack.CODEC);
         }
 
-        public static StoredItemStack getStoredItemStack(ItemStack stack,String key,StoredItemStack fallback) {
-            StoredItemStack storedItemStack = getStoredItemStack(stack,key);
+        public static StoredItemStack getStoredItemStack(ItemStack stack, String key, StoredItemStack fallback) {
+            StoredItemStack storedItemStack = getStoredItemStack(stack, key);
             return storedItemStack == null ? fallback : storedItemStack;
         }
 
-        public static void setStoredItemStack(ItemStack stack,String key,StoredItemStack value) {
-            setValue(stack,key,value,StoredItemStack.CODEC);
+        public static void setStoredItemStack(ItemStack stack, String key, StoredItemStack value) {
+            setValue(stack, key, value, StoredItemStack.CODEC);
         }
 
         // Film
 
         public static Integer getFilmFrameCount(ItemStack stack) {
-            return getInt(stack,"film_frame_count");
+            return getInt(stack, "film_frame_count");
         }
 
-        public static int getFilmFrameCount(ItemStack stack,int fallback) {
+        public static int getFilmFrameCount(ItemStack stack, int fallback) {
             Integer filmFrameCount = getInt(stack, "film_frame_count");
             return filmFrameCount == null ? fallback : filmFrameCount;
         }
 
 
         public static Integer getFilmFrameSize(ItemStack stack) {
-            return getInt(stack,"film_frame_size");
+            return getInt(stack, "film_frame_size");
         }
 
-        public static void setFilmFrameSize(ItemStack stack,int filmFrameSize) {
-            setInt(stack,"film_frame_size",filmFrameSize);
+        public static void setFilmFrameSize(ItemStack stack, int filmFrameSize) {
+            setInt(stack, "film_frame_size", filmFrameSize);
         }
 
-        public static int getFilmFrameSize(ItemStack stack,int fallback) {
+        public static int getFilmFrameSize(ItemStack stack, int fallback) {
             Integer filmFrameSize = getInt(stack, "film_frame_size");
             return filmFrameSize == null ? fallback : filmFrameSize;
         }
 
-        public static void setFilmStyle(ItemStack stack,FilmStyle style) {
-            setValue(stack,"exposure:film_style",style,FilmStyle.CODEC);
+        public static void setFilmStyle(ItemStack stack, FilmStyle style) {
+            setValue(stack, "film_style", style, FilmStyle.CODEC);
         }
 
         public static FilmStyle getFilmStyle(ItemStack stack) {
-            FilmStyle value = getValue(stack, "exposure:film_style", FilmStyle.CODEC);
+            FilmStyle value = getValue(stack, "film_style", FilmStyle.CODEC);
             if (value == null && stack.getItem() instanceof DefaultFilmStyle defaultFilmStyle) {
                 return defaultFilmStyle.getDefaultFilmStyle();
             }
             return value;
         }
 
-        public static FilmStyle getFilmStyle(ItemStack stack,FilmStyle fallback) {
+        public static FilmStyle getFilmStyle(ItemStack stack, FilmStyle fallback) {
             FilmStyle filmStyle = getFilmStyle(stack);
             return filmStyle == null ? fallback : filmStyle;
         }
 
         public static ResourceLocation getFilmColorPalette(ItemStack stack) {
-            return getValue(stack,"film_color_palette",ResourceLocation.CODEC);
+            return getValue(stack, "film_color_palette", ResourceLocation.CODEC);
         }
-
-      //  public static final DataComponentType<ResourceLocation> FILM_COLOR_PALETTE = Register.dataComponentType("film_color_palette",
-       //         arg -> arg.persistent(ResourceLocation.CODEC).networkSynchronized(ResourceLocation.STREAM_CODEC));
 
         public static DitherMode getFilmDitherMode(ItemStack stack) {
-            return getEnum(stack,"film_dither_mode", DitherMode.class);
+            return getEnum(stack, "film_dither_mode", DitherMode.class);
         }
 
-        public static DitherMode getFilmDitherMode(ItemStack stack,DitherMode fallback) {
+        public static DitherMode getFilmDitherMode(ItemStack stack, DitherMode fallback) {
             DitherMode filmDitherMode = getFilmDitherMode(stack);
             return filmDitherMode == null ? fallback : filmDitherMode;
         }
 
-        public static void setFilmDitherMode(ItemStack stack,DitherMode mode) {
-            setEnum(stack,mode,"film_dither_mode");
+        public static void setFilmDitherMode(ItemStack stack, DitherMode mode) {
+            setEnum(stack, mode, "film_dither_mode");
         }
 
-        public static void setFilmFrames(ItemStack stack,List<Frame> state) {
-            setValue(stack,"exposure:film_frames",state,Frame.CODEC.listOf());
+        public static void setFilmFrames(ItemStack stack, List<Frame> state) {
+            setValue(stack, "film_frames", state, Frame.CODEC.listOf());
         }
 
         public static List<Frame> getFilmFrames(ItemStack stack) {
-            return getValue(stack,"exposure:film_frames",Frame.CODEC.listOf());
+            return getValue(stack, "film_frames", Frame.CODEC.listOf());
         }
 
-        public static List<Frame> getFilmFrames(ItemStack stack,List<Frame> fallback) {
+        public static List<Frame> getFilmFrames(ItemStack stack, List<Frame> fallback) {
             List<Frame> value = getFilmFrames(stack);
             return value == null ? fallback : value;
         }
 
         // Photograph
 
-        public static void setPhotographFrame(ItemStack stack,Frame state) {
-            setValue(stack,"exposure:photograph_frame",state,Frame.CODEC);
+        public static void setPhotographFrame(ItemStack stack, Frame state) {
+            setValue(stack, "photograph_frame", state, Frame.CODEC);
         }
 
         public static Frame getPhotographFrame(ItemStack stack) {
-            return getValue(stack,"exposure:photograph_frame",Frame.CODEC);
+            return getValue(stack, "photograph_frame", Frame.CODEC);
         }
 
-        public static Frame getPhotographFrame(ItemStack stack,Frame fallback) {
+        public static Frame getPhotographFrame(ItemStack stack, Frame fallback) {
             Frame value = getPhotographFrame(stack);
             return value == null ? fallback : value;
         }
 
-        public static void setPhotographType(ItemStack stack,ExposureType state) {
-            setValue(stack,"exposure:photograph_type",state,ExposureType.CODEC);
+        public static void setPhotographType(ItemStack stack, ExposureType state) {
+            setValue(stack, "photograph_type", state, ExposureType.CODEC);
         }
 
         public static ExposureType getPhotographType(ItemStack stack) {
-            return getValue(stack,"exposure:photograph_type",ExposureType.CODEC);
+            return getValue(stack, "photograph_type", ExposureType.CODEC);
         }
 
-        public static ExposureType getPhotographType(ItemStack stack,ExposureType fallback) {
+        public static ExposureType getPhotographType(ItemStack stack, ExposureType fallback) {
             ExposureType value = getPhotographType(stack);
             return value == null ? fallback : value;
         }
 
 
         public static Integer getPhotographGeneration(ItemStack stack) {
-            return getInt(stack,"photograph_generation");
+            return getInt(stack, "photograph_generation");
         }
 
-        public static int getPhotographGeneration(ItemStack stack,int fallback) {
+        public static int getPhotographGeneration(ItemStack stack, int fallback) {
             Integer photographGeneration = getInt(stack, "photograph_generation");
             return photographGeneration == null ? fallback : photographGeneration;
         }
 
-        public static void setPhotographGeneration(ItemStack stack,Integer integer) {
-            setInt(stack,"photograph_generation",integer);
+        public static void setPhotographGeneration(ItemStack stack, Integer integer) {
+            setInt(stack, "photograph_generation", integer);
         }
 
         public static List<ItemAndStack<PhotographItem>> getStackedPhotographs(ItemStack stack) {
-            return getValue(stack,"stacked_photographs",StackedPhotographsItem.PHOTOGRAPH_ITEM_AND_STACK_CODEC.listOf());
+            return getValue(stack, "stacked_photographs", StackedPhotographsItem.PHOTOGRAPH_ITEM_AND_STACK_CODEC.listOf());
         }
 
-        public static List<ItemAndStack<PhotographItem>> getStackedPhotographs(ItemStack stack,List<ItemAndStack<PhotographItem>> fallback) {
+        public static List<ItemAndStack<PhotographItem>> getStackedPhotographs(ItemStack stack, List<ItemAndStack<PhotographItem>> fallback) {
             List<ItemAndStack<PhotographItem>> list = getStackedPhotographs(stack);
             return list == null ? fallback : list;
         }
 
-        public static void setStackedPhotographs(ItemStack stack,List<ItemAndStack<PhotographItem>> value) {
-            setValue(stack,"stacked_photographs",value,StackedPhotographsItem.PHOTOGRAPH_ITEM_AND_STACK_CODEC.listOf());
+        public static void setStackedPhotographs(ItemStack stack, List<ItemAndStack<PhotographItem>> value) {
+            setValue(stack, "stacked_photographs", value, StackedPhotographsItem.PHOTOGRAPH_ITEM_AND_STACK_CODEC.listOf());
         }
 
         // Album
 
         public static AlbumContent getAlbumContent(ItemStack stack) {
-            return getValue(stack,"exposure:album_content",AlbumContent.CODEC);
+            return getValue(stack, "album_content", AlbumContent.CODEC);
         }
 
-        public static AlbumContent getAlbumContent(ItemStack stack,AlbumContent fallback) {
+        public static AlbumContent getAlbumContent(ItemStack stack, AlbumContent fallback) {
             AlbumContent albumContent = getAlbumContent(stack);
-            return albumContent ==  null ? fallback : albumContent;
+            return albumContent == null ? fallback : albumContent;
         }
 
-        public static void setAlbumContent(ItemStack stack,AlbumContent content) {
-            setValue(stack,"exposure:album_content",content,AlbumContent.CODEC);
+        public static void setAlbumContent(ItemStack stack, AlbumContent content) {
+            setValue(stack, "album_content", content, AlbumContent.CODEC);
         }
 
         public static SignedAlbumContent getSignedAlbumContent(ItemStack stack) {
-            return getValue(stack,"exposure:signed_album_content",SignedAlbumContent.CODEC);
+            return getValue(stack, "signed_album_content", SignedAlbumContent.CODEC);
         }
 
-        public static SignedAlbumContent getSignedAlbumContent(ItemStack stack,SignedAlbumContent fallback) {
+        public static SignedAlbumContent getSignedAlbumContent(ItemStack stack, SignedAlbumContent fallback) {
             SignedAlbumContent signedAlbumContent = getSignedAlbumContent(stack);
-            return signedAlbumContent ==  null ? fallback : signedAlbumContent;
+            return signedAlbumContent == null ? fallback : signedAlbumContent;
         }
 
-        public static void setSignedAlbumContent(ItemStack stack,SignedAlbumContent content) {
-            setValue(stack,"exposure:signed_album_content",content,SignedAlbumContent.CODEC);
+        public static void setSignedAlbumContent(ItemStack stack, SignedAlbumContent content) {
+            setValue(stack, "signed_album_content", content, SignedAlbumContent.CODEC);
         }
 
 
         // --
 
         public static DitherMode getInterplanarProjectorMode(ItemStack stack) {
-            return getEnum(stack,"interplanar_projector_mode", DitherMode.class);
+            return getEnum(stack, "interplanar_projector_mode", DitherMode.class);
         }
 
-        public static DitherMode getInterplanarProjectorMode(ItemStack stack,DitherMode fallback) {
+        public static DitherMode getInterplanarProjectorMode(ItemStack stack, DitherMode fallback) {
             DitherMode interplanarProjectorMode = getInterplanarProjectorMode(stack);
             return interplanarProjectorMode == null ? fallback : interplanarProjectorMode;
         }
 
-        public static void setInterplanarProjectorMode(ItemStack stack,DitherMode mode) {
-            setEnum(stack,mode,"interplanar_projector_mode");
+        public static void setInterplanarProjectorMode(ItemStack stack, DitherMode mode) {
+            setEnum(stack, mode, "interplanar_projector_mode");
         }
 
-        public static String getInterplanarProjectorErrorCode(ItemStack stack,String fallback) {
+        public static String getInterplanarProjectorErrorCode(ItemStack stack, String fallback) {
             String interplanarProjectorErrorCode = getString(stack, "interplanar_projector_error_code");
             return interplanarProjectorErrorCode == null ? fallback : interplanarProjectorErrorCode;
         }
 
-        public static void setInterplanarProjectorErrorCode(ItemStack stack,String code) {
-            setString(stack,"interplanar_projector_error_code",code);
+        public static void setInterplanarProjectorErrorCode(ItemStack stack, String code) {
+            setString(stack, "interplanar_projector_error_code", code);
         }
 
 
-        public static void setChromaticLayers(ItemStack stack,List<Frame> state) {
-            setValue(stack,"exposure:chromatic_layers",state,Frame.CODEC.listOf());
+        public static void setChromaticLayers(ItemStack stack, List<Frame> state) {
+            setValue(stack, "chromatic_layers", state, Frame.CODEC.listOf());
         }
 
         public static List<Frame> getChromaticLayers(ItemStack stack) {
-            return getValue(stack,"exposure:chromatic_layers",Frame.CODEC.listOf());
+            return getValue(stack, "chromatic_layers", Frame.CODEC.listOf());
         }
 
-        public static List<Frame> getChromaticLayers(ItemStack stack,List<Frame> fallback) {
-            List<Frame> value = getValue(stack, "exposure:chromatic_layers", Frame.CODEC.listOf());
+        public static List<Frame> getChromaticLayers(ItemStack stack, List<Frame> fallback) {
+            List<Frame> value = getValue(stack, "chromatic_layers", Frame.CODEC.listOf());
             return value == null ? fallback : value;
         }
 
@@ -740,20 +736,20 @@ public class Exposure {
 
     public static class EntityTypes {
         public static final Supplier<EntityType<PhotographFrameEntity>> PHOTOGRAPH_FRAME = Register.entityType("photograph_frame",
-                PhotographFrameEntity::new, MobCategory.MISC, false, builder -> builder
-                        .sized(0.5f, 0.5f)
-                        .updateInterval(Integer.MAX_VALUE));
+              PhotographFrameEntity::new, MobCategory.MISC, false, builder -> builder
+                    .sized(0.5f, 0.5f)
+                    .updateInterval(Integer.MAX_VALUE));
 
         public static final Supplier<EntityType<GlassPhotographFrameEntity>> CLEAR_PHOTOGRAPH_FRAME = Register.entityType("glass_photograph_frame",
-                GlassPhotographFrameEntity::new, MobCategory.MISC, false, builder -> builder
-                        .sized(0.5f, 0.5f)
-                        .updateInterval(Integer.MAX_VALUE));
+              GlassPhotographFrameEntity::new, MobCategory.MISC, false, builder -> builder
+                    .sized(0.5f, 0.5f)
+                    .updateInterval(Integer.MAX_VALUE));
 
         public static final Supplier<EntityType<CameraStandEntity>> CAMERA_STAND = Register.entityType("camera_stand",
-                CameraStandEntity::new, MobCategory.MISC, false, builder -> builder
-                        .sized(0.7f, 1.6f)
-                        .updateInterval(3)
-        //                .eyeHeight(1.40625f)
+              CameraStandEntity::new, MobCategory.MISC, false, builder -> builder
+                    .sized(0.7f, 1.6f)
+                    .updateInterval(3)
+              //                .eyeHeight(1.40625f)
         );
 
         static void init() {
@@ -774,22 +770,22 @@ public class Exposure {
     }
 
     public static class RecipeSerializers {
-      //  public static final Supplier<RecipeSerializer<?>> FILM_DEVELOPING =
-     //           registerTransferring("film_developing", "film", FilmDevelopingRecipe::new);
-    //    public static final Supplier<RecipeSerializer<?>> PHOTOGRAPH_COPYING =
-     //           registerTransferring("photograph_copying", "photograph", PhotographCopyingRecipe::new);
-      //  public static final Supplier<RecipeSerializer<?>> PHOTOGRAPH_AGING =
-      //          registerTransferring("photograph_aging", "photograph", PhotographAgingRecipe::new);
+        //  public static final Supplier<RecipeSerializer<?>> FILM_DEVELOPING =
+        //           registerTransferring("film_developing", "film", FilmDevelopingRecipe::new);
+        //    public static final Supplier<RecipeSerializer<?>> PHOTOGRAPH_COPYING =
+        //           registerTransferring("photograph_copying", "photograph", PhotographCopyingRecipe::new);
+        //  public static final Supplier<RecipeSerializer<?>> PHOTOGRAPH_AGING =
+        //          registerTransferring("photograph_aging", "photograph", PhotographAgingRecipe::new);
         public static final Supplier<ComponentTransferringRecipeSerializer<?>> COMPONENT_TRANSFERRING =
-                Register.recipeSerializer("component_transferring",() ->
-                        new ComponentTransferringRecipeSerializer<>("source", ComponentTransferringRecipeSerializer.COMPONENT_TRANSFERRING));
+              Register.recipeSerializer("component_transferring", () ->
+                    new ComponentTransferringRecipeSerializer<>("source", ComponentTransferringRecipeSerializer.COMPONENT_TRANSFERRING));
 
         public static final Supplier<ComponentTransferringRecipeSerializer<?>> FILM_DEVELOPING = Register.recipeSerializer("film_developing",
-                () -> new ComponentTransferringRecipeSerializer<>("film",ComponentTransferringRecipeSerializer.FILM_DEVELOPING));
+              () -> new ComponentTransferringRecipeSerializer<>("film", ComponentTransferringRecipeSerializer.FILM_DEVELOPING));
         public static final Supplier<ComponentTransferringRecipeSerializer<?>> PHOTOGRAPH_COPYING = Register.recipeSerializer("photograph_copying",
-                () -> new ComponentTransferringRecipeSerializer<>("photograph",ComponentTransferringRecipeSerializer.PHOTOGRAPH_COPYING));
+              () -> new ComponentTransferringRecipeSerializer<>("photograph", ComponentTransferringRecipeSerializer.PHOTOGRAPH_COPYING));
         public static final Supplier<ComponentTransferringRecipeSerializer<?>> PHOTOGRAPH_AGING = Register.recipeSerializer("photograph_aging",
-                () -> new ComponentTransferringRecipeSerializer<>("photograph",ComponentTransferringRecipeSerializer.PHOTOGRAPH_AGING));
+              () -> new ComponentTransferringRecipeSerializer<>("photograph", ComponentTransferringRecipeSerializer.PHOTOGRAPH_AGING));
 
         static void init() {
         }
@@ -853,11 +849,11 @@ public class Exposure {
         public static final Map<ResourceLocation, StatFormatter> STATS = new HashMap<>();
 
         public static final ResourceLocation INTERACT_WITH_LIGHTROOM =
-                register(Exposure.resource("interact_with_lightroom"), StatFormatter.DEFAULT);
+              register(Exposure.resource("interact_with_lightroom"), StatFormatter.DEFAULT);
         public static final ResourceLocation FILM_FRAMES_EXPOSED =
-                register(Exposure.resource("film_frames_exposed"), StatFormatter.DEFAULT);
+              register(Exposure.resource("film_frames_exposed"), StatFormatter.DEFAULT);
         public static final ResourceLocation FLASHES_TRIGGERED =
-                register(Exposure.resource("flashes_triggered"), StatFormatter.DEFAULT);
+              register(Exposure.resource("flashes_triggered"), StatFormatter.DEFAULT);
 
         @SuppressWarnings("SameParameterValue")
         private static ResourceLocation register(ResourceLocation location, StatFormatter formatter) {
@@ -876,7 +872,7 @@ public class Exposure {
     public static class ExposureCriteriaTriggers {
         public static FrameExposedTrigger FRAME_EXPOSED = CriteriaTriggers.register(new FrameExposedTrigger());
         public static FramePrintedTrigger FRAME_PRINTED = CriteriaTriggers.register(new FramePrintedTrigger());
-        public static PlayerTrigger PHOTOGRAPH_ENDERMAN_EYES = CriteriaTriggers.register( new PlayerTrigger(resource("photograph_enderman_eyes")));
+        public static PlayerTrigger PHOTOGRAPH_ENDERMAN_EYES = CriteriaTriggers.register(new PlayerTrigger(resource("photograph_enderman_eyes")));
         public static PlayerTrigger SUCCESSFULLY_PROJECT_IMAGE = CriteriaTriggers.register(new PlayerTrigger(resource("successfully_project_image")));
 
         public static void init() {
@@ -884,31 +880,31 @@ public class Exposure {
     }
 
     public static class ItemSubPredicates {
-     /*     public static Supplier<ItemSubPredicate.NbtType<FramePredicate>> FRAME = Register.itemSubPredicate("frame",
-                () -> new ItemSubPredicate.NbtType<>(FramePredicate.CODEC));
-*/
+        /*     public static Supplier<ItemSubPredicate.NbtType<FramePredicate>> FRAME = Register.itemSubPredicate("frame",
+                   () -> new ItemSubPredicate.NbtType<>(FramePredicate.CODEC));
+   */
         public static void init() {
         }
     }
 
     public static class EntitySubPredicates {
-        public static final EntitySubPredicate.Type TAMED = register("tamed",TamedPredicate.CODEC);
+        public static final EntitySubPredicate.Type TAMED = register("tamed", TamedPredicate.CODEC);
 
         public static void init() {
         }
 
-        public static EntitySubPredicate.Type register(String name,Codec<? extends EntitySubPredicate> codec) {
+        public static EntitySubPredicate.Type register(String name, Codec<? extends EntitySubPredicate> codec) {
             BiMap<String, EntitySubPredicate.Type> types = HashBiMap.create(EntitySubPredicate.Types.TYPES);
-            EntitySubPredicate.Type type = jsonObject -> codec.decode(JsonOps.INSTANCE,jsonObject).get().orThrow().getFirst();
-            types.put(name,type);
+            EntitySubPredicate.Type type = jsonObject -> codec.decode(JsonOps.INSTANCE, jsonObject).get().orThrow().getFirst();
+            types.put(name, type);
             return type;
         }
     }
 
     public static class LootTables {
         public static final ResourceLocation SIMPLE_DUNGEON_INJECT = Exposure.resource("chests/simple_dungeon");
-        public static final ResourceLocation ABANDONED_MINESHAFT_INJECT =Exposure.resource("chests/abandoned_mineshaft");
-        public static final ResourceLocation STRONGHOLD_CROSSING_INJECT =Exposure.resource("chests/stronghold_crossing");
+        public static final ResourceLocation ABANDONED_MINESHAFT_INJECT = Exposure.resource("chests/abandoned_mineshaft");
+        public static final ResourceLocation STRONGHOLD_CROSSING_INJECT = Exposure.resource("chests/stronghold_crossing");
         public static final ResourceLocation VILLAGE_PLAINS_HOUSE_INJECT = Exposure.resource("chests/village_plains_house");
         public static final ResourceLocation SHIPWRECK_MAP_INJECT = Exposure.resource("chests/shipwreck_map");
     }
@@ -945,15 +941,15 @@ public class Exposure {
 
     public static class ArgumentTypes {
         public static final Supplier<ArgumentTypeInfo<SizeMultiplierArgument, SingletonArgumentInfo<SizeMultiplierArgument>.Template>> EXPOSURE_SIZE =
-                Register.commandArgumentType("exposure_size", SizeMultiplierArgument.class, SingletonArgumentInfo.contextFree(SizeMultiplierArgument::new));
+              Register.commandArgumentType("exposure_size", SizeMultiplierArgument.class, SingletonArgumentInfo.contextFree(SizeMultiplierArgument::new));
         public static final Supplier<ArgumentTypeInfo<ExposureLookArgument, SingletonArgumentInfo<ExposureLookArgument>.Template>> EXPOSURE_LOOK =
-                Register.commandArgumentType("exposure_look", ExposureLookArgument.class, SingletonArgumentInfo.contextFree(ExposureLookArgument::new));
+              Register.commandArgumentType("exposure_look", ExposureLookArgument.class, SingletonArgumentInfo.contextFree(ExposureLookArgument::new));
         public static final Supplier<ArgumentTypeInfo<ShaderLocationArgument, SingletonArgumentInfo<ShaderLocationArgument>.Template>> SHADER_LOCATION =
-                Register.commandArgumentType("shader_location", ShaderLocationArgument.class, SingletonArgumentInfo.contextFree(ShaderLocationArgument::new));
+              Register.commandArgumentType("shader_location", ShaderLocationArgument.class, SingletonArgumentInfo.contextFree(ShaderLocationArgument::new));
         public static final Supplier<ArgumentTypeInfo<TextureLocationArgument, SingletonArgumentInfo<TextureLocationArgument>.Template>> TEXTURE_LOCATION =
-                Register.commandArgumentType("texture_location", TextureLocationArgument.class, SingletonArgumentInfo.contextFree(TextureLocationArgument::new));
+              Register.commandArgumentType("texture_location", TextureLocationArgument.class, SingletonArgumentInfo.contextFree(TextureLocationArgument::new));
         public static final Supplier<ArgumentTypeInfo<ColorPaletteArgument, SingletonArgumentInfo<ColorPaletteArgument>.Template>> COLOR_PALETTE_LOCATION =
-                Register.commandArgumentType("color_palette_location", ColorPaletteArgument.class, SingletonArgumentInfo.contextFree(ColorPaletteArgument::new));
+              Register.commandArgumentType("color_palette_location", ColorPaletteArgument.class, SingletonArgumentInfo.contextFree(ColorPaletteArgument::new));
 
         public static void init() {
         }

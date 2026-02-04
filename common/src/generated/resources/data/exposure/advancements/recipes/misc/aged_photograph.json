@@ -1,12 +1,12 @@
 {
   "parent": "minecraft:recipes/root",
   "criteria": {
-    "has_camera": {
+    "has_photograph": {
       "conditions": {
         "items": [
           {
             "items": [
-              "exposure:camera"
+              "exposure:photograph"
             ]
           }
         ]
@@ -15,20 +15,21 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "exposure:camera_stand"
+        "recipe": "exposure:aged_photograph"
       },
       "trigger": "minecraft:recipe_unlocked"
     }
   },
   "requirements": [
     [
-      "has_the_recipe",
-      "has_camera"
+      "has_photograph",
+      "has_the_recipe"
     ]
   ],
   "rewards": {
     "recipes": [
-      "exposure:camera_stand"
+      "exposure:aged_photograph"
     ]
-  }
+  },
+  "sends_telemetry_event": false
 }

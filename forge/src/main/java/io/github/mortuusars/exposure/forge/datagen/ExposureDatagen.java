@@ -47,7 +47,6 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 public class ExposureDatagen {
-
     public static void gather(GatherDataEvent event) {
         DataGenerator generator = event.getGenerator();
         PackOutput packOutput = generator.getPackOutput();
@@ -129,13 +128,13 @@ public class ExposureDatagen {
             Ingredient ironIngot = Ingredient.of(Items.IRON_INGOT);
             Ingredient goldIngot = Ingredient.of(Items.GOLD_INGOT);
 
-            ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, Exposure.Items.ALBUM.get())
+            ShapelessRecipeBuilder.shapeless(RecipeCategory.TOOLS, Exposure.Items.ALBUM.get())
                   .requires(Items.WRITABLE_BOOK)
                   .requires(Items.PHANTOM_MEMBRANE)
                   .unlockedBy(getHasName(Items.PHANTOM_MEMBRANE), has(Items.PHANTOM_MEMBRANE))
                   .save(writer);
 
-            ShapedRecipeBuilder.shaped(RecipeCategory.MISC, Exposure.Items.BLACK_AND_WHITE_FILM.get())
+            ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, Exposure.Items.BLACK_AND_WHITE_FILM.get())
                   .define('B', Items.BONE_MEAL)
                   .define('G', Items.GUNPOWDER)
                   .define('I', ironIngot)
@@ -146,16 +145,9 @@ public class ExposureDatagen {
                   .pattern("IKK")
                   .unlockedBy(getHasName(Items.DRIED_KELP), has(Items.DRIED_KELP)).save(writer);
 
-            ExposureRecipeBuilder.exposure(Exposure.RecipeSerializers.COMPONENT_TRANSFERRING.get(),
-                        Exposure.Items.BROKEN_INTERPLANAR_PROJECTOR.get(),
-                        Exposure.Items.INTERPLANAR_PROJECTOR.get())
-                  .with(Items.ENDER_EYE)
-                  //.unlockedBy(getHasName(Exposure.Items.BROKEN_INTERPLANAR_PROJECTOR.get()),has(Exposure.Items.INTERPLANAR_PROJECTOR.get()))
-                  .save(writer, Exposure.resource("broken_interplanar_projector_fixing"));
-
-            ShapedRecipeBuilder.shaped(RecipeCategory.MISC, Exposure.Items.CAMERA.get())
+            ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, Exposure.Items.CAMERA.get())
                   .define('B', ItemTags.BUTTONS)
-                  .define('G', Items.GLASS_PANE)//glass_panes colorless
+                  .define('G', Items.GLASS_PANE) //glass_panes colorless
                   .define('I', ironIngot)
                   .define('L', Items.LEVER)
                   .pattern("LIB")
@@ -163,7 +155,7 @@ public class ExposureDatagen {
                   .pattern("III")
                   .unlockedBy(getHasName(Items.LEVER), has(Items.LEVER)).save(writer);
 
-            ShapedRecipeBuilder.shaped(RecipeCategory.MISC, Exposure.Items.CAMERA_STAND.get())
+            ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, Exposure.Items.CAMERA_STAND.get())
                   .define('S', Items.STICK)
                   .define('B', Items.SMOOTH_STONE_SLAB)
                   .define('I', ironIngot)
@@ -172,7 +164,7 @@ public class ExposureDatagen {
                   .pattern("BSB")
                   .unlockedBy(getHasName(Items.SMOOTH_STONE_SLAB), has(Items.SMOOTH_STONE_SLAB)).save(writer);
 
-            ShapedRecipeBuilder.shaped(RecipeCategory.MISC, Exposure.Items.COLOR_FILM.get())
+            ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, Exposure.Items.COLOR_FILM.get())
                   .define('L', Items.LAPIS_LAZULI)
                   .define('G', Items.GUNPOWDER)
                   .define('I', goldIngot)
@@ -183,7 +175,16 @@ public class ExposureDatagen {
                   .pattern("IKK")
                   .unlockedBy(getHasName(Items.DRIED_KELP), has(Items.DRIED_KELP)).save(writer);
 
-            ShapedRecipeBuilder.shaped(RecipeCategory.MISC, Exposure.Items.GLASS_PHOTOGRAPH_FRAME.get())
+            ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, Exposure.Items.PHOTOGRAPH_FRAME.get())
+                  .define('P', ItemTags.PLANKS)
+                  .define('F', Items.ITEM_FRAME)
+                  .define('S', Items.STICK)
+                  .pattern("SPS")
+                  .pattern("PFP")
+                  .pattern("SPS")
+                  .unlockedBy(getHasName(Items.ITEM_FRAME), has(Items.ITEM_FRAME)).save(writer);
+
+            ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, Exposure.Items.GLASS_PHOTOGRAPH_FRAME.get())
                   .define('P', Items.GLASS_PANE)
                   .define('F', Exposure.Items.PHOTOGRAPH_FRAME.get())
                   .pattern(" P ")
@@ -191,7 +192,7 @@ public class ExposureDatagen {
                   .pattern(" P ")
                   .unlockedBy(getHasName(Exposure.Items.PHOTOGRAPH_FRAME.get()), has(Exposure.Items.PHOTOGRAPH_FRAME.get())).save(writer);
 
-            ShapedRecipeBuilder.shaped(RecipeCategory.MISC, Exposure.Items.HIGH_SENSITIVITY_BLACK_AND_WHITE_FILM.get())
+            ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, Exposure.Items.HIGH_SENSITIVITY_BLACK_AND_WHITE_FILM.get())
                   .define('B', Items.BONE_MEAL)
                   .define('P', Items.PRISMARINE_CRYSTALS)
                   .define('I', ironIngot)
@@ -202,7 +203,7 @@ public class ExposureDatagen {
                   .pattern("IKK")
                   .unlockedBy(getHasName(Items.DRIED_KELP), has(Items.DRIED_KELP)).save(writer);
 
-            ShapedRecipeBuilder.shaped(RecipeCategory.MISC, Exposure.Items.HIGH_SENSITIVITY_COLOR_FILM.get())
+            ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, Exposure.Items.HIGH_SENSITIVITY_COLOR_FILM.get())
                   .define('L', Items.LAPIS_LAZULI)
                   .define('P', Items.PRISMARINE_CRYSTALS)
                   .define('I', goldIngot)
@@ -213,7 +214,7 @@ public class ExposureDatagen {
                   .pattern("IKK")
                   .unlockedBy(getHasName(Items.DRIED_KELP), has(Items.DRIED_KELP)).save(writer);
 
-            ShapedRecipeBuilder.shaped(RecipeCategory.MISC, Exposure.Items.INTERPLANAR_PROJECTOR.get())
+            ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, Exposure.Items.INTERPLANAR_PROJECTOR.get())
                   .define('P', Items.TINTED_GLASS)
                   .define('R', Items.REDSTONE)
                   .define('E', Items.ENDER_EYE)
@@ -222,23 +223,27 @@ public class ExposureDatagen {
                   .pattern("PRP")
                   .unlockedBy(getHasName(Items.ENDER_EYE), has(Items.ENDER_EYE)).save(writer);
 
-            ShapedRecipeBuilder.shaped(RecipeCategory.MISC, Exposure.Items.LIGHTROOM.get())
+            ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, Exposure.Items.LIGHTROOM.get())
                   .define('I', Items.IRON_TRAPDOOR)
                   .define('P', ItemTags.PLANKS)
                   .define('T', Items.REDSTONE_TORCH)
                   .pattern("IT")
                   .pattern("PP")
                   .pattern("PP")
-                  .unlockedBy(getHasName(Items.REDSTONE_TORCH), has(Items.REDSTONE_TORCH)).save(writer);
+                  .unlockedBy(getHasName(Items.REDSTONE_TORCH), has(Items.REDSTONE_TORCH))
+                  .save(writer);
 
             ExposureRecipeBuilder.exposure(Exposure.RecipeSerializers.PHOTOGRAPH_AGING.get(),
+                        RecipeCategory.MISC,
                         Exposure.Items.PHOTOGRAPH.get(),
                         Exposure.Items.AGED_PHOTOGRAPH.get())
                   .with(Exposure.Tags.Items.PHOTO_AGERS)
                   .with(Items.BRUSH)
+                  .unlockedBy(getHasName(Exposure.Items.PHOTOGRAPH.get()), has(Exposure.Items.PHOTOGRAPH.get()))
                   .save(writer);
 
             ExposureRecipeBuilder.exposure(Exposure.RecipeSerializers.PHOTOGRAPH_COPYING.get(),
+                        RecipeCategory.MISC,
                         Exposure.Items.PHOTOGRAPH.get(),
                         Exposure.Items.PHOTOGRAPH.get())
                   .with(Exposure.Tags.Items.PHOTO_PAPERS)
@@ -246,39 +251,39 @@ public class ExposureDatagen {
                   .with(Exposure.Tags.Items.YELLOW_PRINTING_DYES)
                   .with(Exposure.Tags.Items.CYAN_PRINTING_DYES)
                   .with(Exposure.Tags.Items.MAGENTA_PRINTING_DYES)
+                  .unlockedBy(getHasName(Exposure.Items.PHOTOGRAPH.get()), has(Exposure.Items.PHOTOGRAPH.get()))
                   .save(writer, Exposure.resource("photograph_copying"));
 
-            ShapedRecipeBuilder.shaped(RecipeCategory.MISC, Exposure.Items.PHOTOGRAPH_FRAME.get())
-                  .define('P', ItemTags.PLANKS)
-                  .define('F', Items.ITEM_FRAME)
-                  .define('S', Items.STICK)
-                  .pattern("SPS")
-                  .pattern("PFP")
-                  .pattern("SPS")
-                  .unlockedBy(getHasName(Items.ITEM_FRAME), has(Items.ITEM_FRAME)).save(writer);
+            ExposureRecipeBuilder.exposure(Exposure.RecipeSerializers.COMPONENT_TRANSFERRING.get(),
+                        RecipeCategory.MISC,
+                        Exposure.Items.BROKEN_INTERPLANAR_PROJECTOR.get(),
+                        Exposure.Items.INTERPLANAR_PROJECTOR.get())
+                  .with(Items.ENDER_EYE)
+                  .unlockedBy(
+                        getHasName(Exposure.Items.BROKEN_INTERPLANAR_PROJECTOR.get()),
+                        has(Exposure.Items.BROKEN_INTERPLANAR_PROJECTOR.get()))
+                  .save(writer, Exposure.resource("broken_interplanar_projector_fixing"));
         }
     }
 
     static class LootTables extends LootTableProvider {
-
         public LootTables(PackOutput output, Set<ResourceLocation> requiredTables, List<SubProviderEntry> subProviders) {
             super(output, requiredTables, subProviders);
         }
 
         public static LootTableProvider create(PackOutput pOutput) {
             return new LootTables(pOutput, BuiltInLootTables.all(),
-                  List.of(new SubProviderEntry(ChestLoot::new, LootContextParamSets.CHEST),
-                        new SubProviderEntry(BlockLoot::new, LootContextParamSets.ENTITY)
+                  List.of(
+                        new SubProviderEntry(ChestLoot::new, LootContextParamSets.CHEST),
+                        new SubProviderEntry(BlockLoot::new, LootContextParamSets.BLOCK)
                   ));
         }
 
         static class BlockLoot extends VanillaBlockLoot {
-
             @Override
             public void generate() {
-                dropSelf(Exposure.Blocks.LIGHTROOM.get());
+                add(Exposure.Blocks.LIGHTROOM.get(), this::createNameableBlockEntityTable);
             }
-
 
             @SuppressWarnings("deprecation")
             @Override
@@ -507,7 +512,6 @@ public class ExposureDatagen {
                       )
                 );
 
-
                 ItemStack photoVillageAttack1 = Exposure.Items.AGED_PHOTOGRAPH.get().getDefaultInstance();
 
                 Exposure.DataComponents.setPhotographFrame(photoVillageAttack1, new Frame(ExposureIdentifier.texture(
@@ -545,7 +549,6 @@ public class ExposureDatagen {
                       Photographer.EMPTY,
                       Collections.emptyList(),
                       ExtraData.EMPTY));
-
 
                 ItemStack photoVillage3 = Exposure.Items.AGED_PHOTOGRAPH.get().getDefaultInstance();
 
@@ -602,7 +605,6 @@ public class ExposureDatagen {
                                         )
                             )
                 );
-
             }
 
             protected ItemStack film1() {
@@ -669,11 +671,8 @@ public class ExposureDatagen {
 
         }
 
-
         @Override
         protected void validate(@NotNull Map<ResourceLocation, LootTable> map, @NotNull ValidationContext validationtracker) {
         }
-
     }
-
 }

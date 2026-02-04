@@ -22,14 +22,14 @@
   },
   "requirements": [
     [
-      "has_the_recipe",
-      "has_photograph"
+      "has_photograph",
+      "has_the_recipe"
     ]
   ],
   "rewards": {
     "recipes": [
-      "exposure:copying_black_and_white_photograph"
+      "exposure:photograph_copying_black_and_white"
     ]
   },
-  "sends_telemetry_event": true
+  "sends_telemetry_event": false
 }

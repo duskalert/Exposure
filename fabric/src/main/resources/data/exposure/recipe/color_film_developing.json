@@ -5,40 +5,64 @@
   },
   "ingredients": [
     {
-      "fabric:type": "fabric:components",
-      "base": {
-        "item": "minecraft:potion"
-      },
-      "components": {
-        "minecraft:potion_contents": {
-          "potion": "minecraft:awkward"
+      "fabric:type": "fabric:any",
+      "ingredients": [
+        {
+          "fabric:type": "fabric:nbt",
+          "base": {
+            "item": "minecraft:potion"
+          },
+          "nbt": "{Potion:\"minecraft:awkward\"}"
+        },
+        {
+          "fabric:type": "fabric:nbt",
+          "base": {
+            "item": "minecraft:potion"
+          },
+          "nbt": "{Potion:\"awkward\"}"
         }
-      }
+      ]
     },
     {
-      "fabric:type": "fabric:components",
-      "base": {
-        "item": "minecraft:potion"
-      },
-      "components": {
-        "minecraft:potion_contents": {
-          "potion": "minecraft:thick"
+      "fabric:type": "fabric:any",
+      "ingredients": [
+        {
+          "fabric:type": "fabric:nbt",
+          "base": {
+            "item": "minecraft:potion"
+          },
+          "nbt": "{Potion:\"minecraft:thick\"}"
+        },
+        {
+          "fabric:type": "fabric:nbt",
+          "base": {
+            "item": "minecraft:potion"
+          },
+          "nbt": "{Potion:\"thick\"}"
         }
-      }
+      ]
     },
     {
-      "fabric:type": "fabric:components",
-      "base": {
-        "item": "minecraft:potion"
-      },
-      "components": {
-        "minecraft:potion_contents": {
-          "potion": "minecraft:mundane"
+      "fabric:type": "fabric:any",
+      "ingredients": [
+        {
+          "fabric:type": "fabric:nbt",
+          "base": {
+            "item": "minecraft:potion"
+          },
+          "nbt": "{Potion:\"minecraft:mundane\"}"
+        },
+        {
+          "fabric:type": "fabric:nbt",
+          "base": {
+            "item": "minecraft:potion"
+          },
+          "nbt": "{Potion:\"mundane\"}"
         }
-      }
+      ]
     }
   ],
   "result": {
-    "id": "exposure:developed_color_film"
+    "item": "exposure:developed_color_film"
   }
 }

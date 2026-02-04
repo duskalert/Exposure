@@ -1,13 +1,11 @@
 {
   "type": "exposure:photograph_copying",
   "photograph": {
-    "fabric:type": "fabric:components",
+    "fabric:type": "fabric:nbt",
     "base": {
-      "item": "minecraft:potion"
+      "item": "exposure:photograph"
     },
-    "components": {
-      "exposure:photograph_type": "black_and_white"
-    }
+    "nbt": "{photograph_type:\"black_and_white\"}"
   },
   "ingredients": [
     {
@@ -18,6 +16,6 @@
     }
   ],
   "result": {
-    "id": "exposure:photograph"
+    "item": "exposure:photograph"
   }
 }

@@ -391,7 +391,7 @@ public class CameraStandEntity extends Entity implements CameraHolder {
             MenuProvider menuProvider = new MenuProvider() {
                 @Override
                 public @NotNull Component getDisplayName() {
-                    return cameraStack.getDisplayName();
+                    return cameraStack.getHoverName();
                 }
 
                 @Override

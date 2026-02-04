@@ -1,14 +1,12 @@
 {
   "parent": "minecraft:recipes/root",
   "criteria": {
-    "has_photograph": {
+    "has_broken_interplanar_projector": {
       "conditions": {
         "items": [
           {
             "items": [
-              "exposure:photograph",
-              "exposure:aged_photograph",
-              "exposure:stacked_photographs"
+              "exposure:broken_interplanar_projector"
             ]
           }
         ]
@@ -17,20 +15,21 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "exposure:photograph_frame"
+        "recipe": "exposure:broken_interplanar_projector_fixing"
       },
       "trigger": "minecraft:recipe_unlocked"
     }
   },
   "requirements": [
     [
-      "has_the_recipe",
-      "has_photograph"
+      "has_broken_interplanar_projector",
+      "has_the_recipe"
     ]
   ],
   "rewards": {
     "recipes": [
-      "exposure:photograph_frame"
+      "exposure:broken_interplanar_projector_fixing"
     ]
-  }
+  },
+  "sends_telemetry_event": false
 }

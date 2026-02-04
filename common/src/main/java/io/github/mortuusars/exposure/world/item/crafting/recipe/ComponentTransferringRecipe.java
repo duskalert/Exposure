@@ -56,7 +56,7 @@ public class ComponentTransferringRecipe extends CustomRecipe {
             return false;
 
         List<Ingredient> unmatchedIngredients = new ArrayList<>(ingredients);
-        unmatchedIngredients.add(0,getSourceIngredient());
+        unmatchedIngredients.add(0, getSourceIngredient());
 
         int itemsInCraftingGrid = 0;
 

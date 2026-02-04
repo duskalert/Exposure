@@ -5,18 +5,26 @@
   },
   "ingredients": [
     {
-      "fabric:type": "fabric:components",
-      "base": {
-        "item": "minecraft:potion"
-      },
-      "components": {
-        "minecraft:potion_contents": {
-          "potion": "minecraft:water"
+      "fabric:type": "fabric:any",
+      "ingredients": [
+        {
+          "fabric:type": "fabric:nbt",
+          "base": {
+            "item": "minecraft:potion"
+          },
+          "nbt": "{Potion:\"minecraft:water\"}"
+        },
+        {
+          "fabric:type": "fabric:nbt",
+          "base": {
+            "item": "minecraft:potion"
+          },
+          "nbt": "{Potion:\"water\"}"
         }
-      }
+      ]
     }
   ],
   "result": {
-    "id": "exposure:developed_black_and_white_film"
+    "item": "exposure:developed_black_and_white_film"
   }
 }

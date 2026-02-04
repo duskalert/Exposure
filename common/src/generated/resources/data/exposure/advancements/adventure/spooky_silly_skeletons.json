@@ -9,7 +9,7 @@
               "exposure:photograph",
               "exposure:aged_photograph"
             ],
-            "nbt": "{\"exposure:photograph_frame\":{identifier:{texture:\"exposure:textures/exposure/mineshaft/skeleton_smirk.png\"}}}"
+            "nbt": "{photograph_frame:{identifier:{texture:\"exposure:textures/exposure/mineshaft/skeleton_smirk.png\"}}}"
           }
         ]
       },

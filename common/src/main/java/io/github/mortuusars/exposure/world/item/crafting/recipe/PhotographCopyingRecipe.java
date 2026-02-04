@@ -23,9 +23,10 @@ public class PhotographCopyingRecipe extends ComponentTransferringRecipe {
     @Override
     public @NotNull ItemStack transferNbt(ItemStack photographStack, ItemStack recipeResultStack) {
         if (photographStack.getItem() instanceof PhotographItem
-                && photographStack.hasTag() && WrittenBookItem.getGeneration(photographStack) < 2) {
+                && photographStack.hasTag() && Exposure.DataComponents.getPhotographGeneration(photographStack, 0) < 2) {
             ItemStack result = super.transferNbt(photographStack, recipeResultStack);
-            Exposure.DataComponents.setPhotographGeneration(result, Math.min(WrittenBookItem.getGeneration(result) + 1, 2));
+            Exposure.DataComponents.setPhotographGeneration(result,
+                  Math.min(Exposure.DataComponents.getPhotographGeneration(result, 0) + 1, 2));
             return result;
         }
 

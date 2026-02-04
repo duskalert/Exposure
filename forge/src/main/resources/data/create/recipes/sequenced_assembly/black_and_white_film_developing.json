@@ -6,9 +6,7 @@
   "loops": 1,
   "results": [
     {
-      "item": {
-        "id": "exposure:developed_black_and_white_film"
-      }
+      "item": "exposure:developed_black_and_white_film"
     }
   ],
   "sequence": [
@@ -19,23 +17,19 @@
           "item": "exposure:black_and_white_film"
         },
         {
-          "type": "fluid_stack",
           "amount": 250,
-          "fluid": "minecraft:water"
+          "fluid": "minecraft:water",
+          "nbt": {}
         }
       ],
       "results": [
         {
-          "item": {
-            "id": "exposure:black_and_white_film"
-          }
+          "item": "exposure:black_and_white_film"
         }
       ]
     }
   ],
-  "transitional_item": {
-    "item": {
-      "id": "exposure:black_and_white_film"
-    }
+  "transitionalItem": {
+    "item": "exposure:black_and_white_film"
   }
 }

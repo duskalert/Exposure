@@ -1,7 +1,7 @@
-// 1.20.1	2026-02-03T17:00:25.0037362	Loot Tables
-7457f744cf066c960997302e1a4fca20da9687ed data/exposure/loot_tables/blocks/lightroom.json
-9567849aa58371c101e29f60a9331148e8919d27 data/exposure/loot_tables/chests/abandoned_mineshaft.json
-5103ccd4af15a2425249cfe50bdd0b9808893eb8 data/exposure/loot_tables/chests/shipwreck_map.json
-6e8c70a36761208e33c516fca850c0ccf049c029 data/exposure/loot_tables/chests/simple_dungeon.json
-4773231d875d83fb05b7ba27c4b18bf58d224161 data/exposure/loot_tables/chests/stronghold_crossing.json
-96052777c26bb3af8a8a6c1dd0ac7d17a0e0b66e data/exposure/loot_tables/chests/village_plains_house.json
+// 1.20.1	2026-02-04T18:07:14.3028936	Loot Tables
+e4d16c3c4818dcc47c1e994f0c0bbc3a6b05591d data/exposure/loot_tables/blocks/lightroom.json
+a7eecdb02e7a1ec3c62e33763659a0cbe164e39b data/exposure/loot_tables/chests/abandoned_mineshaft.json
+d247cea1019a81fc7ddf4c77e6dc3c91b7415a76 data/exposure/loot_tables/chests/shipwreck_map.json
+f736e6669820b5271cf4dfb17f5b621259ccdb62 data/exposure/loot_tables/chests/simple_dungeon.json
+5a463bbdadc9c6c39f5c6238f21c2bdfd9fb97eb data/exposure/loot_tables/chests/stronghold_crossing.json
+79ab00e833e0d00f5d3fde08a358a083edd57186 data/exposure/loot_tables/chests/village_plains_house.json

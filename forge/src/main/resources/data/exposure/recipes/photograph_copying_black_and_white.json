@@ -3,7 +3,7 @@
   "photograph": {
     "type": "forge:partial_nbt",
     "item": "exposure:photograph",
-    "nbt": "{Type:\"black_and_white\"}"
+    "nbt": "{photograph_type:\"black_and_white\"}"
   },
   "ingredients": [
     {

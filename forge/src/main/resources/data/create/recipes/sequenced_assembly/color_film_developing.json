@@ -6,9 +6,7 @@
   "loops": 1,
   "results": [
     {
-      "item": {
-        "id": "exposure:developed_color_film"
-      }
+      "item": "exposure:developed_color_film"
     }
   ],
   "sequence": [
@@ -19,22 +17,17 @@
           "item": "exposure:color_film"
         },
         {
-          "type": "fluid_stack",
           "amount": 250,
-          "components": {
-            "create:potion_fluid_bottle_type": "regular",
-            "minecraft:potion_contents": {
-              "potion": "minecraft:awkward"
-            }
-          },
-          "fluid": "create:potion"
+          "fluid": "create:potion",
+          "nbt": {
+            "Bottle": "REGULAR",
+            "Potion": "minecraft:awkward"
+          }
         }
       ],
       "results": [
         {
-          "item": {
-            "id": "exposure:color_film"
-          }
+          "item": "exposure:color_film"
         }
       ]
     },
@@ -45,22 +38,17 @@
           "item": "exposure:color_film"
         },
         {
-          "type": "fluid_stack",
           "amount": 250,
-          "components": {
-            "create:potion_fluid_bottle_type": "regular",
-            "minecraft:potion_contents": {
-              "potion": "minecraft:thick"
-            }
-          },
-          "fluid": "create:potion"
+          "fluid": "create:potion",
+          "nbt": {
+            "Bottle": "REGULAR",
+            "Potion": "minecraft:thick"
+          }
         }
       ],
       "results": [
         {
-          "item": {
-            "id": "exposure:color_film"
-          }
+          "item": "exposure:color_film"
         }
       ]
     },
@@ -71,29 +59,22 @@
           "item": "exposure:color_film"
         },
         {
-          "type": "fluid_stack",
           "amount": 250,
-          "components": {
-            "create:potion_fluid_bottle_type": "regular",
-            "minecraft:potion_contents": {
-              "potion": "minecraft:mundane"
-            }
-          },
-          "fluid": "create:potion"
+          "fluid": "create:potion",
+          "nbt": {
+            "Bottle": "REGULAR",
+            "Potion": "minecraft:mundane"
+          }
         }
       ],
       "results": [
         {
-          "item": {
-            "id": "exposure:color_film"
-          }
+          "item": "exposure:color_film"
         }
       ]
     }
   ],
-  "transitional_item": {
-    "item": {
-      "id": "exposure:color_film"
-    }
+  "transitionalItem": {
+    "item": "exposure:color_film"
   }
 }
