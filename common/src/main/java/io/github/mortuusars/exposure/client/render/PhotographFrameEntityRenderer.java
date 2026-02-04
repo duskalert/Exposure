@@ -23,8 +23,8 @@ import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.model.BakedModel;
-import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.core.Direction;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.item.ItemDisplayContext;
@@ -93,7 +93,7 @@ public class PhotographFrameEntityRenderer<T extends PhotographFrameEntity> exte
                 float scale = 0.65f + entity.getSize() * 0.5f;
                 poseStack.translate(0, 0, 0.46875);
                 poseStack.scale(scale, scale, scale * 0.75f);
-                poseStack.mulPose(Axis.ZP.rotationDegrees((entity.getRotation() * 360.0F / 4.0F)));
+                poseStack.mulPose(Axis.ZP.rotationDegrees((entity.getItemRotation() * 360.0F / 4.0F)));
                 Minecrft.get().getItemRenderer().renderStatic(item, ItemDisplayContext.FIXED, packedLight, OverlayTexture.NO_OVERLAY, poseStack, bufferSource, entity.level(), 0);
                 poseStack.popPose();
             }
@@ -107,18 +107,18 @@ public class PhotographFrameEntityRenderer<T extends PhotographFrameEntity> exte
     }
 
     protected void renderFrame(@NotNull T entity, @NotNull PoseStack poseStack, @NotNull MultiBufferSource bufferSource,
-                             int packedLight, int size) {
+                               int packedLight, int size) {
         poseStack.pushPose();
         poseStack.translate(-0.5f, -0.5f, -0.5f);
         ResourceLocation modelLocation = getModelLocation(entity, size);
         BakedModel model = PlatformHelperClient.getModel(modelLocation);
         blockRenderer.getModelRenderer().renderModel(poseStack.last(), bufferSource.getBuffer(getRenderType()),
-                null, model, 1.0f, 1.0f, 1.0f, packedLight, OverlayTexture.NO_OVERLAY);
+              null, model, 1.0f, 1.0f, 1.0f, packedLight, OverlayTexture.NO_OVERLAY);
         poseStack.popPose();
     }
 
     protected boolean renderPhotograph(@NotNull T entity, @NotNull PoseStack poseStack, @NotNull MultiBufferSource bufferSource,
-                                  int packedLight, ItemStack item, int size) {
+                                       int packedLight, ItemStack item, int size) {
         poseStack.pushPose();
 
         boolean frameInvisible = entity.isFrameInvisible();
@@ -128,7 +128,7 @@ public class PhotographFrameEntityRenderer<T extends PhotographFrameEntity> exte
         offsetFromCenter -= Config.Client.PHOTOGRAPH_FRAME_IMAGE_OFFSET.get();
         float desiredSize = size + 1 - frameBorderOffset * 2;
 
-        poseStack.mulPose(Axis.ZP.rotationDegrees((entity.getRotation() * 360.0F / 4.0F)));
+        poseStack.mulPose(Axis.ZP.rotationDegrees((entity.getItemRotation() * 360.0F / 4.0F)));
         poseStack.mulPose(Axis.ZP.rotationDegrees(180.0F));
         poseStack.translate(-0.5 * (size + 1) + frameBorderOffset, -0.5 * (size + 1) + frameBorderOffset, offsetFromCenter);
         poseStack.scale(desiredSize, desiredSize, 1);
@@ -156,12 +156,12 @@ public class PhotographFrameEntityRenderer<T extends PhotographFrameEntity> exte
                 image = image.modifyWith(ImageEffect.Resize.to(pixels)::modify, "pixels-" + pixels);
 
                 ExposureClient.imageRenderer().render(image, poseStack, bufferSource, RenderCoordinates.DEFAULT,
-                        packedLight, brightness, brightness, brightness, 255);
+                      packedLight, brightness, brightness, brightness, 255);
                 photographRendered = !image.isEmpty();
             }
         } else {
             photographRendered = ExposureClient.photographRenderer().render(item, false, false,
-                    poseStack, bufferSource, packedLight, brightness, brightness, brightness, 255);
+                  poseStack, bufferSource, packedLight, brightness, brightness, brightness, 255);
         }
 
         poseStack.popPose();
@@ -179,9 +179,9 @@ public class PhotographFrameEntityRenderer<T extends PhotographFrameEntity> exte
         float shadeFactor = entity.level().getShade(entity.getDirection(), true);
         shadeFactor += (1f - shadeFactor) * 0.2f;
 
-        int shadedBrightness = (int)(255 * shadeFactor);
+        int shadedBrightness = (int) (255 * shadeFactor);
         int missingLight = 255 - shadedBrightness;
-        int lightUp = (int)(missingLight * (lightLevel / 15f * 0.5f));
+        int lightUp = (int) (missingLight * (lightLevel / 15f * 0.5f));
         return Math.min(255, shadedBrightness + lightUp);
     }
 
@@ -223,11 +223,16 @@ public class PhotographFrameEntityRenderer<T extends PhotographFrameEntity> exte
     @Override
     protected boolean shouldShowName(T entity) {
         if (Minecraft.renderNames() && (!entity.getItem().isEmpty() && entity.getItem().hasCustomHoverName()
-                && Minecraft.getInstance().crosshairPickEntity == entity)) {
+              && Minecraft.getInstance().crosshairPickEntity == entity)) {
             double distSqr = Minecraft.getInstance().crosshairPickEntity.distanceToSqr(entity);
             float showRangeSqr = entity.isDiscrete() ? 32.0f : 64.0f;
             return distSqr < (double) (showRangeSqr * showRangeSqr);
         }
         return false;
+    }
+
+    @Override
+    protected void renderNameTag(T entity, Component displayName, PoseStack poseStack, MultiBufferSource buffer, int packedLight) {
+        super.renderNameTag(entity, entity.getItem().getHoverName(), poseStack, buffer, packedLight);
     }
 }
