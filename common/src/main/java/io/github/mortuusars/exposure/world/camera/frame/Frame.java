@@ -7,6 +7,7 @@ import io.github.mortuusars.exposure.world.camera.ColorChannel;
 import io.github.mortuusars.exposure.world.camera.ExposureType;
 import io.github.mortuusars.exposure.world.camera.component.ShutterSpeed;
 import io.github.mortuusars.exposure.world.level.storage.ExposureIdentifier;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
@@ -21,7 +22,7 @@ public record Frame(ExposureIdentifier identifier,
                     ExposureType type,
                     Photographer photographer,
                     List<EntityInFrame> entitiesInFrame,
-                    ExtraData extraData) {
+                    CompoundTag extraData) {
     public static final ExtraData.Type<Boolean> PROJECTED = ExtraData.Type.bool("projected");
     public static final ExtraData.Type<Boolean> CHROMATIC = ExtraData.Type.bool("chromatic");
 
@@ -55,14 +56,14 @@ public record Frame(ExposureIdentifier identifier,
             ExposureType.COLOR,
             Photographer.EMPTY,
             Collections.emptyList(),
-            ExtraData.EMPTY);
+            new CompoundTag());
 
     public static final Codec<Frame> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                     ExposureIdentifier.CODEC.fieldOf("identifier").forGetter(Frame::identifier),
                     ExposureType.CODEC.optionalFieldOf("type", ExposureType.COLOR).forGetter(Frame::type),
                     Photographer.CODEC.optionalFieldOf("photographer", Photographer.EMPTY).forGetter(Frame::photographer),
                     EntityInFrame.CODEC.listOf().optionalFieldOf("entities_in_frame", Collections.emptyList()).forGetter(Frame::entitiesInFrame),
-                    ExtraData.CODEC.optionalFieldOf("extra_data", ExtraData.EMPTY).forGetter(Frame::extraData))
+                    CompoundTag.CODEC.optionalFieldOf("extra_data", new CompoundTag()).forGetter(Frame::extraData))
             .apply(instance, Frame::new));
 
 
@@ -76,7 +77,7 @@ public record Frame(ExposureIdentifier identifier,
         buf.writeEnum(type);
         photographer.toPacket(buf);
         buf.writeCollection(entitiesInFrame,(buf1, entityInFrame) -> entityInFrame.toPacket(buf1));
-        extraData.toPacket(buf);
+        buf.writeNbt(extraData);
     }
 
     public static Mutable create() {
@@ -109,10 +110,10 @@ public record Frame(ExposureIdentifier identifier,
                 .orElse(new ArrayList<>());
         result.setEntitiesInFrame(commonEntitiesInFrame);
 
-        ExtraData mergedTag = frames.stream()
+        CompoundTag mergedTag = frames.stream()
                 .map(f -> f.extraData.copy())
-                .reduce(new ExtraData(), ExtraData::merge);
-        result.setTag(mergedTag);
+                .reduce(new CompoundTag(), CompoundTag::merge);
+        result.setTag(new ExtraData(mergedTag));
 
         return result.toImmutable();
     }
@@ -135,7 +136,7 @@ public record Frame(ExposureIdentifier identifier,
      * Do not modify the tag here! It may cause unwanted side effects.
      */
     public ExtraData getExtraDataForReading() {
-        return extraData();
+        return new ExtraData(extraData());
     }
 
     public boolean isProjected() {
@@ -170,7 +171,7 @@ public record Frame(ExposureIdentifier identifier,
             this.type = photographData.type();
             this.photographer = photographData.photographer();
             this.entitiesInFrame = new ArrayList<>(photographData.entitiesInFrame());
-            this.tag = photographData.extraData().copy();
+            this.tag = new ExtraData(photographData.extraData().copy());
         }
 
         public ExposureIdentifier getIdentifier() {

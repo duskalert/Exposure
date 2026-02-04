@@ -8,7 +8,7 @@
             "exposure:photograph",
             "exposure:aged_photograph"
           ],
-          "nbt": "{chromatic:1b}"
+          "nbt": "{\"exposure:photograph_frame\":{extra_data:{chromatic:1b}}}"
         }
       },
       "trigger": "exposure:frame_printed"

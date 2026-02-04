@@ -16,7 +16,9 @@
               }
             }
           ],
-          "extra_data": "{flash:1b}"
+          "extra_data": {
+            "flash": 1
+          }
         }
       },
       "trigger": "exposure:frame_exposed"

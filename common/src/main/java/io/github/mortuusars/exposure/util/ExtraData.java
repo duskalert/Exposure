@@ -27,7 +27,7 @@ import java.util.function.Function;
  * {@link Type} is meant to be stored in a static final field in appropriate places.
  */
 public class ExtraData extends CompoundTag {
-    public static final Codec<ExtraData> CODEC = Codec.STRING.xmap(string -> new ExtraData(getNBT(string)),extraData -> extraData.toString());
+    public static final Codec<ExtraData> CODEC = CompoundTag.CODEC.xmap(ExtraData::new, Function.identity());
 
     //        private static JsonObject serializeStack(ItemStack stack) {
     //            JsonObject jsonObject = new JsonObject();

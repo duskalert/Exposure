@@ -17,6 +17,7 @@ import net.minecraft.advancements.critereon.*;
 import net.minecraft.client.CameraType;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
@@ -147,8 +148,12 @@ public class ExposureAdvancementGenerator implements ForgeAdvancementProvider.Ad
                           List.of()))
               .save(consumer, Exposure.resource("adventure/exposed_paparazzi"), existingFileHelper);
 
-        ExtraData chromatic = new ExtraData();
-        chromatic.put(Frame.CHROMATIC, true);
+        CompoundTag chromatic = new CompoundTag();
+        CompoundTag extraData = new CompoundTag();
+        CompoundTag p = new ExtraData();
+        p.putBoolean(Frame.CHROMATIC.key(),true);
+        extraData.put("extra_data",p);
+        chromatic.put("exposure:photograph_frame",extraData);
 
         Advancement complexCompositeCompound = Advancement.Builder.advancement()
               .parent(splittingThePhoton)

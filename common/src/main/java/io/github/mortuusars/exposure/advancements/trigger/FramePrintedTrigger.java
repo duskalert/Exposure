@@ -62,9 +62,13 @@ public class FramePrintedTrigger extends SimpleCriterionTrigger<FramePrintedTrig
                                BlockPos pos,
                                Frame frame,
                                ItemStack result) {
-            return location.matches(player.serverLevel(), pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5)
-                    && this.frame.matches(frame)
-                    && item.matches(result);
+
+            boolean locationMatch = location.matches(player.serverLevel(), pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5);
+            boolean frameMatch = this.frame.matches(frame);
+            boolean itemMatch = item.matches(result);
+            return locationMatch
+                    && frameMatch
+                    && itemMatch;
         }
 
         @Override
