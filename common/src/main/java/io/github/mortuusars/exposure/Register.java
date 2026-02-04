@@ -88,7 +88,7 @@ public class Register {
     }
 
     /*@ExpectPlatform
-    public static <T extends ItemSubPredicate.Type<?>> Supplier<T> itemSubPredicate(String name, Supplier<T> supplier) {
+    public static <T extends ItemSubPredicate.NbtType<?>> Supplier<T> itemSubPredicate(String name, Supplier<T> supplier) {
         throw new AssertionError();
     }
 

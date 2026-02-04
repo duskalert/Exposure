@@ -1,7 +1,7 @@
 package io.github.mortuusars.exposure.forge.api.event;
 
-import io.github.mortuusars.exposure.util.ExtraData;
 import io.github.mortuusars.exposure.world.entity.CameraHolder;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
@@ -15,12 +15,12 @@ public class ModifyEntityInFrameDataEvent extends Event {
     private final CameraHolder cameraHolder;
     private final ItemStack camera;
     private final LivingEntity entityInFrame;
-    private final ExtraData data;
+    private final CompoundTag data;
 
     public ModifyEntityInFrameDataEvent(CameraHolder cameraHolder,
                                         ItemStack camera,
                                         LivingEntity entityInFrame,
-                                        ExtraData data) {
+                                        CompoundTag data) {
         this.cameraHolder = cameraHolder;
         this.camera = camera;
         this.entityInFrame = entityInFrame;
@@ -43,7 +43,7 @@ public class ModifyEntityInFrameDataEvent extends Event {
         return entityInFrame;
     }
 
-    public ExtraData getData() {
+    public CompoundTag getData() {
         return data;
     }
 }

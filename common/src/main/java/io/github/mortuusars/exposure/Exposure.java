@@ -884,8 +884,8 @@ public class Exposure {
     }
 
     public static class ItemSubPredicates {
-     /*     public static Supplier<ItemSubPredicate.Type<FramePredicate>> FRAME = Register.itemSubPredicate("frame",
-                () -> new ItemSubPredicate.Type<>(FramePredicate.CODEC));
+     /*     public static Supplier<ItemSubPredicate.NbtType<FramePredicate>> FRAME = Register.itemSubPredicate("frame",
+                () -> new ItemSubPredicate.NbtType<>(FramePredicate.CODEC));
 */
         public static void init() {
         }

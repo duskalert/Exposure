@@ -36,6 +36,7 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.commands.arguments.EntityAnchorArgument;
 import net.minecraft.core.*;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -801,44 +802,44 @@ public class CameraItem extends Item {
     }
 
     protected void addFrameExtraData(CameraHolder holder, ServerLevel level, ItemStack camera, CaptureParameters params,
-                                     List<BlockPos> positionsInFrame, List<LivingEntity> entitiesInFrame, ExtraData data) {
+                                     List<BlockPos> positionsInFrame, List<LivingEntity> entitiesInFrame, CompoundTag data) {
         Entity cameraHolder = holder.asHolderEntity();
         boolean projecting = params.projection().isPresent();
 
         if (projecting) {
-            data.put(Frame.PROJECTED, true);
+            NbtType.put(data,Frame.PROJECTED, true);
             return;
         }
 
         if (params.getFlash()) {
-            data.put(Frame.FLASH, true);
+            NbtType.put(data,Frame.FLASH, true);
         }
         if (isInSelfieMode(camera)) {
-            data.put(Frame.SELFIE, true);
+            NbtType.put(data,Frame.SELFIE, true);
         }
         if (holder instanceof CameraStandEntity) {
-            data.put(Frame.ON_STAND, true);
+            NbtType.put(data,Frame.ON_STAND, true);
         }
 
         double zoom = CameraSettings.ZOOM.getOrDefault(camera);
         FocalRange focalRange = getFocalRange(level.registryAccess(), camera);
         int focalLength = (int) focalRange.focalLengthFromZoom(zoom);
-        data.put(Frame.FOCAL_LENGTH, focalLength);
+        NbtType.put(data,Frame.FOCAL_LENGTH, focalLength);
 
         params.extraData().get(CaptureParameters.LIGHT_LEVEL)
-                .ifPresent(lightLevel -> data.put(Frame.LIGHT_LEVEL, lightLevel));
+                .ifPresent(lightLevel -> NbtType.put(data,Frame.LIGHT_LEVEL, lightLevel));
 
         if (params.filmProperties().type() == ExposureType.BLACK_AND_WHITE) {
             params.singleChannel().ifPresent(channel ->
-                    data.put(Frame.COLOR_CHANNEL, channel));
+                    NbtType.put(data,Frame.COLOR_CHANNEL, channel));
         }
 
-        data.put(Frame.POSITION, cameraHolder.position());
-        data.put(Frame.PITCH, cameraHolder.getXRot());
-        data.put(Frame.YAW, cameraHolder.getYRot());
+        NbtType.put(data,Frame.POSITION, cameraHolder.position());
+        NbtType.put(data,Frame.PITCH, cameraHolder.getXRot());
+        NbtType.put(data,Frame.YAW, cameraHolder.getYRot());
 
-        data.put(Frame.DAY_TIME, (int) level.getDayTime());
-        data.put(Frame.DIMENSION, level.dimension().location());
+        NbtType.put(data,Frame.DAY_TIME, (int) level.getDayTime());
+        NbtType.put(data,Frame.DIMENSION, level.dimension().location());
 
         BlockPos blockPos = cameraHolder.blockPosition();
 
@@ -847,18 +848,18 @@ public class CameraItem extends Item {
         int skyLight = level.getBrightness(LightLayer.SKY, blockPos);
 
         if (cameraHolder.isUnderWater()) {
-            data.put(Frame.UNDERWATER, true);
+            NbtType.put(data,Frame.UNDERWATER, true);
         }
         if (cameraHolder.getBlockY() < Math.min(level.getSeaLevel(), surfaceHeight) && skyLight == 0) {
-            data.put(Frame.IN_CAVE, true);
+            NbtType.put(data,Frame.IN_CAVE, true);
         } else if (!cameraHolder.isUnderWater()) {
             Biome.Precipitation precipitation = level.getBiome(blockPos).value().getPrecipitationAt(blockPos);
             if (level.isThundering() && precipitation != Biome.Precipitation.NONE)
-                data.put(Frame.WEATHER, precipitation == Biome.Precipitation.SNOW ? "Snowstorm" : "Thunder");
+                NbtType.put(data,Frame.WEATHER, precipitation == Biome.Precipitation.SNOW ? "Snowstorm" : "Thunder");
             else if (level.isRaining() && precipitation != Biome.Precipitation.NONE)
-                data.put(Frame.WEATHER, precipitation == Biome.Precipitation.SNOW ? "Snow" : "Rain");
+                NbtType.put(data,Frame.WEATHER, precipitation == Biome.Precipitation.SNOW ? "Snow" : "Rain");
             else
-                data.put(Frame.WEATHER, "Clear");
+                NbtType.put(data,Frame.WEATHER, "Clear");
         }
 
         // Most common biome:
@@ -869,7 +870,7 @@ public class CameraItem extends Item {
                 .max(Map.Entry.comparingByValue())
                 .map(Map.Entry::getKey)
                 .flatMap(pos -> level.getBiome(pos).unwrapKey().map(ResourceKey::location))
-                .ifPresent(biome -> data.put(Frame.BIOME, biome));
+                .ifPresent(biome -> NbtType.put(data,Frame.BIOME, biome));
 
         List<ResourceLocation> structures = positionsInFrame.stream()
                 .map(pos -> LevelUtil.getStructuresAt(level, pos))
@@ -878,7 +879,7 @@ public class CameraItem extends Item {
                 .stream()
                 .toList();
         if (!structures.isEmpty()) {
-            data.put(Frame.STRUCTURES, structures);
+            NbtType.put(data,Frame.STRUCTURES, structures);
         }
 
         PlatformHelper.postModifyFrameExtraDataEvent(holder, camera, params, positionsInFrame, entitiesInFrame, data);

@@ -59,7 +59,7 @@ public class ExposureAdvancementGenerator implements ForgeAdvancementProvider.Ad
                     Optional.empty(), Optional.empty(), MinMaxBounds.Ints.ANY, MinMaxBounds.Ints.ANY,
                     MinMaxBounds.Ints.ANY, MinMaxBounds.Ints.exactly(1),
                     List.of(new EntityInFramePredicate(Optional.of(new ResourceLocation("player")), Optional.empty(), MinMaxBounds.Ints.ANY)),
-                    new ExtraDataPredicate(selfie)), LocationPredicate.ANY, new ArrayList<>()))
+                    new NbtPredicate(selfie)), LocationPredicate.ANY, new ArrayList<>()))
               .save(consumer, Exposure.resource("adventure/spotlight"), existingFileHelper);
 
         Advancement splittingThePhoton = Advancement.Builder.advancement()
@@ -95,7 +95,7 @@ public class ExposureAdvancementGenerator implements ForgeAdvancementProvider.Ad
                           new FramePredicate(Optional.empty(), Optional.empty(),
                                 Optional.empty(), Optional.empty(), MinMaxBounds.Ints.ANY, MinMaxBounds.Ints.ANY,
                                 MinMaxBounds.Ints.ANY, MinMaxBounds.Ints.ANY,
-                                List.of(), ExtraDataPredicate.ANY), LocationPredicate.ANY,
+                                List.of(), NbtPredicate.ANY), LocationPredicate.ANY,
                           List.of(
                                 ContextAwarePredicate.create(
                                       LootItemEntityPropertyCondition.hasProperties(LootContext.EntityTarget.THIS,
@@ -127,7 +127,7 @@ public class ExposureAdvancementGenerator implements ForgeAdvancementProvider.Ad
                           new FramePredicate(Optional.empty(), Optional.empty(),
                                 Optional.empty(), Optional.empty(), MinMaxBounds.Ints.ANY, MinMaxBounds.Ints.atMost(3),
                                 MinMaxBounds.Ints.ANY, MinMaxBounds.Ints.ANY,
-                                List.of(), new ExtraDataPredicate(flash)), LocationPredicate.ANY,
+                                List.of(), new NbtPredicate(flash)), LocationPredicate.ANY,
                           List.of()))
               .save(consumer, Exposure.resource("adventure/lights_up"), existingFileHelper);
 
@@ -144,7 +144,7 @@ public class ExposureAdvancementGenerator implements ForgeAdvancementProvider.Ad
                                 List.of(
                                       new EntityInFramePredicate(Optional.of(new ResourceLocation("villager")),
                                             Optional.empty(), MinMaxBounds.Ints.atLeast(6))
-                                ), new ExtraDataPredicate(flash)), LocationPredicate.ANY,
+                                ), new NbtPredicate(flash)), LocationPredicate.ANY,
                           List.of()))
               .save(consumer, Exposure.resource("adventure/exposed_paparazzi"), existingFileHelper);
 
@@ -270,7 +270,7 @@ public class ExposureAdvancementGenerator implements ForgeAdvancementProvider.Ad
                         MinMaxBounds.Ints.ANY, MinMaxBounds.Ints.ANY,
                         List.of(
                               new EntityInFramePredicate(Optional.of(new ResourceLocation(key)), Optional.empty(), MinMaxBounds.Ints.ANY)
-                        ), ExtraDataPredicate.ANY), LocationPredicate.ANY,
+                        ), NbtPredicate.ANY), LocationPredicate.ANY,
                   List.of());
             map.put(key, villager);
         }

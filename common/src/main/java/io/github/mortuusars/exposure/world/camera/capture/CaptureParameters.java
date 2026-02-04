@@ -4,11 +4,13 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import io.github.mortuusars.exposure.util.Codecs;
 import io.github.mortuusars.exposure.util.ExtraData;
+import io.github.mortuusars.exposure.util.NbtType;
 import io.github.mortuusars.exposure.world.camera.CameraId;
 import io.github.mortuusars.exposure.world.camera.ColorChannel;
 import io.github.mortuusars.exposure.world.camera.component.ShutterSpeed;
 import io.github.mortuusars.exposure.world.camera.film.properties.FilmProperties;
 import io.github.mortuusars.exposure.world.entity.CameraHolder;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
@@ -27,12 +29,12 @@ public record CaptureParameters(String exposureId,
                                 FilmProperties filmProperties,
                                 ExtraData extraData) {
 
-    public static final ExtraData.Type<ShutterSpeed> SHUTTER_SPEED =
-            ExtraData.Type.stringRepresentable("shutter_speed", ShutterSpeed::new);
-    public static final ExtraData.Type<Boolean> FLASH =
-            new ExtraData.Type<>("flash", ExtraData::getBoolean, ExtraData::putBoolean);
-    public static final ExtraData.Type<Integer> LIGHT_LEVEL =
-            new ExtraData.Type<>("light_level", ExtraData::getInt, ExtraData::putInt);
+    public static final NbtType<ShutterSpeed> SHUTTER_SPEED =
+            NbtType.stringRepresentable("shutter_speed", ShutterSpeed::new);
+    public static final NbtType<Boolean> FLASH =
+            new NbtType<>("flash", CompoundTag::getBoolean, CompoundTag::putBoolean);
+    public static final NbtType<Integer> LIGHT_LEVEL =
+            new NbtType<>("light_level", CompoundTag::getInt, CompoundTag::putInt);
 
     // --
 
@@ -169,7 +171,7 @@ public record CaptureParameters(String exposureId,
             return this;
         }
 
-        public <T> Builder extraData(ExtraData.Type<T> type, T value) {
+        public <T> Builder extraData(NbtType<T> type, T value) {
             extraData.put(type, value);
             return this;
         }

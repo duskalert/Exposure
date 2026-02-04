@@ -12,6 +12,7 @@ import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
@@ -106,12 +107,12 @@ public class PlatformHelperImpl {
 
     // --
 
-    public static void postModifyEntityInFrameExtraDataEvent(CameraHolder cameraHolder, ItemStack camera, LivingEntity entityInFrame, ExtraData data) {
+    public static void postModifyEntityInFrameExtraDataEvent(CameraHolder cameraHolder, ItemStack camera, LivingEntity entityInFrame, CompoundTag data) {
         ModifyEntityInFrameExtraDataCallback.EVENT.invoker().modifyEntityInFrameData(cameraHolder, camera, entityInFrame, data);
     }
 
     public static void postModifyFrameExtraDataEvent(CameraHolder cameraHolder, ItemStack camera, CaptureParameters captureParameters,
-                                                List<BlockPos> positionsInFrame, List<LivingEntity> entitiesInFrame, ExtraData data) {
+                                                List<BlockPos> positionsInFrame, List<LivingEntity> entitiesInFrame, CompoundTag data) {
         ModifyFrameExtraDataCallback.EVENT.invoker().modifyFrameExtraData(cameraHolder, camera, captureParameters, positionsInFrame, entitiesInFrame, data);
     }
 

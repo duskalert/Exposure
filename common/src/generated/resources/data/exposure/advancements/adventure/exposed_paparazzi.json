@@ -17,7 +17,9 @@
             }
           ],
           "extra_data": {
-            "flash": 1
+            "nbt": {
+              "flash": 1
+            }
           }
         }
       },

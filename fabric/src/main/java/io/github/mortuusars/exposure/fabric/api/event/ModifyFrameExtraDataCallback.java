@@ -1,11 +1,11 @@
 package io.github.mortuusars.exposure.fabric.api.event;
 
-import io.github.mortuusars.exposure.util.ExtraData;
 import io.github.mortuusars.exposure.world.camera.capture.CaptureParameters;
 import io.github.mortuusars.exposure.world.entity.CameraHolder;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 
@@ -24,5 +24,5 @@ public interface ModifyFrameExtraDataCallback {
             });
 
     void modifyFrameExtraData(CameraHolder cameraHolder, ItemStack stack, CaptureParameters captureParameters,
-                              List<BlockPos> positionsInFrame, List<LivingEntity> entitiesInFrame, ExtraData data);
+                              List<BlockPos> positionsInFrame, List<LivingEntity> entitiesInFrame, CompoundTag data);
 }

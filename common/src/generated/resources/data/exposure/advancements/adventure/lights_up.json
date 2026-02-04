@@ -5,7 +5,9 @@
       "conditions": {
         "frame": {
           "extra_data": {
-            "flash": 1
+            "nbt": {
+              "flash": 1
+            }
           },
           "light_level": {
             "max": 3

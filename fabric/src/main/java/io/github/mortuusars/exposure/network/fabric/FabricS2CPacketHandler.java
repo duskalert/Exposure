@@ -4,12 +4,12 @@ public class FabricS2CPacketHandler {
     /*public static void register() {
         for (var definition : S2CPackets.getDefinitions()) {
             ClientPlayNetworking.registerGlobalReceiver(
-                    (CustomPacketPayload.Type<Packet>) definition.type(), FabricS2CPacketHandler::handleClientboundPacket);
+                    (CustomPacketPayload.NbtType<Packet>) definition.type(), FabricS2CPacketHandler::handleClientboundPacket);
         }
 
         for (var definition : CommonPackets.getDefinitions()) {
             ClientPlayNetworking.registerGlobalReceiver(
-                    (CustomPacketPayload.Type<Packet>) definition.type(), FabricS2CPacketHandler::handleClientboundPacket);
+                    (CustomPacketPayload.NbtType<Packet>) definition.type(), FabricS2CPacketHandler::handleClientboundPacket);
         }
 
         for (var definition : S2CPackets.getDefinitions().entrySet()) {

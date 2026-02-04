@@ -8,10 +8,13 @@ import com.mojang.serialization.JsonOps;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import io.github.mortuusars.exposure.Exposure;
 import io.github.mortuusars.exposure.Stuff;
+import io.github.mortuusars.exposure.util.NbtType;
 import io.github.mortuusars.exposure.world.camera.frame.Frame;
 import io.github.mortuusars.exposure.world.level.storage.ExposureIdentifier;
 import net.minecraft.advancements.critereon.ItemPredicate;
 import net.minecraft.advancements.critereon.MinMaxBounds;
+import net.minecraft.advancements.critereon.NbtPredicate;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
@@ -29,7 +32,7 @@ public record FramePredicate(Optional<ExposureIdentifier> identifier,
                              MinMaxBounds.Ints dayTime,
                              MinMaxBounds.Ints entitiesInFrameCount,
                              List<EntityInFramePredicate> entitiesInFrame,
-                             ExtraDataPredicate extraData) {
+                             NbtPredicate extraData) {
     public static final Codec<FramePredicate> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             ExposureIdentifier.CODEC.optionalFieldOf("identifier").forGetter(FramePredicate::identifier),
             Codec.STRING.optionalFieldOf("type").forGetter(FramePredicate::type),
@@ -40,12 +43,12 @@ public record FramePredicate(Optional<ExposureIdentifier> identifier,
             Stuff.INTS_CODEC.optionalFieldOf("day_time", MinMaxBounds.Ints.ANY).forGetter(FramePredicate::dayTime),
             Stuff.INTS_CODEC.optionalFieldOf("entities_in_frame_count", MinMaxBounds.Ints.ANY).forGetter(FramePredicate::entitiesInFrameCount),
             EntityInFramePredicate.CODEC.listOf().optionalFieldOf("entities_in_frame",List.of()).forGetter(FramePredicate::entitiesInFrame),
-            ExtraDataPredicate.CODEC.optionalFieldOf("extra_data",ExtraDataPredicate.ANY).forGetter(FramePredicate::extraData)
+            Stuff.NBT_PREDICATE_CODEC.optionalFieldOf("extra_data",NbtPredicate.ANY).forGetter(FramePredicate::extraData)
     ).apply(instance, FramePredicate::new));
 
     public static final FramePredicate ANY = new FramePredicate(Optional.empty(),Optional.empty(),
             Optional.empty(),Optional.empty(), MinMaxBounds.Ints.ANY, MinMaxBounds.Ints.ANY,
-            MinMaxBounds.Ints.ANY, MinMaxBounds.Ints.ANY,new ArrayList<>(),ExtraDataPredicate.ANY);
+            MinMaxBounds.Ints.ANY, MinMaxBounds.Ints.ANY,new ArrayList<>(),NbtPredicate.ANY);
 
     public static FramePredicate fromJson(@Nullable JsonElement json) {
         if (json == null || json.isJsonNull())
@@ -70,15 +73,16 @@ public record FramePredicate(Optional<ExposureIdentifier> identifier,
     }
 
     public boolean matches(Frame frame) {
+        CompoundTag extraData = frame.extraData();
         return (identifier.isEmpty() || identifier.get().equals(frame.identifier()))
                 && (type.isEmpty() || type.get().equals(frame.type().getSerializedName()))
                 && (photographer.isEmpty() || photographer.get().equals(frame.photographer().name()))
-                && (shutterSpeed.isEmpty() || shutterSpeed.get().matches(frame.getExtraDataForReading().get(Frame.SHUTTER_SPEED)))
-                && (frame.getExtraDataForReading().get(Frame.FOCAL_LENGTH).map(focalLength::matches).orElse(false))
-                && (frame.getExtraDataForReading().get(Frame.LIGHT_LEVEL).map(lightLevel::matches).orElse(false))
-                && (frame.getExtraDataForReading().get(Frame.DAY_TIME).map(dayTime::matches).orElse(false))
+                && (shutterSpeed.isEmpty() || shutterSpeed.get().matches(NbtType.get(extraData,Frame.SHUTTER_SPEED)))
+                && (NbtType.get(extraData,Frame.FOCAL_LENGTH).map(focalLength::matches).orElse(false))
+                && (NbtType.get(extraData,Frame.LIGHT_LEVEL).map(lightLevel::matches).orElse(false))
+                && (NbtType.get(extraData,Frame.DAY_TIME).map(dayTime::matches).orElse(false))
                 && (entitiesInFrameCount.matches(frame.entitiesInFrame().size()))
                 && (entitiesInFrame.isEmpty() || entitiesInFrame.stream().allMatch(predicate -> predicate.matches(frame.entitiesInFrame())))
-                && (extraData.matches(frame.extraData()));
+                && (this.extraData.matches(frame.extraData()));
     }
 }

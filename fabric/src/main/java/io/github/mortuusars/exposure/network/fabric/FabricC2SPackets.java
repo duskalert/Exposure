@@ -27,9 +27,9 @@ public class FabricC2SPackets {
             });
 
             /*PayloadTypeRegistry.playC2S().register(
-                    (CustomPacketPayload.Type<CustomPacketPayload>) definition.type(),
+                    (CustomPacketPayload.NbtType<CustomPacketPayload>) definition.type(),
                     (StreamCodec<FriendlyByteBuf, CustomPacketPayload>) definition.codec().cast());
-            ServerPlayNetworking.registerGlobalReceiver((CustomPacketPayload.Type<Packet>) definition.type(), FabricC2SPackets::handleServerboundPacket);*/
+            ServerPlayNetworking.registerGlobalReceiver((CustomPacketPayload.NbtType<Packet>) definition.type(), FabricC2SPackets::handleServerboundPacket);*/
         }
 
         for (var definition : CommonPackets.getDefinitions().entrySet()) {

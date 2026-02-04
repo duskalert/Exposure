@@ -2,7 +2,7 @@ package io.github.mortuusars.exposure.world.camera.frame;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import io.github.mortuusars.exposure.util.ExtraData;
+import io.github.mortuusars.exposure.util.NbtType;
 import io.github.mortuusars.exposure.world.camera.ColorChannel;
 import io.github.mortuusars.exposure.world.camera.ExposureType;
 import io.github.mortuusars.exposure.world.camera.component.ShutterSpeed;
@@ -23,31 +23,31 @@ public record Frame(ExposureIdentifier identifier,
                     Photographer photographer,
                     List<EntityInFrame> entitiesInFrame,
                     CompoundTag extraData) {
-    public static final ExtraData.Type<Boolean> PROJECTED = ExtraData.Type.bool("projected");
-    public static final ExtraData.Type<Boolean> CHROMATIC = ExtraData.Type.bool("chromatic");
+    public static final NbtType<Boolean> PROJECTED = NbtType.bool("projected");
+    public static final NbtType<Boolean> CHROMATIC = NbtType.bool("chromatic");
 
-    public static final ExtraData.Type<ColorChannel> COLOR_CHANNEL =
-            ExtraData.Type.stringRepresentable("color_channel", ColorChannel::fromStringOrThrow);
-    public static final ExtraData.Type<ShutterSpeed> SHUTTER_SPEED =
-            ExtraData.Type.stringRepresentable("shutter_speed", ShutterSpeed::new);
+    public static final NbtType<ColorChannel> COLOR_CHANNEL =
+            NbtType.stringRepresentable("color_channel", ColorChannel::fromStringOrThrow);
+    public static final NbtType<ShutterSpeed> SHUTTER_SPEED =
+            NbtType.stringRepresentable("shutter_speed", ShutterSpeed::new);
 
-    public static final ExtraData.Type<Long> TIMESTAMP = ExtraData.Type.longVal("timestamp");
-    public static final ExtraData.Type<Integer> FOCAL_LENGTH = ExtraData.Type.intVal("focal_length");
-    public static final ExtraData.Type<Boolean> FLASH = ExtraData.Type.bool("flash");
-    public static final ExtraData.Type<Boolean> SELFIE = ExtraData.Type.bool("selfie");
-    public static final ExtraData.Type<Boolean> ON_STAND = ExtraData.Type.bool("on_stand");
+    public static final NbtType<Long> TIMESTAMP = NbtType.longVal("timestamp");
+    public static final NbtType<Integer> FOCAL_LENGTH = NbtType.intVal("focal_length");
+    public static final NbtType<Boolean> FLASH = NbtType.bool("flash");
+    public static final NbtType<Boolean> SELFIE = NbtType.bool("selfie");
+    public static final NbtType<Boolean> ON_STAND = NbtType.bool("on_stand");
 
-    public static final ExtraData.Type<Vec3> POSITION = ExtraData.Type.vec3("pos");
-    public static final ExtraData.Type<Float> PITCH = ExtraData.Type.floatVal("pitch");
-    public static final ExtraData.Type<Float> YAW = ExtraData.Type.floatVal("yaw");
-    public static final ExtraData.Type<Integer> LIGHT_LEVEL = ExtraData.Type.intVal("light_level");
-    public static final ExtraData.Type<Integer> DAY_TIME = ExtraData.Type.intVal("day_time");
-    public static final ExtraData.Type<ResourceLocation> DIMENSION = ExtraData.Type.resourceLocation("dimension");
-    public static final ExtraData.Type<ResourceLocation> BIOME = ExtraData.Type.resourceLocation("biome");
-    public static final ExtraData.Type<String> WEATHER = ExtraData.Type.string("weather");
-    public static final ExtraData.Type<Boolean> IN_CAVE = ExtraData.Type.bool("in_cave");
-    public static final ExtraData.Type<Boolean> UNDERWATER = ExtraData.Type.bool("underwater");
-    public static final ExtraData.Type<List<ResourceLocation>> STRUCTURES = ExtraData.Type.stringBasedList("structures",
+    public static final NbtType<Vec3> POSITION = NbtType.vec3("pos");
+    public static final NbtType<Float> PITCH = NbtType.floatVal("pitch");
+    public static final NbtType<Float> YAW = NbtType.floatVal("yaw");
+    public static final NbtType<Integer> LIGHT_LEVEL = NbtType.intVal("light_level");
+    public static final NbtType<Integer> DAY_TIME = NbtType.intVal("day_time");
+    public static final NbtType<ResourceLocation> DIMENSION = NbtType.resourceLocation("dimension");
+    public static final NbtType<ResourceLocation> BIOME = NbtType.resourceLocation("biome");
+    public static final NbtType<String> WEATHER = NbtType.string("weather");
+    public static final NbtType<Boolean> IN_CAVE = NbtType.bool("in_cave");
+    public static final NbtType<Boolean> UNDERWATER = NbtType.bool("underwater");
+    public static final NbtType<List<ResourceLocation>> STRUCTURES = NbtType.stringBasedList("structures",
             ResourceLocation::new, ResourceLocation::toString);
     // --
 
@@ -69,7 +69,7 @@ public record Frame(ExposureIdentifier identifier,
 
     public static Frame fromPacket(FriendlyByteBuf buf) {
         return new Frame(ExposureIdentifier.fromPacket(buf),buf.readEnum(ExposureType.class),
-                Photographer.fromPacket(buf),buf.readList(EntityInFrame::fromPacket),ExtraData.fromPacket(buf));
+                Photographer.fromPacket(buf),buf.readList(EntityInFrame::fromPacket),buf.readNbt());
     }
 
     public void toPacket(FriendlyByteBuf buf) {
@@ -113,7 +113,7 @@ public record Frame(ExposureIdentifier identifier,
         CompoundTag mergedTag = frames.stream()
                 .map(f -> f.extraData.copy())
                 .reduce(new CompoundTag(), CompoundTag::merge);
-        result.setTag(new ExtraData(mergedTag));
+        result.setTag(mergedTag);
 
         return result.toImmutable();
     }
@@ -135,20 +135,20 @@ public record Frame(ExposureIdentifier identifier,
     /**
      * Do not modify the tag here! It may cause unwanted side effects.
      */
-    public ExtraData getExtraDataForReading() {
-        return new ExtraData(extraData());
+    public CompoundTag getExtraDataForReading() {
+        return extraData();
     }
 
     public boolean isProjected() {
-        return getExtraDataForReading().get(PROJECTED).orElse(false);
+        return NbtType.get(getExtraDataForReading(),PROJECTED).orElse(false);
     }
 
     public boolean isChromatic() {
-        return getExtraDataForReading().get(CHROMATIC).orElse(false);
+        return NbtType.get(getExtraDataForReading(),CHROMATIC).orElse(false);
     }
 
     public Optional<ColorChannel> getColorChannel() {
-        return getExtraDataForReading().get(COLOR_CHANNEL);
+        return NbtType.get(getExtraDataForReading(),COLOR_CHANNEL);
     }
 
     public boolean wasTakenWithChromaticFilter() {
@@ -164,14 +164,14 @@ public record Frame(ExposureIdentifier identifier,
         private ExposureType type;
         private Photographer photographer;
         private List<EntityInFrame> entitiesInFrame;
-        private ExtraData tag;
+        private CompoundTag tag;
 
         public Mutable(Frame photographData) {
             this.identifier = photographData.identifier();
             this.type = photographData.type();
             this.photographer = photographData.photographer();
             this.entitiesInFrame = new ArrayList<>(photographData.entitiesInFrame());
-            this.tag = new ExtraData(photographData.extraData().copy());
+            this.tag = photographData.extraData().copy();
         }
 
         public ExposureIdentifier getIdentifier() {
@@ -210,27 +210,27 @@ public record Frame(ExposureIdentifier identifier,
             return this;
         }
 
-        public ExtraData getTag() {
+        public CompoundTag getTag() {
             return tag;
         }
 
-        public Mutable setTag(ExtraData tag) {
+        public Mutable setTag(CompoundTag tag) {
             this.tag = tag;
             return this;
         }
 
-        public Mutable updateExtraData(Consumer<ExtraData> updater) {
+        public Mutable updateExtraData(Consumer<CompoundTag> updater) {
             updater.accept(tag);
             return this;
         }
 
-        public <T> Mutable addExtraData(ExtraData.Type<T> type, T value) {
-            tag.put(type, value);
+        public <T> Mutable addExtraData(NbtType<T> type, T value) {
+            NbtType.put(tag,type, value);
             return this;
         }
 
         public Mutable setChromatic(boolean chromatic) {
-            return updateExtraData(tag -> tag.put(CHROMATIC, chromatic));
+            return updateExtraData(tag -> NbtType.put(tag,CHROMATIC, chromatic));
         }
 
         public Frame toImmutable() {
