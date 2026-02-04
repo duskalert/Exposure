@@ -18,6 +18,7 @@ import io.github.mortuusars.exposure.world.item.camera.Attachment;
 import io.github.mortuusars.exposure.client.util.GuiUtil;
 import io.github.mortuusars.exposure.util.Rect2f;
 import net.minecraft.SharedConstants;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.player.LocalPlayer;
@@ -244,7 +245,7 @@ public class ViewfinderOverlay {
     }
 
     public void applyMovementDelay(PoseStack poseStack, float deltaTracker) {
-        float delta = Math.min(deltaTracker * 0.6f, 1.0f);
+        float delta = Math.min(Minecrft.get().getDeltaFrameTime() * 0.7f, 1.0f);
         xRot0 = Mth.lerp(delta, xRot0, xRot);
         yRot0 = Mth.lerp(delta, yRot0, yRot);
         xRot = Minecrft.get().gameRenderer.getMainCamera().getXRot();

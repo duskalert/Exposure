@@ -24,9 +24,8 @@ import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
 
 public class ModelHooks {
-
     public static BakedModel renderItem(BakedModel model, ItemStack stack, ItemDisplayContext displayContext, boolean leftHand,
-                          PoseStack poseStack, MultiBufferSource buffer, int combinedLight, int combinedOverlay) {
+                                        PoseStack poseStack, MultiBufferSource buffer, int combinedLight, int combinedOverlay) {
         if (Minecraft.getInstance().level == null) return model;
         if (!stack.is(Exposure.Items.CAMERA.get())) return model;
 
@@ -39,7 +38,7 @@ public class ModelHooks {
         return model;
     }
 
-    public static BakedModel getModel(BakedModel original, ItemStack stack, @Nullable Level level,  @Nullable LivingEntity entity, int seed) {
+    public static BakedModel getModel(BakedModel original, ItemStack stack, @Nullable Level level, @Nullable LivingEntity entity, int seed) {
         if (stack.is(Exposure.Items.CAMERA.get())) {
             @Nullable ClientLevel clientLevel = level instanceof ClientLevel lv ? lv : null;
             return CameraModel.modifyCameraModel(stack, clientLevel, entity, seed, original);
@@ -48,10 +47,10 @@ public class ModelHooks {
         return original;
     }
 
-    public static boolean renderGui(GuiGraphics guiGraphics,float partialTick) {
+    public static boolean renderGui(GuiGraphics guiGraphics, float partialTick) {
         Viewfinder viewfinder = CameraClient.viewfinder();
         if (viewfinder != null && viewfinder.isLookingThrough()) {
-            viewfinder.overlay().render(guiGraphics,partialTick);
+            viewfinder.overlay().render(guiGraphics, partialTick);
             if (Config.Client.HIDE_HUD_WHILE_IN_VIEWFINDER.get()) {
                 return true;
             }
@@ -62,8 +61,8 @@ public class ModelHooks {
     public static boolean renderCrosshair() {
         LocalPlayer player = (LocalPlayer) Minecrft.player();
         if (Config.Client.PHOTOGRAPH_IN_HAND_HIDE_CROSSHAIR.get() && player.getXRot() > 25f
-                && (player.getMainHandItem().getItem() instanceof PhotographItem || player.getMainHandItem().getItem() instanceof StackedPhotographsItem)
-                && player.getOffhandItem().isEmpty())
+              && (player.getMainHandItem().getItem() instanceof PhotographItem || player.getMainHandItem().getItem() instanceof StackedPhotographsItem)
+              && player.getOffhandItem().isEmpty())
             return true;
         return false;
     }
