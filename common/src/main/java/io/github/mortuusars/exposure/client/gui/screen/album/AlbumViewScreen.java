@@ -159,8 +159,8 @@ public class AlbumViewScreen extends Screen {
 
     @Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        super.render(guiGraphics, mouseX, mouseY, partialTick);
         renderBackground(guiGraphics,mouseX,mouseY,partialTick);
+        super.render(guiGraphics, mouseX, mouseY, partialTick);
         renderTooltip(guiGraphics, mouseX, mouseY);
 
         for (Page page : pages) {
