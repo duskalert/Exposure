@@ -12,22 +12,18 @@ import java.util.function.Function;
 
 public class Widgets {
     public static final ModWidgetSprites PREVIOUS_BUTTON_SPRITES =
-            threeStateSprites(Exposure.resource("widgets/previous_button"),16,16);
+          threeStateSprites(Exposure.resource("widgets/previous_button"), 16, 16);
     public static final ModWidgetSprites NEXT_BUTTON_SPRITES =
-            threeStateSprites(Exposure.resource("widgets/next_button"),16,16);
+          threeStateSprites(Exposure.resource("widgets/next_button"), 16, 16);
 
     public static ResourceLocation empty() {
         return Exposure.resource("empty");
     }
 
-    public static ModWidgetSprites threeStateSprites(ResourceLocation base,int w,int h) {
+    public static ModWidgetSprites threeStateSprites(ResourceLocation base, int w, int h) {
         return ModWidgetSprites.withPrefix(base,
-                new ResourceLocation(base.getNamespace(), base.getPath() + "_disabled"),
-                new ResourceLocation(base.getNamespace(), base.getPath() + "_highlighted"),w,h);
-    }
-
-    public static ModWidgetSprites threeStateSprites(ResourceLocation base) {
-        return threeStateSprites(base,15,18);
+              new ResourceLocation(base.getNamespace(), base.getPath() + "_disabled"),
+              new ResourceLocation(base.getNamespace(), base.getPath() + "_highlighted"), w, h);
     }
 
     public static <T> Map<T, ModWidgetSprites> createMap(List<T> values, Function<T, ModWidgetSprites> convertFunc) {

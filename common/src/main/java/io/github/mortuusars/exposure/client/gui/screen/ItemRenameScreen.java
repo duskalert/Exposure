@@ -2,11 +2,13 @@ package io.github.mortuusars.exposure.client.gui.screen;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import io.github.mortuusars.exposure.Exposure;
+import io.github.mortuusars.exposure.ModWidgetSprites;
+import io.github.mortuusars.exposure.client.gui.BetterImageButton;
+import io.github.mortuusars.exposure.client.gui.Widgets;
 import io.github.mortuusars.exposure.world.inventory.ItemRenameMenu;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.EditBox;
-import net.minecraft.client.gui.components.ImageButton;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
@@ -22,6 +24,10 @@ import java.util.Objects;
 
 public class ItemRenameScreen extends AbstractContainerScreen<ItemRenameMenu> {
     public static final ResourceLocation TEXTURE = Exposure.resource("textures/gui/item_rename.png");
+    public static final ModWidgetSprites APPLY_BUTTON_SPRITES = Widgets.threeStateSprites(
+          Exposure.resource("widgets/confirm_button"), 19, 19);
+    public static final ModWidgetSprites CANCEL_BUTTON_SPRITES = Widgets.threeStateSprites(
+          Exposure.resource("widgets/cancel_button"), 19, 19);
 
     protected EditBox name;
 
@@ -48,15 +54,13 @@ public class ItemRenameScreen extends AbstractContainerScreen<ItemRenameMenu> {
         addWidget(name);
         setInitialFocus(name);
 
-        ImageButton applyButton = new ImageButton(leftPos + 133, topPos + 42, 19, 19,
-                imageWidth,0,19,TEXTURE,256,256,
-                button -> confirm(), Component.translatable("gui.exposure.item_rename.apply"));
+        BetterImageButton applyButton = new BetterImageButton(leftPos + 133, topPos + 42, 19, 19,
+              APPLY_BUTTON_SPRITES, button -> confirm(), Component.translatable("gui.exposure.item_rename.apply"));
         applyButton.setTooltip(Tooltip.create(Component.translatable("gui.exposure.item_rename.apply")));
         addRenderableWidget(applyButton);
 
-        ImageButton cancelButton = new ImageButton(leftPos + 154, topPos + 42, 19, 19,
-                imageWidth + 19, 0, 19, TEXTURE, 256, 256,
-                button -> cancel(), Component.translatable("gui.exposure.item_rename.cancel"));
+        BetterImageButton cancelButton = new BetterImageButton(leftPos + 154, topPos + 42, 19, 19,
+              CANCEL_BUTTON_SPRITES, button -> cancel(), Component.translatable("gui.exposure.item_rename.cancel"));
         cancelButton.setTooltip(Tooltip.create(Component.translatable("gui.exposure.item_rename.cancel")));
         addRenderableWidget(cancelButton);
     }
@@ -78,14 +82,14 @@ public class ItemRenameScreen extends AbstractContainerScreen<ItemRenameMenu> {
         this.name.setValue(string);
     }
 
-//    @Override
-//    public void containerTick() {
-//        super.containerTick();
-//        name.tick();
-//    }
+    @Override
+    public void containerTick() {
+        name.tick();
+    }
 
     @Override
     public void render(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+        renderBackground(guiGraphics);
         super.render(guiGraphics, mouseX, mouseY, partialTick);
         this.name.render(guiGraphics, mouseX, mouseY, partialTick);
         renderTooltip(guiGraphics, mouseX, mouseY);
@@ -104,7 +108,7 @@ public class ItemRenameScreen extends AbstractContainerScreen<ItemRenameMenu> {
     protected void onNameChanged(String name) {
         ItemStack itemStack = getMenu().getSlot(0).getItem();
         if (!itemStack.hasCustomHoverName() && name.equals(itemStack.getHoverName().getString())
-                || name.equals(itemStack.getItem().getName(itemStack).getString())) {
+              || name.equals(itemStack.getItem().getName(itemStack).getString())) {
             name = "";
         }
 

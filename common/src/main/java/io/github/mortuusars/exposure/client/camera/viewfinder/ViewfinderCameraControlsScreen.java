@@ -167,7 +167,8 @@ public class ViewfinderCameraControlsScreen extends Screen {
     protected @NotNull Button createCompositionGuideButton() {
         List<CompositionGuide> guides = CompositionGuides.getGuides();
         CompositionGuide currentGuide = camera.map(CameraSettings.COMPOSITION_GUIDE::getOrDefault, CompositionGuides.NONE);
-        Function<CompositionGuide, ModWidgetSprites> spritesFunc = guide -> Widgets.threeStateSprites(guide.buttonSpriteLocation());
+        Function<CompositionGuide, ModWidgetSprites> spritesFunc = guide ->
+              Widgets.threeStateSprites(guide.buttonSpriteLocation(), 15, 18);
 
         return new CycleButton<>(0, 0, BUTTON_WIDTH, BUTTON_HEIGHT, guides, currentGuide, spritesFunc)
                 .setDefaultTooltip(Tooltip.create(Component.translatable("gui.exposure.camera_controls.composition_guide.tooltip")))
@@ -180,8 +181,8 @@ public class ViewfinderCameraControlsScreen extends Screen {
     protected @NotNull Button createSelfTimerButton() {
         List<SelfTimer> values = Arrays.asList(SelfTimer.values());
         SelfTimer currentValue = camera.map(CameraSettings.SELF_TIMER::getOrDefault, SelfTimer.OFF);
-        Function<SelfTimer, ModWidgetSprites> spritesFunc = mode -> Widgets.threeStateSprites(
-                Exposure.resource("camera_controls/self_timer/timer_" + mode.getSerializedName()));
+        Function<SelfTimer, ModWidgetSprites> spritesFunc = mode ->
+              Widgets.threeStateSprites(Exposure.resource("camera_controls/self_timer/timer_" + mode.getSerializedName()), 15, 18);
 
         return new CycleButton<>(0, 0, BUTTON_WIDTH, BUTTON_HEIGHT, values, currentValue, spritesFunc)
                 .setDefaultTooltip(Tooltip.create(Component.translatable("gui.exposure.camera_controls.self_timer.tooltip")))
@@ -194,8 +195,8 @@ public class ViewfinderCameraControlsScreen extends Screen {
     protected @NotNull Button createFlashModeButton() {
         List<FlashMode> modes = Arrays.asList(FlashMode.values());
         FlashMode currentMode = camera.map(CameraSettings.FLASH_MODE::getOrDefault, FlashMode.OFF);
-        Function<FlashMode, ModWidgetSprites> spritesFunc = mode -> Widgets.threeStateSprites(
-                Exposure.resource("camera_controls/flash_mode/flash_" + mode.getSerializedName()));
+        Function<FlashMode, ModWidgetSprites> spritesFunc = mode ->
+              Widgets.threeStateSprites(Exposure.resource("camera_controls/flash_mode/flash_" + mode.getSerializedName()), 15, 18);
 
         return new CycleButton<>(0, 0, BUTTON_WIDTH, BUTTON_HEIGHT, modes, currentMode, spritesFunc)
                 .setDefaultTooltip(Tooltip.create(Component.translatable("gui.exposure.camera_controls.flash_mode.tooltip")))
@@ -256,11 +257,6 @@ public class ViewfinderCameraControlsScreen extends Screen {
         super.render(guiGraphics, mouseX, mouseY, partialTick);
 
         guiGraphics.pose().popPose();
-    }
-
-   // @Override
-    public void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        // Prevents blur from rendering.
     }
 
     @Override
