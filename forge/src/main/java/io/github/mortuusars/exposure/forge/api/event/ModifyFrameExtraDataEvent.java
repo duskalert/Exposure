@@ -1,9 +1,9 @@
 package io.github.mortuusars.exposure.forge.api.event;
 
-import io.github.mortuusars.exposure.util.ExtraData;
 import io.github.mortuusars.exposure.world.camera.capture.CaptureParameters;
 import io.github.mortuusars.exposure.world.entity.CameraHolder;
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
@@ -21,10 +21,10 @@ public class ModifyFrameExtraDataEvent extends Event {
     private final CaptureParameters captureParameters;
     private final List<BlockPos> positionsInFrame;
     private final List<LivingEntity> entitiesInFrame;
-    private final ExtraData data;
+    private final CompoundTag data;
 
     public ModifyFrameExtraDataEvent(CameraHolder cameraHolder, ItemStack stack, CaptureParameters captureParameters,
-                                     List<BlockPos> positionsInFrame, List<LivingEntity> entitiesInFrame, ExtraData data) {
+                                     List<BlockPos> positionsInFrame, List<LivingEntity> entitiesInFrame, CompoundTag data) {
         this.cameraHolder = cameraHolder;
         this.stack = stack;
         this.captureParameters = captureParameters;
@@ -57,7 +57,7 @@ public class ModifyFrameExtraDataEvent extends Event {
         return entitiesInFrame;
     }
 
-    public ExtraData getData() {
+    public CompoundTag getData() {
         return data;
     }
 }

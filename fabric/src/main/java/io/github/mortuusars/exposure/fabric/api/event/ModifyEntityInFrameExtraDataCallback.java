@@ -1,6 +1,5 @@
 package io.github.mortuusars.exposure.fabric.api.event;
 
-import io.github.mortuusars.exposure.util.ExtraData;
 import io.github.mortuusars.exposure.world.entity.CameraHolder;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;

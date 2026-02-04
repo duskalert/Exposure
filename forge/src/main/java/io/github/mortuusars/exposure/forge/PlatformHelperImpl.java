@@ -5,11 +5,11 @@ import io.github.mortuusars.exposure.forge.api.event.ModifyEntityInFrameDataEven
 import io.github.mortuusars.exposure.forge.api.event.FrameAddedEvent;
 import io.github.mortuusars.exposure.forge.api.event.ModifyFrameExtraDataEvent;
 import io.github.mortuusars.exposure.forge.integration.CreateIntegration;
-import io.github.mortuusars.exposure.util.ExtraData;
 import io.github.mortuusars.exposure.world.camera.capture.CaptureParameters;
 import io.github.mortuusars.exposure.world.camera.frame.Frame;
 import io.github.mortuusars.exposure.world.entity.CameraHolder;
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
@@ -82,16 +82,17 @@ public class PlatformHelperImpl {
 
     // --
 
-    public static void postModifyEntityInFrameExtraDataEvent(CameraHolder cameraHolder, ItemStack camera, LivingEntity entityInFrame, ExtraData data) {
+    public static void postModifyEntityInFrameExtraDataEvent(CameraHolder cameraHolder, ItemStack camera, LivingEntity entityInFrame, CompoundTag data) {
         MinecraftForge.EVENT_BUS.post(new ModifyEntityInFrameDataEvent(cameraHolder, camera, entityInFrame, data));
     }
 
     public static void postModifyFrameExtraDataEvent(CameraHolder cameraHolder, ItemStack camera, CaptureParameters captureParameters,
-                                                     List<BlockPos> positionsInFrame, List<LivingEntity> entitiesInFrame, ExtraData data) {
+                                                     List<BlockPos> positionsInFrame, List<LivingEntity> entitiesInFrame, CompoundTag data) {
         MinecraftForge.EVENT_BUS.post(new ModifyFrameExtraDataEvent(cameraHolder, camera, captureParameters, positionsInFrame, entitiesInFrame, data));
     }
 
-    public static void postFrameAddedEvent(CameraHolder cameraHolder, ItemStack camera, Frame frame, List<BlockPos> positionsInFrame, List<LivingEntity> entitiesInFrame) {
-        MinecraftForge.EVENT_BUS.post(new FrameAddedEvent(cameraHolder, camera, frame, positionsInFrame, entitiesInFrame));
+    public static void postFrameAddedEvent(CameraHolder holder, ItemStack camera, Frame frame,
+                                           List<BlockPos> positionsInFrame, List<LivingEntity> entitiesInFrame) {
+        MinecraftForge.EVENT_BUS.post(new FrameAddedEvent(holder, camera, frame, positionsInFrame, entitiesInFrame));
     }
 }
