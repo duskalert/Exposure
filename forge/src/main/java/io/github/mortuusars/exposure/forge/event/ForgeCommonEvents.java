@@ -7,6 +7,7 @@ import io.github.mortuusars.exposure.data.Filter;
 import io.github.mortuusars.exposure.data.Lens;
 import io.github.mortuusars.exposure.event.CommonEvents;
 import io.github.mortuusars.exposure.event.ServerEvents;
+import io.github.mortuusars.exposure.network.forge.PacketsImpl;
 import io.github.mortuusars.exposure.network.packet.C2SPackets;
 import io.github.mortuusars.exposure.network.packet.CommonPackets;
 import io.github.mortuusars.exposure.network.packet.Packet;
@@ -55,7 +56,7 @@ public class ForgeCommonEvents {
                     Stats.CUSTOM.get(location);
                 });
             });
-            registerPackets();
+            PacketsImpl.register();
         }
 
         @SubscribeEvent
@@ -64,31 +65,6 @@ public class ForgeCommonEvents {
             event.dataPackRegistry(Exposure.Registries.LENS, Lens.CODEC, Lens.CODEC);
             event.dataPackRegistry(Exposure.Registries.FILTER, Filter.CODEC, Filter.CODEC);
         }
-
-        public static SimpleChannel registrar;
-
-
-        @SuppressWarnings("unchecked")
-        public static void registerPackets() {
-            registrar = NetworkRegistry.newSimpleChannel(Exposure.resource("packet"), () -> "1.0", s -> true, s -> true);
-            // This monstrosity is to avoid having to define packets for forge and fabric separately.
-            int i = 0;
-            for (Map.Entry<Class<Packet>, Function<FriendlyByteBuf, Packet>> definition : S2CPackets.getDefinitions().entrySet()) {
-                registrar.registerMessage(i++,definition.getKey(), Packet::toPacket, definition.getValue(),
-                        ForgeCommonEvents.wrapS2C());
-            }
-
-            for (Map.Entry<Class<Packet>, Function<FriendlyByteBuf, Packet>> definition : C2SPackets.getDefinitions().entrySet()) {
-                registrar.registerMessage(i++,definition.getKey(),Packet::toPacket,definition.getValue(), ForgeCommonEvents.wrapC2S());
-            }
-
-            for (Map.Entry<Class<Packet>, Function<FriendlyByteBuf, Packet>> definition : CommonPackets.getDefinitions().entrySet()) {
-                registrar.registerMessage(i++,definition.getKey(),Packet::toPacket,definition.getValue(), ForgeCommonEvents.wrapS2C());
-                registrar.registerMessage(i++,definition.getKey(),Packet::toPacket,definition.getValue(), ForgeCommonEvents.wrapC2S());
-            }
-        }
-
-
     }
 
     public static <MSG extends Packet> BiConsumer<MSG, Supplier<NetworkEvent.Context>> wrapS2C() {

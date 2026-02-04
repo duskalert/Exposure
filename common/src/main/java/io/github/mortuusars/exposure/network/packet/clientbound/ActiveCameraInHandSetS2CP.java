@@ -24,7 +24,7 @@ public record ActiveCameraInHandSetS2CP(int operatorEntityId, CameraId cameraId,
     }
 
     public static ActiveCameraInHandSetS2CP fromPacket(FriendlyByteBuf buf) {
-        return new ActiveCameraInHandSetS2CP(buf.readInt(),CameraId.fromPacket(buf),buf.readEnum(InteractionHand.class));
+        return new ActiveCameraInHandSetS2CP(buf.readInt(), CameraId.fromPacket(buf), buf.readEnum(InteractionHand.class));
     }
 
     @Override

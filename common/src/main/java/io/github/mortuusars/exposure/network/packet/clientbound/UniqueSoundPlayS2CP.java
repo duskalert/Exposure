@@ -27,7 +27,13 @@ public record UniqueSoundPlayS2CP(String id, int entityId, SoundEvent sound, Sou
     }
 
     public static UniqueSoundPlayS2CP fromPacket(FriendlyByteBuf buf) {
-        return new UniqueSoundPlayS2CP(buf.readUtf(),buf.readInt(),SoundEvent.readFromNetwork(buf),buf.readEnum(SoundSource.class),buf.readFloat(),buf.readFloat());
+        return new UniqueSoundPlayS2CP(
+              buf.readUtf(),
+              buf.readInt(),
+              SoundEvent.readFromNetwork(buf),
+              buf.readEnum(SoundSource.class),
+              buf.readFloat(),
+              buf.readFloat());
     }
 
     @Override
@@ -36,7 +42,6 @@ public record UniqueSoundPlayS2CP(String id, int entityId, SoundEvent sound, Sou
         if (entity != null) {
             UniqueSoundManager.play(id, entity, sound, source, volume, pitch);
         }
-
         return true;
     }
 }

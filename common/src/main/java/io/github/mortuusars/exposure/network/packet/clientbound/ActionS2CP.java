@@ -29,7 +29,6 @@ public enum ActionS2CP implements Packet {
             case SHUTTER_OPENED -> ClientPacketsHandler.shutterOpened();
             case EXPORT_STOPPED -> ClientPacketsHandler.stopExportTask();
         }
-        ;
         return true;
     }
 }
