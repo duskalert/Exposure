@@ -20,5 +20,4 @@ public abstract class LecternBlockEntityMixin {
             cir.setReturnValue(true);
         }
     }
-
 }
