@@ -13,6 +13,11 @@ public record AlbumSyncNoteC2SP(int pageIndex, String text) implements Packet {
     public static final ResourceLocation ID = Exposure.resource("album_update_note");
 
     @Override
+    public ResourceLocation getId() {
+        return ID;
+    }
+
+    @Override
     public void toPacket(FriendlyByteBuf buf) {
         buf.writeInt(pageIndex);
         buf.writeUtf(text);

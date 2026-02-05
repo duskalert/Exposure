@@ -13,6 +13,11 @@ public record CaptureStartS2CP(ResourceLocation templateId, CaptureParameters ca
     public static final ResourceLocation ID = Exposure.resource("capture_start");
 
     @Override
+    public ResourceLocation getId() {
+        return ID;
+    }
+
+    @Override
     public void toPacket(FriendlyByteBuf buf) {
         buf.writeResourceLocation(templateId);
         captureParameters.toPacket(buf);

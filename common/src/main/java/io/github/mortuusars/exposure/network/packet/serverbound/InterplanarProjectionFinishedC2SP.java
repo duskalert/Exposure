@@ -18,6 +18,11 @@ public record InterplanarProjectionFinishedC2SP(CameraId cameraId,
     public static final ResourceLocation ID = Exposure.resource("interplanar_projection_finished");
 
     @Override
+    public ResourceLocation getId() {
+        return ID;
+    }
+
+    @Override
     public void toPacket(FriendlyByteBuf buf) {
         cameraId.toPacket(buf);
         buf.writeBoolean(successful);

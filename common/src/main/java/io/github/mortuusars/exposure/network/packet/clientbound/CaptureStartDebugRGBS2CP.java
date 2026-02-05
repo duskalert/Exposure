@@ -15,6 +15,11 @@ public record CaptureStartDebugRGBS2CP(ResourceLocation templateId, List<Capture
     public static final ResourceLocation ID = Exposure.resource("capture_start_debug_rgb");
 
     @Override
+    public ResourceLocation getId() {
+        return ID;
+    }
+
+    @Override
     public void toPacket(FriendlyByteBuf buf) {
         buf.writeResourceLocation(templateId);
         buf.writeCollection(captureProperties,(buf1, captureParameters) -> captureParameters.toPacket(buf1));

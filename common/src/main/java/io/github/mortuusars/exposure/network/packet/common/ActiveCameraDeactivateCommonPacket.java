@@ -13,6 +13,11 @@ public enum ActiveCameraDeactivateCommonPacket implements Packet {
     public static final ResourceLocation ID = Exposure.resource("active_camera_deactivate");
 
     @Override
+    public ResourceLocation getId() {
+        return ID;
+    }
+
+    @Override
     public boolean handle(PacketFlow flow, Player player) {
         player.getActiveExposureCameraOptional().ifPresent(camera -> {
             camera.map((item, stack) -> item.deactivate(camera.getHolder().asHolderEntity(), stack));
@@ -24,5 +29,9 @@ public enum ActiveCameraDeactivateCommonPacket implements Packet {
     @Override
     public void toPacket(FriendlyByteBuf buf) {
 
+    }
+
+    public static ActiveCameraDeactivateCommonPacket fromBuffer(FriendlyByteBuf buffer) {
+        return INSTANCE;
     }
 }

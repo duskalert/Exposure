@@ -13,6 +13,11 @@ public record ExposureRequestC2SP(String id) implements Packet {
     public static final ResourceLocation ID = Exposure.resource("exposure_request");
 
     @Override
+    public ResourceLocation getId() {
+        return ID;
+    }
+
+    @Override
     public void toPacket(FriendlyByteBuf buf) {
         buf.writeUtf(id);
     }

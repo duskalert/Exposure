@@ -17,6 +17,11 @@ public record ActiveCameraInHandSetS2CP(int operatorEntityId, CameraId cameraId,
     public static final ResourceLocation ID = Exposure.resource("active_camera_in_hand_set");
 
     @Override
+    public ResourceLocation getId() {
+        return ID;
+    }
+
+    @Override
     public void toPacket(FriendlyByteBuf buf) {
         buf.writeInt(operatorEntityId);
         cameraId.toPacket(buf);

@@ -16,6 +16,11 @@ public record ExportS2CP(List<String> ids, ExportSize size, ExportLook look) imp
     public static final ResourceLocation ID = Exposure.resource("export");
 
     @Override
+    public ResourceLocation getId() {
+        return ID;
+    }
+
+    @Override
     public void toPacket(FriendlyByteBuf buf) {
         buf.writeCollection(ids,FriendlyByteBuf::writeUtf);
         buf.writeEnum(size);

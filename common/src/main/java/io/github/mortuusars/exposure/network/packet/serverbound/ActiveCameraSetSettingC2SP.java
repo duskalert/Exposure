@@ -15,6 +15,11 @@ public record ActiveCameraSetSettingC2SP(CameraSetting<?> setting, byte[] encode
     public static final ResourceLocation ID = Exposure.resource("active_camera_set_setting");
 
     @Override
+    public ResourceLocation getId() {
+        return ID;
+    }
+
+    @Override
     public void toPacket(FriendlyByteBuf buf) {
         setting.toPacket(buf);
         buf.writeByteArray(encodedValue);

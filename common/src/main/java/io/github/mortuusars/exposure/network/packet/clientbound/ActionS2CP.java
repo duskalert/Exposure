@@ -14,6 +14,11 @@ public enum ActionS2CP implements Packet {
     public static final ResourceLocation ID = Exposure.resource("clear_rendering_cache");
 
     @Override
+    public ResourceLocation getId() {
+        return ID;
+    }
+
+    @Override
     public void toPacket(FriendlyByteBuf buf) {
         buf.writeEnum(this);
     }

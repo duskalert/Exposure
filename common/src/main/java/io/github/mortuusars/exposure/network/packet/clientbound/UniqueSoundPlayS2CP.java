@@ -17,6 +17,11 @@ public record UniqueSoundPlayS2CP(String id, int entityId, SoundEvent sound, Sou
     public static final ResourceLocation ID = Exposure.resource("unique_sound_play");
 
     @Override
+    public ResourceLocation getId() {
+        return ID;
+    }
+
+    @Override
     public void toPacket(FriendlyByteBuf buf) {
         buf.writeUtf(id);
         buf.writeInt(entityId);

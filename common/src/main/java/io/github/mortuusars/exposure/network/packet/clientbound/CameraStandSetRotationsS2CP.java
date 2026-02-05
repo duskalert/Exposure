@@ -12,6 +12,11 @@ public record CameraStandSetRotationsS2CP(int entityId, float yRot, float xRot) 
     public static final ResourceLocation ID = Exposure.resource("camera_stand_set_rotations");
 
     @Override
+    public ResourceLocation getId() {
+        return ID;
+    }
+
+    @Override
     public void toPacket(FriendlyByteBuf buf) {
         buf.writeInt(entityId);
         buf.writeFloat(yRot);

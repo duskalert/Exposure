@@ -15,6 +15,11 @@ public record CreateChromaticExposureS2CP(String id, List<ExposureIdentifier> la
     public static final ResourceLocation ID = Exposure.resource("create_chromatic_exposure");
 
     @Override
+    public ResourceLocation getId() {
+        return ID;
+    }
+
+    @Override
     public void toPacket(FriendlyByteBuf buf) {
         buf.writeUtf(id);
         buf.writeCollection(layers,(buf1, exposureIdentifier) -> exposureIdentifier.toPacket(buf1));

@@ -13,6 +13,11 @@ public record UniqueSoundStopS2CP(String id, SoundEvent sound) implements Packet
     public static final ResourceLocation ID = Exposure.resource("unique_sound_stop");
 
     @Override
+    public ResourceLocation getId() {
+        return ID;
+    }
+
+    @Override
     public void toPacket(FriendlyByteBuf buf) {
         buf.writeUtf(id);
         sound.writeToNetwork(buf);

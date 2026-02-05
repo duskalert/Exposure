@@ -13,6 +13,11 @@ public record ExposureDataResponseS2CP(String id, RequestedPalettedExposure resu
     public static final ResourceLocation ID = Exposure.resource("exposure_data_response");
 
     @Override
+    public ResourceLocation getId() {
+        return ID;
+    }
+
+    @Override
     public void toPacket(FriendlyByteBuf buf) {
         buf.writeUtf(id);
         result.toPacket(buf);

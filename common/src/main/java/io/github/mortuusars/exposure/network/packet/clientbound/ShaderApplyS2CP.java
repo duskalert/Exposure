@@ -13,6 +13,11 @@ import java.util.Optional;
 public record ShaderApplyS2CP(Optional<ResourceLocation> shaderLocation) implements Packet {
     public static final ResourceLocation ID = Exposure.resource("shader_apply");
 
+    @Override
+    public ResourceLocation getId() {
+        return ID;
+    }
+
     public ShaderApplyS2CP(ResourceLocation location) {
         this(Optional.of(location));
     }

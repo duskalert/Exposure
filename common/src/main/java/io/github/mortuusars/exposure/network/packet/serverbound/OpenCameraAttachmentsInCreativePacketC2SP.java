@@ -14,6 +14,11 @@ public record OpenCameraAttachmentsInCreativePacketC2SP(int cameraSlotIndex) imp
     public static final ResourceLocation ID = Exposure.resource("open_camera_attachments");
 
     @Override
+    public ResourceLocation getId() {
+        return ID;
+    }
+
+    @Override
     public void toPacket(FriendlyByteBuf buf) {
         buf.writeInt(cameraSlotIndex);
     }

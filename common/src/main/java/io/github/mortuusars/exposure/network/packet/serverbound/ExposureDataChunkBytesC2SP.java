@@ -10,7 +10,12 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 
 public record ExposureDataChunkBytesC2SP(String id, int offset, byte[] bytes) implements Packet {
-    public static final ResourceLocation ID = Exposure.resource("exposure_data_chunk_header");
+    public static final ResourceLocation ID = Exposure.resource("exposure_data_chunk_bytes");
+
+    @Override
+    public ResourceLocation getId() {
+        return ID;
+    }
 
     @Override
     public void toPacket(FriendlyByteBuf buffer) {

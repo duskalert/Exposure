@@ -9,7 +9,7 @@ import io.github.mortuusars.exposure.client.render.GlassPhotographFrameEntityRen
 import io.github.mortuusars.exposure.fabric.resources.ExposureFabricClientReloadListener;
 import io.github.mortuusars.exposure.client.gui.tooltip.PhotographClientTooltip;
 import io.github.mortuusars.exposure.integration.ModCompatibilityClient;
-import io.github.mortuusars.exposure.network.fabric.FabricS2CPackets;
+import io.github.mortuusars.exposure.network.fabric.PacketsImpl;
 import io.github.mortuusars.exposure.world.inventory.tooltip.PhotographTooltip;
 import io.github.mortuusars.exposure.client.render.PhotographFrameEntityRenderer;
 import io.github.mortuusars.exposure.world.item.camera.CameraItem;
@@ -47,7 +47,7 @@ public class ExposureFabricClient implements ClientModInitializer {
 
         HudRenderCallback.EVENT.register(CameraStandTooltip::render);
 
-        FabricS2CPackets.register();
+        PacketsImpl.registerS2CPackets();
 
         ModCompatibilityClient.handle();
     }

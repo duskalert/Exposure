@@ -17,6 +17,11 @@ public record UniqueSoundPlayShutterTickingS2CP(int entityId,
     public static final ResourceLocation ID = Exposure.resource("unique_sound_play_shutter_ticking");
 
     @Override
+    public ResourceLocation getId() {
+        return ID;
+    }
+
+    @Override
     public void toPacket(FriendlyByteBuf buf) {
         buf.writeInt(entityId);
         cameraId.toPacket(buf);

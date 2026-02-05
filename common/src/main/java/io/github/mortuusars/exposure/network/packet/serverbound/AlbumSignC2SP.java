@@ -15,6 +15,11 @@ public record AlbumSignC2SP(int slot, String title, String author) implements Pa
     public static final ResourceLocation ID = Exposure.resource("album_sign");
 
     @Override
+    public ResourceLocation getId() {
+        return ID;
+    }
+
+    @Override
     public void toPacket(FriendlyByteBuf buf) {
         buf.writeInt(slot);
         buf.writeUtf(title);

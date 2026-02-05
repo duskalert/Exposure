@@ -15,6 +15,11 @@ public record ExposureDataChunkHeaderC2SP(String id, int width, int height,
     public static final ResourceLocation ID = Exposure.resource("exposure_data_chunk_header");
 
     @Override
+    public ResourceLocation getId() {
+        return ID;
+    }
+
+    @Override
     public void toPacket(FriendlyByteBuf buffer) {
         buffer.writeUtf(id);
         buffer.writeInt(width);

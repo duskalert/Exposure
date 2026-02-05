@@ -14,6 +14,11 @@ import net.minecraft.world.entity.player.Player;
 public record ActiveCameraOnStandSetS2CP(int operatorEntityId, int cameraStandId, CameraId cameraId) implements Packet {
     public static final ResourceLocation ID = Exposure.resource("active_camera_on_stand_set");
 
+    @Override
+    public ResourceLocation getId() {
+        return ID;
+    }
+
     public void toPacket(FriendlyByteBuf buf) {
         buf.writeInt(operatorEntityId);
         buf.writeInt(cameraStandId);

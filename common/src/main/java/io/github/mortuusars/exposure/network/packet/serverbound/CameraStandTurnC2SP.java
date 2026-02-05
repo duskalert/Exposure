@@ -12,6 +12,11 @@ public record CameraStandTurnC2SP(int entityId, double yRot, double xRot) implem
     public static final ResourceLocation ID = Exposure.resource("camera_stand_turn");
 
     @Override
+    public ResourceLocation getId() {
+        return ID;
+    }
+
+    @Override
     public void toPacket(FriendlyByteBuf buf) {
         buf.writeInt(entityId);
         buf.writeDouble(yRot);

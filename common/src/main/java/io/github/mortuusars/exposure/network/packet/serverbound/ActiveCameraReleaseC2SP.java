@@ -5,10 +5,18 @@ import io.github.mortuusars.exposure.network.packet.Packet;
 import io.github.mortuusars.exposure.world.camera.Camera;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.protocol.PacketFlow;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 
 public enum ActiveCameraReleaseC2SP implements Packet {
     INSTANCE;
+
+    public static final ResourceLocation ID = Exposure.resource("active_camera_release");
+
+    @Override
+    public ResourceLocation getId() {
+        return ID;
+    }
 
     @Override
     public void toPacket(FriendlyByteBuf buf) {

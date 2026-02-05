@@ -12,6 +12,11 @@ public record CameraStandStopControllingS2CP(int standId) implements Packet {
     public static final ResourceLocation ID = Exposure.resource("camera_stand_stop_controlling");
 
     @Override
+    public ResourceLocation getId() {
+        return ID;
+    }
+
+    @Override
     public void toPacket(FriendlyByteBuf buf) {
         buf.writeInt(standId);
     }

@@ -14,6 +14,11 @@ public record ExposureDataC2SP(String id, ExposureData exposure) implements Pack
     public static final ResourceLocation ID = Exposure.resource("exposure_data");
 
     @Override
+    public ResourceLocation getId() {
+        return ID;
+    }
+
+    @Override
     public void toPacket(FriendlyByteBuf buf) {
         buf.writeUtf(id);
         exposure.toPacket(buf);

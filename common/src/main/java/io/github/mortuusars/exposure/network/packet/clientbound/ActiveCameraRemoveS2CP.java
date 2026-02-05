@@ -12,6 +12,11 @@ public record ActiveCameraRemoveS2CP(int operatorEntityId) implements Packet {
     public static final ResourceLocation ID = Exposure.resource("active_camera_remove");
 
     @Override
+    public ResourceLocation getId() {
+        return ID;
+    }
+
+    @Override
     public void toPacket(FriendlyByteBuf buf) {
         buf.writeInt(operatorEntityId);
     }

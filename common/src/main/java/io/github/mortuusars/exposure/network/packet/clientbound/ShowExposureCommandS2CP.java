@@ -17,6 +17,11 @@ public record ShowExposureCommandS2CP(List<Frame> frames,
     public static final ResourceLocation ID = Exposure.resource("show_exposure_command");
 
     @Override
+    public ResourceLocation getId() {
+        return ID;
+    }
+
+    @Override
     public void toPacket(FriendlyByteBuf buf) {
         buf.writeCollection(frames,(buf1, frame) -> frame.toPacket(buf1));
         buf.writeBoolean(negative);
