@@ -36,8 +36,7 @@ public class Supporters {
     // --
 
     public static boolean hasAccessToGoldenSkin(UUID uuid) {
-        return true; //TODO: remove
-//        return gilded().hasAccessToGoldenSkin(uuid) || patreon().hasAccessToGoldenSkin(uuid);
+        return gilded().hasAccessToGoldenSkin(uuid) || patreon().hasAccessToGoldenSkin(uuid);
     }
 
     public static class Loader {
