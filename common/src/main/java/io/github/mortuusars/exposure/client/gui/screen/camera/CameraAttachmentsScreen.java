@@ -4,8 +4,10 @@ import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.systems.RenderSystem;
 import io.github.mortuusars.exposure.Config;
 import io.github.mortuusars.exposure.Exposure;
+import io.github.mortuusars.exposure.ModWidgetSprites;
+import io.github.mortuusars.exposure.client.gui.Widgets;
+import io.github.mortuusars.exposure.client.gui.component.CycleButton;
 import io.github.mortuusars.exposure.client.gui.screen.ItemListScreen;
-import io.github.mortuusars.exposure.client.gui.screen.element.ToggleImageButton;
 import io.github.mortuusars.exposure.client.gui.toast.BetterTutorialToast;
 import io.github.mortuusars.exposure.client.gui.toast.ToastIcon;
 import io.github.mortuusars.exposure.client.input.KeyboardHandler;
@@ -33,6 +35,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -124,9 +127,15 @@ public class CameraAttachmentsScreen extends AbstractContainerScreen<AbstractCam
         super.init();
 
         if (Supporters.hasAccessToGoldenSkin(Minecrft.player().getUUID())) {
-            ToggleImageButton button = new ToggleImageButton(leftPos + 8, topPos + 18, 7, 7,
-                    Exposure.resource("camera_attachments/regular"), this::changeSkin);
-            button.setState(getMenu().getCamera().map((i, s) -> Exposure.DataComponents.getCameraGold(s, false)));
+            boolean isGold = getMenu().getCamera().map((i, s) -> Exposure.DataComponents.getCameraGold(s, false));
+            Map<Boolean, ModWidgetSprites> spriteMap = Map.of(
+                  true, Widgets.threeStateSprites(Exposure.resource("camera_attachments/regular"), 7, 7),
+                  false, Widgets.threeStateSprites(Exposure.resource("camera_attachments/gold"), 7, 7));
+
+            CycleButton<Boolean> button = new CycleButton<>(leftPos + 8, topPos + 18, 7, 7,
+                  List.of(false, true), isGold, spriteMap, (btn, value) -> changeSkin(value))
+                  .setClickSound(SoundEvents.UI_BUTTON_CLICK.value());
+
             button.setTooltip(Tooltip.create(Component.translatable("gui.exposure.camera_attachments.change_skin")));
             addRenderableWidget(button);
         }
