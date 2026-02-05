@@ -383,9 +383,8 @@ public class Config {
                         .define("middle_click_controls", true);
                 VIEWFINDER_ZOOM_SENSITIVITY_INFLUENCE = builder
                         .comment("How much zooming influences mouse sensitivity.",
-                                "0 - no change to sensitivity. 1 - full effect.",
-                                "Default: 0.75")
-                        .defineInRange("zoom_sensitivity_influence", 0.75, 0.0, 1.0);
+                                "0 - no change to sensitivity. 1 - full effect.")
+                        .defineInRange("zoom_sensitivity_influence", 1.0, 0.0, 1.0);
                 VIEWFINDER_BACKGROUND_COLOR = builder
                         .comment("Color in hex format. AARRGGBB.").define("background_color", "FA1F1D1B");
                 VIEWFINDER_FONT_MAIN_COLOR = builder
