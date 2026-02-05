@@ -6,7 +6,7 @@
 
 _**This version could be unstable or buggy. Use at your own risk.**_
 
-**_Most of the existing data (photographs, items, etc) will be removed from the world when updating to this version._**
+**_Most of the existing data will be removed from the world when updating to this version._**
 
 _Please report any issues on [github](https://github.com/mortuusars/Exposure/issues)_ 
 
