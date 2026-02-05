@@ -51,7 +51,7 @@
     "frame": "task",
     "hidden": false,
     "icon": {
-      "item": "exposure:photograph"
+      "item": "exposure:camera_stand"
     },
     "show_toast": true,
     "title": {
