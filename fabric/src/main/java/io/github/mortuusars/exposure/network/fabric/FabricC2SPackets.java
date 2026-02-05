@@ -15,28 +15,20 @@ import java.util.Locale;
 import java.util.function.Function;
 
 public class FabricC2SPackets {
-    @SuppressWarnings("unchecked")
     public static void register() {
-        // This monstrosity is to avoid having to define packets for forge and fabric separately.
         for (var definition : C2SPackets.getDefinitions().entrySet()) {
-
             Function<FriendlyByteBuf, Packet> value = definition.getValue();
             ServerPlayNetworking.registerGlobalReceiver(classToRL(definition.getKey()), (minecraftServer, serverPlayer, serverGamePacketListener, friendlyByteBuf, packetSender) -> {
                 Packet packet = value.apply(friendlyByteBuf);
-                packet.handle(PacketFlow.SERVERBOUND, serverPlayer);
+                serverPlayer.server.execute(() -> packet.handle(PacketFlow.SERVERBOUND, serverPlayer));
             });
-
-            /*PayloadTypeRegistry.playC2S().register(
-                    (CustomPacketPayload.NbtType<CustomPacketPayload>) definition.type(),
-                    (StreamCodec<FriendlyByteBuf, CustomPacketPayload>) definition.codec().cast());
-            ServerPlayNetworking.registerGlobalReceiver((CustomPacketPayload.NbtType<Packet>) definition.type(), FabricC2SPackets::handleServerboundPacket);*/
         }
 
         for (var definition : CommonPackets.getDefinitions().entrySet()) {
             Function<FriendlyByteBuf, Packet> value = definition.getValue();
             ServerPlayNetworking.registerGlobalReceiver(classToRL(definition.getKey()), (minecraftServer, serverPlayer, serverGamePacketListener, friendlyByteBuf, packetSender) -> {
                 Packet packet = value.apply(friendlyByteBuf);
-                packet.handle(PacketFlow.SERVERBOUND, serverPlayer);
+                serverPlayer.server.execute(() -> packet.handle(PacketFlow.SERVERBOUND, serverPlayer));
             });
         }
     }

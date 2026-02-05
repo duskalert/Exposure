@@ -770,12 +770,6 @@ public class Exposure {
     }
 
     public static class RecipeSerializers {
-        //  public static final Supplier<RecipeSerializer<?>> FILM_DEVELOPING =
-        //           registerTransferring("film_developing", "film", FilmDevelopingRecipe::new);
-        //    public static final Supplier<RecipeSerializer<?>> PHOTOGRAPH_COPYING =
-        //           registerTransferring("photograph_copying", "photograph", PhotographCopyingRecipe::new);
-        //  public static final Supplier<RecipeSerializer<?>> PHOTOGRAPH_AGING =
-        //          registerTransferring("photograph_aging", "photograph", PhotographAgingRecipe::new);
         public static final Supplier<ComponentTransferringRecipeSerializer<?>> COMPONENT_TRANSFERRING =
               Register.recipeSerializer("component_transferring", () ->
                     new ComponentTransferringRecipeSerializer<>("source", ComponentTransferringRecipeSerializer.COMPONENT_TRANSFERRING));

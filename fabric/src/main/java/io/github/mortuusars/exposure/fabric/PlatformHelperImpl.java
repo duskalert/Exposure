@@ -47,14 +47,10 @@ public class PlatformHelperImpl {
 
     public static void openMenu(ServerPlayer serverPlayer, MenuProvider menuProvider, Consumer<FriendlyByteBuf> extraDataWriter) {
         ExtendedScreenHandlerFactory extendedScreenHandlerFactory = new ExtendedScreenHandlerFactory() {
-
             @Override
-            public void writeScreenOpeningData(ServerPlayer serverPlayer, FriendlyByteBuf friendlyByteBuf) {
-                FriendlyByteBuf buffer = PacketByteBufs.create();
+            public void writeScreenOpeningData(ServerPlayer serverPlayer, FriendlyByteBuf buffer) {
                 extraDataWriter.accept(buffer);
-                buffer.release();
             }
-
 
             @Nullable
             @Override

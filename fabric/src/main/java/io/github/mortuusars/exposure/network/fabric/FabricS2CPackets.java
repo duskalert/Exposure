@@ -1,5 +1,6 @@
 package io.github.mortuusars.exposure.network.fabric;
 
+import io.github.mortuusars.exposure.client.util.Minecrft;
 import io.github.mortuusars.exposure.network.packet.CommonPackets;
 import io.github.mortuusars.exposure.network.packet.Packet;
 import io.github.mortuusars.exposure.network.packet.S2CPackets;
@@ -15,7 +16,7 @@ public class FabricS2CPackets {
             Function<FriendlyByteBuf, Packet> value = definition.getValue();
             ClientPlayNetworking.registerGlobalReceiver(FabricC2SPackets.classToRL(definition.getKey()),(minecraft, clientPacketListener, friendlyByteBuf, packetSender) -> {
                 Packet packet = value.apply(friendlyByteBuf);
-                packet.handle(PacketFlow.CLIENTBOUND, minecraft.player);
+                Minecrft.execute(() -> packet.handle(PacketFlow.CLIENTBOUND, minecraft.player));
             });
         }
 
@@ -23,7 +24,7 @@ public class FabricS2CPackets {
             Function<FriendlyByteBuf, Packet> value = definition.getValue();
             ClientPlayNetworking.registerGlobalReceiver(FabricC2SPackets.classToRL(definition.getKey()),(minecraft, clientPacketListener, friendlyByteBuf, packetSender) -> {
                 Packet packet = value.apply(friendlyByteBuf);
-                packet.handle(PacketFlow.CLIENTBOUND, minecraft.player);
+                Minecrft.execute(() -> packet.handle(PacketFlow.CLIENTBOUND, minecraft.player));
             });
         }
     }
