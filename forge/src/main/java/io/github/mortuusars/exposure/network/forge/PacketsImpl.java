@@ -1,5 +1,6 @@
 package io.github.mortuusars.exposure.network.forge;
 
+import io.github.mortuusars.exposure.client.util.Minecrft;
 import io.github.mortuusars.exposure.network.packet.*;
 import io.github.mortuusars.exposure.network.packet.clientbound.*;
 import io.github.mortuusars.exposure.network.packet.common.ActiveCameraDeactivateCommonPacket;
@@ -10,6 +11,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkEvent;
 import net.minecraftforge.network.NetworkRegistry;
@@ -122,7 +124,10 @@ public class PacketsImpl {
 
     private static <T extends Packet> void handlePacket(T packet, Supplier<NetworkEvent.Context> contextSupplier) {
         NetworkEvent.Context context = contextSupplier.get();
-        packet.handle(direction(context.getDirection()), context.getSender());
+        Player player = context.getDirection().getReceptionSide().isClient()
+              ? Minecrft.player()
+              : context.getSender();
+        packet.handle(direction(context.getDirection()), player);
     }
 
     private static PacketFlow direction(NetworkDirection direction) {
