@@ -18,6 +18,9 @@ public class C2SPackets {
         map.put((Class<T>) ActiveCameraReleaseC2SP.class, buf -> (T) ActiveCameraReleaseC2SP.fromPacket(buf));
         map.put((Class<T>) InterplanarProjectionFinishedC2SP.class, buf -> (T) InterplanarProjectionFinishedC2SP.fromPacket(buf));
         map.put((Class<T>) ExposureDataC2SP.class, buf -> (T) ExposureDataC2SP.fromPacket(buf));
+        map.put((Class<T>) ExposureDataChunkHeaderC2SP.class, buf -> (T) ExposureDataChunkHeaderC2SP.fromPacket(buf));
+        map.put((Class<T>) ExposureDataChunkBytesC2SP.class, buf -> (T) ExposureDataChunkBytesC2SP.fromPacket(buf));
+        map.put((Class<T>) ExposureDataC2SP.class, buf -> (T) ExposureDataC2SP.fromPacket(buf));
         map.put((Class<T>) CameraStandTurnC2SP.class, buf -> (T) CameraStandTurnC2SP.fromPacket(buf));
         return map;
     }

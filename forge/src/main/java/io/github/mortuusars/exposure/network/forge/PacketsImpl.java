@@ -49,6 +49,8 @@ public class PacketsImpl {
         registerC2S(ActiveCameraReleaseC2SP.class, ActiveCameraReleaseC2SP::toPacket, ActiveCameraReleaseC2SP::fromPacket);
         registerC2S(InterplanarProjectionFinishedC2SP.class, InterplanarProjectionFinishedC2SP::toPacket, InterplanarProjectionFinishedC2SP::fromPacket);
         registerC2S(ExposureDataC2SP.class, ExposureDataC2SP::toPacket, ExposureDataC2SP::fromPacket);
+        registerC2S(ExposureDataChunkHeaderC2SP.class, ExposureDataChunkHeaderC2SP::toPacket, ExposureDataChunkHeaderC2SP::fromPacket);
+        registerC2S(ExposureDataChunkBytesC2SP.class, ExposureDataChunkBytesC2SP::toPacket, ExposureDataChunkBytesC2SP::fromPacket);
         registerC2S(CameraStandTurnC2SP.class, CameraStandTurnC2SP::toPacket, CameraStandTurnC2SP::fromPacket);
 
         registerS2C(ActiveCameraRemoveS2CP.class, ActiveCameraRemoveS2CP::toPacket, ActiveCameraRemoveS2CP::fromPacket);

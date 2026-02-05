@@ -18,13 +18,13 @@ public class RequestedPalettedExposure {
     public static final RequestedPalettedExposure NOT_FOUND = status(RequestedExposureStatus.NOT_FOUND);
     public static final RequestedPalettedExposure CANNOT_LOAD = status(RequestedExposureStatus.CANNOT_LOAD);
 
-    public void toPacket(FriendlyByteBuf buf){
-        buf.writeOptional(getData(),(buf1, exposureData) -> exposureData.toPacket(buf1));
+    public void toPacket(FriendlyByteBuf buf) {
+        buf.writeOptional(getData(), (buffer, data) -> data.toPacket(buffer));
         buf.writeEnum(status);
     }
 
     public static RequestedPalettedExposure fromPacket(FriendlyByteBuf buf) {
-        return fromOptional(buf.readOptional(ExposureData::fromPacket),buf.readEnum(RequestedExposureStatus.class));
+        return fromOptional(buf.readOptional(ExposureData::fromPacket), buf.readEnum(RequestedExposureStatus.class));
     }
 
     @Nullable
@@ -42,7 +42,7 @@ public class RequestedPalettedExposure {
 
     private static RequestedPalettedExposure status(RequestedExposureStatus status) {
         Preconditions.checkArgument(status != RequestedExposureStatus.SUCCESS && status != RequestedExposureStatus.NEEDS_REFRESH,
-                "Successful result cannot be created without data.");
+              "Successful result cannot be created without data.");
         return new RequestedPalettedExposure(null, status);
     }
 
@@ -61,10 +61,8 @@ public class RequestedPalettedExposure {
 
     public static RequestedPalettedExposure fromRequestStatus(ExposureRequester.Status status) {
         return switch (status) {
-//            case NOT_REQUESTED -> NOT_REQUESTED;
             case AWAITING -> AWAITING;
             case TIMED_OUT -> TIMED_OUT;
-            default -> throw new IllegalArgumentException(status + " is unexpected.");
         };
     }
 
@@ -90,8 +88,8 @@ public class RequestedPalettedExposure {
 
     public boolean isError() {
         return status != RequestedExposureStatus.SUCCESS
-                && status != RequestedExposureStatus.NEEDS_REFRESH
-                && status != RequestedExposureStatus.AWAITED
-                && status != RequestedExposureStatus.NOT_REQUESTED;
+              && status != RequestedExposureStatus.NEEDS_REFRESH
+              && status != RequestedExposureStatus.AWAITED
+              && status != RequestedExposureStatus.NOT_REQUESTED;
     }
 }

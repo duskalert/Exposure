@@ -20,7 +20,7 @@ public record ExposureDataC2SP(String id, ExposureData exposure) implements Pack
     }
 
     public static ExposureDataC2SP fromPacket(FriendlyByteBuf buf) {
-        return new ExposureDataC2SP(buf.readUtf(),ExposureData.fromPacket(buf));
+        return new ExposureDataC2SP(buf.readUtf(), ExposureData.fromPacket(buf));
     }
 
     @Override
