@@ -3,13 +3,16 @@ package io.github.mortuusars.exposure.world.item.crafting.recipe;
 import io.github.mortuusars.exposure.Exposure;
 import io.github.mortuusars.exposure.world.item.PhotographItem;
 import net.minecraft.core.NonNullList;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.WrittenBookItem;
 import net.minecraft.world.item.crafting.*;
 import org.jetbrains.annotations.NotNull;
 
 public class PhotographCopyingRecipe extends ComponentTransferringRecipe {
-    public PhotographCopyingRecipe(CraftingBookCategory category, Ingredient sourceIngredient, NonNullList<Ingredient> ingredients, ItemStack result) {
-        super(category, sourceIngredient, ingredients, result);
+    public PhotographCopyingRecipe(ResourceLocation id, Ingredient sourceIngredient, NonNullList<Ingredient> ingredients, ItemStack result) {
+        super(id,CraftingBookCategory.MISC, sourceIngredient, ingredients, result);
     }
 
     @Override
@@ -18,11 +21,12 @@ public class PhotographCopyingRecipe extends ComponentTransferringRecipe {
     }
 
     @Override
-    public @NotNull ItemStack transferComponents(ItemStack stack, ItemStack recipeResultStack) {
-        int generation = stack.getOrDefault(Exposure.DataComponents.PHOTOGRAPH_GENERATION, 0);
-        if (generation < 2) {
-            ItemStack result = super.transferComponents(stack, recipeResultStack);
-            result.set(Exposure.DataComponents.PHOTOGRAPH_GENERATION, generation + 1);
+    public @NotNull ItemStack transferNbt(ItemStack photographStack, ItemStack recipeResultStack) {
+        if (photographStack.getItem() instanceof PhotographItem
+                && photographStack.hasTag() && Exposure.DataComponents.getPhotographGeneration(photographStack, 0) < 2) {
+            ItemStack result = super.transferNbt(photographStack, recipeResultStack);
+            Exposure.DataComponents.setPhotographGeneration(result,
+                  Math.min(Exposure.DataComponents.getPhotographGeneration(result, 0) + 1, 2));
             return result;
         }
 
@@ -30,7 +34,7 @@ public class PhotographCopyingRecipe extends ComponentTransferringRecipe {
     }
 
     @Override
-    public @NotNull NonNullList<ItemStack> getRemainingItems(CraftingInput input) {
+    public @NotNull NonNullList<ItemStack> getRemainingItems(CraftingContainer input) {
         NonNullList<ItemStack> remainingItems = super.getRemainingItems(input);;
 
         for(int i = 0; i < remainingItems.size(); ++i) {
@@ -44,4 +48,5 @@ public class PhotographCopyingRecipe extends ComponentTransferringRecipe {
 
         return remainingItems;
     }
+
 }

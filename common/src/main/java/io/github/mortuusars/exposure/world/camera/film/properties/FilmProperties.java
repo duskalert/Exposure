@@ -11,9 +11,7 @@ import io.github.mortuusars.exposure.world.camera.ExposureType;
 import io.github.mortuusars.exposure.world.camera.capture.DitherMode;
 import net.minecraft.core.Holder;
 import net.minecraft.core.RegistryAccess;
-import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.codec.ByteBufCodecs;
-import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.util.ExtraCodecs;
 import org.jetbrains.annotations.NotNull;
@@ -39,24 +37,19 @@ public record FilmProperties(ExposureType type,
             FilmStyle.CODEC.optionalFieldOf("style", FilmStyle.EMPTY).forGetter(FilmProperties::style)
     ).apply(instance, FilmProperties::new));
 
-    public static final StreamCodec<RegistryFriendlyByteBuf, FilmProperties> STREAM_CODEC = new StreamCodec<>() {
-        public void encode(RegistryFriendlyByteBuf buffer, FilmProperties data) {
-            ExposureType.STREAM_CODEC.encode(buffer, data.type());
-            ByteBufCodecs.optional(ByteBufCodecs.VAR_INT).encode(buffer, data.size());
-            ResourceKey.streamCodec(Exposure.Registries.COLOR_PALETTE).encode(buffer, data.colorPalette());
-            DitherMode.STREAM_CODEC.encode(buffer, data.ditherMode());
-            FilmStyle.STREAM_CODEC.encode(buffer, data.style());
-        }
+    public void toPacket(FriendlyByteBuf buf) {
+        buf.writeEnum(type);
+        buf.writeOptional(size,FriendlyByteBuf::writeInt);
+        buf.writeResourceKey(colorPalette);
+        buf.writeEnum(ditherMode);
+        style.toPacket(buf);
+    }
 
-        public @NotNull FilmProperties decode(RegistryFriendlyByteBuf buffer) {
-            return new FilmProperties(
-                    ExposureType.STREAM_CODEC.decode(buffer),
-                    ByteBufCodecs.optional(ByteBufCodecs.VAR_INT).decode(buffer),
-                    ResourceKey.streamCodec(Exposure.Registries.COLOR_PALETTE).decode(buffer),
-                    DitherMode.STREAM_CODEC.decode(buffer),
-                    FilmStyle.STREAM_CODEC.decode(buffer));
-        }
-    };
+    public static FilmProperties fromPacket(FriendlyByteBuf buf){
+        return new FilmProperties(buf.readEnum(ExposureType.class),buf.readOptional(FriendlyByteBuf::readInt),buf.readResourceKey(Exposure.Registries.COLOR_PALETTE),
+                buf.readEnum(DitherMode.class),FilmStyle.fromPacket(buf)
+        );
+    }
 
     public static final FilmProperties EMPTY = new FilmProperties(
             ExposureType.COLOR,

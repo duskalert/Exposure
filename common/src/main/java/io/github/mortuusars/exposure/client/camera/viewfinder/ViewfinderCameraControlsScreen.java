@@ -3,6 +3,7 @@ package io.github.mortuusars.exposure.client.camera.viewfinder;
 import com.mojang.blaze3d.platform.InputConstants;
 import io.github.mortuusars.exposure.Config;
 import io.github.mortuusars.exposure.Exposure;
+import io.github.mortuusars.exposure.ModWidgetSprites;
 import io.github.mortuusars.exposure.client.gui.Widgets;
 import io.github.mortuusars.exposure.client.gui.component.CycleButton;
 import io.github.mortuusars.exposure.client.gui.screen.camera.button.FocalLengthButton;
@@ -12,11 +13,11 @@ import io.github.mortuusars.exposure.client.input.KeyboardHandler;
 import io.github.mortuusars.exposure.client.input.MouseHandler;
 import io.github.mortuusars.exposure.client.util.Minecrft;
 import io.github.mortuusars.exposure.client.util.ZoomDirection;
+import io.github.mortuusars.exposure.network.Packets;
+import io.github.mortuusars.exposure.network.packet.serverbound.ActiveCameraReleaseC2SP;
 import io.github.mortuusars.exposure.world.camera.Camera;
 import io.github.mortuusars.exposure.world.camera.component.*;
 import io.github.mortuusars.exposure.world.item.camera.CameraSettings;
-import io.github.mortuusars.exposure.network.Packets;
-import io.github.mortuusars.exposure.network.packet.serverbound.ActiveCameraReleaseC2SP;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
@@ -25,7 +26,6 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.ImageWidget;
 import net.minecraft.client.gui.components.Tooltip;
-import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
@@ -38,22 +38,22 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class ViewfinderCameraControlsScreen extends Screen {
-    public static final WidgetSprites SHUTTER_SPEED_SPRITES = new WidgetSprites(
+    public static final ModWidgetSprites SHUTTER_SPEED_SPRITES = ModWidgetSprites.withPrefix(
             Exposure.resource("camera_controls/shutter_speed_dial"),
             Exposure.resource("camera_controls/shutter_speed_dial_disabled"),
-            Exposure.resource("camera_controls/shutter_speed_dial_highlighted"));
+            Exposure.resource("camera_controls/shutter_speed_dial_highlighted"),69,12);
 
-    public static final WidgetSprites FOCAL_LENGTH_SPRITES = new WidgetSprites(
+    public static final ModWidgetSprites FOCAL_LENGTH_SPRITES = ModWidgetSprites.withPrefix(
             Exposure.resource("camera_controls/focal_length"),
             Exposure.resource("camera_controls/focal_length_disabled"),
-            Exposure.resource("camera_controls/focal_length_highlighted"));
+            Exposure.resource("camera_controls/focal_length_highlighted"),49,18);
 
-    public static final WidgetSprites FRAME_COUNTER_SPRITES = new WidgetSprites(
+    public static final ModWidgetSprites FRAME_COUNTER_SPRITES = ModWidgetSprites.withPrefix(
             Exposure.resource("camera_controls/frame_counter"),
             Exposure.resource("camera_controls/frame_counter_disabled"),
-            Exposure.resource("camera_controls/frame_counter_highlighted"));
+            Exposure.resource("camera_controls/frame_counter_highlighted"),49,18);
 
-    public static final ResourceLocation SEPARATOR_SPRITE = Exposure.resource("camera_controls/button_separator");
+    public static final ResourceLocation SEPARATOR_SPRITE = Exposure.resource("textures/gui/sprites/camera_controls/button_separator.png");
 
     protected static final int SEPARATOR_WIDTH = 1;
     protected static final int BUTTON_HEIGHT = 18;
@@ -167,7 +167,8 @@ public class ViewfinderCameraControlsScreen extends Screen {
     protected @NotNull Button createCompositionGuideButton() {
         List<CompositionGuide> guides = CompositionGuides.getGuides();
         CompositionGuide currentGuide = camera.map(CameraSettings.COMPOSITION_GUIDE::getOrDefault, CompositionGuides.NONE);
-        Function<CompositionGuide, WidgetSprites> spritesFunc = guide -> Widgets.threeStateSprites(guide.buttonSpriteLocation());
+        Function<CompositionGuide, ModWidgetSprites> spritesFunc = guide ->
+              Widgets.threeStateSprites(guide.buttonSpriteLocation(), 15, 18);
 
         return new CycleButton<>(0, 0, BUTTON_WIDTH, BUTTON_HEIGHT, guides, currentGuide, spritesFunc)
                 .setDefaultTooltip(Tooltip.create(Component.translatable("gui.exposure.camera_controls.composition_guide.tooltip")))
@@ -180,8 +181,8 @@ public class ViewfinderCameraControlsScreen extends Screen {
     protected @NotNull Button createSelfTimerButton() {
         List<SelfTimer> values = Arrays.asList(SelfTimer.values());
         SelfTimer currentValue = camera.map(CameraSettings.SELF_TIMER::getOrDefault, SelfTimer.OFF);
-        Function<SelfTimer, WidgetSprites> spritesFunc = mode -> Widgets.threeStateSprites(
-                Exposure.resource("camera_controls/self_timer/timer_" + mode.getSerializedName()));
+        Function<SelfTimer, ModWidgetSprites> spritesFunc = mode ->
+              Widgets.threeStateSprites(Exposure.resource("camera_controls/self_timer/timer_" + mode.getSerializedName()), 15, 18);
 
         return new CycleButton<>(0, 0, BUTTON_WIDTH, BUTTON_HEIGHT, values, currentValue, spritesFunc)
                 .setDefaultTooltip(Tooltip.create(Component.translatable("gui.exposure.camera_controls.self_timer.tooltip")))
@@ -194,8 +195,8 @@ public class ViewfinderCameraControlsScreen extends Screen {
     protected @NotNull Button createFlashModeButton() {
         List<FlashMode> modes = Arrays.asList(FlashMode.values());
         FlashMode currentMode = camera.map(CameraSettings.FLASH_MODE::getOrDefault, FlashMode.OFF);
-        Function<FlashMode, WidgetSprites> spritesFunc = mode -> Widgets.threeStateSprites(
-                Exposure.resource("camera_controls/flash_mode/flash_" + mode.getSerializedName()));
+        Function<FlashMode, ModWidgetSprites> spritesFunc = mode ->
+              Widgets.threeStateSprites(Exposure.resource("camera_controls/flash_mode/flash_" + mode.getSerializedName()), 15, 18);
 
         return new CycleButton<>(0, 0, BUTTON_WIDTH, BUTTON_HEIGHT, modes, currentMode, spritesFunc)
                 .setDefaultTooltip(Tooltip.create(Component.translatable("gui.exposure.camera_controls.flash_mode.tooltip")))
@@ -206,7 +207,7 @@ public class ViewfinderCameraControlsScreen extends Screen {
     }
 
     protected void addSeparator(int x, int y) {
-        ImageWidget sprite = ImageWidget.sprite(SEPARATOR_WIDTH, BUTTON_HEIGHT, SEPARATOR_SPRITE);
+        ImageWidget sprite = new ImageWidget(SEPARATOR_WIDTH, BUTTON_HEIGHT, SEPARATOR_SPRITE);
         sprite.setX(x);
         sprite.setY(y);
         addRenderableOnly(sprite);
@@ -256,11 +257,6 @@ public class ViewfinderCameraControlsScreen extends Screen {
         super.render(guiGraphics, mouseX, mouseY, partialTick);
 
         guiGraphics.pose().popPose();
-    }
-
-    @Override
-    public void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        // Prevents blur from rendering.
     }
 
     @Override
@@ -348,8 +344,8 @@ public class ViewfinderCameraControlsScreen extends Screen {
     }
 
     @Override
-    public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
-        if (!super.mouseScrolled(mouseX, mouseY, scrollX, scrollY)) {
+    public boolean mouseScrolled(double mouseX, double mouseY, double scrollY) {
+        if (!super.mouseScrolled(mouseX, mouseY,  scrollY)) {
             viewfinder.zoom().zoom(scrollY > 0d ? ZoomDirection.IN : ZoomDirection.OUT, true);
             return true;
         }

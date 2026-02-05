@@ -1,9 +1,9 @@
 plugins {
-    id "dev.architectury.loom" version "1.7-SNAPSHOT" apply false
+    id "dev.architectury.loom" version "1.13-SNAPSHOT" apply false
     id "architectury-plugin" version "3.4-SNAPSHOT"
-    id 'com.github.johnrengelman.shadow' version '8.1.1' apply false
-    id "me.modmuss50.mod-publish-plugin" version "0.8.4"
+    id "me.modmuss50.mod-publish-plugin" version "1.1.0"
     id 'org.moddedmc.wiki.toolkit' version '0.2.6'
+    id 'com.gradleup.shadow' version '8.3.6' apply false
 }
 
 architectury {
@@ -105,8 +105,7 @@ subprojects {
         runs {
             client {
                 property 'item_asset_export.render.namespaces', 'exposure'
-                vmArgs '-XX:+AllowEnhancedClassRedefinition', '-XX:HotswapAgent=core'
-                //  , '-Dmixin.debug.export=true'
+                vmArgs '-Dsodium.checks.issue2561=false'
             }
         }
     }
@@ -120,7 +119,7 @@ subprojects {
         }
 
         modCompileOnlyApi("mezz.jei:jei-${minecraft_version}-common-api:${jei_version}")
-        modCompileOnlyApi("curse.maven:jade-324717:${jade_neoforge_id}")
+        modCompileOnlyApi("curse.maven:jade-324717:${jade_forge_id}")
     }
 
     java {
@@ -129,35 +128,38 @@ subprojects {
         // If you remove this line, sources will not be generated.
         withSourcesJar()
 
-        sourceCompatibility = JavaVersion.VERSION_21
-        targetCompatibility = JavaVersion.VERSION_21
+        //sourceCompatibility = JavaVersion.VERSION_17
+        //targetCompatibility = JavaVersion.VERSION_17
     }
 
-    tasks.withType(JavaCompile).configureEach {
-        it.options.release = 21
+
+    tasks.withType(JavaCompile) {
+        options.encoding = "UTF-8"
+        options.release = 17
+        options.compilerArgs << "-Xmaxerrs" << "100000"
     }
 
     processResources {
         var expandProps = [
-                minecraft_version            : minecraft_version,
-                minecraft_version_range      : minecraft_version_range,
-                neoforge_version             : neoforge_version,
-                neoforge_version_range       : neoforge_version_range,
-                neoforge_loader_version_range: neoforge_loader_version_range,
-                create_version_range         : create_version_range,
-                create_version_range_reason  : create_version_range_reason,
-                mod_id                       : mod_id,
-                mod_name                     : mod_name,
-                mod_version                  : mod_version,
-                mod_authors                  : mod_authors,
-                mod_description              : mod_description,
-                mod_issues                   : mod_issues,
-                mod_page                     : mod_page,
-                mod_github                   : mod_github,
+                minecraft_version          : minecraft_version,
+                minecraft_version_range    : minecraft_version_range,
+                forge_version              : forge_version,
+                forge_version_range        : forge_version_range,
+                forge_loader_version_range : forge_loader_version_range,
+                create_version_range       : create_version_range,
+                create_version_range_reason: create_version_range_reason,
+                mod_id                     : mod_id,
+                mod_name                   : mod_name,
+                mod_version                : mod_version,
+                mod_authors                : mod_authors,
+                mod_description            : mod_description,
+                mod_issues                 : mod_issues,
+                mod_page                   : mod_page,
+                mod_github                 : mod_github,
                 mod_license                  : mod_license,
                 maven_group                  : maven_group
         ]
-        filesMatching(['pack.mcmeta', 'fabric.mod.json', 'META-INF/mods.toml', 'META-INF/neoforge.mods.toml', "*.mixins.json"]) {
+        filesMatching(['pack.mcmeta', 'fabric.mod.json', 'META-INF/mods.toml', 'META-INF/mods.toml', "*.mixins.json"]) {
             expand expandProps
         }
         inputs.properties(expandProps)
@@ -242,14 +244,14 @@ task printLatestVersionChangelog {
 
 publishMods {
     changelog = project.ext.changelog
-    type = STABLE
+    type = ALPHA
     dryRun = providers.environmentVariable("CURSEFORGE_TOKEN").getOrNull() == null || providers.environmentVariable("MODRINTH_TOKEN").getOrNull() == null
 
     def cfOptions = curseforgeOptions {
         accessToken = providers.environmentVariable("CURSEFORGE_TOKEN")
         projectId = mod_curseforge_project_id
         minecraftVersions.add("${minecraft_version}")
-        javaVersions.add(JavaVersion.VERSION_21)
+        javaVersions.add(JavaVersion.VERSION_17)
         clientRequired = true
         serverRequired = true
     }
@@ -260,11 +262,11 @@ publishMods {
         minecraftVersions.add("${minecraft_version}")
     }
 
-    curseforge("curseforgeNeoForge") {
+    curseforge("curseforgeForge") {
         from cfOptions
-        file project(":neoforge")
-        modLoaders.add("neoforge")
-        displayName = "${mod_name} - NeoForge ${minecraft_version} - ${mod_version}"
+        file project(":forge")
+        modLoaders.add("forge")
+        displayName = "[Unstable] ${mod_name} - Forge ${minecraft_version} - ${mod_version}"
         optional("jei")
     }
 
@@ -272,17 +274,17 @@ publishMods {
         from cfOptions
         file project(":fabric")
         modLoaders.add("fabric")
-        displayName = "${mod_name} - Fabric ${minecraft_version} - ${mod_version}"
+        displayName = "[Unstable] ${mod_name} - Fabric ${minecraft_version} - ${mod_version}"
         requires("fabric-api")
         requires("forge-config-api-port")
         optional("jei")
     }
 
-    modrinth("modrinthNeoForge") {
+    modrinth("modrinthForge") {
         from mrOptions
-        file project(":neoforge")
-        modLoaders.add("neoforge")
-        displayName = "${mod_name} - ${mod_version}"
+        file project(":forge")
+        modLoaders.add("forge")
+        displayName = "[Unstable] ${mod_name} - ${mod_version}"
         optional("jei")
     }
 
@@ -290,7 +292,7 @@ publishMods {
         from mrOptions
         file project(":fabric")
         modLoaders.add("fabric")
-        displayName = "${mod_name} - ${mod_version}"
+        displayName = "[Unstable] ${mod_name} - ${mod_version}"
         requires("fabric-api")
         requires("forge-config-api-port")
         optional("jei")

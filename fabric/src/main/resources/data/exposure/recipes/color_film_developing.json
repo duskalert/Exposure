@@ -1,0 +1,68 @@
+{
+  "type": "exposure:film_developing",
+  "film": {
+    "tag": "exposure:color_film_rolls"
+  },
+  "ingredients": [
+    {
+      "fabric:type": "fabric:any",
+      "ingredients": [
+        {
+          "fabric:type": "fabric:nbt",
+          "base": {
+            "item": "minecraft:potion"
+          },
+          "nbt": "{Potion:\"minecraft:awkward\"}"
+        },
+        {
+          "fabric:type": "fabric:nbt",
+          "base": {
+            "item": "minecraft:potion"
+          },
+          "nbt": "{Potion:\"awkward\"}"
+        }
+      ]
+    },
+    {
+      "fabric:type": "fabric:any",
+      "ingredients": [
+        {
+          "fabric:type": "fabric:nbt",
+          "base": {
+            "item": "minecraft:potion"
+          },
+          "nbt": "{Potion:\"minecraft:thick\"}"
+        },
+        {
+          "fabric:type": "fabric:nbt",
+          "base": {
+            "item": "minecraft:potion"
+          },
+          "nbt": "{Potion:\"thick\"}"
+        }
+      ]
+    },
+    {
+      "fabric:type": "fabric:any",
+      "ingredients": [
+        {
+          "fabric:type": "fabric:nbt",
+          "base": {
+            "item": "minecraft:potion"
+          },
+          "nbt": "{Potion:\"minecraft:mundane\"}"
+        },
+        {
+          "fabric:type": "fabric:nbt",
+          "base": {
+            "item": "minecraft:potion"
+          },
+          "nbt": "{Potion:\"mundane\"}"
+        }
+      ]
+    }
+  ],
+  "result": {
+    "item": "exposure:developed_color_film"
+  }
+}

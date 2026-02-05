@@ -13,7 +13,7 @@ public class FocalRangeTests {
     void codecEncodeRange() {
         FocalRange focalRange = new FocalRange(12, 250);
 
-        JsonObject jsonObject = FocalRange.CODEC.encodeStart(JsonOps.INSTANCE, focalRange).getOrThrow().getAsJsonObject();
+        JsonObject jsonObject = FocalRange.CODEC.encodeStart(JsonOps.INSTANCE, focalRange).get().orThrow().getAsJsonObject();
 
         assertEquals(12, jsonObject.get("min").getAsInt());
         assertEquals(250, jsonObject.get("max").getAsInt());
@@ -25,7 +25,7 @@ public class FocalRangeTests {
         jsonObject.addProperty("min", 24);
         jsonObject.addProperty("max", 180);
 
-        FocalRange focalRange = FocalRange.CODEC.decode(JsonOps.INSTANCE, jsonObject).getOrThrow().getFirst();
+        FocalRange focalRange = FocalRange.CODEC.decode(JsonOps.INSTANCE, jsonObject).get().orThrow().getFirst();
 
         assertEquals(24, focalRange.min());
         assertEquals(180, focalRange.max());
@@ -35,7 +35,7 @@ public class FocalRangeTests {
     void codecEncodePrime() {
         FocalRange focalRange = new FocalRange(50);
 
-        JsonPrimitive jsonPrimitive = FocalRange.CODEC.encodeStart(JsonOps.INSTANCE, focalRange).getOrThrow().getAsJsonPrimitive();
+        JsonPrimitive jsonPrimitive = FocalRange.CODEC.encodeStart(JsonOps.INSTANCE, focalRange).get().orThrow().getAsJsonPrimitive();
 
         assertTrue(jsonPrimitive.isNumber());
         assertEquals(50, jsonPrimitive.getAsInt());
@@ -44,7 +44,7 @@ public class FocalRangeTests {
     @Test
     void codecDecodePrime() {
         JsonPrimitive jsonPrimitive = new JsonPrimitive(35);
-        FocalRange focalRange = FocalRange.CODEC.decode(JsonOps.INSTANCE, jsonPrimitive).getOrThrow().getFirst();
+        FocalRange focalRange = FocalRange.CODEC.decode(JsonOps.INSTANCE, jsonPrimitive).get().orThrow().getFirst();
 
         assertTrue(focalRange.isPrime());
         assertEquals(35, focalRange.min());

@@ -1,0 +1,80 @@
+{
+  "type": "create:sequenced_assembly",
+  "ingredient": {
+    "item": "exposure:high_sensitivity_color_film"
+  },
+  "loops": 1,
+  "results": [
+    {
+      "item": "exposure:developed_color_film"
+    }
+  ],
+  "sequence": [
+    {
+      "type": "create:filling",
+      "ingredients": [
+        {
+          "item": "exposure:high_sensitivity_color_film"
+        },
+        {
+          "amount": 250,
+          "fluid": "create:potion",
+          "nbt": {
+            "Bottle": "REGULAR",
+            "Potion": "minecraft:awkward"
+          }
+        }
+      ],
+      "results": [
+        {
+          "item": "exposure:high_sensitivity_color_film"
+        }
+      ]
+    },
+    {
+      "type": "create:filling",
+      "ingredients": [
+        {
+          "item": "exposure:high_sensitivity_color_film"
+        },
+        {
+          "amount": 250,
+          "fluid": "create:potion",
+          "nbt": {
+            "Bottle": "REGULAR",
+            "Potion": "minecraft:thick"
+          }
+        }
+      ],
+      "results": [
+        {
+          "item": "exposure:high_sensitivity_color_film"
+        }
+      ]
+    },
+    {
+      "type": "create:filling",
+      "ingredients": [
+        {
+          "item": "exposure:high_sensitivity_color_film"
+        },
+        {
+          "amount": 250,
+          "fluid": "create:potion",
+          "nbt": {
+            "Bottle": "REGULAR",
+            "Potion": "minecraft:mundane"
+          }
+        }
+      ],
+      "results": [
+        {
+          "item": "exposure:high_sensitivity_color_film"
+        }
+      ]
+    }
+  ],
+  "transitionalItem": {
+    "item": "exposure:high_sensitivity_color_film"
+  }
+}

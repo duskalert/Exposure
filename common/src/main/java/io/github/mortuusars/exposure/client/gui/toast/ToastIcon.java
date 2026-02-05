@@ -14,9 +14,9 @@ public interface ToastIcon {
     ToastIcon WOODEN_PLANKS = new TutorialIcon(TutorialToast.Icons.WOODEN_PLANKS);
     ToastIcon SOCIAL_INTERACTIONS = new TutorialIcon(TutorialToast.Icons.SOCIAL_INTERACTIONS);
     ToastIcon RIGHT_CLICK = new TutorialIcon(TutorialToast.Icons.RIGHT_CLICK);
-    ToastIcon HOVER = new SpriteIcon(Exposure.resource("toast/hover"));
-    ToastIcon F1 = new SpriteIcon(Exposure.resource("toast/f1"));
-    ToastIcon HEADS_UP = new SpriteIcon(Exposure.resource("toast/heads_up"));
+    ToastIcon HOVER = new SpriteIcon(Exposure.resource("textures/gui/sprites/toast/hover.png"));
+    ToastIcon F1 = new SpriteIcon(Exposure.resource("textures/gui/sprites/toast/f1.png"));
+    ToastIcon HEADS_UP = new SpriteIcon(Exposure.resource("textures/gui/sprites/toast/heads_up.png"));
 
     void render(GuiGraphics guiGraphics, int x, int y);
 
@@ -29,7 +29,7 @@ public interface ToastIcon {
 
         public void render(GuiGraphics guiGraphics, int x, int y) {
             RenderSystem.enableBlend();
-            guiGraphics.blitSprite(this.sprite, x, y, 20, 20);
+            guiGraphics.blit(this.sprite, x, y,0,0, 20, 20,20,20);
         }
     }
 

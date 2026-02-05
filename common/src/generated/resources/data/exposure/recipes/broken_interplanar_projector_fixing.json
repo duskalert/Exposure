@@ -1,0 +1,15 @@
+{
+  "type": "exposure:component_transferring",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "minecraft:ender_eye"
+    }
+  ],
+  "result": {
+    "item": "exposure:interplanar_projector"
+  },
+  "source": {
+    "item": "exposure:broken_interplanar_projector"
+  }
+}

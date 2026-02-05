@@ -17,12 +17,11 @@ public class ColorPalettes {
 
     public static Holder<ColorPalette> get(RegistryAccess registryAccess, ResourceKey<ColorPalette> key) {
         Registry<ColorPalette> registry = registryAccess.registryOrThrow(Exposure.Registries.COLOR_PALETTE);
-        return registry.getHolder(key).or(() -> registry.getHolder(DEFAULT)).or(registry::getAny).orElseThrow();
+        return registry.getHolder(key).or(() -> registry.getHolder(DEFAULT)).orElseThrow();
     }
 
     public static Holder<ColorPalette> get(RegistryAccess registryAccess, ResourceLocation key) {
-        Registry<ColorPalette> registry = registryAccess.registryOrThrow(Exposure.Registries.COLOR_PALETTE);
-        return registry.getHolder(key).or(() -> registry.getHolder(DEFAULT)).or(registry::getAny).orElseThrow();
+        return get(registryAccess,createKey(key));
     }
 
     public static Holder<ColorPalette> getDefault(RegistryAccess registryAccess) {

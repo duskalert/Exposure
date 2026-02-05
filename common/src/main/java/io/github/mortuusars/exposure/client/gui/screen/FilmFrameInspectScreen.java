@@ -4,6 +4,7 @@ import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.systems.RenderSystem;
 import io.github.mortuusars.exposure.Exposure;
 import io.github.mortuusars.exposure.ExposureClient;
+import io.github.mortuusars.exposure.client.gui.BetterImageButton;
 import io.github.mortuusars.exposure.client.gui.Widgets;
 import io.github.mortuusars.exposure.client.gui.component.SteppedZoom;
 import io.github.mortuusars.exposure.client.gui.screen.element.Pager;
@@ -21,7 +22,6 @@ import io.github.mortuusars.exposure.world.camera.frame.Frame;
 import io.github.mortuusars.exposure.world.sound.SoundEffect;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.components.ImageButton;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.network.chat.Component;
@@ -39,6 +39,7 @@ public class FilmFrameInspectScreen extends Screen {
 
     public static final int BG_SIZE = 78;
     public static final int FRAME_SIZE = 54;
+    public static final int BUTTON_SIZE = 16;
 
     protected final Pager pager = new Pager()
             .setChangeSound(new SoundEffect(Exposure.SoundEvents.CAMERA_LENS_RING_CLICK))
@@ -88,14 +89,19 @@ public class FilmFrameInspectScreen extends Screen {
 
         zoomFactor = ((float) height / BG_SIZE) / (float)zoom.getZoomPerStep();
 
-        ImageButton previousButton = new ImageButton(0, (int) (height / 2f - 16 / 2f), 16, 16,
+        /*ImageButton previousButton = new ImageButton(0, (int) (height / 2f - 16 / 2f), 16, 16,
                 Widgets.PREVIOUS_BUTTON_SPRITES,
                 button -> pager.changePage(PagingDirection.PREVIOUS), Component.translatable("gui.exposure.previous_page"));
-        addRenderableWidget(previousButton);
 
         ImageButton nextButton = new ImageButton(width - 16, (int) (height / 2f - 16 / 2f), 16, 16,
                 Widgets.NEXT_BUTTON_SPRITES,
-                button -> pager.changePage(PagingDirection.NEXT), Component.translatable("gui.exposure.next_page"));
+                button -> pager.changePage(PagingDirection.NEXT), Component.translatable("gui.exposure.next_page"));*/
+
+        BetterImageButton previousButton = new BetterImageButton(0, (int) (height / 2f - BUTTON_SIZE / 2f),
+                BUTTON_SIZE, BUTTON_SIZE, Widgets.PREVIOUS_BUTTON_SPRITES, button -> pager.changePage(PagingDirection.PREVIOUS));
+        BetterImageButton nextButton = new BetterImageButton(width - BUTTON_SIZE, (int) (height / 2f - BUTTON_SIZE / 2f), BUTTON_SIZE,
+                 BUTTON_SIZE, Widgets.NEXT_BUTTON_SPRITES,button -> pager.changePage(PagingDirection.NEXT));
+        addRenderableWidget(previousButton);
         addRenderableWidget(nextButton);
 
         pager.setPagesCount(frames.size())
@@ -104,7 +110,7 @@ public class FilmFrameInspectScreen extends Screen {
     }
 
     protected Frame getCurrentFrame() {
-        return frames.getFirst();
+        return frames.get(0);
     }
 
     protected void pageChanged(int oldPage, int newPage) {
@@ -120,7 +126,7 @@ public class FilmFrameInspectScreen extends Screen {
         RenderSystem.defaultBlendFunc();
         RenderSystem.disableDepthTest();
 
-        renderTransparentBackground(guiGraphics);
+        renderBackground(guiGraphics);
 
         guiGraphics.pose().pushPose();
         guiGraphics.pose().translate(x, y, 0);
@@ -156,7 +162,7 @@ public class FilmFrameInspectScreen extends Screen {
         guiGraphics.pose().popPose();
     }
 
-    @Override
+   // @Override
     public void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
         // Background is rendered manually in #render method.
         // Otherwise, background will be rendered on top
@@ -173,8 +179,8 @@ public class FilmFrameInspectScreen extends Screen {
     }
 
     @Override
-    public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
-        if (super.mouseScrolled(mouseX, mouseY, scrollX, scrollY)) return true;
+    public boolean mouseScrolled(double mouseX, double mouseY, double scrollY) {
+        if (super.mouseScrolled(mouseX, mouseY, scrollY)) return true;
 
         if (scrollY >= 0.0) {
             zoom.zoomIn();

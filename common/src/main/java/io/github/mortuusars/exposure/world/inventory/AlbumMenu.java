@@ -13,7 +13,7 @@ import io.github.mortuusars.exposure.world.item.component.album.AlbumPage;
 import io.github.mortuusars.exposure.network.Packets;
 import io.github.mortuusars.exposure.network.packet.serverbound.AlbumSignC2SP;
 import io.github.mortuusars.exposure.util.Side;
-import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -342,7 +342,7 @@ public class AlbumMenu extends AbstractContainerMenu {
         return player.getInventory().getItem(albumSlot).getItem() instanceof AlbumItem;
     }
 
-    public static AlbumMenu fromBuffer(int containerId, Inventory playerInventory, RegistryFriendlyByteBuf buffer) {
+    public static AlbumMenu fromBuffer(int containerId, Inventory playerInventory, FriendlyByteBuf buffer) {
         return new AlbumMenu(containerId, playerInventory, buffer.readVarInt());
     }
 }

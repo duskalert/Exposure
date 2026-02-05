@@ -6,7 +6,7 @@ import io.github.mortuusars.exposure.util.Side;
 import io.github.mortuusars.exposure.world.item.AlbumItem;
 import io.github.mortuusars.exposure.world.item.SignedAlbumItem;
 import io.github.mortuusars.exposure.world.item.component.album.SignedAlbumPage;
-import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.*;
@@ -106,7 +106,7 @@ public class SignedAlbumMenu extends AbstractContainerMenu {
         return player.getInventory().getItem(albumSlot).getItem() instanceof AlbumItem;
     }
 
-    public static SignedAlbumMenu fromBuffer(int containerId, Inventory playerInventory, RegistryFriendlyByteBuf buffer) {
+    public static SignedAlbumMenu fromBuffer(int containerId, Inventory playerInventory, FriendlyByteBuf buffer) {
         return new SignedAlbumMenu(containerId, playerInventory, buffer.readVarInt());
     }
 }

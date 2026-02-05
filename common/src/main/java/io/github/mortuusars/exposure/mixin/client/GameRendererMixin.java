@@ -7,7 +7,6 @@ import io.github.mortuusars.exposure.client.render.FovModifier;
 import io.github.mortuusars.exposure.client.util.Shader;
 import io.github.mortuusars.exposure.event.ClientEvents;
 import net.minecraft.client.Camera;
-import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.renderer.GameRenderer;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -19,7 +18,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public abstract class GameRendererMixin {
     @Inject(method = "render", at = @At(value = "INVOKE",
             target = "Lnet/minecraft/client/Minecraft;getMainRenderTarget()Lcom/mojang/blaze3d/pipeline/RenderTarget;"))
-    void onRender(DeltaTracker deltaTracker, boolean renderLevel, CallbackInfo ci) {
+    void onRender(float partialTicks, long nanoTime, boolean renderLevel, CallbackInfo ci) {
         // Processing viewfinder shader should be done before capturing
         // otherwise Direct capture method will not be affected by it.
         Shader.processForGameRenderer();

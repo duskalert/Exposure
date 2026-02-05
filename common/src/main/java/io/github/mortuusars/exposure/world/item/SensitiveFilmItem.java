@@ -22,17 +22,17 @@ public interface SensitiveFilmItem extends FilmItem {
     }
 
     default @NotNull FilmStyle getFilmStyle(ItemStack stack) {
-        return stack.getOrDefault(Exposure.DataComponents.FILM_STYLE, FilmStyle.EMPTY);
+        return Exposure.DataComponents.getFilmStyle(stack, FilmStyle.EMPTY);
     }
 
     default ResourceKey<ColorPalette> getColorPalette(ItemStack stack) {
-        @Nullable ResourceLocation location = stack.get(Exposure.DataComponents.FILM_COLOR_PALETTE);
+        @Nullable ResourceLocation location = Exposure.DataComponents.getFilmColorPalette(stack);
         if (location != null) return ColorPalettes.createKey(location);
         return ColorPalettes.DEFAULT;
     }
 
     default @NotNull DitherMode getDitherMode(ItemStack stack) {
-        return stack.getOrDefault(Exposure.DataComponents.FILM_DITHER_MODE, DitherMode.DITHERED);
+        return Exposure.DataComponents.getFilmDitherMode(stack, DitherMode.DITHERED);
     }
 
     // --

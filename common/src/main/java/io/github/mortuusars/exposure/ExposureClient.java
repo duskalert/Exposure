@@ -3,6 +3,11 @@ package io.github.mortuusars.exposure;
 import io.github.mortuusars.exposure.client.animation.CameraModelPoses;
 import io.github.mortuusars.exposure.client.animation.CameraPoses;
 import io.github.mortuusars.exposure.client.capture.template.*;
+import io.github.mortuusars.exposure.client.gui.screen.ItemRenameScreen;
+import io.github.mortuusars.exposure.client.gui.screen.LightroomScreen;
+import io.github.mortuusars.exposure.client.gui.screen.album.AlbumScreen;
+import io.github.mortuusars.exposure.client.gui.screen.album.LecternAlbumScreen;
+import io.github.mortuusars.exposure.client.gui.screen.camera.CameraAttachmentsScreen;
 import io.github.mortuusars.exposure.client.task.ClearStaleRenderedImagesIndefiniteTask;
 import io.github.mortuusars.exposure.client.RenderedExposures;
 import io.github.mortuusars.exposure.client.camera.viewfinder.*;
@@ -21,9 +26,8 @@ import io.github.mortuusars.exposure.world.item.AlbumItem;
 import io.github.mortuusars.exposure.world.item.camera.CameraItem;
 import io.github.mortuusars.exposure.world.item.ChromaticSheetItem;
 import io.github.mortuusars.exposure.world.item.StackedPhotographsItem;
+import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.item.ItemProperties;
-import net.minecraft.client.resources.model.ModelResourceLocation;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.resources.ResourceLocation;
 
 import java.util.HashSet;
@@ -56,6 +60,13 @@ public class ExposureClient {
 
         cycles().addParallelTask(new ClearStaleRenderedImagesIndefiniteTask());
 
+        MenuScreens.register(Exposure.MenuTypes.CAMERA_IN_HAND.get(), CameraAttachmentsScreen::new);
+        MenuScreens.register(Exposure.MenuTypes.CAMERA_ON_STAND.get(), CameraAttachmentsScreen::new);
+        MenuScreens.register(Exposure.MenuTypes.ALBUM.get(), AlbumScreen::new);
+        MenuScreens.register(Exposure.MenuTypes.LECTERN_ALBUM.get(), LecternAlbumScreen::new);
+        MenuScreens.register(Exposure.MenuTypes.LIGHTROOM.get(), LightroomScreen::new);
+        MenuScreens.register(Exposure.MenuTypes.ITEM_RENAME.get(), ItemRenameScreen::new);
+
         registerItemModelProperties();
     }
 
@@ -84,11 +95,11 @@ public class ExposureClient {
     public static boolean shouldUseDirectCapture() {
         //TODO: maybe check if neoforge is ok and then enable it only on fabric?
         if (PlatformHelper.isModLoaded("distanthorizons")
-                && (PlatformHelper.isModLoaded("oculus") || PlatformHelper.isModLoaded("iris"))) {
+                || (PlatformHelper.isModLoaded("oculus") || PlatformHelper.isModLoaded("iris"))) {
             return true;
         }
 
-        return Config.Client.FORCE_DIRECT_CAPTURE.isTrue()
+        return Config.Client.FORCE_DIRECT_CAPTURE.get()
                 || Config.Client.FORCE_DIRECT_CAPTURE_MODS.get().stream().anyMatch(PlatformHelper::isModLoaded);
     }
 
@@ -96,7 +107,7 @@ public class ExposureClient {
 
     private static void registerItemModelProperties() {
         ItemProperties.register(Exposure.Items.CAMERA.get(), Exposure.resource("camera_gold"), (stack, level, entity, seed) ->
-                stack.getOrDefault(Exposure.DataComponents.CAMERA_GOLD, false) ? 1 : 0);
+                Exposure.DataComponents.getCameraGold(stack,false) ? 1 : 0);
 
         ItemProperties.register(Exposure.Items.CAMERA.get(), Exposure.resource("camera_active"), (stack, level, entity, seed) ->
                 stack.getItem() instanceof CameraItem cameraItem && cameraItem.isActive(stack) ? 1 : 0);
@@ -126,32 +137,32 @@ public class ExposureClient {
                         stack.getItem() instanceof AlbumItem albumItem ? albumItem.getPhotographsCount(stack) / 100f : 0f);
 
         ItemProperties.register(Exposure.Items.INTERPLANAR_PROJECTOR.get(), Exposure.resource("projector_active"),
-                (stack, clientLevel, livingEntity, seed) -> Config.Server.CAN_PROJECT.get() && stack.has(DataComponents.CUSTOM_NAME) ? 1f : 0f);
+                (stack, clientLevel, livingEntity, seed) -> Config.Server.CAN_PROJECT.get() && stack.hasCustomHoverName() ? 1f : 0f);
     }
 
     public static class Models {
-        public static final Set<ModelResourceLocation> MODELS = new HashSet<>();
+        public static final Set<ResourceLocation> MODELS = new HashSet<>();
 
-        public static final ModelResourceLocation CAMERA_GUI = register("item/camera_gui");
-        public static final ModelResourceLocation CAMERA_ACTIVE = register("item/camera_active");
-        public static final ModelResourceLocation CAMERA_SELFIE = register("item/camera_selfie");
-        public static final ModelResourceLocation CAMERA_VIEWFINDER = register("item/camera_parts/viewfinder");
-        public static final ModelResourceLocation CAMERA_FLASH = register("item/camera_parts/flash");
-        public static final ModelResourceLocation CAMERA_LENS = register("item/camera_parts/lens");
-        public static final ModelResourceLocation CAMERA_SELFIE_STICK = register("item/camera_parts/selfie_stick");
-        public static final ModelResourceLocation SELFIE_STICK = register("item/selfie_stick");
+        public static final ResourceLocation CAMERA_GUI = register("item/camera_gui");
+        public static final ResourceLocation CAMERA_ACTIVE = register("item/camera_active");
+        public static final ResourceLocation CAMERA_SELFIE = register("item/camera_selfie");
+        public static final ResourceLocation CAMERA_VIEWFINDER = register("item/camera_parts/viewfinder");
+        public static final ResourceLocation CAMERA_FLASH = register("item/camera_parts/flash");
+        public static final ResourceLocation CAMERA_LENS = register("item/camera_parts/lens");
+        public static final ResourceLocation CAMERA_SELFIE_STICK = register("item/camera_parts/selfie_stick");
+        public static final ResourceLocation SELFIE_STICK = register("item/selfie_stick");
 
-        public static final ModelResourceLocation PHOTOGRAPH_FRAME_SMALL = register("block/photograph_frame_small");
-        public static final ModelResourceLocation PHOTOGRAPH_FRAME_MEDIUM = register("block/photograph_frame_medium");
-        public static final ModelResourceLocation PHOTOGRAPH_FRAME_LARGE = register("block/photograph_frame_large");
-        public static final ModelResourceLocation CLEAR_PHOTOGRAPH_FRAME_SMALL = register("block/glass_photograph_frame_small");
-        public static final ModelResourceLocation CLEAR_PHOTOGRAPH_FRAME_MEDIUM = register("block/glass_photograph_frame_medium");
-        public static final ModelResourceLocation CLEAR_PHOTOGRAPH_FRAME_LARGE = register("block/glass_photograph_frame_large");
-        public static final ModelResourceLocation CAMERA_STAND = register("block/camera_stand");
-        public static final ModelResourceLocation CAMERA_STAND_MOUNT = register("block/camera_stand_mount");
+        public static final ResourceLocation PHOTOGRAPH_FRAME_SMALL = register("block/photograph_frame_small");
+        public static final ResourceLocation PHOTOGRAPH_FRAME_MEDIUM = register("block/photograph_frame_medium");
+        public static final ResourceLocation PHOTOGRAPH_FRAME_LARGE = register("block/photograph_frame_large");
+        public static final ResourceLocation CLEAR_PHOTOGRAPH_FRAME_SMALL = register("block/glass_photograph_frame_small");
+        public static final ResourceLocation CLEAR_PHOTOGRAPH_FRAME_MEDIUM = register("block/glass_photograph_frame_medium");
+        public static final ResourceLocation CLEAR_PHOTOGRAPH_FRAME_LARGE = register("block/glass_photograph_frame_large");
+        public static final ResourceLocation CAMERA_STAND = register("block/camera_stand");
+        public static final ResourceLocation CAMERA_STAND_MOUNT = register("block/camera_stand_mount");
 
-        public static ModelResourceLocation register(String path) {
-            ModelResourceLocation location = new ModelResourceLocation(Exposure.resource(path), "standalone");
+        public static ResourceLocation register(String path) {
+            ResourceLocation location = Exposure.resource(path);
             MODELS.add(location);
             return location;
         }

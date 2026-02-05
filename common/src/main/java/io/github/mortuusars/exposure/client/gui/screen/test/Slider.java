@@ -26,10 +26,10 @@ import java.text.DecimalFormat;
 import java.util.function.Consumer;
 
 public class Slider extends AbstractWidget {
-    public static final ResourceLocation SLIDER_SPRITE = ResourceLocation.withDefaultNamespace("widget/slider");
-    public static final ResourceLocation HIGHLIGHTED_SPRITE = ResourceLocation.withDefaultNamespace("widget/slider_highlighted");
-    public static final ResourceLocation SLIDER_HANDLE_SPRITE = ResourceLocation.withDefaultNamespace("widget/slider_handle");
-    public static final ResourceLocation SLIDER_HANDLE_HIGHLIGHTED_SPRITE = ResourceLocation.withDefaultNamespace("widget/slider_handle_highlighted");
+    public static final ResourceLocation SLIDER_SPRITE = new ResourceLocation("widget/slider");
+    public static final ResourceLocation HIGHLIGHTED_SPRITE = new ResourceLocation("widget/slider_highlighted");
+    public static final ResourceLocation SLIDER_HANDLE_SPRITE = new ResourceLocation("widget/slider_handle");
+    public static final ResourceLocation SLIDER_HANDLE_HIGHLIGHTED_SPRITE = new ResourceLocation("widget/slider_handle_highlighted");
 
     protected static final int TEXT_MARGIN = 2;
     protected static final int HANDLE_WIDTH = 8;
@@ -195,7 +195,7 @@ public class Slider extends AbstractWidget {
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
         RenderSystem.enableDepthTest();
-        guiGraphics.blitSprite(getSprite(), getX(), getY(), getWidth(), getHeight());
+        guiGraphics.blit(getSprite(), getX(), getY(),0,0, getWidth(), getHeight());
 
         if (active && horizontalGradient != null) {
             fillHorizontalGradient(guiGraphics, getX() + 1, getY() + 1, getX() + getWidth() - 1,
@@ -205,7 +205,7 @@ public class Slider extends AbstractWidget {
         guiGraphics.pose().pushPose();
         guiGraphics.pose().translate(0, 0, 50);
 
-        guiGraphics.blitSprite(getHandleSprite(), getX() + (int)(position * (double)(width - HANDLE_WIDTH)), getY(), HANDLE_WIDTH, getHeight());
+        guiGraphics.blit(getHandleSprite(), getX() + (int)(position * (double)(width - HANDLE_WIDTH)), getY(),0,0, HANDLE_WIDTH, getHeight());
         guiGraphics.setColor(1.0F, 1.0F, 1.0F, 1.0F);
         int textColor = (active ? 0xFFFFFF : 0xA0A0A0) | Mth.ceil(alpha * 255.0F) << 24;
         renderScrollingString(guiGraphics, minecraft.font, TEXT_MARGIN, textColor);
@@ -215,10 +215,10 @@ public class Slider extends AbstractWidget {
     private void fillHorizontalGradient(GuiGraphics guiGraphics, int x1, int y1, int x2, int y2, int colorFrom, int colorTo) {
         VertexConsumer consumer = guiGraphics.bufferSource().getBuffer(RenderType.gui());
         Matrix4f matrix4f = guiGraphics.pose().last().pose();
-        consumer.addVertex(matrix4f, (float)x1, (float)y1, 0).setColor(colorFrom);
-        consumer.addVertex(matrix4f, (float)x1, (float)y2, 0).setColor(colorFrom);
-        consumer.addVertex(matrix4f, (float)x2, (float)y2, 0).setColor(colorTo);
-        consumer.addVertex(matrix4f, (float)x2, (float)y1, 0).setColor(colorTo);
+        consumer.vertex(matrix4f, (float)x1, (float)y1, 0).color(colorFrom).endVertex();
+        consumer.vertex(matrix4f, (float)x1, (float)y2, 0).color(colorFrom).endVertex();
+        consumer.vertex(matrix4f, (float)x2, (float)y2, 0).color(colorTo).endVertex();
+        consumer.vertex(matrix4f, (float)x2, (float)y1, 0).color(colorTo).endVertex();
     }
 
     // --

@@ -9,12 +9,9 @@ import io.github.mortuusars.exposure.Exposure;
 import io.github.mortuusars.exposure.world.camera.ExposureType;
 import io.github.mortuusars.exposure.data.ColorPalettes;
 import io.github.mortuusars.exposure.util.Codecs;
-import io.netty.buffer.ByteBuf;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
-import net.minecraft.network.codec.ByteBufCodecs;
-import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.saveddata.SavedData;
 import org.jetbrains.annotations.NotNull;
@@ -31,14 +28,17 @@ public class ExposureData extends SavedData {
             Tag.CODEC.optionalFieldOf("tag", Tag.EMPTY).forGetter(ExposureData::getTag)
     ).apply(instance, ExposureData::new));
 
-    public static final StreamCodec<ByteBuf, ExposureData> STREAM_CODEC = StreamCodec.composite(
-            ByteBufCodecs.VAR_INT, ExposureData::getWidth,
-            ByteBufCodecs.VAR_INT, ExposureData::getHeight,
-            ByteBufCodecs.byteArray(2048 * 2048), ExposureData::getPixels,
-            ResourceLocation.STREAM_CODEC, ExposureData::getPaletteId,
-            Tag.STREAM_CODEC, ExposureData::getTag,
-            ExposureData::new
-    );
+    public void toPacket(FriendlyByteBuf buf){
+        buf.writeInt(width);
+        buf.writeInt(height);
+        buf.writeByteArray(pixels);
+        buf.writeResourceLocation(palette);
+        tag.toPacket(buf);
+    }
+
+    public static ExposureData fromPacket(FriendlyByteBuf buf) {
+        return new ExposureData(buf.readInt(),buf.readInt(),buf.readByteArray(),buf.readResourceLocation(),Tag.fromPacket(buf));
+    }
 
     public static final ExposureData EMPTY = new ExposureData(
             1, 1, new byte[]{0}, ColorPalettes.DEFAULT.location(), Tag.EMPTY);
@@ -107,10 +107,10 @@ public class ExposureData extends SavedData {
     // --
 
     @Override
-    public @NotNull CompoundTag save(CompoundTag tag, HolderLookup.Provider registries) {
+    public @NotNull CompoundTag save(CompoundTag tag) {
         DataResult<net.minecraft.nbt.Tag> encodingResult = CODEC.encode(this, NbtOps.INSTANCE, tag);
-        if (encodingResult.isSuccess()) {
-            net.minecraft.nbt.Tag encodedTag = encodingResult.getOrThrow();
+        if (encodingResult.error().isEmpty()) {
+            net.minecraft.nbt.Tag encodedTag = encodingResult.get().left().get();
             if (encodedTag instanceof CompoundTag encodedCompoundTag)
                 return encodedCompoundTag;
             else {
@@ -123,14 +123,8 @@ public class ExposureData extends SavedData {
         return tag;
     }
 
-    public static SavedData.Factory<ExposureData> factory() {
-        return new SavedData.Factory<>(() -> {
-            throw new IllegalStateException("Should never create an empty exposure saved data");
-        }, ExposureData::load, null);
-    }
-
-    public static ExposureData load(CompoundTag tag, HolderLookup.Provider levelRegistry) {
-        return CODEC.decode(NbtOps.INSTANCE, tag).getOrThrow().getFirst();
+    public static ExposureData load(CompoundTag tag) {
+        return CODEC.decode(NbtOps.INSTANCE, tag).get().orThrow().getFirst();
     }
 
     public record Tag(ExposureType type,
@@ -146,24 +140,17 @@ public class ExposureData extends SavedData {
                 Codec.BOOL.optionalFieldOf("was_printed", false).forGetter(Tag::wasPrinted)
         ).apply(instance, Tag::new));
 
-        public static final StreamCodec<ByteBuf, Tag> STREAM_CODEC = new StreamCodec<>() {
-            public @NotNull ExposureData.Tag decode(ByteBuf buffer) {
-                return new Tag(
-                        ExposureType.STREAM_CODEC.decode(buffer),
-                        ByteBufCodecs.STRING_UTF8.decode(buffer),
-                        ByteBufCodecs.VAR_LONG.decode(buffer),
-                        ByteBufCodecs.BOOL.decode(buffer),
-                        ByteBufCodecs.BOOL.decode(buffer));
-            }
+        public static Tag fromPacket(FriendlyByteBuf buf) {
+            return new Tag(buf.readEnum(ExposureType.class), buf.readUtf(),buf.readLong(),buf.readBoolean(),buf.readBoolean());
+        }
 
-            public void encode(ByteBuf buffer, Tag data) {
-                ExposureType.STREAM_CODEC.encode(buffer, data.type());
-                ByteBufCodecs.STRING_UTF8.encode(buffer, data.creator());
-                ByteBufCodecs.VAR_LONG.encode(buffer, data.unixTimestamp());
-                ByteBufCodecs.BOOL.encode(buffer, data.loaded());
-                ByteBufCodecs.BOOL.encode(buffer, data.wasPrinted());
-            }
-        };
+        public void toPacket(FriendlyByteBuf buf) {
+            buf.writeEnum(type);
+            buf.writeUtf(creator);
+            buf.writeLong(unixTimestamp);
+            buf.writeBoolean(loaded);
+            buf.writeBoolean(wasPrinted);
+        }
 
         public static final Tag EMPTY = new Tag(ExposureType.COLOR, "", 0, false, false);
 

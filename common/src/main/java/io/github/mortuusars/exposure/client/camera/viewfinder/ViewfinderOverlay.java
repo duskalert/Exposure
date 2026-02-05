@@ -18,7 +18,7 @@ import io.github.mortuusars.exposure.world.item.camera.Attachment;
 import io.github.mortuusars.exposure.client.util.GuiUtil;
 import io.github.mortuusars.exposure.util.Rect2f;
 import net.minecraft.SharedConstants;
-import net.minecraft.client.DeltaTracker;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.player.LocalPlayer;
@@ -62,7 +62,7 @@ public class ViewfinderOverlay {
     protected long forceDrawShutterUntil = -1;
 
     public ViewfinderOverlay(Camera camera, Viewfinder viewfinder) {
-        this.player = Minecrft.player();
+        this.player = (LocalPlayer) Minecrft.player();
         this.camera = camera;
         this.viewfinder = viewfinder;
         this.backgroundColor = Config.getColor(Config.Client.VIEWFINDER_BACKGROUND_COLOR);
@@ -87,7 +87,7 @@ public class ViewfinderOverlay {
         return scale;
     }
 
-    public void render(GuiGraphics guiGraphics, DeltaTracker deltaTracker) {
+    public void render(GuiGraphics guiGraphics, float deltaTracker) {
         recalculateOpening();
         scale = Mth.lerp((float) scaleAnimation.getValue(), initialScale, 1f);
 
@@ -173,7 +173,7 @@ public class ViewfinderOverlay {
 
     public void startDrawingShutter() {
         forceDrawShutterOnNextFrame = true;
-        forceDrawShutterUntil = UnixTimestamp.Milliseconds.now() + SharedConstants.MILLIS_PER_TICK * 2;
+        forceDrawShutterUntil = UnixTimestamp.Milliseconds.now() + 50 * 2;
     }
 
     protected void renderBSOD(GuiGraphics guiGraphics, BrokenInterplanarProjectorItem item, ItemStack stack) {
@@ -213,14 +213,14 @@ public class ViewfinderOverlay {
         guiGraphics.drawString(font, code, x + qrCodeSize + margin, y, 0xFFFFFFFF, false);
     }
 
-    public void bobView(PoseStack poseStack, DeltaTracker deltaTracker) {
+    public void bobView(PoseStack poseStack, float deltaTracker) {
         if (Minecrft.get().getCameraEntity() instanceof Player pl) {
-            float walkDist = Mth.lerp(deltaTracker.getGameTimeDeltaTicks(), pl.walkDistO, pl.walkDist);
-            float strength = Mth.lerp(deltaTracker.getGameTimeDeltaTicks(), pl.oBob, pl.bob);
+            float walkDist = Mth.lerp(deltaTracker, pl.walkDistO, pl.walkDist);
+            float strength = Mth.lerp(deltaTracker, pl.oBob, pl.bob);
             float x = Mth.sin(walkDist * (float) Math.PI) * strength;
             float y = Math.abs(Mth.cos(walkDist * (float) Math.PI) * strength);
 
-            float delta = Math.min(deltaTracker.getGameTimeDeltaTicks(), 1f);
+            float delta = Math.min(deltaTracker, 1f);
             bobX = Mth.lerp(delta, bobX, x);
             bobY = Mth.lerp(delta, bobY, y);
             double guiScale = Minecrft.get().getWindow().getGuiScale();
@@ -230,12 +230,12 @@ public class ViewfinderOverlay {
         }
     }
 
-    public void applyAttackAnimation(PoseStack poseStack, DeltaTracker deltaTracker) {
+    public void applyAttackAnimation(PoseStack poseStack, float deltaTracker) {
         float attack = player.attackAnim;
         if (attack > 0.1f)
             attack = 1f - attack;
 
-        float delta = Math.min(deltaTracker.getGameTimeDeltaTicks(), 1f);
+        float delta = Math.min(deltaTracker, 1f);
         attackAnim = Mth.lerp(delta, attackAnim, attack);
 
         poseStack.scale(1f - attackAnim * 0.1f, 1f - attackAnim * 0.2f, 1f - attackAnim * 0.1f);
@@ -244,8 +244,8 @@ public class ViewfinderOverlay {
         poseStack.translate(0, 60f / guiScale * attackAnim, 0);
     }
 
-    public void applyMovementDelay(PoseStack poseStack, DeltaTracker deltaTracker) {
-        float delta = Math.min(deltaTracker.getGameTimeDeltaTicks() * 0.6f, 1.0f);
+    public void applyMovementDelay(PoseStack poseStack, float deltaTracker) {
+        float delta = Math.min(Minecrft.get().getDeltaFrameTime() * 0.7f, 1.0f);
         xRot0 = Mth.lerp(delta, xRot0, xRot);
         yRot0 = Mth.lerp(delta, yRot0, yRot);
         xRot = Minecrft.get().gameRenderer.getMainCamera().getXRot();

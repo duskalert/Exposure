@@ -1,13 +1,13 @@
 package io.github.mortuusars.exposure.client.gui.component;
 
 import com.google.common.base.Preconditions;
+import io.github.mortuusars.exposure.ModWidgetSprites;
 import io.github.mortuusars.exposure.client.gui.Tooltips;
 import io.github.mortuusars.exposure.client.gui.Widgets;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.Tooltip;
-import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
@@ -29,7 +29,7 @@ import java.util.function.Function;
 public class CycleButton<T> extends Button {
     protected final List<T> values;
     protected final T startingValue;
-    protected final Map<T, WidgetSprites> spritesMap;
+    protected final Map<T, ModWidgetSprites> spritesMap;
 
     protected OnCycle<T> onCycle;
     protected boolean loop = true;
@@ -40,7 +40,7 @@ public class CycleButton<T> extends Button {
     protected int currentIndex;
 
     public CycleButton(int x, int y, int width, int height, List<T> values, @NotNull T startingValue,
-                       Map<T, WidgetSprites> spritesMap, OnCycle<T> onCycle) {
+                       Map<T, ModWidgetSprites> spritesMap, OnCycle<T> onCycle) {
         super(x, y, width, height, CommonComponents.EMPTY, b -> {}, DEFAULT_NARRATION);
         Preconditions.checkArgument(!values.isEmpty(), "Cannot create a CycleButton with 0 possible values.");
         this.values = values;
@@ -53,17 +53,17 @@ public class CycleButton<T> extends Button {
     }
 
     public CycleButton(int x, int y, int width, int height, List<T> values, @NotNull T startingValue,
-                       Map<T, WidgetSprites> spritesMap) {
+                       Map<T, ModWidgetSprites> spritesMap) {
         this(x, y, width, height, values, startingValue, spritesMap, (b, v) -> {});
     }
 
     public CycleButton(int x, int y, int width, int height, List<T> values, @NotNull T startingValue,
-                       Function<T, WidgetSprites> spritesFunc, OnCycle<T> onCycle) {
+                       Function<T, ModWidgetSprites> spritesFunc, OnCycle<T> onCycle) {
         this(x, y, width, height, values, startingValue, Widgets.createMap(values, spritesFunc), onCycle);
     }
 
     public CycleButton(int x, int y, int width, int height, List<T> values, @NotNull T startingValue,
-                       Function<T, WidgetSprites> spritesFunc) {
+                       Function<T, ModWidgetSprites> spritesFunc) {
         this(x, y, width, height, values, startingValue, Widgets.createMap(values, spritesFunc), (b, v) -> {});
     }
 
@@ -146,11 +146,13 @@ public class CycleButton<T> extends Button {
 
     @Override
     public void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        @Nullable WidgetSprites sprites = spritesMap.get(getCurrentValue());
+        @Nullable ModWidgetSprites sprites = spritesMap.get(getCurrentValue());
         ResourceLocation spriteLocation = sprites != null
                 ? sprites.get(isActive(), isHoveredOrFocused())
                 : TextureManager.INTENTIONAL_MISSING_TEXTURE;
-        guiGraphics.blitSprite(spriteLocation, getX(), getY(), getWidth(), getHeight());
+        int width = sprites != null ? sprites.width() : 256;
+        int height = sprites != null ? sprites.height() : 256;
+        guiGraphics.blit(spriteLocation, getX(), getY(),0,0, getWidth(), getHeight(),width,height);
     }
 
     @Override
@@ -164,7 +166,7 @@ public class CycleButton<T> extends Button {
     }
 
     @Override
-    public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
+    public boolean mouseScrolled(double mouseX, double mouseY, double scrollY) {
         cycle(scrollY < 0d);
         playDownSound(Minecraft.getInstance().getSoundManager());
         return true;

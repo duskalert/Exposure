@@ -2,15 +2,16 @@ package io.github.mortuusars.exposure.client.gui.screen.album;
 
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.platform.InputConstants;
+import com.mojang.blaze3d.systems.RenderSystem;
 import io.github.mortuusars.exposure.Exposure;
 import io.github.mortuusars.exposure.ExposureClient;
+import io.github.mortuusars.exposure.ModWidgetSprites;
 import io.github.mortuusars.exposure.client.render.photograph.PhotographStyle;
 import io.github.mortuusars.exposure.client.util.Minecrft;
 import io.github.mortuusars.exposure.world.item.PhotographItem;
 import io.github.mortuusars.exposure.world.item.util.ItemAndStack;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
-import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.gui.narration.NarratedElementType;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.navigation.CommonInputs;
@@ -29,10 +30,10 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public class PhotographSlotWidget extends AbstractWidget {
-    public static final WidgetSprites SPRITES = new WidgetSprites(
-            Exposure.resource("album/photograph_slot"), Exposure.resource("album/photograph_slot_highlighted"));
-    public static final WidgetSprites EMPTY_SPRITES = new WidgetSprites(
-            Exposure.resource("album/photograph_slot_empty"), Exposure.resource("album/photograph_slot_empty_highlighted"));
+    public static final ModWidgetSprites SPRITES = ModWidgetSprites.withPrefix(
+            Exposure.resource("album/photograph_slot"), Exposure.resource("album/photograph_slot_highlighted"),108,108);
+    public static final ModWidgetSprites EMPTY_SPRITES = ModWidgetSprites.withPrefix(
+            Exposure.resource("album/photograph_slot_empty"), Exposure.resource("album/photograph_slot_empty_highlighted"),108,108);
 
     private final Screen parent;
     protected final Supplier<ItemStack> photographSupplier;
@@ -78,6 +79,7 @@ public class PhotographSlotWidget extends AbstractWidget {
 
     @Override
     protected void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+        RenderSystem.enableDepthTest();
         ItemStack photograph = getPhotograph();
 
         if (photograph.getItem() instanceof PhotographItem) {
@@ -113,12 +115,13 @@ public class PhotographSlotWidget extends AbstractWidget {
             hasPhotograph = false;
         }
 
-        WidgetSprites sprites = hasPhotograph ? SPRITES : EMPTY_SPRITES;
+        ModWidgetSprites sprites = hasPhotograph ? SPRITES : EMPTY_SPRITES;
         ResourceLocation resourceLocation = sprites.get(isActive(), isHoveredOrFocused());
         if (!editable && !hasPhotograph) {
             resourceLocation = sprites.get(isActive(), false);
         }
-        guiGraphics.blitSprite(resourceLocation, getX(), getY(), width, height);
+        RenderSystem.enableDepthTest();
+        guiGraphics.blit(resourceLocation, getX(), getY(),0,0,width,height, sprites.width(), sprites.height());
     }
 
     public void renderTooltip(GuiGraphics guiGraphics, int mouseX, int mouseY) {
@@ -160,13 +163,13 @@ public class PhotographSlotWidget extends AbstractWidget {
     }
 
     @Override
-    public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
+    public boolean mouseScrolled(double mouseX, double mouseY, double scrollY) {
         if (scrollY > 0 && clicked(mouseX, mouseY) && hasPhotograph) {
             primaryAction.accept(this);
             return true;
         }
 
-        return super.mouseScrolled(mouseX, mouseY, scrollX, scrollY);
+        return super.mouseScrolled(mouseX, mouseY,  scrollY);
     }
 
     @Override

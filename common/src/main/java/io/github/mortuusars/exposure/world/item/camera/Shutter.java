@@ -29,11 +29,11 @@ public class Shutter {
     }
 
     public ShutterState getState(ItemStack stack) {
-        return stack.getOrDefault(Exposure.DataComponents.SHUTTER_STATE, ShutterState.CLOSED);
+        return Exposure.DataComponents.getCameraShutterState(stack, ShutterState.CLOSED);
     }
 
     public void setState(ItemStack stack, ShutterState shutterState) {
-        stack.set(Exposure.DataComponents.SHUTTER_STATE, shutterState);
+        Exposure.DataComponents.setCameraShutterState(stack, shutterState);
     }
 
     public boolean isOpen(ItemStack stack) {

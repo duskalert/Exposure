@@ -4,8 +4,6 @@ import com.google.common.base.Preconditions;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.codec.ByteBufCodecs;
-import net.minecraft.network.codec.StreamCodec;
 
 public record Levels(int shadows, int midtones, int highlights, int black, int white) {
     public Levels {
@@ -30,14 +28,17 @@ public record Levels(int shadows, int midtones, int highlights, int black, int w
             Codec.INT.optionalFieldOf("white", 255).forGetter(Levels::white)
     ).apply(instance, Levels::new));
 
-    public static final StreamCodec<FriendlyByteBuf, Levels> STREAM_CODEC = StreamCodec.composite(
-            ByteBufCodecs.VAR_INT, Levels::shadows,
-            ByteBufCodecs.VAR_INT, Levels::midtones,
-            ByteBufCodecs.VAR_INT, Levels::highlights,
-            ByteBufCodecs.VAR_INT, Levels::black,
-            ByteBufCodecs.VAR_INT, Levels::white,
-            Levels::new
-    );
+    public void toPacket(FriendlyByteBuf buf){
+        buf.writeInt(shadows);
+        buf.writeInt(midtones);
+        buf.writeInt(highlights);
+        buf.writeInt(black);
+        buf.writeInt(white);
+    }
+
+    public static Levels fromPacket(FriendlyByteBuf buf) {
+        return new Levels(buf.readInt(),buf.readInt(),buf.readInt(),buf.readInt(),buf.readInt());
+    }
 
     @Override
     public String toString() {

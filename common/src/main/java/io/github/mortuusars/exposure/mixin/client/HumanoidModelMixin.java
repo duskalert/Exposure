@@ -50,7 +50,8 @@ public abstract class HumanoidModelMixin<T extends LivingEntity> extends Ageable
             return;
         }
 
-        if (operator.getActiveExposureCamera() instanceof Camera camera && camera.getItemStack().getItem() instanceof CameraItem item) {
+        Camera camera = operator.getActiveExposureCamera();
+        if (camera!=null && camera.getItemStack().getItem() instanceof CameraItem item) {
             CameraPoses poses = CameraModelPoses.get(item);
             HumanoidArm arm = camera instanceof CameraInHand cameraInHand && cameraInHand.getHand() == InteractionHand.OFF_HAND
                     ? Minecraft.getInstance().options.mainHand().get().getOpposite()
@@ -88,16 +89,19 @@ public abstract class HumanoidModelMixin<T extends LivingEntity> extends Ageable
             return;
         }
 
-        if (entity instanceof CameraHolder holder && CameraInHand.find(holder) instanceof CameraInHand camera) {
-            camera.ifPresent((item, stack) -> {
-                CameraPoses poses = CameraModelPoses.get(item);
-                if (item.isDisassembled(stack)) {
-                    HumanoidArm arm = camera.getHand() == InteractionHand.OFF_HAND
-                            ? Minecraft.getInstance().options.mainHand().get().getOpposite()
-                            : Minecraft.getInstance().options.mainHand().get();
-                    poses.applyDisassembled((HumanoidModel<?>) (Object) this, entity, arm);
-                }
-            });
+        if (entity instanceof CameraHolder holder) {
+            CameraInHand cameraInHand =CameraInHand.find(holder);
+            if (cameraInHand!= null) {
+                cameraInHand.ifPresent((item, stack) -> {
+                    CameraPoses poses = CameraModelPoses.get(item);
+                    if (item.isDisassembled(stack)) {
+                        HumanoidArm arm = cameraInHand.getHand() == InteractionHand.OFF_HAND
+                                ? Minecraft.getInstance().options.mainHand().get().getOpposite()
+                                : Minecraft.getInstance().options.mainHand().get();
+                        poses.applyDisassembled((HumanoidModel<?>) (Object) this, entity, arm);
+                    }
+                });
+            }
         }
         exposure$LeftArmBobbingMultiplier = 1F;
         exposure$RightArmBobbingMultiplier = 1F;

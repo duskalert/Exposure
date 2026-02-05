@@ -7,7 +7,6 @@ import io.github.mortuusars.exposure.client.image.WrappedBufferedImage;
 import io.github.mortuusars.exposure.util.TranslatableError;
 import io.github.mortuusars.exposure.util.cycles.task.Result;
 import io.github.mortuusars.exposure.util.cycles.task.Task;
-import net.minecraft.SharedConstants;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 
@@ -56,6 +55,6 @@ public class UrlCaptureTask extends Task<Result<Image>> {
                 return Result.error(ERROR_CANNOT_READ);
             }
         }).completeOnTimeout(Result.error(ERROR_TIMED_OUT),
-                Config.Server.PROJECT_TIMEOUT_TICKS.get() * SharedConstants.MILLIS_PER_TICK, TimeUnit.MILLISECONDS);
+                Config.Server.PROJECT_TIMEOUT_TICKS.get() * 50, TimeUnit.MILLISECONDS);
     }
 }

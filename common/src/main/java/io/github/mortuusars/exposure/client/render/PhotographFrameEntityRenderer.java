@@ -14,7 +14,6 @@ import io.github.mortuusars.exposure.world.camera.frame.Frame;
 import io.github.mortuusars.exposure.world.entity.PhotographFrameEntity;
 import io.github.mortuusars.exposure.world.item.PhotographItem;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Font;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -24,20 +23,15 @@ import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.model.BakedModel;
-import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.core.Direction;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.EntityAttachment;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.phys.EntityHitResult;
-import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
-import org.joml.Matrix4f;
 
 public class PhotographFrameEntityRenderer<T extends PhotographFrameEntity> extends EntityRenderer<T> {
     protected final BlockRenderDispatcher blockRenderer;
@@ -52,7 +46,7 @@ public class PhotographFrameEntityRenderer<T extends PhotographFrameEntity> exte
         return InventoryMenu.BLOCK_ATLAS;
     }
 
-    public ModelResourceLocation getModelLocation(T entity, int size) {
+    public ResourceLocation getModelLocation(T entity, int size) {
         return switch (size) {
             case 0 -> ExposureClient.Models.PHOTOGRAPH_FRAME_SMALL;
             case 1 -> ExposureClient.Models.PHOTOGRAPH_FRAME_MEDIUM;
@@ -113,18 +107,18 @@ public class PhotographFrameEntityRenderer<T extends PhotographFrameEntity> exte
     }
 
     protected void renderFrame(@NotNull T entity, @NotNull PoseStack poseStack, @NotNull MultiBufferSource bufferSource,
-                             int packedLight, int size) {
+                               int packedLight, int size) {
         poseStack.pushPose();
         poseStack.translate(-0.5f, -0.5f, -0.5f);
-        ModelResourceLocation modelLocation = getModelLocation(entity, size);
+        ResourceLocation modelLocation = getModelLocation(entity, size);
         BakedModel model = PlatformHelperClient.getModel(modelLocation);
         blockRenderer.getModelRenderer().renderModel(poseStack.last(), bufferSource.getBuffer(getRenderType()),
-                null, model, 1.0f, 1.0f, 1.0f, packedLight, OverlayTexture.NO_OVERLAY);
+              null, model, 1.0f, 1.0f, 1.0f, packedLight, OverlayTexture.NO_OVERLAY);
         poseStack.popPose();
     }
 
     protected boolean renderPhotograph(@NotNull T entity, @NotNull PoseStack poseStack, @NotNull MultiBufferSource bufferSource,
-                                  int packedLight, ItemStack item, int size) {
+                                       int packedLight, ItemStack item, int size) {
         poseStack.pushPose();
 
         boolean frameInvisible = entity.isFrameInvisible();
@@ -162,12 +156,12 @@ public class PhotographFrameEntityRenderer<T extends PhotographFrameEntity> exte
                 image = image.modifyWith(ImageEffect.Resize.to(pixels)::modify, "pixels-" + pixels);
 
                 ExposureClient.imageRenderer().render(image, poseStack, bufferSource, RenderCoordinates.DEFAULT,
-                        packedLight, brightness, brightness, brightness, 255);
+                      packedLight, brightness, brightness, brightness, 255);
                 photographRendered = !image.isEmpty();
             }
         } else {
             photographRendered = ExposureClient.photographRenderer().render(item, false, false,
-                    poseStack, bufferSource, packedLight, brightness, brightness, brightness, 255);
+                  poseStack, bufferSource, packedLight, brightness, brightness, brightness, 255);
         }
 
         poseStack.popPose();
@@ -185,13 +179,13 @@ public class PhotographFrameEntityRenderer<T extends PhotographFrameEntity> exte
         float shadeFactor = entity.level().getShade(entity.getDirection(), true);
         shadeFactor += (1f - shadeFactor) * 0.2f;
 
-        int shadedBrightness = (int)(255 * shadeFactor);
+        int shadedBrightness = (int) (255 * shadeFactor);
         int missingLight = 255 - shadedBrightness;
-        int lightUp = (int)(missingLight * (lightLevel / 15f * 0.5f));
+        int lightUp = (int) (missingLight * (lightLevel / 15f * 0.5f));
         return Math.min(255, shadedBrightness + lightUp);
     }
 
-    @Override
+    /*@Override
     protected void renderNameTag(T entity, Component displayName, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, float partialTick) {
         double d = this.entityRenderDispatcher.distanceToSqr(entity);
         if (!(d > 4096.0)) {
@@ -224,16 +218,21 @@ public class PhotographFrameEntityRenderer<T extends PhotographFrameEntity> exte
                 poseStack.popPose();
             }
         }
-    }
+    }*/
 
     @Override
     protected boolean shouldShowName(T entity) {
-        if (Minecraft.renderNames() && (!entity.getItem().isEmpty() && entity.getItem().has(DataComponents.CUSTOM_NAME)
-                && Minecraft.getInstance().crosshairPickEntity == entity)) {
+        if (Minecraft.renderNames() && (!entity.getItem().isEmpty() && entity.getItem().hasCustomHoverName()
+              && Minecraft.getInstance().crosshairPickEntity == entity)) {
             double distSqr = Minecraft.getInstance().crosshairPickEntity.distanceToSqr(entity);
             float showRangeSqr = entity.isDiscrete() ? 32.0f : 64.0f;
             return distSqr < (double) (showRangeSqr * showRangeSqr);
         }
         return false;
+    }
+
+    @Override
+    protected void renderNameTag(T entity, Component displayName, PoseStack poseStack, MultiBufferSource buffer, int packedLight) {
+        super.renderNameTag(entity, entity.getItem().getHoverName(), poseStack, buffer, packedLight);
     }
 }

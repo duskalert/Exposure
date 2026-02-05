@@ -2,6 +2,7 @@ package io.github.mortuusars.exposure.advancements.predicate;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import io.github.mortuusars.exposure.Stuff;
 import io.github.mortuusars.exposure.world.camera.frame.EntityInFrame;
 import net.minecraft.advancements.critereon.MinMaxBounds;
 import net.minecraft.resources.ResourceLocation;
@@ -15,8 +16,10 @@ public record EntityInFramePredicate(Optional<ResourceLocation> type,
     public static final Codec<EntityInFramePredicate> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             ResourceLocation.CODEC.optionalFieldOf("type").forGetter(EntityInFramePredicate::type),
             Codec.STRING.optionalFieldOf("name").forGetter(EntityInFramePredicate::name),
-            MinMaxBounds.Ints.CODEC.optionalFieldOf("distance", MinMaxBounds.Ints.ANY).forGetter(EntityInFramePredicate::distance)
+            Stuff.INTS_CODEC.optionalFieldOf("distance", MinMaxBounds.Ints.ANY).forGetter(EntityInFramePredicate::distance)
     ).apply(instance, EntityInFramePredicate::new));
+
+    public static final EntityInFramePredicate ANY = new EntityInFramePredicate(Optional.empty(),Optional.empty(), MinMaxBounds.Ints.ANY);
 
     public boolean matches(EntityInFrame entity) {
         if (type.isPresent() && !type.get().equals(entity.id())) return false;

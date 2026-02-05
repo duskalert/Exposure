@@ -45,7 +45,7 @@ public class ExposeCommand {
 
         try {
             RegistryOps<Tag> ops = RegistryOps.create(NbtOps.INSTANCE, context.getSource().registryAccess());
-            captureParameters = CaptureParameters.CODEC.decode(ops, properties).getOrThrow().getFirst();
+            captureParameters = CaptureParameters.CODEC.decode(ops, properties).get().orThrow().getFirst();
         } catch (Exception e) {
             context.getSource().sendFailure(Component.literal("Cannot decode properties: " + e.getMessage()));
             return 0;
@@ -56,7 +56,7 @@ public class ExposeCommand {
 
         Supplier<Component> msg = () -> {
             ItemStack photograph = new ItemStack(Exposure.Items.PHOTOGRAPH.get());
-            photograph.set(Exposure.DataComponents.PHOTOGRAPH_FRAME, frame);
+            Exposure.DataComponents.setPhotographFrame(photograph,frame);
 
             return Component.literal("Exposed: ")
                     .append(Component.literal(exposureId)

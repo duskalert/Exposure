@@ -6,6 +6,7 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.multiplayer.MultiPlayerGameMode;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.RegistryAccess;
+import net.minecraft.world.entity.player.Player;
 
 import java.util.Objects;
 
@@ -14,7 +15,7 @@ public class Minecrft {
         return Minecraft.getInstance();
     }
 
-    public static LocalPlayer player() {
+    public static Player player() {
         return Objects.requireNonNull(get().player, "Player is not available.");
     }
 

@@ -1,10 +1,10 @@
 package io.github.mortuusars.exposure;
 
+import io.github.mortuusars.exposure.util.color.Color;
 import io.github.mortuusars.exposure.world.block.FlashBlock;
 import io.github.mortuusars.exposure.world.camera.component.FocalRange;
-import io.github.mortuusars.exposure.util.color.Color;
 import net.minecraft.world.item.DyeColor;
-import net.neoforged.neoforge.common.ModConfigSpec;
+import net.minecraftforge.common.ForgeConfigSpec;
 
 import java.util.List;
 
@@ -13,58 +13,58 @@ import java.util.List;
  */
 public class Config {
     public static class Server {
-        public static final ModConfigSpec SPEC;
+        public static final ForgeConfigSpec SPEC;
 
         // Camera
-        public static final ModConfigSpec.ConfigValue<String> CAMERA_DEFAULT_FOCAL_RANGE;
-        public static final ModConfigSpec.BooleanValue CAMERA_VIEWFINDER_ATTACK;
-        public static final ModConfigSpec.BooleanValue WAIST_LEVEL_VIEWFINDER;
-        public static final ModConfigSpec.DoubleValue SELFIE_CAMERA_DISTANCE;
-        public static final ModConfigSpec.BooleanValue CAMERA_GUI_RIGHT_CLICK_OPEN_ATTACHMENTS;
-        public static final ModConfigSpec.BooleanValue CAMERA_GUI_RIGHT_CLICK_HOTSWAP;
-        public static final ModConfigSpec.BooleanValue TIMER_ATTRACTS_MOB_ATTENTION;
-        public static final ModConfigSpec.IntValue TIMER_ATTENTION_RADIUS;
+        public static final ForgeConfigSpec.ConfigValue<String> CAMERA_DEFAULT_FOCAL_RANGE;
+        public static final ForgeConfigSpec.BooleanValue CAMERA_VIEWFINDER_ATTACK;
+        public static final ForgeConfigSpec.BooleanValue WAIST_LEVEL_VIEWFINDER;
+        public static final ForgeConfigSpec.DoubleValue SELFIE_CAMERA_DISTANCE;
+        public static final ForgeConfigSpec.BooleanValue CAMERA_GUI_RIGHT_CLICK_OPEN_ATTACHMENTS;
+        public static final ForgeConfigSpec.BooleanValue CAMERA_GUI_RIGHT_CLICK_HOTSWAP;
+        public static final ForgeConfigSpec.BooleanValue TIMER_ATTRACTS_MOB_ATTENTION;
+        public static final ForgeConfigSpec.IntValue TIMER_ATTENTION_RADIUS;
 
         // Camera Stand
-        public static final ModConfigSpec.IntValue CAMERA_STAND_WORKING_RANGE;
-        public static final ModConfigSpec.BooleanValue CAMERA_STAND_RANGE_MALFUNCTION;
-        public static final ModConfigSpec.BooleanValue CAMERA_STAND_FALLBACK_TO_OTHER_PLAYERS;
-        public static final ModConfigSpec.BooleanValue CAMERA_STAND_FALLBACK_TO_OTHER_PLAYERS_PROJECTOR;
+        public static final ForgeConfigSpec.IntValue CAMERA_STAND_WORKING_RANGE;
+        public static final ForgeConfigSpec.BooleanValue CAMERA_STAND_RANGE_MALFUNCTION;
+        public static final ForgeConfigSpec.BooleanValue CAMERA_STAND_FALLBACK_TO_OTHER_PLAYERS;
+        public static final ForgeConfigSpec.BooleanValue CAMERA_STAND_FALLBACK_TO_OTHER_PLAYERS_PROJECTOR;
 
         // Capture
-        public static final ModConfigSpec.IntValue DEFAULT_FRAME_SIZE;
-        public static final ModConfigSpec.BooleanValue CAN_PROJECT;
-        public static final ModConfigSpec.IntValue PROJECT_TIMEOUT_TICKS;
+        public static final ForgeConfigSpec.IntValue DEFAULT_FRAME_SIZE;
+        public static final ForgeConfigSpec.BooleanValue CAN_PROJECT;
+        public static final ForgeConfigSpec.IntValue PROJECT_TIMEOUT_TICKS;
 
         // Lightroom
-        public static final ModConfigSpec.IntValue LIGHTROOM_LIGHT_REQUIREMENT;
-        public static final ModConfigSpec.ConfigValue<List<? extends String>> LIGHTROOM_BW_DYES;
-        public static final ModConfigSpec.ConfigValue<List<? extends String>> LIGHTROOM_COLOR_DYES;
-        public static final ModConfigSpec.ConfigValue<List<? extends String>> LIGHTROOM_CHROMATIC_RED_DYES;
-        public static final ModConfigSpec.ConfigValue<List<? extends String>> LIGHTROOM_CHROMATIC_GREEN_DYES;
-        public static final ModConfigSpec.ConfigValue<List<? extends String>> LIGHTROOM_CHROMATIC_BLUE_DYES;
-        public static final ModConfigSpec.IntValue LIGHTROOM_BW_PRINT_TIME;
-        public static final ModConfigSpec.IntValue LIGHTROOM_COLOR_PRINT_TIME;
-        public static final ModConfigSpec.IntValue LIGHTROOM_CHROMATIC_PRINT_TIME;
-        public static final ModConfigSpec.IntValue LIGHTROOM_BW_EXPERIENCE;
-        public static final ModConfigSpec.IntValue LIGHTROOM_COLOR_EXPERIENCE;
-        public static final ModConfigSpec.IntValue LIGHTROOM_CHROMATIC_EXPERIENCE;
+        public static final ForgeConfigSpec.IntValue LIGHTROOM_LIGHT_REQUIREMENT;
+        public static final ForgeConfigSpec.ConfigValue<List<? extends String>> LIGHTROOM_BW_DYES;
+        public static final ForgeConfigSpec.ConfigValue<List<? extends String>> LIGHTROOM_COLOR_DYES;
+        public static final ForgeConfigSpec.ConfigValue<List<? extends String>> LIGHTROOM_CHROMATIC_RED_DYES;
+        public static final ForgeConfigSpec.ConfigValue<List<? extends String>> LIGHTROOM_CHROMATIC_GREEN_DYES;
+        public static final ForgeConfigSpec.ConfigValue<List<? extends String>> LIGHTROOM_CHROMATIC_BLUE_DYES;
+        public static final ForgeConfigSpec.IntValue LIGHTROOM_BW_PRINT_TIME;
+        public static final ForgeConfigSpec.IntValue LIGHTROOM_COLOR_PRINT_TIME;
+        public static final ForgeConfigSpec.IntValue LIGHTROOM_CHROMATIC_PRINT_TIME;
+        public static final ForgeConfigSpec.IntValue LIGHTROOM_BW_EXPERIENCE;
+        public static final ForgeConfigSpec.IntValue LIGHTROOM_COLOR_EXPERIENCE;
+        public static final ForgeConfigSpec.IntValue LIGHTROOM_CHROMATIC_EXPERIENCE;
 
         // Photographs
-        public static final ModConfigSpec.IntValue STACKED_PHOTOGRAPHS_MAX_SIZE;
+        public static final ForgeConfigSpec.IntValue STACKED_PHOTOGRAPHS_MAX_SIZE;
 
         // Misc
-        public static final ModConfigSpec.BooleanValue FILM_ROLL_EASY_RENAMING;
-        public static final ModConfigSpec.BooleanValue INTERPLANAR_PROJECTOR_LARGER_RENAMING_LIMIT;
+        public static final ForgeConfigSpec.BooleanValue FILM_ROLL_EASY_RENAMING;
+        public static final ForgeConfigSpec.BooleanValue INTERPLANAR_PROJECTOR_LARGER_RENAMING_LIMIT;
 
         // Integration
-        public static final ModConfigSpec.BooleanValue CREATE_DEPLOYER_STAND_HOTSWAP;
+        public static final ForgeConfigSpec.BooleanValue CREATE_DEPLOYER_STAND_HOTSWAP;
 
         // Debug
-        public static final ModConfigSpec.BooleanValue CLEANUP_TIMED_OUT_EXPECTED_EXPOSURES;
+        public static final ForgeConfigSpec.BooleanValue CLEANUP_TIMED_OUT_EXPECTED_EXPOSURES;
 
         static {
-            ModConfigSpec.Builder builder = new ModConfigSpec.Builder();
+            ForgeConfigSpec.Builder builder = new ForgeConfigSpec.Builder();
 
             {
                 builder.push("camera");
@@ -146,19 +146,19 @@ public class Config {
                                 "Multiple definitions will make the lightroom consume multiple items per print. [\"black\", \"black\"] -> 2 Black Dye is consumed per print.");
                 LIGHTROOM_BW_DYES = builder
                         .comment("Dyes for black and white print. Default: [\"black\"]")
-                        .defineList("dyes_black_and_white", () -> List.of(DyeColor.BLACK.getName()), DyeColor.BLACK::getName, Server::validatePrintingDyes);
+                        .defineList("dyes_black_and_white", () -> List.of(DyeColor.BLACK.getName()), Server::validatePrintingDyes);
                 LIGHTROOM_COLOR_DYES = builder
                         .comment("Dyes for color print. Default: [\"cyan\", \"magenta\", \"yellow\", \"black\"]")
-                        .defineList("dyes_color", () -> List.of(DyeColor.CYAN.getName(), DyeColor.MAGENTA.getName(), DyeColor.YELLOW.getName(), DyeColor.BLACK.getName()), DyeColor.BLACK::getName, Server::validatePrintingDyes);
+                        .defineList("dyes_color", () -> List.of(DyeColor.CYAN.getName(), DyeColor.MAGENTA.getName(), DyeColor.YELLOW.getName(), DyeColor.BLACK.getName()), Server::validatePrintingDyes);
                 LIGHTROOM_CHROMATIC_RED_DYES = builder
                         .comment("Dyes for chromatic red channel print. Default: [\"magenta\", \"yellow\"]")
-                        .defineList("dyes_chromatic_red", () -> List.of(DyeColor.MAGENTA.getName(), DyeColor.YELLOW.getName()), DyeColor.BLACK::getName, Server::validatePrintingDyes);
+                        .defineList("dyes_chromatic_red", () -> List.of(DyeColor.MAGENTA.getName(), DyeColor.YELLOW.getName()), Server::validatePrintingDyes);
                 LIGHTROOM_CHROMATIC_GREEN_DYES = builder
                         .comment("Dyes for chromatic green channel print. Default: [\"cyan\", \"yellow\"]")
-                        .defineList("dyes_chromatic_green", () -> List.of(DyeColor.CYAN.getName(), DyeColor.YELLOW.getName()), DyeColor.BLACK::getName, Server::validatePrintingDyes);
+                        .defineList("dyes_chromatic_green", () -> List.of(DyeColor.CYAN.getName(), DyeColor.YELLOW.getName()),  Server::validatePrintingDyes);
                 LIGHTROOM_CHROMATIC_BLUE_DYES = builder
                         .comment("Dyes for chromatic blue channel print. Default: [\"cyan\", \"magenta\"]")
-                        .defineList("dyes_chromatic_blue", () -> List.of(DyeColor.CYAN.getName(), DyeColor.MAGENTA.getName()), DyeColor.BLACK::getName, Server::validatePrintingDyes);
+                        .defineList("dyes_chromatic_blue", () -> List.of(DyeColor.CYAN.getName(), DyeColor.MAGENTA.getName()), Server::validatePrintingDyes);
                 LIGHTROOM_BW_PRINT_TIME = builder
                         .comment("Time in ticks to print black and white photograph. Default: 80")
                         .defineInRange("print_time_black_and_white", 80, 1, Integer.MAX_VALUE);
@@ -232,13 +232,13 @@ public class Config {
     }
 
     public static class Common {
-        public static final ModConfigSpec SPEC;
-        public static final ModConfigSpec.BooleanValue SIGNED_ALBUM_GLINT;
-        public static final ModConfigSpec.BooleanValue DIFFERENT_DEVELOPING_POTION_COLORS;
-        public static final ModConfigSpec.BooleanValue GENERATE_LOOT;
+        public static final ForgeConfigSpec SPEC;
+        public static final ForgeConfigSpec.BooleanValue SIGNED_ALBUM_GLINT;
+        public static final ForgeConfigSpec.BooleanValue DIFFERENT_DEVELOPING_POTION_COLORS;
+        public static final ForgeConfigSpec.BooleanValue GENERATE_LOOT;
 
         static {
-            ModConfigSpec.Builder builder = new ModConfigSpec.Builder();
+            ForgeConfigSpec.Builder builder = new ForgeConfigSpec.Builder();
 
             builder.push("misc");
             {
@@ -261,64 +261,64 @@ public class Config {
     }
 
     public static class Client {
-        public static final ModConfigSpec SPEC;
+        public static final ForgeConfigSpec SPEC;
 
         // UI
-        public static final ModConfigSpec.BooleanValue RECIPE_TOOLTIPS_WITHOUT_JEI;
-        public static final ModConfigSpec.BooleanValue CAMERA_SHOW_TOOLTIP_DETAILS;
-        public static final ModConfigSpec.BooleanValue CAMERA_SHOW_FILM_FRAMES_IN_TOOLTIP;
-        public static final ModConfigSpec.BooleanValue CAMERA_SHOW_FILM_BAR_ON_ITEM;
-        public static final ModConfigSpec.BooleanValue PHOTOGRAPH_SHOW_PHOTOGRAPHER_IN_TOOLTIP;
-        public static final ModConfigSpec.BooleanValue PHOTOGRAPH_IN_HAND_HIDE_CROSSHAIR;
-        public static final ModConfigSpec.BooleanValue CAMERA_STAND_TOOLTIP;
+        public static final ForgeConfigSpec.BooleanValue RECIPE_TOOLTIPS_WITHOUT_JEI;
+        public static final ForgeConfigSpec.BooleanValue CAMERA_SHOW_TOOLTIP_DETAILS;
+        public static final ForgeConfigSpec.BooleanValue CAMERA_SHOW_FILM_FRAMES_IN_TOOLTIP;
+        public static final ForgeConfigSpec.BooleanValue CAMERA_SHOW_FILM_BAR_ON_ITEM;
+        public static final ForgeConfigSpec.BooleanValue PHOTOGRAPH_SHOW_PHOTOGRAPHER_IN_TOOLTIP;
+        public static final ForgeConfigSpec.BooleanValue PHOTOGRAPH_IN_HAND_HIDE_CROSSHAIR;
+        public static final ForgeConfigSpec.BooleanValue CAMERA_STAND_TOOLTIP;
 
-        public static final ModConfigSpec.BooleanValue ALBUM_PHOTOS_COUNT_TOOLTIP;
-        public static final ModConfigSpec.ConfigValue<String> ALBUM_FONT_MAIN_COLOR;
-        public static final ModConfigSpec.ConfigValue<String> ALBUM_FONT_SECONDARY_COLOR;
-        public static final ModConfigSpec.ConfigValue<String> ALBUM_SELECTION_COLOR;
-        public static final ModConfigSpec.ConfigValue<String> ALBUM_SELECTION_UNFOCUSED_COLOR;
+        public static final ForgeConfigSpec.BooleanValue ALBUM_PHOTOS_COUNT_TOOLTIP;
+        public static final ForgeConfigSpec.ConfigValue<String> ALBUM_FONT_MAIN_COLOR;
+        public static final ForgeConfigSpec.ConfigValue<String> ALBUM_FONT_SECONDARY_COLOR;
+        public static final ForgeConfigSpec.ConfigValue<String> ALBUM_SELECTION_COLOR;
+        public static final ForgeConfigSpec.ConfigValue<String> ALBUM_SELECTION_UNFOCUSED_COLOR;
 
         // VIEWFINDER
-        public static final ModConfigSpec.BooleanValue VIEWFINDER_MIDDLE_CLICK_CONTROLS;
-        public static final ModConfigSpec.DoubleValue VIEWFINDER_ZOOM_SENSITIVITY_INFLUENCE;
-        public static final ModConfigSpec.ConfigValue<String> VIEWFINDER_BACKGROUND_COLOR;
-        public static final ModConfigSpec.ConfigValue<String> VIEWFINDER_FONT_MAIN_COLOR;
-        public static final ModConfigSpec.ConfigValue<String> VIEWFINDER_FONT_SECONDARY_COLOR;
-        public static final ModConfigSpec.BooleanValue HIDE_HUD_WHILE_IN_VIEWFINDER;
-        public static final ModConfigSpec.IntValue VIEWFINDER_STATUS_ICON_OFFSET_X;
-        public static final ModConfigSpec.IntValue VIEWFINDER_STATUS_ICON_OFFSET_Y;
+        public static final ForgeConfigSpec.BooleanValue VIEWFINDER_MIDDLE_CLICK_CONTROLS;
+        public static final ForgeConfigSpec.DoubleValue VIEWFINDER_ZOOM_SENSITIVITY_INFLUENCE;
+        public static final ForgeConfigSpec.ConfigValue<String> VIEWFINDER_BACKGROUND_COLOR;
+        public static final ForgeConfigSpec.ConfigValue<String> VIEWFINDER_FONT_MAIN_COLOR;
+        public static final ForgeConfigSpec.ConfigValue<String> VIEWFINDER_FONT_SECONDARY_COLOR;
+        public static final ForgeConfigSpec.BooleanValue HIDE_HUD_WHILE_IN_VIEWFINDER;
+        public static final ForgeConfigSpec.IntValue VIEWFINDER_STATUS_ICON_OFFSET_X;
+        public static final ForgeConfigSpec.IntValue VIEWFINDER_STATUS_ICON_OFFSET_Y;
 
         // CAPTURE
-        public static final ModConfigSpec.BooleanValue KEEP_POST_EFFECT;
-        public static final ModConfigSpec.IntValue FLASH_CAPTURE_DELAY_TICKS;
-        public static final ModConfigSpec.BooleanValue FORCE_DIRECT_CAPTURE;
-        public static final ModConfigSpec.ConfigValue<List<? extends String>> FORCE_DIRECT_CAPTURE_MODS;
-        public static final ModConfigSpec.IntValue DIRECT_CAPTURE_DELAY_FRAMES;
-        public static final ModConfigSpec.BooleanValue BACKGROUND_CAPTURE_USE_PANORAMIC_MODE;
+        public static final ForgeConfigSpec.BooleanValue KEEP_POST_EFFECT;
+        public static final ForgeConfigSpec.IntValue FLASH_CAPTURE_DELAY_TICKS;
+        public static final ForgeConfigSpec.BooleanValue FORCE_DIRECT_CAPTURE;
+        public static final ForgeConfigSpec.ConfigValue<List<? extends String>> FORCE_DIRECT_CAPTURE_MODS;
+        public static final ForgeConfigSpec.IntValue DIRECT_CAPTURE_DELAY_FRAMES;
+        public static final ForgeConfigSpec.BooleanValue BACKGROUND_CAPTURE_USE_PANORAMIC_MODE;
 
         // RENDER
-        public static final ModConfigSpec.BooleanValue PIXEL_PERFECT_PHOTOGRAPH_FRAME;
-        public static final ModConfigSpec.BooleanValue PHOTOGRAPH_RENDERS_IN_ITEM_FRAME;
-        public static final ModConfigSpec.BooleanValue HIDE_PROJECTED_PHOTOGRAPHS_MADE_BY_OTHERS;
-        public static final ModConfigSpec.BooleanValue HIDE_ALL_PHOTOGRAPHS_MADE_BY_OTHERS;
-        public static final ModConfigSpec.IntValue PHOTOGRAPH_FRAME_CULLING_DISTANCE;
-        public static final ModConfigSpec.DoubleValue PHOTOGRAPH_FRAME_IMAGE_OFFSET;
+        public static final ForgeConfigSpec.BooleanValue PIXEL_PERFECT_PHOTOGRAPH_FRAME;
+        public static final ForgeConfigSpec.BooleanValue PHOTOGRAPH_RENDERS_IN_ITEM_FRAME;
+        public static final ForgeConfigSpec.BooleanValue HIDE_PROJECTED_PHOTOGRAPHS_MADE_BY_OTHERS;
+        public static final ForgeConfigSpec.BooleanValue HIDE_ALL_PHOTOGRAPHS_MADE_BY_OTHERS;
+        public static final ForgeConfigSpec.IntValue PHOTOGRAPH_FRAME_CULLING_DISTANCE;
+        public static final ForgeConfigSpec.DoubleValue PHOTOGRAPH_FRAME_IMAGE_OFFSET;
 
         // INTEGRATION
-        public static final ModConfigSpec.BooleanValue SHOW_JEI_INFORMATION;
-        public static final ModConfigSpec.BooleanValue REAL_CAMERA_DISABLE_IN_VIEWFINDER;
+        public static final ForgeConfigSpec.BooleanValue SHOW_JEI_INFORMATION;
+        public static final ForgeConfigSpec.BooleanValue REAL_CAMERA_DISABLE_IN_VIEWFINDER;
 
         // IMAGE SAVING
-        public static final ModConfigSpec.BooleanValue EXPORT_PHOTOGRAPH_WHEN_VIEWED;
-        public static final ModConfigSpec.BooleanValue EXPORT_ORGANIZE_BY_WORLD;
-        public static final ModConfigSpec.IntValue EXPORT_SIZE_MULTIPLIER;
+        public static final ForgeConfigSpec.BooleanValue EXPORT_PHOTOGRAPH_WHEN_VIEWED;
+        public static final ForgeConfigSpec.BooleanValue EXPORT_ORGANIZE_BY_WORLD;
+        public static final ForgeConfigSpec.IntValue EXPORT_SIZE_MULTIPLIER;
 
         // MISC
-        public static final ModConfigSpec.BooleanValue ATTACHMENTS_SHOW_INFO_TOAST;
-        public static final ModConfigSpec.BooleanValue ATTACHMENTS_SHOW_WIKI_TOAST;
+        public static final ForgeConfigSpec.BooleanValue ATTACHMENTS_SHOW_INFO_TOAST;
+        public static final ForgeConfigSpec.BooleanValue ATTACHMENTS_SHOW_WIKI_TOAST;
 
         static {
-            ModConfigSpec.Builder builder = new ModConfigSpec.Builder();
+            ForgeConfigSpec.Builder builder = new ForgeConfigSpec.Builder();
 
             {
                 builder.push("ui");
@@ -383,9 +383,8 @@ public class Config {
                         .define("middle_click_controls", true);
                 VIEWFINDER_ZOOM_SENSITIVITY_INFLUENCE = builder
                         .comment("How much zooming influences mouse sensitivity.",
-                                "0 - no change to sensitivity. 1 - full effect.",
-                                "Default: 0.75")
-                        .defineInRange("zoom_sensitivity_influence", 0.75, 0.0, 1.0);
+                                "0 - no change to sensitivity. 1 - full effect.")
+                        .defineInRange("zoom_sensitivity_influence", 1.0, 0.0, 1.0);
                 VIEWFINDER_BACKGROUND_COLOR = builder
                         .comment("Color in hex format. AARRGGBB.").define("background_color", "FA1F1D1B");
                 VIEWFINDER_FONT_MAIN_COLOR = builder
@@ -424,7 +423,7 @@ public class Config {
                 FORCE_DIRECT_CAPTURE_MODS = builder
                         .comment("Direct capture will be used if any of these mods is installed.",
                                 "Format: '[\"mod_id\", \"mod_id\"]'. Default: [" + String.join(", ", Exposure.MODS_REQUIRING_DIRECT_CAPTURE) + "]")
-                        .defineListAllowEmpty("force_direct_capture_default_mods", () -> Exposure.MODS_REQUIRING_DIRECT_CAPTURE, () -> "mod_id", o -> true);
+                        .defineListAllowEmpty(List.of("force_direct_capture_default_mods"), () -> Exposure.MODS_REQUIRING_DIRECT_CAPTURE, o -> true);
                 DIRECT_CAPTURE_DELAY_FRAMES = builder
                         .comment("Delay in frames before capturing an image if 'direct_capture' method is in use.",
                                 "Set to higher value when leftovers of GUI elements (such as nameplates) are visible on the images",
@@ -509,7 +508,7 @@ public class Config {
         }
     }
 
-    public static int getColor(ModConfigSpec.ConfigValue<String> config) {
+    public static int getColor(ForgeConfigSpec.ConfigValue<String> config) {
         String value = config.get();
         try {
             return Color.fromHex(value).getARGB();

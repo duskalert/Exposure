@@ -3,7 +3,7 @@ package io.github.mortuusars.exposure.world.item.camera;
 import com.google.common.base.Preconditions;
 import io.github.mortuusars.exposure.*;
 import io.github.mortuusars.exposure.data.*;
-import io.github.mortuusars.exposure.network.packet.clientbound.ShutterOpenedS2CP;
+import io.github.mortuusars.exposure.network.packet.clientbound.ActionS2CP;
 import io.github.mortuusars.exposure.util.color.Color;
 import io.github.mortuusars.exposure.client.util.Minecrft;
 import io.github.mortuusars.exposure.world.camera.*;
@@ -35,8 +35,8 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.commands.arguments.EntityAnchorArgument;
 import net.minecraft.core.*;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -44,6 +44,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
@@ -255,10 +256,12 @@ public class CameraItem extends Item {
     // --
 
     public CameraId getOrCreateId(ItemStack stack) {
-        if (!stack.has(Exposure.DataComponents.CAMERA_ID)) {
-            stack.set(Exposure.DataComponents.CAMERA_ID, CameraId.create());
+        CameraId cameraId = Exposure.DataComponents.getCameraId(stack);
+        if (cameraId == null) {
+            cameraId = CameraId.create();
+            Exposure.DataComponents.setCameraId(stack,cameraId);
         }
-        return stack.get(Exposure.DataComponents.CAMERA_ID);
+        return cameraId;
     }
 
     public boolean isInSelfieMode(ItemStack stack) {
@@ -266,35 +269,31 @@ public class CameraItem extends Item {
     }
 
     public boolean isActive(ItemStack stack) {
-        return stack.getOrDefault(Exposure.DataComponents.CAMERA_ACTIVE, false);
+        return Exposure.DataComponents.getCameraActive(stack,false);
     }
 
     public void setActive(ItemStack stack, boolean active) {
-        if (!active) {
-            stack.remove(Exposure.DataComponents.CAMERA_ACTIVE);
-        } else {
-            stack.set(Exposure.DataComponents.CAMERA_ACTIVE, true);
-        }
+        Exposure.DataComponents.setCameraActive(stack,active);
     }
 
     public boolean isDisassembled(ItemStack stack) {
-        return stack.getOrDefault(Exposure.DataComponents.CAMERA_DISASSEMBLED, false);
+        return Exposure.DataComponents.getCameraDisassembled(stack, false);
     }
 
     public void setDisassembled(ItemStack stack, boolean disassembled) {
         if (!disassembled) {
-            stack.remove(Exposure.DataComponents.CAMERA_DISASSEMBLED);
+            Exposure.DataComponents.setCameraDisassembled(stack,null);
         } else {
-            stack.set(Exposure.DataComponents.CAMERA_DISASSEMBLED, true);
+            Exposure.DataComponents.setCameraDisassembled(stack,true);
         }
     }
 
     public long getLastActionTime(ItemStack stack) {
-        return stack.getOrDefault(Exposure.DataComponents.CAMERA_LAST_ACTION_TIME, -1L);
+        return Exposure.DataComponents.getLastCameraActionTime(stack,-1L);
     }
 
     public void setLastActionTime(ItemStack stack, long lastActionTime) {
-        stack.set(Exposure.DataComponents.CAMERA_LAST_ACTION_TIME, lastActionTime);
+        Exposure.DataComponents.setCameraLastActionTime(stack, lastActionTime);
     }
 
     public void actionPerformed(ItemStack stack, CameraHolder holder) {
@@ -356,7 +355,7 @@ public class CameraItem extends Item {
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> components, TooltipFlag tooltipFlag) {
+    public void appendHoverText(ItemStack stack, Level context, List<Component> components, TooltipFlag tooltipFlag) {
         if (Config.Client.CAMERA_SHOW_FILM_FRAMES_IN_TOOLTIP.get()) {
             Attachment.FILM.ifPresent(stack, (filmItem, filmStack) -> {
                 int exposed = filmItem.getStoredFramesCount(filmStack);
@@ -448,7 +447,7 @@ public class CameraItem extends Item {
 
             if (attachment.matches(otherStack)) {
                 // Insertion
-                if (storedStack.isEmpty() || ItemStack.isSameItemSameComponents(storedStack.getForReading(), otherStack)) {
+                if (storedStack.isEmpty() || ItemStack.isSameItemSameTags(storedStack.getForReading(), otherStack)) {
                     int availableCount = Math.max(0, maxCount - storedStack.getForReading().getCount());
                     if (availableCount == 0) {
                         holder.asHolderEntity().playSound(Exposure.SoundEvents.CAMERA_LENS_RING_CLICK.get(), 0.9f, 1f);
@@ -513,7 +512,7 @@ public class CameraItem extends Item {
             MenuProvider menuProvider = new MenuProvider() {
                 @Override
                 public @NotNull Component getDisplayName() {
-                    return stack.get(DataComponents.CUSTOM_NAME) != null
+                    return stack.hasCustomHoverName()
                             ? stack.getHoverName() : Component.translatable("container.exposure.camera");
                 }
 
@@ -742,7 +741,7 @@ public class CameraItem extends Item {
     protected void onShutterOpen(CameraHolder holder, ServerLevel serverLevel, ItemStack stack) {
         holder.getExposureCameraOperator().ifPresent(operator -> {
             if (operator instanceof ServerPlayer player) {
-                Packets.sendToClient(ShutterOpenedS2CP.INSTANCE, player);
+                Packets.sendToClient(ActionS2CP.SHUTTER_OPENED, player);
             }
         });
     }
@@ -803,44 +802,44 @@ public class CameraItem extends Item {
     }
 
     protected void addFrameExtraData(CameraHolder holder, ServerLevel level, ItemStack camera, CaptureParameters params,
-                                     List<BlockPos> positionsInFrame, List<LivingEntity> entitiesInFrame, ExtraData data) {
+                                     List<BlockPos> positionsInFrame, List<LivingEntity> entitiesInFrame, CompoundTag data) {
         Entity cameraHolder = holder.asHolderEntity();
         boolean projecting = params.projection().isPresent();
 
         if (projecting) {
-            data.put(Frame.PROJECTED, true);
+            NbtType.put(data,Frame.PROJECTED, true);
             return;
         }
 
         if (params.getFlash()) {
-            data.put(Frame.FLASH, true);
+            NbtType.put(data,Frame.FLASH, true);
         }
         if (isInSelfieMode(camera)) {
-            data.put(Frame.SELFIE, true);
+            NbtType.put(data,Frame.SELFIE, true);
         }
         if (holder instanceof CameraStandEntity) {
-            data.put(Frame.ON_STAND, true);
+            NbtType.put(data,Frame.ON_STAND, true);
         }
 
         double zoom = CameraSettings.ZOOM.getOrDefault(camera);
         FocalRange focalRange = getFocalRange(level.registryAccess(), camera);
         int focalLength = (int) focalRange.focalLengthFromZoom(zoom);
-        data.put(Frame.FOCAL_LENGTH, focalLength);
+        NbtType.put(data,Frame.FOCAL_LENGTH, focalLength);
 
         params.extraData().get(CaptureParameters.LIGHT_LEVEL)
-                .ifPresent(lightLevel -> data.put(Frame.LIGHT_LEVEL, lightLevel));
+                .ifPresent(lightLevel -> NbtType.put(data,Frame.LIGHT_LEVEL, lightLevel));
 
         if (params.filmProperties().type() == ExposureType.BLACK_AND_WHITE) {
             params.singleChannel().ifPresent(channel ->
-                    data.put(Frame.COLOR_CHANNEL, channel));
+                    NbtType.put(data,Frame.COLOR_CHANNEL, channel));
         }
 
-        data.put(Frame.POSITION, cameraHolder.position());
-        data.put(Frame.PITCH, cameraHolder.getXRot());
-        data.put(Frame.YAW, cameraHolder.getYRot());
+        NbtType.put(data,Frame.POSITION, cameraHolder.position());
+        NbtType.put(data,Frame.PITCH, cameraHolder.getXRot());
+        NbtType.put(data,Frame.YAW, cameraHolder.getYRot());
 
-        data.put(Frame.DAY_TIME, (int) level.getDayTime());
-        data.put(Frame.DIMENSION, level.dimension().location());
+        NbtType.put(data,Frame.DAY_TIME, (int) level.getDayTime());
+        NbtType.put(data,Frame.DIMENSION, level.dimension().location());
 
         BlockPos blockPos = cameraHolder.blockPosition();
 
@@ -849,18 +848,18 @@ public class CameraItem extends Item {
         int skyLight = level.getBrightness(LightLayer.SKY, blockPos);
 
         if (cameraHolder.isUnderWater()) {
-            data.put(Frame.UNDERWATER, true);
+            NbtType.put(data,Frame.UNDERWATER, true);
         }
         if (cameraHolder.getBlockY() < Math.min(level.getSeaLevel(), surfaceHeight) && skyLight == 0) {
-            data.put(Frame.IN_CAVE, true);
+            NbtType.put(data,Frame.IN_CAVE, true);
         } else if (!cameraHolder.isUnderWater()) {
             Biome.Precipitation precipitation = level.getBiome(blockPos).value().getPrecipitationAt(blockPos);
             if (level.isThundering() && precipitation != Biome.Precipitation.NONE)
-                data.put(Frame.WEATHER, precipitation == Biome.Precipitation.SNOW ? "Snowstorm" : "Thunder");
+                NbtType.put(data,Frame.WEATHER, precipitation == Biome.Precipitation.SNOW ? "Snowstorm" : "Thunder");
             else if (level.isRaining() && precipitation != Biome.Precipitation.NONE)
-                data.put(Frame.WEATHER, precipitation == Biome.Precipitation.SNOW ? "Snow" : "Rain");
+                NbtType.put(data,Frame.WEATHER, precipitation == Biome.Precipitation.SNOW ? "Snow" : "Rain");
             else
-                data.put(Frame.WEATHER, "Clear");
+                NbtType.put(data,Frame.WEATHER, "Clear");
         }
 
         // Most common biome:
@@ -871,7 +870,7 @@ public class CameraItem extends Item {
                 .max(Map.Entry.comparingByValue())
                 .map(Map.Entry::getKey)
                 .flatMap(pos -> level.getBiome(pos).unwrapKey().map(ResourceKey::location))
-                .ifPresent(biome -> data.put(Frame.BIOME, biome));
+                .ifPresent(biome -> NbtType.put(data,Frame.BIOME, biome));
 
         List<ResourceLocation> structures = positionsInFrame.stream()
                 .map(pos -> LevelUtil.getStructuresAt(level, pos))
@@ -880,7 +879,7 @@ public class CameraItem extends Item {
                 .stream()
                 .toList();
         if (!structures.isEmpty()) {
-            data.put(Frame.STRUCTURES, structures);
+            NbtType.put(data,Frame.STRUCTURES, structures);
         }
 
         PlatformHelper.postModifyFrameExtraDataEvent(holder, camera, params, positionsInFrame, entitiesInFrame, data);
@@ -927,7 +926,7 @@ public class CameraItem extends Item {
                 .ifPresent(player -> {
                     ServerPlayer serverPlayer = (ServerPlayer) player;
                     serverPlayer.awardStat(Exposure.Stats.FILM_FRAMES_EXPOSED);
-                    Exposure.CriteriaTriggers.FRAME_EXPOSED.get().trigger(
+                    Exposure.ExposureCriteriaTriggers.FRAME_EXPOSED.trigger(
                             serverPlayer, holder, stack, frame, positionsInFrame, entitiesInFrame);
                 });
 
@@ -942,9 +941,15 @@ public class CameraItem extends Item {
                 // I wanted to implement this in a predicate,
                 // but it's tricky because EntitySubPredicates do not get the player in their 'match' method.
                 // So it's just easier to hardcode it like this.
-                Exposure.CriteriaTriggers.PHOTOGRAPH_ENDERMAN_EYES.get().trigger(player);
+                Exposure.ExposureCriteriaTriggers.PHOTOGRAPH_ENDERMAN_EYES.trigger(player);
             }
         }
+    }
+
+    public static ItemStack transmuteCopy(ItemStack original,Item newItem) {
+        ItemStack stack = new ItemStack(newItem,original.getCount());
+        stack.setTag(original.getTag());
+        return stack;
     }
 
     public void handleProjectionResult(ServerLevel level, CameraHolder holder, ItemStack stack,
@@ -957,8 +962,9 @@ public class CameraItem extends Item {
         Entity entity = holder.asHolderEntity();
 
         if (projectionState == CameraInstance.ProjectionState.FAILED || projectionState == CameraInstance.ProjectionState.TIMED_OUT) {
-            ItemStack filterStack = filter.getCopy().transmuteCopy(Exposure.Items.BROKEN_INTERPLANAR_PROJECTOR.get());
-            error.ifPresent(err -> filterStack.set(Exposure.DataComponents.INTERPLANAR_PROJECTOR_ERROR_CODE, err.code()));
+
+            ItemStack filterStack = transmuteCopy(filter.getCopy(),Exposure.Items.BROKEN_INTERPLANAR_PROJECTOR.get());
+            error.ifPresent(err -> Exposure.DataComponents.setInterplanarProjectorErrorCode(filterStack, err.code()));
             Attachment.FILTER.set(stack, filterStack);
             Sound.play(entity, Exposure.SoundEvents.BSOD.get());
             if (getShutter().isOpen(stack)) {
@@ -972,12 +978,13 @@ public class CameraItem extends Item {
         Attachment.FILTER.set(stack, filterStack);
 
         if (projectionState == CameraInstance.ProjectionState.SUCCESSFUL) {
+            RandomSource randomSource = level.random;
             holder.getServerPlayerAwardedForExposure()
-                    .ifPresent(player -> Exposure.CriteriaTriggers.SUCCESSFULLY_PROJECT_IMAGE.get().trigger(player));
+                    .ifPresent(player -> Exposure.ExposureCriteriaTriggers.SUCCESSFULLY_PROJECT_IMAGE.trigger(player));
             Sound.play(entity, Exposure.SoundEvents.INTERPLANAR_PROJECT.get(), entity.getSoundSource(), 0.8f, 1.1f);
             for (int i = 0; i < 16; i++) {
                 level.sendParticles(ParticleTypes.PORTAL, entity.getX(), entity.getY() + 1.2, entity.getZ(), 2,
-                        entity.getRandom().nextGaussian() * 0.3, entity.getRandom().nextGaussian() * 0.3, entity.getRandom().nextGaussian() * 0.3, 0.01);
+                        randomSource.nextGaussian() * 0.3, randomSource.nextGaussian() * 0.3, randomSource.nextGaussian() * 0.3, 0.01);
             }
         }
     }
@@ -1022,8 +1029,8 @@ public class CameraItem extends Item {
             if (filter.isEmpty()) return shutterOpen ? 0xFF333333 : -1;
             if (filter.getForReading().getItem() instanceof BlockItem item && item.getBlock() instanceof StainedGlassPaneBlock pane) {
                 return shutterOpen
-                        ? Color.argb(pane.getColor().getTextureDiffuseColor()).multiply(0.2f).withAlpha(255).getARGB()
-                        : pane.getColor().getTextureDiffuseColor();
+                        ? Color.argb(pane.getColor().getTextColor()).multiply(0.2f).withAlpha(255).getARGB()
+                        : pane.getColor().getTextColor();
             }
             if (filter.getForReading().is(Exposure.Items.INTERPLANAR_PROJECTOR.get()))
                 return shutterOpen ? 0xFF051A0F : 0xFF50B27E;

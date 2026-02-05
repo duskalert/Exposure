@@ -10,6 +10,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Containers;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -98,9 +99,9 @@ public class LightroomBlock extends Block implements EntityBlock {
     }
 
     @Override
-    protected @NotNull InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
+    public @NotNull InteractionResult use(@NotNull BlockState blockState, Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hitResult) {
         if (!(level.getBlockEntity(pos) instanceof LightroomBlockEntity lightroomBlockEntity))
-            return super.useWithoutItem(state, level, pos, player, hitResult);
+            return InteractionResult.FAIL;
 
         player.awardStat(Exposure.Stats.INTERACT_WITH_LIGHTROOM);
 

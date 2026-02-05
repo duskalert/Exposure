@@ -8,6 +8,7 @@ import io.github.mortuusars.exposure.world.item.camera.CameraItem;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.ModelResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
@@ -49,14 +50,14 @@ public class CameraModel {
         }
 
         if (!models.isEmpty()) {
-            models.addFirst(original);
+            models.add(0,original);
             return new CompositeModel(models);
         }
 
         return original;
     }
 
-    private static BakedModel getModelWithOverrides(ModelResourceLocation location, ItemStack stack,
+    private static BakedModel getModelWithOverrides(ResourceLocation location, ItemStack stack,
                                                     @Nullable ClientLevel level, @Nullable LivingEntity entity, int seed) {
         BakedModel model = PlatformHelperClient.getModel(location);
         return model.getOverrides().resolve(model, stack, level, entity, seed);

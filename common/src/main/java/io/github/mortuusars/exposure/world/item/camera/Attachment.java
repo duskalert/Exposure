@@ -5,7 +5,6 @@ import io.github.mortuusars.exposure.world.item.FilmRollItem;
 import io.github.mortuusars.exposure.world.item.component.StoredItemStack;
 import io.github.mortuusars.exposure.world.sound.Sound;
 import io.github.mortuusars.exposure.world.sound.SoundEffect;
-import net.minecraft.core.component.DataComponentType;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
@@ -20,7 +19,7 @@ import java.util.function.*;
  * Copy ItemStack and set with {@link Attachment#set(ItemStack, ItemStack)}.
  */
 public record Attachment<T extends Item>(ResourceLocation id,
-                                         DataComponentType<StoredItemStack> component,
+                                         String component,
                                          Predicate<ItemStack> itemPredicate,
                                          Class<T> itemType,
                                          Supplier<Integer> maxCount,
@@ -28,7 +27,7 @@ public record Attachment<T extends Item>(ResourceLocation id,
                                          Optional<SoundEffect> removedSound) {
     public static final Attachment<FilmRollItem> FILM = new Attachment<>(
             Exposure.resource("film"),
-            Exposure.DataComponents.FILM,
+            "camera_film",
             stack -> stack.getItem() instanceof FilmRollItem,
             FilmRollItem.class,
             () -> 1,
@@ -36,7 +35,7 @@ public record Attachment<T extends Item>(ResourceLocation id,
             new SoundEffect(Exposure.SoundEvents.FILM_REMOVED, 0.7F, 1F));
     public static final Attachment<Item> FLASH = new Attachment<>(
             Exposure.resource("flash"),
-            Exposure.DataComponents.FLASH,
+            "camera_flash",
             stack -> stack.is(Exposure.Tags.Items.FLASHES),
             Item.class,
             () -> 1,
@@ -44,7 +43,7 @@ public record Attachment<T extends Item>(ResourceLocation id,
             new SoundEffect(Exposure.SoundEvents.CAMERA_GENERIC_CLICK, 0.35F, 0.95F));
     public static final Attachment<Item> LENS = new Attachment<>(
             Exposure.resource("lens"),
-            Exposure.DataComponents.LENS,
+            "camera_lens",
             stack -> stack.is(Exposure.Tags.Items.LENSES),
             Item.class,
             () -> 1,
@@ -52,7 +51,7 @@ public record Attachment<T extends Item>(ResourceLocation id,
             new SoundEffect(Exposure.SoundEvents.LENS_REMOVE));
     public static final Attachment<Item> FILTER = new Attachment<>(
             Exposure.resource("filter"),
-            Exposure.DataComponents.FILTER,
+            "camera_filter",
             stack -> stack.is(Exposure.Tags.Items.FILTERS),
             Item.class,
             () -> 1,
@@ -60,7 +59,7 @@ public record Attachment<T extends Item>(ResourceLocation id,
             new SoundEffect(Exposure.SoundEvents.FILTER_REMOVE, 0.5F));
 
     public Attachment(ResourceLocation id,
-                      DataComponentType<StoredItemStack> component,
+                      String component,
                       Predicate<ItemStack> itemPredicate,
                       Class<T> itemType,
                       Supplier<Integer> maxCount,
@@ -70,7 +69,7 @@ public record Attachment<T extends Item>(ResourceLocation id,
     }
 
     public Attachment(ResourceLocation id,
-                      DataComponentType<StoredItemStack> component,
+                      String component,
                       Predicate<ItemStack> itemPredicate,
                       Class<T> itemType,
                       Supplier<Integer> maxCount) {
@@ -94,7 +93,7 @@ public record Attachment<T extends Item>(ResourceLocation id,
      * ItemStacks gotten from this method should NOT be modified under any circumstances.
      */
     public StoredItemStack get(ItemStack stack) {
-        return stack.getOrDefault(component, StoredItemStack.EMPTY);
+        return Exposure.DataComponents.getStoredItemStack(stack,component, StoredItemStack.EMPTY);
     }
 
     /**
@@ -173,9 +172,9 @@ public record Attachment<T extends Item>(ResourceLocation id,
 
     public Attachment<T> set(ItemStack stack, ItemStack attachment) {
         if (attachment.isEmpty()) {
-            stack.remove(component);
+            stack.removeTagKey(component);
         } else {
-            stack.set(component, new StoredItemStack(attachment));
+            Exposure.DataComponents.setStoredItemStack(stack,component, new StoredItemStack(attachment));
         }
         return this;
     }

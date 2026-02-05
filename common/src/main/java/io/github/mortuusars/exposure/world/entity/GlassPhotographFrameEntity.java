@@ -22,7 +22,7 @@ public class GlassPhotographFrameEntity extends PhotographFrameEntity {
 
     @Override
     public PhotographFrameItem getBaseFrameItem() {
-        return Exposure.Items.CLEAR_PHOTOGRAPH_FRAME.get();
+        return Exposure.Items.GLASS_PHOTOGRAPH_FRAME.get();
     }
 
     @Override

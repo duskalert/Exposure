@@ -46,7 +46,7 @@ public class LoadCommand {
 
         try {
             RegistryOps<Tag> ops = RegistryOps.create(NbtOps.INSTANCE, context.getSource().registryAccess());
-            captureParameters = CaptureParameters.CODEC.decode(ops, properties).getOrThrow().getFirst();
+            captureParameters = CaptureParameters.CODEC.decode(ops, properties).get().orThrow().getFirst();
         } catch (Exception e) {
             context.getSource().sendFailure(Component.literal("Cannot decode properties: " + e.getMessage()));
             return 0;
@@ -62,7 +62,7 @@ public class LoadCommand {
 
         Supplier<Component> msg = () -> {
             ItemStack photograph = new ItemStack(Exposure.Items.PHOTOGRAPH.get());
-            photograph.set(Exposure.DataComponents.PHOTOGRAPH_FRAME, frame);
+            Exposure.DataComponents.setPhotographFrame(photograph, frame);
 
             return Component.literal("Loaded exposure: ")
                     .append(Component.literal(exposureId)

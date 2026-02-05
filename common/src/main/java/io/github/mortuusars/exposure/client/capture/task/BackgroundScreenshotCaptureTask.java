@@ -2,6 +2,7 @@ package io.github.mortuusars.exposure.client.capture.task;
 
 import com.mojang.blaze3d.pipeline.RenderTarget;
 import com.mojang.blaze3d.pipeline.TextureTarget;
+import com.mojang.blaze3d.vertex.PoseStack;
 import io.github.mortuusars.exposure.Config;
 import io.github.mortuusars.exposure.Exposure;
 import io.github.mortuusars.exposure.ExposureClient;
@@ -66,7 +67,7 @@ public class BackgroundScreenshotCaptureTask extends Task<Result<Image>> {
 
             minecraft.levelRenderer.graphicsChanged();
             renderTarget.bindWrite(false);
-            minecraft.gameRenderer.renderLevel(minecraft.getTimer());
+            minecraft.gameRenderer.renderLevel(1.0F, 0L, new PoseStack());//minecraft.getTimer? todo
 
             applyShaderEffects(renderTarget);
 

@@ -28,3 +28,62 @@ accessible field net/minecraft/client/gui/screens/Screen renderables Ljava/util/
 accessible method net/minecraft/client/gui/screens/inventory/AbstractContainerScreen getTooltipFromContainerItem (Lnet/minecraft/world/item/ItemStack;)Ljava/util/List;
 
 accessible method net/minecraft/world/entity/monster/EnderMan isLookingAtMe (Lnet/minecraft/world/entity/player/Player;)Z
+accessible method net/minecraft/world/item/ItemStackLinkedSet hashStackAndTag (Lnet/minecraft/world/item/ItemStack;)I
+accessible method net/minecraft/advancements/CriteriaTriggers register (Lnet/minecraft/advancements/CriterionTrigger;)Lnet/minecraft/advancements/CriterionTrigger;
+
+accessible method net/minecraft/client/gui/screens/MenuScreens register (Lnet/minecraft/world/inventory/MenuType;Lnet/minecraft/client/gui/screens/MenuScreens$ScreenConstructor;)V
+accessible class net/minecraft/client/gui/screens/MenuScreens$ScreenConstructor
+
+accessible field net/minecraft/advancements/critereon/EnchantmentPredicate enchantment Lnet/minecraft/world/item/enchantment/Enchantment;
+accessible field net/minecraft/advancements/critereon/EnchantmentPredicate level Lnet/minecraft/advancements/critereon/MinMaxBounds$Ints;
+accessible field net/minecraft/advancements/critereon/NbtPredicate tag Lnet/minecraft/nbt/CompoundTag;
+
+accessible field net/minecraft/advancements/critereon/ItemPredicate tag Lnet/minecraft/tags/TagKey;
+accessible field net/minecraft/advancements/critereon/ItemPredicate items Ljava/util/Set;
+accessible field net/minecraft/advancements/critereon/ItemPredicate count Lnet/minecraft/advancements/critereon/MinMaxBounds$Ints;
+accessible field net/minecraft/advancements/critereon/ItemPredicate durability Lnet/minecraft/advancements/critereon/MinMaxBounds$Ints;
+accessible field net/minecraft/advancements/critereon/ItemPredicate potion Lnet/minecraft/world/item/alchemy/Potion;
+accessible field net/minecraft/advancements/critereon/ItemPredicate enchantments [Lnet/minecraft/advancements/critereon/EnchantmentPredicate;
+accessible field net/minecraft/advancements/critereon/ItemPredicate storedEnchantments [Lnet/minecraft/advancements/critereon/EnchantmentPredicate;
+accessible field net/minecraft/advancements/critereon/ItemPredicate nbt Lnet/minecraft/advancements/critereon/NbtPredicate;
+
+mutable field net/minecraft/advancements/critereon/EntitySubPredicate$Types TYPES Lcom/google/common/collect/BiMap;
+
+accessible field net/minecraft/advancements/critereon/LocationPredicate x Lnet/minecraft/advancements/critereon/MinMaxBounds$Doubles;
+accessible field net/minecraft/advancements/critereon/LocationPredicate y Lnet/minecraft/advancements/critereon/MinMaxBounds$Doubles;
+accessible field net/minecraft/advancements/critereon/LocationPredicate z Lnet/minecraft/advancements/critereon/MinMaxBounds$Doubles;
+
+accessible field net/minecraft/advancements/critereon/LocationPredicate biome Lnet/minecraft/resources/ResourceKey;
+accessible field net/minecraft/advancements/critereon/LocationPredicate structure Lnet/minecraft/resources/ResourceKey;
+accessible field net/minecraft/advancements/critereon/LocationPredicate dimension Lnet/minecraft/resources/ResourceKey;
+
+accessible field net/minecraft/advancements/critereon/LocationPredicate smokey Ljava/lang/Boolean;
+
+accessible field net/minecraft/advancements/critereon/LightPredicate composite Lnet/minecraft/advancements/critereon/MinMaxBounds$Ints;
+accessible method net/minecraft/advancements/critereon/LightPredicate <init> (Lnet/minecraft/advancements/critereon/MinMaxBounds$Ints;)V
+
+accessible field net/minecraft/advancements/critereon/LocationPredicate light Lnet/minecraft/advancements/critereon/LightPredicate;
+accessible field net/minecraft/advancements/critereon/LocationPredicate block Lnet/minecraft/advancements/critereon/BlockPredicate;
+accessible field net/minecraft/advancements/critereon/LocationPredicate fluid Lnet/minecraft/advancements/critereon/FluidPredicate;
+
+accessible class net/minecraft/advancements/critereon/StatePropertiesPredicate$PropertyMatcher
+accessible class net/minecraft/advancements/critereon/StatePropertiesPredicate$RangedPropertyMatcher
+accessible class net/minecraft/advancements/critereon/StatePropertiesPredicate$ExactPropertyMatcher
+
+accessible field net/minecraft/advancements/critereon/StatePropertiesPredicate$ExactPropertyMatcher value Ljava/lang/String;
+
+accessible field net/minecraft/advancements/critereon/StatePropertiesPredicate$RangedPropertyMatcher minValue Ljava/lang/String;
+accessible field net/minecraft/advancements/critereon/StatePropertiesPredicate$RangedPropertyMatcher maxValue Ljava/lang/String;
+
+accessible method net/minecraft/advancements/critereon/StatePropertiesPredicate <init> (Ljava/util/List;)V
+accessible field net/minecraft/advancements/critereon/StatePropertiesPredicate properties Ljava/util/List;
+
+accessible field net/minecraft/advancements/critereon/BlockPredicate properties Lnet/minecraft/advancements/critereon/StatePropertiesPredicate;
+accessible field net/minecraft/advancements/critereon/BlockPredicate blocks Ljava/util/Set;
+accessible field net/minecraft/advancements/critereon/BlockPredicate nbt Lnet/minecraft/advancements/critereon/NbtPredicate;
+accessible field net/minecraft/advancements/critereon/BlockPredicate tag Lnet/minecraft/tags/TagKey;
+
+accessible field net/minecraft/advancements/critereon/FluidPredicate fluid Lnet/minecraft/world/level/material/Fluid;
+accessible field net/minecraft/advancements/critereon/FluidPredicate tag Lnet/minecraft/tags/TagKey;
+accessible field net/minecraft/advancements/critereon/FluidPredicate properties Lnet/minecraft/advancements/critereon/StatePropertiesPredicate;
+accessible method net/minecraft/advancements/critereon/MinMaxBounds$Ints <init> (Ljava/lang/Integer;Ljava/lang/Integer;)V

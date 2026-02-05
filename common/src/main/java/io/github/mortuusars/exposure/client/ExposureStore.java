@@ -3,7 +3,6 @@ package io.github.mortuusars.exposure.client;
 import io.github.mortuusars.exposure.Exposure;
 import io.github.mortuusars.exposure.world.level.storage.RequestedExposureStatus;
 import io.github.mortuusars.exposure.world.level.storage.RequestedPalettedExposure;
-import net.minecraft.util.StringUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
@@ -17,7 +16,7 @@ public class ExposureStore {
     private final Map<String, RequestedPalettedExposure> exposures = new ConcurrentHashMap<>();
 
     public RequestedPalettedExposure getOrRequest(@NotNull String id) {
-        if (StringUtil.isBlank(id)) {
+        if (id.isBlank()) {
             return RequestedPalettedExposure.INVALID_ID;
         }
 
@@ -40,7 +39,7 @@ public class ExposureStore {
     }
 
     public void receive(@NotNull String id, RequestedPalettedExposure result) {
-        if (StringUtil.isBlank(id)) {
+        if (id.isBlank()) {
             return;
         }
 

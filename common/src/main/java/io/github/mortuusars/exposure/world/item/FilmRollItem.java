@@ -9,8 +9,10 @@ import io.github.mortuusars.exposure.data.ColorPalettes;
 import io.github.mortuusars.exposure.world.camera.ExposureType;
 import io.github.mortuusars.exposure.client.gui.ClientGUI;
 import io.github.mortuusars.exposure.world.camera.film.properties.FilmProperties;
+import io.github.mortuusars.exposure.world.camera.film.properties.FilmStyle;
 import io.github.mortuusars.exposure.world.camera.frame.Frame;
 import io.github.mortuusars.exposure.world.inventory.ItemRenameMenu;
+import io.github.mortuusars.exposure.world.item.interfaces.DefaultFilmStyle;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
@@ -32,17 +34,24 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class FilmRollItem extends Item implements SensitiveFilmItem {
+public class FilmRollItem extends Item implements SensitiveFilmItem, DefaultFilmStyle {
     public static final int BAR_BLACK_AND_WHITE = Mth.color(0.8F, 0.8F, 0.9F);
     public static final int BAR_COLOR = Mth.color(0.4F, 0.4F, 1.0F);
 
     protected final ExposureType type;
     protected final int barColor;
+    private final FilmStyle filmStyle;
 
-    public FilmRollItem(ExposureType type, int barColor, Properties properties) {
+    public FilmRollItem(ExposureType type, int barColor, Properties properties, FilmStyle filmStyle) {
         super(properties);
         this.type = type;
         this.barColor = barColor;
+        this.filmStyle = filmStyle;
+    }
+
+    @Override
+    public FilmStyle getDefaultFilmStyle() {
+        return filmStyle;
     }
 
     @Override
@@ -60,16 +69,16 @@ public class FilmRollItem extends Item implements SensitiveFilmItem {
         Preconditions.checkState(getStoredFramesCount(stack) < getMaxFrameCount(stack),
                 "Cannot add more frames than film could fit. Size: " + getMaxFrameCount(stack));
 
-        List<Frame> frames = new ArrayList<>(stack.getOrDefault(Exposure.DataComponents.FILM_FRAMES, Collections.emptyList()));
+        List<Frame> frames = new ArrayList<>(Exposure.DataComponents.getFilmFrames(stack, Collections.emptyList()));
         frames.add(frame);
 
-        stack.set(Exposure.DataComponents.FILM_FRAMES, frames);
+        Exposure.DataComponents.setFilmFrames(stack, frames);
     }
 
     // --
 
     @Override
-    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> list, TooltipFlag tooltipFlag) {
+    public void appendHoverText(ItemStack stack, Level context, List<Component> list, TooltipFlag tooltipFlag) {
         int exposedFrames = getStoredFramesCount(stack);
         if (exposedFrames > 0) {
             int totalFrames = getMaxFrameCount(stack);

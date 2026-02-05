@@ -34,7 +34,7 @@ public class ColorPaletteTests {
     @Test
     void hexCodec() {
         ColorPalette palette = new ColorPalette(new int[] { 0x7F7F7F7F, 0xFF112233});
-        JsonObject jsonObject = ColorPalette.CODEC.encodeStart(JsonOps.INSTANCE, palette).getOrThrow().getAsJsonObject();
+        JsonObject jsonObject = ColorPalette.CODEC.encodeStart(JsonOps.INSTANCE, palette).get().orThrow().getAsJsonObject();
         JsonArray jsonArray = jsonObject.get("colors").getAsJsonArray();
 
         assertEquals("7F7F7F7F", jsonArray.get(0).getAsString());
@@ -52,7 +52,7 @@ public class ColorPaletteTests {
                 }
                 """;
 
-        ColorPalette decodedPalette = ColorPalette.CODEC.decode(JsonOps.INSTANCE, GsonHelper.parse(json)).getOrThrow().getFirst();
+        ColorPalette decodedPalette = ColorPalette.CODEC.decode(JsonOps.INSTANCE, GsonHelper.parse(json)).get().orThrow().getFirst();
 
         assertEquals(0x7F7F7F7F, decodedPalette.byId(0));
         assertEquals(0x33001122, decodedPalette.byId(1));

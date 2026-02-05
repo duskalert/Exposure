@@ -19,7 +19,7 @@ public class PhotographStyles {
 
     public static @NotNull PhotographStyle get(PhotographType type) {
         @Nullable PhotographStyle style = STYLES.get(type);
-        Preconditions.checkNotNull(style, "Type '%s' does not have a registered style.");
+        Preconditions.checkNotNull(style, "NbtType '%s' does not have a registered style.");
         return style;
     }
 }

@@ -4,7 +4,6 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import io.github.mortuusars.exposure.Exposure;
 import io.github.mortuusars.exposure.world.camera.frame.Frame;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.core.UUIDUtil;
 import net.minecraft.nbt.*;
 import net.minecraft.server.MinecraftServer;
@@ -46,7 +45,7 @@ public class ExposureFrameHistory extends SavedData {
         List<Frame> list = frames.compute(uuid, (id, framesList) ->
                 framesList == null ? new ArrayList<>() : new ArrayList<>(framesList));
         while (list.size() >= LIMIT) {
-            list.removeFirst();
+            list.remove(0);
         }
         list.add(frame);
         setDirty();
@@ -61,10 +60,10 @@ public class ExposureFrameHistory extends SavedData {
     }
 
     @Override
-    public @NotNull CompoundTag save(CompoundTag tag, HolderLookup.Provider registries) {
+    public @NotNull CompoundTag save(CompoundTag tag) {
         DataResult<Tag> encodingResult = CODEC.encode(this, NbtOps.INSTANCE, tag);
-        if (encodingResult.isSuccess()) {
-            Tag encodedTag = encodingResult.getOrThrow();
+        if (encodingResult.error().isEmpty()) {
+            Tag encodedTag = encodingResult.get().left().get();
             if (encodedTag instanceof CompoundTag encodedCompoundTag)
                 return encodedCompoundTag;
             else {
@@ -79,15 +78,11 @@ public class ExposureFrameHistory extends SavedData {
         return tag;
     }
 
-    public static SavedData.Factory<ExposureFrameHistory> factory() {
-        return new SavedData.Factory<>(() -> new ExposureFrameHistory(new HashMap<>()), ExposureFrameHistory::load, null);
-    }
-
-    public static ExposureFrameHistory load(CompoundTag tag, HolderLookup.Provider levelRegistry) {
-        return CODEC.decode(NbtOps.INSTANCE, tag).getOrThrow().getFirst();
+    public static ExposureFrameHistory load(CompoundTag tag) {
+        return CODEC.decode(NbtOps.INSTANCE, tag).get().orThrow().getFirst();
     }
 
     public static @NotNull ExposureFrameHistory loadOrCreate(MinecraftServer server) {
-        return server.overworld().getDataStorage().computeIfAbsent(ExposureFrameHistory.factory(), "exposure_frame_history");
+        return server.overworld().getDataStorage().computeIfAbsent(ExposureFrameHistory::load,() -> new ExposureFrameHistory(new HashMap<>()) ,"exposure_frame_history");
     }
 }

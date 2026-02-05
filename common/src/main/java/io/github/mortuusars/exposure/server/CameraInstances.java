@@ -54,7 +54,7 @@ public class CameraInstances {
     }
 
     public static void ifPresent(ItemStack stack, Consumer<CameraInstance> instanceConsumer) {
-        @Nullable CameraId id = stack.get(Exposure.DataComponents.CAMERA_ID);
+        @Nullable CameraId id = Exposure.DataComponents.getCameraId(stack);
         if (id != null) {
             ifPresent(id, instanceConsumer);
         }

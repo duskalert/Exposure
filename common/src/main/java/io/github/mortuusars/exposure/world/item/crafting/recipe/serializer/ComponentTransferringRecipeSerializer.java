@@ -1,81 +1,91 @@
 package io.github.mortuusars.exposure.world.item.crafting.recipe.serializer;
 
-import com.mojang.serialization.DataResult;
-import com.mojang.serialization.MapCodec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
 import io.github.mortuusars.exposure.world.item.crafting.recipe.ComponentTransferringRecipe;
+import io.github.mortuusars.exposure.world.item.crafting.recipe.FilmDevelopingRecipe;
+import io.github.mortuusars.exposure.world.item.crafting.recipe.PhotographAgingRecipe;
+import io.github.mortuusars.exposure.world.item.crafting.recipe.PhotographCopyingRecipe;
 import net.minecraft.core.NonNullList;
-import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.codec.ByteBufCodecs;
-import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.*;
-import org.jetbrains.annotations.NotNull;
+import net.minecraft.world.item.crafting.CraftingBookCategory;
+import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.item.crafting.ShapedRecipe;
 
 public class ComponentTransferringRecipeSerializer<T extends ComponentTransferringRecipe> implements RecipeSerializer<T> {
-    private final MapCodec<T> codec;
-    private final StreamCodec<RegistryFriendlyByteBuf, T> streamCodec;
 
-    public ComponentTransferringRecipeSerializer(String recipeName, String sourceName, RecipeConstructor<T> constructor) {
-        this.codec = createCodec(recipeName, sourceName, constructor);
-        this.streamCodec = createStreamCodec(constructor);
+    protected final String target;
+    private final Factory<T> factory;
+
+    public ComponentTransferringRecipeSerializer(String target, Factory<T> factory) {
+        this.target = target;
+        this.factory = factory;
     }
 
-    public ComponentTransferringRecipeSerializer(String serializedSourceIngredientName, RecipeConstructor<T> constructor) {
-        this("component_transferring", serializedSourceIngredientName, constructor);
+    public String target() {
+        return target;
     }
 
-    public ComponentTransferringRecipeSerializer(RecipeConstructor<T> constructor) {
-        this("component_transferring", "source_ingredient", constructor);
+    public static final Factory<ComponentTransferringRecipe> COMPONENT_TRANSFERRING = (id, targetIngredient, ingredients, result) ->
+      new ComponentTransferringRecipe(id,CraftingBookCategory.MISC,targetIngredient,ingredients,result);
+
+    public static final Factory<ComponentTransferringRecipe> PHOTOGRAPH_AGING = PhotographAgingRecipe::new;
+    public static final Factory<ComponentTransferringRecipe> PHOTOGRAPH_COPYING = PhotographCopyingRecipe::new;
+    public static final Factory<ComponentTransferringRecipe> FILM_DEVELOPING = FilmDevelopingRecipe::new;
+
+    @Override
+    public T fromJson(ResourceLocation recipeId, JsonObject serializedRecipe) {
+        Ingredient targetIngredient = Ingredient.fromJson(GsonHelper.getNonNull(serializedRecipe, target));
+        NonNullList<Ingredient> ingredients = getIngredients(GsonHelper.getAsJsonArray(serializedRecipe, "ingredients"));
+        ItemStack result = ShapedRecipe.itemStackFromJson(GsonHelper.getAsJsonObject(serializedRecipe, "result"));
+        if (targetIngredient.isEmpty())
+            throw new JsonParseException("Recipe should have '"+target+"' ingredient.");
+        return factory.create(recipeId,targetIngredient,ingredients,result);
     }
 
-    protected @NotNull MapCodec<T> createCodec(String recipeTypeName, String sourceIngredientName, RecipeConstructor<T> constructor) {
-        return RecordCodecBuilder.mapCodec(
-                instance -> instance.group(
-                        CraftingBookCategory.CODEC.fieldOf("category").orElse(CraftingBookCategory.MISC).forGetter(CraftingRecipe::category),
-                        Ingredient.CODEC_NONEMPTY.fieldOf(sourceIngredientName).forGetter(ComponentTransferringRecipe::getSourceIngredient),
-                        Ingredient.CODEC_NONEMPTY
-                                .listOf()
-                                .fieldOf("ingredients")
-                                .flatXmap(
-                                        list -> {
-                                            if (list.isEmpty()) {
-                                                return DataResult.error(() -> "No ingredients for %s recipe".formatted(recipeTypeName));
-                                            } else {
-                                                return list.size() > 9
-                                                        ? DataResult.error(() -> ("Too many ingredients for %s recipe. Maximum is: %s".formatted(9, recipeTypeName)))
-                                                        : DataResult.success(NonNullList.of(Ingredient.EMPTY, list.toArray(new Ingredient[0])));
-                                            }
-                                        },
-                                        DataResult::success
-                                )
-                                .forGetter(ComponentTransferringRecipe::getIngredients),
-                        ItemStack.STRICT_CODEC.fieldOf("result").forGetter(ComponentTransferringRecipe::getResult)
-                ).apply(instance, constructor::create)
-        );
-    }
+    private static NonNullList<Ingredient> getIngredients(JsonArray jsonArray) {
+        NonNullList<Ingredient> ingredients = NonNullList.create();
 
-    protected @NotNull StreamCodec<RegistryFriendlyByteBuf, T> createStreamCodec(RecipeConstructor<T> constructor) {
-        return StreamCodec.composite(
-                CraftingBookCategory.STREAM_CODEC, CraftingRecipe::category,
-                Ingredient.CONTENTS_STREAM_CODEC, ComponentTransferringRecipe::getSourceIngredient,
-                ByteBufCodecs.collection(NonNullList::createWithCapacity, Ingredient.CONTENTS_STREAM_CODEC), ComponentTransferringRecipe::getIngredients,
-                ItemStack.STREAM_CODEC, ComponentTransferringRecipe::getResult,
-                constructor::create);
+        for (int i = 0; i < jsonArray.size(); ++i) {
+            Ingredient ingredient = Ingredient.fromJson(jsonArray.get(i));
+            if (!ingredient.isEmpty())
+                ingredients.add(ingredient);
+        }
+
+        if (ingredients.isEmpty())
+            throw new JsonParseException("No ingredients for a recipe.");
+        else if (ingredients.size() > 3 * 3)
+            throw new JsonParseException("Too many ingredients for a recipe. The maximum is 9.");
+        return ingredients;
     }
 
     @Override
-    public @NotNull MapCodec<T> codec() {
-        return codec;
+    public T fromNetwork(ResourceLocation recipeId, FriendlyByteBuf buffer) {
+        Ingredient transferredIngredient = Ingredient.fromNetwork(buffer);
+        int ingredientsCount = buffer.readVarInt();
+        NonNullList<Ingredient> ingredients = NonNullList.withSize(ingredientsCount, Ingredient.EMPTY);
+        ingredients.replaceAll(ignored -> Ingredient.fromNetwork(buffer));
+        ItemStack result = buffer.readItem();
+
+        return factory.create(recipeId,transferredIngredient,ingredients,result);
     }
 
     @Override
-    public @NotNull StreamCodec<RegistryFriendlyByteBuf, T> streamCodec() {
-        return streamCodec;
+    public void toNetwork(FriendlyByteBuf buffer, T recipe) {
+        recipe.getSourceIngredient().toNetwork(buffer);
+        buffer.writeVarInt(recipe.getIngredients().size());
+        for (Ingredient ingredient : recipe.getIngredients()) {
+            ingredient.toNetwork(buffer);
+        }
+        buffer.writeItem(recipe.getResult());
     }
 
-    @FunctionalInterface
-    public interface RecipeConstructor<T extends ComponentTransferringRecipe> {
-        T create(CraftingBookCategory arg, Ingredient sourceIngredient, NonNullList<Ingredient> ingredients, ItemStack result);
+    public interface Factory<T>{
+        T create(ResourceLocation id,Ingredient targetIngredient,NonNullList<Ingredient> ingredients,ItemStack result);
     }
 }

@@ -3,6 +3,8 @@ package io.github.mortuusars.exposure.client.gui.screen.album;
 import com.mojang.blaze3d.platform.InputConstants;
 import io.github.mortuusars.exposure.Config;
 import io.github.mortuusars.exposure.Exposure;
+import io.github.mortuusars.exposure.ModWidgetSprites;
+import io.github.mortuusars.exposure.client.gui.BetterImageButton;
 import io.github.mortuusars.exposure.client.gui.screen.element.textbox.HorizontalAlignment;
 import io.github.mortuusars.exposure.client.gui.screen.element.textbox.TextBox;
 import io.github.mortuusars.exposure.client.util.Minecrft;
@@ -10,31 +12,39 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.ImageButton;
 import net.minecraft.client.gui.components.Tooltip;
-import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.resources.ResourceLocation;
 
 public class AlbumSigningScreen extends Screen {
-    public static final WidgetSprites CANCEL_BUTTON_SPRITE = new WidgetSprites(
-            Exposure.resource("album/cancel"), Exposure.resource("album/cancel_disabled"), Exposure.resource("album/cancel_highlighted"));
 
     public static final int SELECTION_COLOR = 0xFF8888FF;
     public static final int SELECTION_UNFOCUSED_COLOR = 0xFFBBBBFF;
 
+    public static final ModWidgetSprites CANCEL_BUTTON_SPRITE = ModWidgetSprites.withPrefix(
+            Exposure.resource("album/cancel"), Exposure.resource("album/cancel_disabled"),
+            Exposure.resource("album/cancel_highlighted"),22,22);
+
     protected final AlbumScreen parentScreen;
+    private final ResourceLocation texture;
+    private final int textureWidth;
+    private final int textureHeight;
 
     protected int imageWidth, imageHeight, leftPos, topPos;
 
     protected TextBox titleTextBox;
-    protected ImageButton signButton;
-    protected ImageButton cancelSigningButton;
+    protected BetterImageButton signButton;
+    protected BetterImageButton cancelSigningButton;
 
     protected String titleText = "";
 
-    public AlbumSigningScreen(AlbumScreen parent) {
+    public AlbumSigningScreen(AlbumScreen parent, ResourceLocation texture, int textureWidth, int textureHeight) {
         super(Component.empty());
         this.parentScreen = parent;
+        this.texture = texture;
+        this.textureWidth = textureWidth;
+        this.textureHeight = textureHeight;
     }
 
     @Override
@@ -54,7 +64,7 @@ public class AlbumSigningScreen extends Screen {
         addRenderableWidget(titleTextBox);
 
         // SIGN
-        signButton = new ImageButton(leftPos + 46, topPos + 110, 22, 22,
+        signButton = new BetterImageButton(leftPos + 46, topPos + 110,22,22,
                 AlbumScreen.SIGN_BUTTON_SPRITES, b -> signAlbum(), Component.translatable("gui.exposure.album.sign"));
         MutableComponent component = Component.translatable("gui.exposure.album.sign")
                 .append("\n").append(Component.translatable("gui.exposure.album.sign.warning").withStyle(ChatFormatting.GRAY));
@@ -62,12 +72,30 @@ public class AlbumSigningScreen extends Screen {
         addRenderableWidget(signButton);
 
         // CANCEL
-        cancelSigningButton = new ImageButton(leftPos + 83, topPos + 111, 22, 22,
-                CANCEL_BUTTON_SPRITE, b -> cancelSigning(), Component.translatable("gui.exposure.album.cancel_signing"));
+        cancelSigningButton = new BetterImageButton(leftPos + 83, topPos + 111, 22,22,
+                CANCEL_BUTTON_SPRITE,b -> cancelSigning(), Component.translatable("gui.exposure.album.cancel_signing"));
         cancelSigningButton.setTooltip(Tooltip.create(Component.translatable("gui.exposure.album.cancel_signing")));
         addRenderableWidget(cancelSigningButton);
 
         setInitialFocus(titleTextBox);
+
+        //        // SIGN
+        //        signButton = new ImageButton(leftPos + 46, topPos + 110, 22, 22, 242, 188,
+        //                22, texture, textureWidth, textureHeight,
+        //                b -> signAlbum(), Component.translatable("gui.exposure.album.sign"));
+        //        MutableComponent component = Component.translatable("gui.exposure.album.sign")
+        //                .append("\n").append(Component.translatable("gui.exposure.album.sign.warning").withStyle(ChatFormatting.GRAY));
+        //        signButton.setTooltip(Tooltip.create(component));
+        //        addRenderableWidget(signButton);
+        //
+        //        // CANCEL
+        //        cancelSigningButton = new ImageButton(leftPos + 83, topPos + 111, 22, 22, 264, 188,
+        //                22, texture, textureWidth, textureHeight,
+        //                b -> cancelSigning(), Component.translatable("gui.exposure.album.cancel_signing"));
+        //        cancelSigningButton.setTooltip(Tooltip.create(Component.translatable("gui.exposure.album.cancel_signing")));
+        //        addRenderableWidget(cancelSigningButton);
+        //
+        //        setInitialFocus(titleTextBox);
     }
 
     @Override
@@ -91,15 +119,11 @@ public class AlbumSigningScreen extends Screen {
     @Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
         updateButtons();
-        super.render(guiGraphics, mouseX, mouseY, partialTick);
-        renderLabels(guiGraphics);
-    }
-
-    @Override
-    public void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        renderTransparentBackground(guiGraphics);
+        renderBackground(guiGraphics);
         guiGraphics.blit(AlbumGUI.TEXTURE, leftPos, topPos, 0, 298,
                 0, imageWidth, imageHeight, 512, 512);
+        super.render(guiGraphics, mouseX, mouseY, partialTick);
+        renderLabels(guiGraphics);
     }
 
     private void renderLabels(GuiGraphics guiGraphics) {

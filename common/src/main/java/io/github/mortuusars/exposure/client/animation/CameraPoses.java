@@ -20,7 +20,7 @@ public class CameraPoses {
         ModelPart offHand = rightHanded ? model.leftArm : model.rightArm;
 
         model.head.xRot += 0.4f; // Applying part of head rotation. If we turn head down completely - arms will be too low.
-        model.head.xRot = Math.clamp(model.head.xRot, -1F, 1.15F); // Look up/down limit
+        model.head.xRot = Mth.clamp(model.head.xRot, -1F, 1.15F); // Look up/down limit
 
         mainHand.yRot = (rightHanded ? -0.3F : 0.3F) + model.head.yRot;
         offHand.yRot = (rightHanded ? 0.5F : -0.5F) + model.head.yRot;
@@ -57,7 +57,7 @@ public class CameraPoses {
         }
 
         model.head.xRot += 0.4f; // Applying part of head rotation. If we turn head down completely - arms will be too low.
-        model.head.xRot = Math.clamp(model.head.xRot, -0.75F, 0.75F); // Look up/down limit
+        model.head.xRot = Mth.clamp(model.head.xRot, -0.75F, 0.75F); // Look up/down limit
 
         boolean rightHanded = arm == HumanoidArm.RIGHT;
 
@@ -108,7 +108,7 @@ public class CameraPoses {
 
     public float getCameraActionProgress(LivingEntity entity) {
         if (entity instanceof CameraOperator operator) {
-            float partialTick = Minecrft.get().getTimer().getGameTimeDeltaPartialTick(true);
+            float partialTick = Minecrft.get().getDeltaFrameTime();
             return operator.getExposureCameraActionAnim(partialTick);
         }
         return 0F;

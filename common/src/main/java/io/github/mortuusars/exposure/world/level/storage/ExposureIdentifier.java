@@ -1,14 +1,19 @@
 package io.github.mortuusars.exposure.world.level.storage;
 
 import com.google.common.base.Preconditions;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonNull;
+import com.google.gson.JsonObject;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.DynamicOps;
+import com.mojang.serialization.JsonOps;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import io.github.mortuusars.exposure.Exposure;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.GsonHelper;
 import net.minecraft.util.StringUtil;
 import net.minecraft.world.entity.Entity;
 import org.jetbrains.annotations.Contract;
@@ -53,22 +58,21 @@ public class ExposureIdentifier {
             textureOpt.orElse(null)
     )));
 
-    public static final StreamCodec<FriendlyByteBuf, ExposureIdentifier> STREAM_CODEC = new StreamCodec<>() {
-        @Override
-        public @NotNull ExposureIdentifier decode(FriendlyByteBuf buffer) {
-            boolean isTexture = buffer.readBoolean();
-            return isTexture
-                    ? ExposureIdentifier.texture(buffer.readResourceLocation())
-                    : ExposureIdentifier.id(buffer.readUtf());
-        }
+    public static ExposureIdentifier fromPacket(FriendlyByteBuf buf) {
+        boolean isTexture = buf.readBoolean();
+        return isTexture
+                ? ExposureIdentifier.texture(buf.readResourceLocation())
+                : ExposureIdentifier.id(buf.readUtf());
+    }
 
-        @Override
-        public void encode(FriendlyByteBuf buffer, ExposureIdentifier instance) {
-            buffer.writeBoolean(instance.isTexture());
-            instance.ifId(buffer::writeUtf)
-                    .ifTexture(buffer::writeResourceLocation);
+    public void toPacket(FriendlyByteBuf buf) {
+        buf.writeBoolean(isTexture());
+        if (isId()) {
+            buf.writeUtf(id);
+        } else {
+            buf.writeResourceLocation(texture);
         }
-    };
+    }
 
     @Nullable
     private final String id;
@@ -80,6 +84,16 @@ public class ExposureIdentifier {
                 "Cannot have both id and texture defined at once. Only one of them should be present.");
         this.id = id;
         this.texture = texture;
+    }
+
+    public static ExposureIdentifier fromJson(@Nullable JsonElement element) {
+        if (element == null || element== JsonNull.INSTANCE) {
+            return null;
+        }
+
+        JsonObject jsonObj = GsonHelper.convertToJsonObject(element, "identifier");
+
+        return CODEC.decode(JsonOps.INSTANCE,jsonObj).resultOrPartial(Exposure.LOGGER::error).get().getFirst();
     }
 
     public static ExposureIdentifier id(@NotNull String id) {
@@ -205,4 +219,5 @@ public class ExposureIdentifier {
                 .toList();
         return String.join("_", sanitizedParts);
     }
+
 }

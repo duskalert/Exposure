@@ -3,16 +3,14 @@ package io.github.mortuusars.exposure.world.item.camera;
 import com.mojang.serialization.Codec;
 import io.github.mortuusars.exposure.network.Packets;
 import io.github.mortuusars.exposure.network.packet.serverbound.ActiveCameraSetSettingC2SP;
+import io.github.mortuusars.exposure.util.NBTAbstraction;
 import io.github.mortuusars.exposure.world.camera.Camera;
 import io.github.mortuusars.exposure.world.entity.CameraHolder;
 import io.github.mortuusars.exposure.world.sound.Sound;
 import io.github.mortuusars.exposure.world.sound.SoundEffect;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
-import net.minecraft.core.RegistryAccess;
-import net.minecraft.core.component.DataComponentType;
-import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.item.ItemStack;
@@ -20,25 +18,29 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 
-public record CameraSetting<T>(DataComponentType<T> component, T defaultValue, Optional<SoundEffect> sound) {
+public record CameraSetting<T>(NBTAbstraction.Named<T> function, T defaultValue, Optional<SoundEffect> sound) {
     public static final Codec<CameraSetting<?>> CODEC = ResourceLocation.CODEC.xmap(CameraSettings::byId, CameraSettings::idOf);
-    public static final StreamCodec<ByteBuf, CameraSetting<?>> STREAM_CODEC = StreamCodec.composite(
-            ResourceLocation.STREAM_CODEC, CameraSettings::idOf,
-            CameraSettings::byId
-    );
 
-    public CameraSetting(DataComponentType<T> component, T defaultValue, SoundEffect sound) {
-        this(component, defaultValue, Optional.ofNullable(sound));
+    public void toPacket(FriendlyByteBuf buf) {
+        buf.writeResourceLocation(CameraSettings.idOf(this));
     }
 
-    public CameraSetting(DataComponentType<T> component, T defaultValue) {
-        this(component, defaultValue, Optional.empty());
+    public static CameraSetting<?> fromPacket(FriendlyByteBuf buf) {
+        return CameraSettings.byId(buf.readResourceLocation());
+    }
+
+    public CameraSetting(NBTAbstraction.Named<T> function, T defaultValue, SoundEffect sound) {
+        this(function, defaultValue, Optional.ofNullable(sound));
+    }
+
+    public CameraSetting(NBTAbstraction.Named<T> function, T defaultValue) {
+        this(function, defaultValue, Optional.empty());
     }
 
     // --
 
     public @Nullable T get(ItemStack stack) {
-        return stack.get(component);
+        return function.read(stack);
     }
 
     public Optional<T> getOptional(ItemStack stack) {
@@ -46,15 +48,17 @@ public record CameraSetting<T>(DataComponentType<T> component, T defaultValue, O
     }
 
     public T getOrDefault(ItemStack stack) {
-        return stack.getOrDefault(component, defaultValue);
+        T t = get(stack);
+        return t == null ? defaultValue : t;
     }
 
     public T getOrElse(ItemStack stack, T defaultValue) {
-        return stack.getOrDefault(component, defaultValue);
+        T t = get(stack);
+        return t == null ? defaultValue : t;
     }
 
     public @Nullable T get(Camera camera) {
-        return camera.getItemStack().get(component);
+        return function.read(camera.getItemStack());
     }
 
     public Optional<T> getOptional(Camera camera) {
@@ -62,11 +66,13 @@ public record CameraSetting<T>(DataComponentType<T> component, T defaultValue, O
     }
 
     public T getOrDefault(Camera camera) {
-        return camera.getItemStack().getOrDefault(component, defaultValue);
+        T t = function.read(camera.getItemStack());
+        return t == null ? defaultValue : t;
     }
 
     public T getOrElse(Camera camera, T defaultValue) {
-        return camera.getItemStack().getOrDefault(component, defaultValue);
+        T t = function.read(camera.getItemStack());
+        return t == null ? defaultValue : t;
     }
 
     // --
@@ -75,9 +81,9 @@ public record CameraSetting<T>(DataComponentType<T> component, T defaultValue, O
         if (stack.isEmpty() || getOrDefault(stack).equals(value)) return false;
 
         if (value instanceof Boolean bool && !bool) {
-            stack.remove(component);
+            stack.removeTagKey(function.key());
         } else {
-            stack.set(component, value);
+            function.write(stack,value);
         }
         return true;
     }
@@ -100,7 +106,7 @@ public record CameraSetting<T>(DataComponentType<T> component, T defaultValue, O
     public boolean setAndSync(Camera camera, T value) {
         return camera.map((item, stack) -> {
             if (set(camera.getHolder(), stack, value)) {
-                byte[] bytes = encodeValue(camera.getHolder().asHolderEntity().registryAccess(), value);
+                byte[] bytes = encodeValue(value);
                 Packets.sendToServer(new ActiveCameraSetSettingC2SP(this, bytes));
                 return true;
             }
@@ -108,33 +114,33 @@ public record CameraSetting<T>(DataComponentType<T> component, T defaultValue, O
         }).orElse(false);
     }
 
-    public boolean decodeAndSet(ItemStack stack, RegistryAccess registryAccess, byte[] bytes) {
-        T value = decodeValue(registryAccess, bytes);
+    public boolean decodeAndSet(ItemStack stack, byte[] bytes) {
+        T value = decodeValue(bytes);
         return set(stack, value);
     }
 
-    public boolean decodeAndSet(CameraHolder holder, ItemStack stack, RegistryAccess registryAccess, byte[] bytes) {
-        T value = decodeValue(registryAccess, bytes);
+    public boolean decodeAndSet(CameraHolder holder, ItemStack stack, byte[] bytes) {
+        T value = decodeValue(bytes);
         return set(holder, stack, value);
     }
 
     // --
 
-    public byte[] encodeValue(RegistryAccess registryAccess, T value) {
-        RegistryFriendlyByteBuf buffer = new RegistryFriendlyByteBuf(Unpooled.buffer(), registryAccess);
+    public byte[] encodeValue(T value) {
+        FriendlyByteBuf buffer = new FriendlyByteBuf(Unpooled.buffer());
         try {
-            component.streamCodec().encode(buffer, value);
+            function.abstraction().packetWriter().accept(buffer, value);
             return buffer.array().clone();
         } finally {
             buffer.release();
         }
     }
 
-    public T decodeValue(RegistryAccess registryAccess, byte[] bytes) {
-        RegistryFriendlyByteBuf buffer = new RegistryFriendlyByteBuf(Unpooled.buffer(), registryAccess);
+    public T decodeValue(byte[] bytes) {
+        FriendlyByteBuf buffer = new FriendlyByteBuf(Unpooled.buffer());
         try {
             buffer.writeBytes(bytes);
-            return component.streamCodec().decode(buffer);
+            return function.abstraction().packetReader().apply(buffer);
         } finally {
             buffer.release();
         }

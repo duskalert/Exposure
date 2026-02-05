@@ -20,14 +20,4 @@ public abstract class LecternBlockEntityMixin {
             cir.setReturnValue(true);
         }
     }
-
-    @Inject(method = "getPageCount", at = @At("HEAD"), cancellable = true)
-    private static void onGetPageCount(ItemStack stack, CallbackInfoReturnable<Integer> cir) {
-        if (stack.getItem() instanceof AlbumItem albumItem) {
-            cir.setReturnValue(albumItem.getContent(stack).pages().size());
-        }
-        else if (stack.getItem() instanceof SignedAlbumItem signedAlbumItem) {
-            cir.setReturnValue(signedAlbumItem.getContent(stack).pages().size());
-        }
-    }
 }

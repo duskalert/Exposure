@@ -29,8 +29,8 @@ public class SupportersTests {
         List<Supporter> supporters = new Supporters.Loader().parseSupporters(json);
 
         assertEquals(2, supporters.size());
-        assertEquals("player1", supporters.getFirst().name());
-        assertEquals(UUID.fromString("19266046-b14b-428f-919b-75a21474ba07"), supporters.getFirst().uuid());
+        assertEquals("player1", supporters.get(0).name());
+        assertEquals(UUID.fromString("19266046-b14b-428f-919b-75a21474ba07"), supporters.get(0).uuid());
         assertEquals("player2", supporters.get(1).name());
         assertEquals(UUID.fromString("11111111-b14b-428f-919b-75a21474ba07"), supporters.get(1).uuid());
     }

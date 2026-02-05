@@ -19,7 +19,7 @@ import io.github.mortuusars.exposure.world.level.storage.ExposureIdentifier;
 import io.github.mortuusars.exposure.world.camera.frame.Frame;
 import io.github.mortuusars.exposure.world.item.*;
 import io.github.mortuusars.exposure.network.Packets;
-import io.github.mortuusars.exposure.network.packet.clientbound.ClearRenderingCacheS2CP;
+import io.github.mortuusars.exposure.network.packet.clientbound.ActionS2CP;
 import io.github.mortuusars.exposure.network.packet.clientbound.CaptureStartDebugRGBS2CP;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
@@ -56,7 +56,7 @@ public class DebugCommand {
     private static int clearRenderingCache(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         CommandSourceStack stack = context.getSource();
         ServerPlayer player = stack.getPlayerOrException();
-        Packets.sendToClient(ClearRenderingCacheS2CP.INSTANCE, player);
+        Packets.sendToClient(ActionS2CP.CLEAR_RENDERING_CACHE, player);
         return 0;
     }
 
@@ -104,7 +104,7 @@ public class DebugCommand {
 
             Supplier<Component> msg = () -> {
                 ItemStack photograph = new ItemStack(Exposure.Items.PHOTOGRAPH.get());
-                photograph.set(Exposure.DataComponents.PHOTOGRAPH_FRAME, frame);
+                Exposure.DataComponents.setPhotographFrame(photograph, frame);
                 return Component.translatable("command.exposure.debug.expose_rgb.success.captured", channel.getSerializedName())
                         .append(Component.literal(exposureId)
                                 .withStyle(Style.EMPTY
@@ -149,7 +149,7 @@ public class DebugCommand {
             }
 
             ItemStack photographStack = item.combineIntoPhotograph(player, itemStack, false);
-            @Nullable Frame frame = photographStack.get(Exposure.DataComponents.PHOTOGRAPH_FRAME);
+            @Nullable Frame frame = Exposure.DataComponents.getPhotographFrame(photographStack);
             Preconditions.checkState(frame != null, "Frame data cannot be empty after combining.");
 
             ExposureServer.frameHistory().add(player, frame);
@@ -185,7 +185,7 @@ public class DebugCommand {
                 DevelopedFilmItem itemType = filmRollItem.getType() == ExposureType.COLOR
                         ? Exposure.Items.DEVELOPED_COLOR_FILM.get()
                         : Exposure.Items.DEVELOPED_BLACK_AND_WHITE_FILM.get();
-                ItemStack developedFilmStack = itemInHand.transmuteCopy(itemType);
+                ItemStack developedFilmStack = CameraItem.transmuteCopy(itemInHand,itemType);
 
                 if (replace) {
                     player.setItemInHand(hand, developedFilmStack);

@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "B": {
+      "item": "minecraft:bone_meal"
+    },
+    "P": {
+      "item": "minecraft:prismarine_crystals"
+    },
+    "I": {
+      "tag": "forge:ingots/gold"
+    },
+    "K": {
+      "item": "minecraft:dried_kelp"
+    },
+    "N": {
+      "tag": "forge:nuggets/gold"
+    }
+  },
+  "pattern": [
+    "NBB",
+    "IPP",
+    "IKK"
+  ],
+  "result": {
+    "item": "exposure:black_and_white_film"
+  },
+  "show_notification": true
+}

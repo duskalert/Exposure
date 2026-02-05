@@ -1,12 +1,12 @@
 package io.github.mortuusars.exposure.client.gui.screen.camera.button;
 
 import io.github.mortuusars.exposure.Config;
+import io.github.mortuusars.exposure.ModWidgetSprites;
 import io.github.mortuusars.exposure.client.gui.component.CycleButton;
 import io.github.mortuusars.exposure.world.camera.component.ShutterSpeed;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.client.sounds.SoundManager;
 import org.jetbrains.annotations.NotNull;
@@ -20,14 +20,14 @@ public class ShutterSpeedButton extends CycleButton<ShutterSpeed> {
     protected final int mainFontColor;
 
     public ShutterSpeedButton(int x, int y, int width, int height, List<ShutterSpeed> values, @NotNull ShutterSpeed startingValue,
-                              Function<ShutterSpeed, WidgetSprites> spritesFunc, OnCycle<ShutterSpeed> onCycle) {
+                              Function<ShutterSpeed, ModWidgetSprites> spritesFunc, OnCycle<ShutterSpeed> onCycle) {
         super(x, y, width, height, values, startingValue, spritesFunc, onCycle);
         mainFontColor = Config.getColor(Config.Client.VIEWFINDER_FONT_MAIN_COLOR);
         secondaryFontColor = Config.getColor(Config.Client.VIEWFINDER_FONT_SECONDARY_COLOR);
     }
 
     public ShutterSpeedButton(int x, int y, int width, int height, List<ShutterSpeed> values, @NotNull ShutterSpeed startingValue,
-                              Function<ShutterSpeed, WidgetSprites> spritesFunc) {
+                              Function<ShutterSpeed, ModWidgetSprites> spritesFunc) {
         super(x, y, width, height, values, startingValue, spritesFunc, (button, newValue) -> {});
         mainFontColor = Config.getColor(Config.Client.VIEWFINDER_FONT_MAIN_COLOR);
         secondaryFontColor = Config.getColor(Config.Client.VIEWFINDER_FONT_SECONDARY_COLOR);

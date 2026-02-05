@@ -9,11 +9,9 @@
     "client.BuggerScreenOverlayMixin",
     "client.BuggerScreenRenderLinesInvoker",
     "client.CameraMixin",
-    "client.ClientPacketListenerMixin",
     "client.EntityMixin",
     "client.ExposureLightTextureMixin",
     "client.GameRendererMixin",
-    "client.GuiMixin",
     "client.HumanoidModelMixin",
     "client.ItemFrameRendererMixin",
     "client.ItemInHandRendererMixin",
@@ -36,10 +34,11 @@
     "LivingEntityMixin",
     "MinecraftServerMixin",
     "PlayerMixin",
-    "PotionContentsMixin",
+    "PotionUtilsMixin",
     "ServerEntityMixin",
     "ServerGamePacketListenerMixin",
-    "ServerPlayerMixin"
+    "ServerPlayerMixin",
+    "WrittenBookItemMixin"
   ],
   "injectors": {
     "defaultRequire": 1

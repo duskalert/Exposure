@@ -28,7 +28,6 @@ public abstract class Camera {
     public abstract ItemStack getItemStack();
     public abstract Packet createSyncPacket();
 
-
     // --
 
     public CameraHolder getHolder() {

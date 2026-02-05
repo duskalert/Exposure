@@ -50,19 +50,19 @@ public class ColorTests {
 
     @Test
     void intCodec() {
-        int integer = Color.CODEC.encodeStart(JsonOps.INSTANCE, Color.fromHex("7F7F7F7F")).getOrThrow().getAsInt();
+        int integer = Color.CODEC.encodeStart(JsonOps.INSTANCE, Color.fromHex("7F7F7F7F")).get().orThrow().getAsInt();
         assertEquals(0x7F7F7F7F, integer);
 
-        Color decodedColor = Color.CODEC.decode(JsonOps.INSTANCE, new JsonPrimitive(0x7F7F7F7F)).getOrThrow().getFirst();
+        Color decodedColor = Color.CODEC.decode(JsonOps.INSTANCE, new JsonPrimitive(0x7F7F7F7F)).get().orThrow().getFirst();
         assertEquals(0x7F7F7F7F, decodedColor.getARGB());
     }
 
     @Test
     void hexCodec() {
-        String json = Color.HEX_STRING_CODEC.encodeStart(JsonOps.INSTANCE, Color.argb(0x7F7F7F7F)).getOrThrow().getAsString();
+        String json = Color.HEX_STRING_CODEC.encodeStart(JsonOps.INSTANCE, Color.argb(0x7F7F7F7F)).get().orThrow().getAsString();
         assertEquals("7F7F7F7F", json);
 
-        Color decodedColor = Color.HEX_STRING_CODEC.decode(JsonOps.INSTANCE, new JsonPrimitive("7F7F7F7F")).getOrThrow().getFirst();
+        Color decodedColor = Color.HEX_STRING_CODEC.decode(JsonOps.INSTANCE, new JsonPrimitive("7F7F7F7F")).get().orThrow().getFirst();
         assertEquals(0x7F7F7F7F, decodedColor.getARGB());
     }
 }

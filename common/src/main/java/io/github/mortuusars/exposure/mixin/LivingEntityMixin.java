@@ -15,7 +15,7 @@ public abstract class LivingEntityMixin extends Entity {
         super(entityType, level);
     }
 
-    @ModifyReturnValue(method = "getMaxHeadRotationRelativeToBody", at = @At("RETURN"))
+    @ModifyReturnValue(method = "tickHeadTurn", at = @At("RETURN"))
     private float onGetMaxHeadRotationRelativeToBody(float original) {
         if (this instanceof CameraOperator operator && operator.getActiveExposureCamera() != null) {
             return Math.min(original, 20);

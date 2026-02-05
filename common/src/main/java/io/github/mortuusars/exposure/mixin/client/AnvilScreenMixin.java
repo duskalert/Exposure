@@ -28,7 +28,7 @@ public abstract class AnvilScreenMixin extends ItemCombinerScreen<AnvilMenu> {
 
     @Inject(method = "slotChanged", at = @At("HEAD"))
     private void onSlotChanged(AbstractContainerMenu containerToSend, int dataSlotIndex, ItemStack stack, CallbackInfo ci) {
-        if (dataSlotIndex == 0 && Config.Server.INTERPLANAR_PROJECTOR_LARGER_RENAMING_LIMIT.isTrue()) {
+        if (dataSlotIndex == 0 && Config.Server.INTERPLANAR_PROJECTOR_LARGER_RENAMING_LIMIT.get()) {
             int maxLength = stack.getItem() instanceof InterplanarProjectorItem || stack.getItem() instanceof BrokenInterplanarProjectorItem ? 150 : 50;
             this.name.setMaxLength(maxLength);
         }

@@ -1,7 +1,7 @@
 package io.github.mortuusars.exposure.world.inventory;
 
 import io.github.mortuusars.exposure.Exposure;
-import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
@@ -40,9 +40,9 @@ public class LecternAlbumMenu extends AbstractContainerMenu {
         this.addDataSlots(data);
     }
 
-    public LecternAlbumMenu(int containerId, Inventory playerInventory, RegistryFriendlyByteBuf buffer) {
+    public LecternAlbumMenu(int containerId, Inventory playerInventory, FriendlyByteBuf buffer) {
         this(containerId, playerInventory, new SimpleContainer(SLOT_COUNT), new SimpleContainerData(DATA_COUNT));
-        ItemStack book = ItemStack.OPTIONAL_STREAM_CODEC.decode(buffer);
+        ItemStack book = buffer.readItem();
         container.setItem(0, book);
     }
 

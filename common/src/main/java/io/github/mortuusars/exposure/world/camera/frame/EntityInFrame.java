@@ -5,8 +5,6 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import io.github.mortuusars.exposure.util.ExtraData;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.codec.ByteBufCodecs;
-import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -22,14 +20,17 @@ public record EntityInFrame(ResourceLocation id, String name, BlockPos pos, int 
                     ExtraData.CODEC.optionalFieldOf("extra_data", ExtraData.EMPTY).forGetter(EntityInFrame::extraData))
             .apply(instance, EntityInFrame::new));
 
-    public static StreamCodec<FriendlyByteBuf, EntityInFrame> STREAM_CODEC = StreamCodec.composite(
-            ResourceLocation.STREAM_CODEC, EntityInFrame::id,
-            ByteBufCodecs.STRING_UTF8, EntityInFrame::name,
-            BlockPos.STREAM_CODEC, EntityInFrame::pos,
-            ByteBufCodecs.VAR_INT, EntityInFrame::distance,
-            ExtraData.STREAM_CODEC, EntityInFrame::extraData,
-            EntityInFrame::new
-    );
+    public void toPacket(FriendlyByteBuf buf) {
+        buf.writeResourceLocation(id);
+        buf.writeUtf(name);
+        buf.writeBlockPos(pos);
+        buf.writeInt(distance);
+        extraData.toPacket(buf);
+    }
+
+    public static EntityInFrame fromPacket(FriendlyByteBuf buf) {
+        return new EntityInFrame(buf.readResourceLocation(),buf.readUtf(),buf.readBlockPos(),buf.readInt(),ExtraData.fromPacket(buf));
+    }
 
     public static EntityInFrame of(Entity cameraHolder, Entity entity) {
         return of(cameraHolder, entity, ExtraData.EMPTY);

@@ -6,33 +6,32 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import io.github.mortuusars.exposure.Exposure;
 import io.github.mortuusars.exposure.ExposureClient;
+import io.github.mortuusars.exposure.ModWidgetSprites;
+import io.github.mortuusars.exposure.client.gui.BetterImageButton;
+import io.github.mortuusars.exposure.client.gui.component.CycleButton;
 import io.github.mortuusars.exposure.client.gui.toast.BetterTutorialToast;
 import io.github.mortuusars.exposure.client.gui.toast.ToastIcon;
-import io.github.mortuusars.exposure.client.input.Key;
-import io.github.mortuusars.exposure.client.input.KeyBindings;
-import io.github.mortuusars.exposure.client.util.Minecrft;
-import io.github.mortuusars.exposure.world.block.entity.Lightroom;
-import io.github.mortuusars.exposure.world.block.entity.LightroomBlockEntity;
-import io.github.mortuusars.exposure.client.gui.component.CycleButton;
 import io.github.mortuusars.exposure.client.image.modifier.ImageEffect;
 import io.github.mortuusars.exposure.client.image.renderable.RenderableImage;
+import io.github.mortuusars.exposure.client.input.Key;
+import io.github.mortuusars.exposure.client.input.KeyBindings;
 import io.github.mortuusars.exposure.client.render.image.RenderCoordinates;
-import io.github.mortuusars.exposure.world.camera.FilmColor;
+import io.github.mortuusars.exposure.client.util.Minecrft;
+import io.github.mortuusars.exposure.util.PagingDirection;
+import io.github.mortuusars.exposure.world.block.entity.Lightroom;
+import io.github.mortuusars.exposure.world.block.entity.LightroomBlockEntity;
 import io.github.mortuusars.exposure.world.camera.ExposureType;
-import io.github.mortuusars.exposure.world.item.FilmRollItem;
-import io.github.mortuusars.exposure.world.lightroom.PrintingMode;
-import io.github.mortuusars.exposure.world.item.DevelopedFilmItem;
+import io.github.mortuusars.exposure.world.camera.FilmColor;
 import io.github.mortuusars.exposure.world.camera.frame.Frame;
 import io.github.mortuusars.exposure.world.inventory.LightroomMenu;
-import io.github.mortuusars.exposure.util.PagingDirection;
+import io.github.mortuusars.exposure.world.item.DevelopedFilmItem;
+import io.github.mortuusars.exposure.world.item.FilmRollItem;
+import io.github.mortuusars.exposure.world.lightroom.PrintingMode;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.gui.components.ImageButton;
 import net.minecraft.client.gui.components.Tooltip;
-import net.minecraft.client.gui.components.WidgetSprites;
-import net.minecraft.client.gui.components.toasts.TutorialToast;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.GameRenderer;
@@ -59,18 +58,18 @@ public class LightroomScreen extends AbstractContainerScreen<LightroomMenu> {
     public static final ResourceLocation MAIN_TEXTURE = Exposure.resource("textures/gui/lightroom.png");
     public static final ResourceLocation FILM_OVERLAYS_TEXTURE = Exposure.resource("textures/gui/lightroom_film_overlays.png");
 
-    public static final WidgetSprites PRINT_BUTTON_SPRITES = new WidgetSprites(
+    public static final ModWidgetSprites PRINT_BUTTON_SPRITES = ModWidgetSprites.withPrefix(
             Exposure.resource("lightroom/print_button"),
             Exposure.resource("lightroom/print_button_disabled"),
-            Exposure.resource("lightroom/print_button_highlighted"));
+            Exposure.resource("lightroom/print_button_highlighted"),22,22);
 
-    public static final WidgetSprites PRINTING_MODE_TOGGLE_REGULAR_SPRITES = new WidgetSprites(
+    public static final ModWidgetSprites PRINTING_MODE_TOGGLE_REGULAR_SPRITES = ModWidgetSprites.withPrefix(
             Exposure.resource("lightroom/printing_mode_regular"),
-            Exposure.resource("lightroom/printing_mode_regular_highlighted"));
+            Exposure.resource("lightroom/printing_mode_regular_highlighted"),18,18);
 
-    public static final WidgetSprites PRINTING_MODE_TOGGLE_CHROMATIC_SPRITES = new WidgetSprites(
+    public static final ModWidgetSprites PRINTING_MODE_TOGGLE_CHROMATIC_SPRITES = ModWidgetSprites.withPrefix(
             Exposure.resource("lightroom/printing_mode_chromatic"),
-            Exposure.resource("lightroom/printing_mode_chromatic_highlighted"));
+            Exposure.resource("lightroom/printing_mode_chromatic_highlighted"),18,18);
 
     public static final int FRAME_SIZE = 54;
 
@@ -112,7 +111,7 @@ public class LightroomScreen extends AbstractContainerScreen<LightroomMenu> {
                 Lightroom.BLACK_SLOT, new Rect2i(238, 90, 18, 18)
         );
 
-        printButton = new ImageButton(leftPos + 117, topPos + 89, 22, 22, PRINT_BUTTON_SPRITES,
+        printButton = new BetterImageButton(leftPos + 117, topPos + 89, 22, 22, PRINT_BUTTON_SPRITES,
                 button -> {
                     int buttonId = Screen.hasShiftDown() && player.isCreative() ? LightroomMenu.PRINT_CREATIVE_BUTTON_ID : LightroomMenu.PRINT_BUTTON_ID;
                     clickButton(buttonId);
@@ -143,7 +142,7 @@ public class LightroomScreen extends AbstractContainerScreen<LightroomMenu> {
     }
 
     protected CycleButton<PrintingMode> createPrintingModeToggleButton() {
-        Map<PrintingMode, WidgetSprites> spritesMap = Map.of(PrintingMode.REGULAR, PRINTING_MODE_TOGGLE_REGULAR_SPRITES,
+        Map<PrintingMode,ModWidgetSprites> spritesMap = Map.of(PrintingMode.REGULAR, PRINTING_MODE_TOGGLE_REGULAR_SPRITES,
                 PrintingMode.CHROMATIC, PRINTING_MODE_TOGGLE_CHROMATIC_SPRITES);
         Map<PrintingMode, Tooltip> tooltipMap = Map.of(
                 PrintingMode.REGULAR, Tooltip.create(Component.translatable("gui.exposure.lightroom.printing_mode.regular")
@@ -175,6 +174,7 @@ public class LightroomScreen extends AbstractContainerScreen<LightroomMenu> {
     @Override
     public void render(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
         updateButtons();
+        renderBackground(guiGraphics);
         super.render(guiGraphics, mouseX, mouseY, partialTick);
         renderTooltip(guiGraphics, mouseX, mouseY);
     }
@@ -369,8 +369,8 @@ public class LightroomScreen extends AbstractContainerScreen<LightroomMenu> {
     }
 
     @Override
-    public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
-        boolean handled = super.mouseScrolled(mouseX, mouseY, scrollX, scrollY);
+    public boolean mouseScrolled(double mouseX, double mouseY,  double scrollY) {
+        boolean handled = super.mouseScrolled(mouseX, mouseY, scrollY);
 
         if (!handled) {
             if (scrollY >= 0.0 && isOverCenterFrame((int) mouseX, (int) mouseY)) // Scroll Up

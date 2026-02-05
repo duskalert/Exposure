@@ -69,7 +69,7 @@ public class ViewfinderShader implements AutoCloseable {
             RenderSystem.disableBlend();
             RenderSystem.disableDepthTest();
             RenderSystem.resetTextureMatrix();
-            shader.process(minecraft.getTimer().getGameTimeDeltaTicks());
+            shader.process(minecraft.getDeltaFrameTime());
         }
     }
 

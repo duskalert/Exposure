@@ -1,0 +1,50 @@
+{
+  "type": "minecraft:chest",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "chance": 0.2,
+          "condition": "minecraft:random_chance"
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{photograph_frame:{identifier:{texture:\"exposure:textures/exposure/mineshaft/tunnel.png\"}}}"
+            }
+          ],
+          "name": "exposure:photograph",
+          "weight": 3
+        },
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{photograph_frame:{identifier:{texture:\"exposure:textures/exposure/mineshaft/skeleton.png\"}}}"
+            }
+          ],
+          "name": "exposure:photograph",
+          "weight": 3
+        },
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{photograph_frame:{identifier:{texture:\"exposure:textures/exposure/mineshaft/skeleton_smirk.png\"}}}"
+            }
+          ],
+          "name": "exposure:photograph"
+        }
+      ],
+      "rolls": 1.0
+    }
+  ],
+  "random_sequence": "exposure:chests/abandoned_mineshaft"
+}

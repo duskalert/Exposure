@@ -8,8 +8,6 @@ import io.github.mortuusars.exposure.Exposure;
 import io.github.mortuusars.exposure.client.gui.ClientGUI;
 import io.github.mortuusars.exposure.world.inventory.tooltip.PhotographTooltip;
 import io.github.mortuusars.exposure.world.item.util.ItemAndStack;
-import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
@@ -39,11 +37,6 @@ public class StackedPhotographsItem extends Item {
         }
     }, ItemAndStack::getItemStack);
 
-    public static final StreamCodec<RegistryFriendlyByteBuf, ItemAndStack<PhotographItem>> PHOTOGRAPH_ITEM_AND_STACK_STREAM_CODEC =
-            ItemStack.STREAM_CODEC.map(
-                    ItemAndStack::new, ItemAndStack::getItemStack
-            );
-
     public StackedPhotographsItem(Properties properties) {
         super(properties);
     }
@@ -56,11 +49,11 @@ public class StackedPhotographsItem extends Item {
     }
 
     public List<ItemAndStack<PhotographItem>> getPhotographs(ItemStack stack) {
-        return stack.getOrDefault(Exposure.DataComponents.STACKED_PHOTOGRAPHS, Collections.emptyList());
+        return Exposure.DataComponents.getStackedPhotographs(stack, Collections.emptyList());
     }
 
     public void setPhotographs(ItemStack stack, List<ItemAndStack<PhotographItem>> photographs) {
-        stack.set(Exposure.DataComponents.STACKED_PHOTOGRAPHS, photographs);
+        Exposure.DataComponents.setStackedPhotographs(stack,photographs);
     }
 
     public boolean canAddPhotograph(ItemStack stack) {

@@ -2,11 +2,9 @@ package io.github.mortuusars.exposure.util;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import io.netty.buffer.ByteBuf;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.codec.ByteBufCodecs;
-import net.minecraft.network.codec.StreamCodec;
 
 public record TranslatableError(String key, String code) {
     public static final TranslatableError GENERIC = new TranslatableError("error.exposure.generic", "ERR_GENERIC");
@@ -17,11 +15,14 @@ public record TranslatableError(String key, String code) {
             Codec.STRING.fieldOf("code").forGetter(TranslatableError::code)
     ).apply(instance, TranslatableError::new));
 
-    public static final StreamCodec<ByteBuf, TranslatableError> STREAM_CODEC = StreamCodec.composite(
-            ByteBufCodecs.STRING_UTF8, TranslatableError::key,
-            ByteBufCodecs.STRING_UTF8, TranslatableError::code,
-            TranslatableError::new
-    );
+    public void toPacket(FriendlyByteBuf buf) {
+        buf.writeUtf(key);
+        buf.writeUtf(code);
+    }
+
+    public static TranslatableError fromPacket(FriendlyByteBuf buf) {
+        return new TranslatableError(buf.readUtf(),buf.readUtf());
+    }
 
     public MutableComponent technical() {
         return Component.translatable(key() + ".technical");

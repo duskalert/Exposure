@@ -2,7 +2,6 @@ package io.github.mortuusars.exposure.client.gui;
 
 import com.google.common.base.Preconditions;
 import net.minecraft.client.gui.components.Tooltip;
-import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.network.chat.Component;
 
 import java.util.HashMap;

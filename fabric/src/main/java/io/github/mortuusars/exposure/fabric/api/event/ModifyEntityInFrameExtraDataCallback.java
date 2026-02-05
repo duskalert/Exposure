@@ -1,9 +1,9 @@
 package io.github.mortuusars.exposure.fabric.api.event;
 
-import io.github.mortuusars.exposure.util.ExtraData;
 import io.github.mortuusars.exposure.world.entity.CameraHolder;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 
@@ -21,5 +21,5 @@ public interface ModifyEntityInFrameExtraDataCallback {
                 return false;
             });
 
-    boolean modifyEntityInFrameData(CameraHolder cameraHolder, ItemStack camera, LivingEntity entityInFrame, ExtraData data);
+    boolean modifyEntityInFrameData(CameraHolder cameraHolder, ItemStack camera, LivingEntity entityInFrame, CompoundTag data);
 }

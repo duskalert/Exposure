@@ -169,7 +169,7 @@ public abstract class AbstractCameraAttachmentsMenu extends AbstractContainerMen
             while (!movedStack.isEmpty() && !(!reverseDirection ? i >= endIndex : i < startIndex)) {
                 Slot slot = this.slots.get(i);
                 ItemStack slotStack = slot.getItem();
-                if (!slotStack.isEmpty() && ItemStack.isSameItemSameComponents(movedStack, slotStack)) {
+                if (!slotStack.isEmpty() && ItemStack.isSameItemSameTags(movedStack, slotStack)) {
                     int maxSize;
                     int j = slotStack.getCount() + movedStack.getCount();
                     if (j <= (maxSize = Math.min(slot.getMaxStackSize(), movedStack.getMaxStackSize()))) {
@@ -220,10 +220,10 @@ public abstract class AbstractCameraAttachmentsMenu extends AbstractContainerMen
     public boolean clickMenuButton(Player player, int id) {
         if (Supporters.hasAccessToGoldenSkin(player.getUUID())) {
             if (id == SKIN_REGULAR_BUTTON_ID) {
-                getCamera().apply((i, s) -> s.set(Exposure.DataComponents.CAMERA_GOLD, false));
+                getCamera().apply((i, s) -> Exposure.DataComponents.setCameraGold(s, false));
                 return true;
             } else if (id == SKIN_GOLD_BUTTON_ID) {
-                getCamera().apply((i, s) -> s.set(Exposure.DataComponents.CAMERA_GOLD, true));
+                getCamera().apply((i, s) -> Exposure.DataComponents.setCameraGold(s, true));
                 return true;
             }
         }

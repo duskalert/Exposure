@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "I": {
+      "item": "minecraft:gold_ingot"
+    },
+    "K": {
+      "item": "minecraft:dried_kelp"
+    },
+    "L": {
+      "item": "minecraft:lapis_lazuli"
+    },
+    "N": {
+      "item": "minecraft:gold_nugget"
+    },
+    "P": {
+      "item": "minecraft:prismarine_crystals"
+    }
+  },
+  "pattern": [
+    "NLL",
+    "IPP",
+    "IKK"
+  ],
+  "result": {
+    "item": "exposure:high_sensitivity_color_film"
+  },
+  "show_notification": true
+}

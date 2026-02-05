@@ -5,7 +5,7 @@ import io.github.mortuusars.exposure.Exposure;
 import io.github.mortuusars.exposure.world.camera.CameraId;
 import io.github.mortuusars.exposure.world.inventory.slot.FilteredSlot;
 import io.github.mortuusars.exposure.world.item.camera.CameraItem;
-import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -104,7 +104,7 @@ public class CameraInHandAttachmentsMenu extends AbstractCameraAttachmentsMenu {
         return CameraId.ofStack(getCameraStack()).matches(player.getInventory().getItem(cameraSlotIndex));
     }
 
-    public static CameraInHandAttachmentsMenu fromBuffer(int containerId, Inventory playerInventory, RegistryFriendlyByteBuf buffer) {
+    public static CameraInHandAttachmentsMenu fromBuffer(int containerId, Inventory playerInventory, FriendlyByteBuf buffer) {
         return new CameraInHandAttachmentsMenu(containerId, playerInventory, buffer.readInt(), buffer.readBoolean());
     }
 

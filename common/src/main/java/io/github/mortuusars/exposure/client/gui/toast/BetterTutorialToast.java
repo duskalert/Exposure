@@ -3,6 +3,7 @@ package io.github.mortuusars.exposure.client.gui.toast;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.toasts.Toast;
 import net.minecraft.client.gui.components.toasts.ToastComponent;
+import net.minecraft.client.gui.components.toasts.TutorialToast;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
@@ -11,7 +12,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.function.Supplier;
 
 public class BetterTutorialToast implements Toast {
-    private static final ResourceLocation BACKGROUND_SPRITE = ResourceLocation.withDefaultNamespace("toast/tutorial");
+    private static final ResourceLocation BACKGROUND_SPRITE = TutorialToast.TEXTURE;
     public static final int DEFAULT_SHOW_DURATION_MS = 7000;
 
     public ResourceLocation backgroundSprite = BACKGROUND_SPRITE;
@@ -62,7 +63,7 @@ public class BetterTutorialToast implements Toast {
             onHide.run();
         }
 
-        guiGraphics.blitSprite(backgroundSprite, 0, 0, this.width(), this.height());
+        guiGraphics.blit(backgroundSprite, 0, 0,0,96, this.width(), this.height());
         this.icon.render(guiGraphics, 6, 6);
         if (this.message == null) {
             guiGraphics.drawString(toastComponent.getMinecraft().font, this.title, 30, 12, 0xFF500050, false);

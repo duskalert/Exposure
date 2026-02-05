@@ -1,5 +1,6 @@
 package io.github.mortuusars.exposure.world.item.util;
 
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
@@ -29,6 +30,14 @@ public class ItemAndStack<T extends Item> {
         return this;
     }
 
+    public void toPacket(FriendlyByteBuf buf) {
+        buf.writeItem(stack);
+    }
+
+    public static ItemAndStack<?> fromPacket(FriendlyByteBuf buf) {
+        return new ItemAndStack<>(buf.readItem());
+    }
+
     public <R> R map(BiFunction<T, ItemStack, R> mappingFunction) {
         return mappingFunction.apply(item, stack);
     }
@@ -43,7 +52,7 @@ public class ItemAndStack<T extends Item> {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ItemAndStack<?> that = (ItemAndStack<?>) o;
-        return Objects.equals(item, that.item) && Objects.equals(stack, that.stack);
+        return Objects.equals(item, that.item) && ItemStack.isSameItemSameTags(stack, that.stack);//can't use .equals on itemstacks!
     }
 
     @Override

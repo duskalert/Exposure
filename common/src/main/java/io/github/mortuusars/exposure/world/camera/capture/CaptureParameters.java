@@ -4,16 +4,15 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import io.github.mortuusars.exposure.util.Codecs;
 import io.github.mortuusars.exposure.util.ExtraData;
+import io.github.mortuusars.exposure.util.NbtType;
 import io.github.mortuusars.exposure.world.camera.CameraId;
 import io.github.mortuusars.exposure.world.camera.ColorChannel;
 import io.github.mortuusars.exposure.world.camera.component.ShutterSpeed;
 import io.github.mortuusars.exposure.world.camera.film.properties.FilmProperties;
 import io.github.mortuusars.exposure.world.entity.CameraHolder;
-import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.codec.ByteBufCodecs;
-import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
@@ -30,12 +29,12 @@ public record CaptureParameters(String exposureId,
                                 FilmProperties filmProperties,
                                 ExtraData extraData) {
 
-    public static final ExtraData.Type<ShutterSpeed> SHUTTER_SPEED =
-            ExtraData.Type.stringRepresentable("shutter_speed", ShutterSpeed::new);
-    public static final ExtraData.Type<Boolean> FLASH =
-            new ExtraData.Type<>("flash", ExtraData::getBoolean, ExtraData::putBoolean);
-    public static final ExtraData.Type<Integer> LIGHT_LEVEL =
-            new ExtraData.Type<>("light_level", ExtraData::getInt, ExtraData::putInt);
+    public static final NbtType<ShutterSpeed> SHUTTER_SPEED =
+            NbtType.stringRepresentable("shutter_speed", ShutterSpeed::new);
+    public static final NbtType<Boolean> FLASH =
+            new NbtType<>("flash", CompoundTag::getBoolean, CompoundTag::putBoolean);
+    public static final NbtType<Integer> LIGHT_LEVEL =
+            new NbtType<>("light_level", CompoundTag::getInt, CompoundTag::putInt);
 
     // --
 
@@ -52,34 +51,24 @@ public record CaptureParameters(String exposureId,
             ExtraData.CODEC.optionalFieldOf("extra_data", ExtraData.EMPTY).forGetter(CaptureParameters::extraData)
     ).apply(instance, CaptureParameters::new));
 
-    public static final StreamCodec<RegistryFriendlyByteBuf, CaptureParameters> STREAM_CODEC = new StreamCodec<>() {
-        public @NotNull CaptureParameters decode(RegistryFriendlyByteBuf buffer) {
-            return new CaptureParameters(
-                    ByteBufCodecs.STRING_UTF8.decode(buffer),
-                    ByteBufCodecs.optional(CameraId.STREAM_CODEC).decode(buffer),
-                    ByteBufCodecs.optional(ByteBufCodecs.VAR_INT).decode(buffer),
-                    ByteBufCodecs.optional(ByteBufCodecs.DOUBLE).decode(buffer),
-                    ByteBufCodecs.FLOAT.decode(buffer),
-                    ByteBufCodecs.optional(ResourceLocation.STREAM_CODEC).decode(buffer),
-                    ByteBufCodecs.optional(Projection.STREAM_CODEC).decode(buffer),
-                    ByteBufCodecs.optional(ColorChannel.STREAM_CODEC).decode(buffer),
-                    FilmProperties.STREAM_CODEC.decode(buffer),
-                    ExtraData.STREAM_CODEC.decode(buffer));
-        }
+    public void toPacket(FriendlyByteBuf buf) {
+        buf.writeUtf(exposureId);
+        buf.writeOptional(cameraId,(buf1, cameraId1) -> cameraId1.toPacket(buf1));
+        buf.writeOptional(cameraHolderId, FriendlyByteBuf::writeInt);
+        buf.writeOptional(fov,FriendlyByteBuf::writeDouble);
+        buf.writeFloat(cropFactor);
+        buf.writeOptional(filter,FriendlyByteBuf::writeResourceLocation);
+        buf.writeOptional(projection,(buf1, projection1) -> projection1.toPacket(buf1));
+        buf.writeOptional(singleChannel,FriendlyByteBuf::writeEnum);
+        filmProperties.toPacket(buf);
+        extraData.toPacket(buf);
+    }
 
-        public void encode(RegistryFriendlyByteBuf buffer, CaptureParameters data) {
-            ByteBufCodecs.STRING_UTF8.encode(buffer, data.exposureId());
-            ByteBufCodecs.optional(CameraId.STREAM_CODEC).encode(buffer, data.cameraId());
-            ByteBufCodecs.optional(ByteBufCodecs.VAR_INT).encode(buffer, data.cameraHolderId());
-            ByteBufCodecs.optional(ByteBufCodecs.DOUBLE).encode(buffer, data.fov());
-            ByteBufCodecs.FLOAT.encode(buffer, data.cropFactor());
-            ByteBufCodecs.optional(ResourceLocation.STREAM_CODEC).encode(buffer, data.filter());
-            ByteBufCodecs.optional(Projection.STREAM_CODEC).encode(buffer, data.projection());
-            ByteBufCodecs.optional(ColorChannel.STREAM_CODEC).encode(buffer, data.singleChannel());
-            FilmProperties.STREAM_CODEC.encode(buffer, data.filmProperties());
-            ExtraData.STREAM_CODEC.encode(buffer, data.extraData());
-        }
-    };
+    public static CaptureParameters fromPacket(FriendlyByteBuf buf) {
+        return new CaptureParameters(buf.readUtf(),buf.readOptional(CameraId::fromPacket),buf.readOptional(FriendlyByteBuf::readInt),
+                buf.readOptional(FriendlyByteBuf::readDouble),buf.readFloat(),buf.readOptional(FriendlyByteBuf::readResourceLocation),
+                buf.readOptional(Projection::fromPacket),buf.readOptional(buf1 -> buf1.readEnum(ColorChannel.class)),FilmProperties.fromPacket(buf),ExtraData.fromPacket(buf));
+    }
 
     public ShutterSpeed getShutterSpeed() {
         return extraData.get(SHUTTER_SPEED).orElse(ShutterSpeed.DEFAULT);
@@ -182,7 +171,7 @@ public record CaptureParameters(String exposureId,
             return this;
         }
 
-        public <T> Builder extraData(ExtraData.Type<T> type, T value) {
+        public <T> Builder extraData(NbtType<T> type, T value) {
             extraData.put(type, value);
             return this;
         }

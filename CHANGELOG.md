@@ -1,5 +1,15 @@
 # Changelog
 
+## 1.20.1 - 1.9.13 - 2026-02-05
+- Backport of latest version from 1.21.1 to 1.20.1.
+  - Most of the work was done by _Tfarcenim_ who was commissioned by _MonoRedBaron_
+
+_**This version could be unstable or buggy. Use at your own risk.**_
+
+**_Most of the existing data (photographs, items, etc) will be removed from the world when updating to this version._**
+
+_Please report any issues on [github](https://github.com/mortuusars/Exposure/issues)_ 
+
 ## 1.9.13 - 2025-12-30
 - Capturing the image no longer sets the game to 'panoramic mode' by default.
   - Setting to enable it is added to config. Enable if world is not looking right in the photos.

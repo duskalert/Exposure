@@ -5,7 +5,6 @@ import io.github.mortuusars.exposure.Exposure;
 import io.github.mortuusars.exposure.world.camera.capture.DitherMode;
 import io.github.mortuusars.exposure.world.camera.capture.Projection;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.SlotAccess;
 import net.minecraft.world.entity.player.Player;
@@ -14,6 +13,7 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -25,11 +25,11 @@ public class InterplanarProjectorItem extends Item {
     }
 
     public DitherMode getMode(ItemStack stack) {
-        return stack.getOrDefault(Exposure.DataComponents.INTERPLANAR_PROJECTOR_MODE, DitherMode.DITHERED);
+        return Exposure.DataComponents.getInterplanarProjectorMode(stack, DitherMode.DITHERED);
     }
 
     public void setMode(ItemStack stack, DitherMode mode) {
-        stack.set(Exposure.DataComponents.INTERPLANAR_PROJECTOR_MODE, mode);
+        Exposure.DataComponents.setInterplanarProjectorMode(stack, mode);
     }
 
     public boolean isConsumable(ItemStack stack) {
@@ -41,7 +41,7 @@ public class InterplanarProjectorItem extends Item {
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> components, TooltipFlag tooltipFlag) {
+    public void appendHoverText(ItemStack stack, Level context, List<Component> components, TooltipFlag tooltipFlag) {
         if (!isAllowed()) {
             components.add(Component.translatable("item.exposure.interplanar_projector.tooltip.disabled"));
         }
@@ -78,8 +78,8 @@ public class InterplanarProjectorItem extends Item {
     }
 
     public Optional<String> getPath(ItemStack stack) {
-        @Nullable Component customName = stack.get(DataComponents.CUSTOM_NAME);
-        return customName != null ? Optional.of(customName.getString()) : Optional.empty();
+        @Nullable Component customName = stack.getHoverName();
+        return Optional.of(customName.getString());
     }
 
     public Optional<Projection> getProjection(ItemStack stack) {

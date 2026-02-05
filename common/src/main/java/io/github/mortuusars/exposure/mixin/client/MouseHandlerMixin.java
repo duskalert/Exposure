@@ -13,7 +13,7 @@ public class MouseHandlerMixin {
     @Inject(method = "onScroll", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/player/LocalPlayer;isSpectator()Z"),
             cancellable = true)
     private void onScroll(long windowPointer, double xOffset, double yOffset, CallbackInfo ci,
-                  @Local(ordinal = 4 /* Magic number that corresponds to yScroll variable*/) double yScroll) {
+                  @Local(ordinal = 2 /* Magic number that corresponds to yScroll variable*/) double yScroll) {
         if (yScroll != 0 && MouseHandler.scrolled(yScroll)) {
             ci.cancel();
         }

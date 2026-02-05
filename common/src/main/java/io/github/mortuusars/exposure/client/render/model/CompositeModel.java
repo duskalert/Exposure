@@ -39,36 +39,36 @@ public class CompositeModel implements BakedModel {
 
     @Override
     public boolean useAmbientOcclusion() {
-        return models.getFirst().useAmbientOcclusion();
+        return models.get(0).useAmbientOcclusion();
     }
 
     @Override
     public boolean isGui3d() {
-        return models.getFirst().isGui3d();
+        return models.get(0).isGui3d();
     }
 
     @Override
     public boolean usesBlockLight() {
-        return models.getFirst().usesBlockLight();
+        return models.get(0).usesBlockLight();
     }
 
     @Override
     public boolean isCustomRenderer() {
-        return models.getFirst().isCustomRenderer();
+        return models.get(0).isCustomRenderer();
     }
 
     @Override
     public @NotNull TextureAtlasSprite getParticleIcon() {
-        return models.getFirst().getParticleIcon();
+        return models.get(0).getParticleIcon();
     }
 
     @Override
     public @NotNull ItemTransforms getTransforms() {
-        return models.getFirst().getTransforms();
+        return models.get(0).getTransforms();
     }
 
     @Override
     public @NotNull ItemOverrides getOverrides() {
-        return models.getFirst().getOverrides();
+        return models.get(0).getOverrides();
     }
 }

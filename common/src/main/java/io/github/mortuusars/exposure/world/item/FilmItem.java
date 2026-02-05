@@ -25,15 +25,15 @@ public interface FilmItem {
     }
 
     default int getMaxFrameCount(ItemStack stack) {
-        return stack.getOrDefault(Exposure.DataComponents.FILM_FRAME_COUNT, getDefaultMaxFrameCount(stack));
+        return Exposure.DataComponents.getFilmFrameCount(stack, getDefaultMaxFrameCount(stack));
     }
 
     default int getFrameSize(ItemStack stack) {
-        return stack.getOrDefault(Exposure.DataComponents.FILM_FRAME_SIZE, getDefaultFrameSize(stack));
+        return Exposure.DataComponents.getFilmFrameSize(stack, getDefaultFrameSize(stack));
     }
 
     default List<Frame> getStoredFrames(ItemStack stack) {
-        return stack.getOrDefault(Exposure.DataComponents.FILM_FRAMES, Collections.emptyList());
+        return Exposure.DataComponents.getFilmFrames(stack, Collections.emptyList());
     }
 
     default int getStoredFramesCount(ItemStack stack) {

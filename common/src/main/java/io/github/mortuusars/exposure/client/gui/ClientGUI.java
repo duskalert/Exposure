@@ -17,6 +17,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.crafting.*;
+import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -36,7 +37,7 @@ public class ClientGUI {
         Minecrft.get().setScreen(new AlbumViewScreen(AlbumViewScreen.AlbumAccess.fromItem(albumStack)));
     }
 
-    public static void addFilmRollDevelopingTooltip(ItemStack filmStack, Item.TooltipContext tooltipContext,
+    public static void addFilmRollDevelopingTooltip(ItemStack filmStack, Level tooltipContext,
                                                     @NotNull List<Component> tooltipComponents, @NotNull TooltipFlag isAdvanced) {
         addRecipeTooltip(filmStack, tooltipContext, tooltipComponents, isAdvanced,
                 r -> r instanceof FilmDevelopingRecipe filmDevelopingRecipe
@@ -44,7 +45,7 @@ public class ClientGUI {
                 "item.exposure.film_roll.tooltip.details.develop");
     }
 
-    public static void addPhotographCopyingTooltip(ItemStack photographStack, Item.TooltipContext tooltipContext,
+    public static void addPhotographCopyingTooltip(ItemStack photographStack, Level tooltipContext,
                                                    @NotNull List<Component> tooltipComponents, @NotNull TooltipFlag isAdvanced) {
         addRecipeTooltip(photographStack, tooltipContext, tooltipComponents, isAdvanced,
                 r -> r instanceof PhotographCopyingRecipe photographCopyingRecipe
@@ -52,7 +53,7 @@ public class ClientGUI {
                 "item.exposure.photograph.tooltip.details.copy");
     }
 
-    private static void addRecipeTooltip(ItemStack stack, Item.TooltipContext tooltipContext,
+    private static void addRecipeTooltip(ItemStack stack, Level tooltipContext,
                                          @NotNull List<Component> tooltipComponents, @NotNull TooltipFlag isAdvanced,
                                          Predicate<CraftingRecipe> recipeFilter, String detailsKey) {
         if (Minecraft.getInstance().level == null) {
@@ -68,7 +69,7 @@ public class ClientGUI {
                 .getRecipeManager()
                 .getAllRecipesFor(RecipeType.CRAFTING)
                 .stream()
-                .map(RecipeHolder::value)
+                //.map(RecipeHolder::value)
                 .filter(recipeFilter)
                 .findFirst()
                 .map(Recipe::getIngredients);

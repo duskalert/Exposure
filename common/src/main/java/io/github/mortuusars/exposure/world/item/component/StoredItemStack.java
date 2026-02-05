@@ -2,10 +2,10 @@ package io.github.mortuusars.exposure.world.item.component;
 
 import com.mojang.serialization.Codec;
 import io.github.mortuusars.exposure.world.item.util.ItemAndStack;
-import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemStackLinkedSet;
 
 import java.util.Optional;
 import java.util.function.BiFunction;
@@ -23,10 +23,14 @@ public class StoredItemStack {
     public static final StoredItemStack EMPTY = new StoredItemStack(ItemStack.EMPTY);
 
     public static final Codec<StoredItemStack> CODEC = ItemStack.CODEC.xmap(StoredItemStack::new, StoredItemStack::getForReading);
-    public static final StreamCodec<RegistryFriendlyByteBuf, StoredItemStack> STREAM_CODEC = ItemStack.STREAM_CODEC.map(
-            StoredItemStack::new,
-            StoredItemStack::getForReading
-    );
+
+    public void toPacket(FriendlyByteBuf buf) {
+        buf.writeItem(stack);
+    }
+
+    public static StoredItemStack fromPacket(FriendlyByteBuf buf) {
+        return new StoredItemStack(buf.readItem());
+    }
 
     private final ItemStack stack;
 
@@ -64,7 +68,7 @@ public class StoredItemStack {
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof StoredItemStack other) {
-            return ItemStack.isSameItemSameComponents(getForReading(), other.getForReading());
+            return ItemStack.isSameItemSameTags(getForReading(), other.getForReading());
         } else {
             return false;
         }
@@ -72,7 +76,7 @@ public class StoredItemStack {
 
     @Override
     public int hashCode() {
-        return ItemStack.hashItemAndComponents(getForReading());
+        return ItemStackLinkedSet.hashStackAndTag(getForReading());
     }
 
     @Override

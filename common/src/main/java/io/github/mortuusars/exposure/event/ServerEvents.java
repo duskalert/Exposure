@@ -9,7 +9,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 
-import java.util.stream.Stream;
+import java.util.List;
 
 public class ServerEvents {
     public static void onServerSave() {
@@ -26,7 +26,7 @@ public class ServerEvents {
 
     }
 
-    public static void syncDatapack(Stream<ServerPlayer> relevantPlayers) {
+    public static void syncDatapack(List<ServerPlayer> relevantPlayers) {
 
     }
 

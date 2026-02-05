@@ -6,28 +6,35 @@ import mezz.jei.api.gui.ingredient.ICraftingGridHelper;
 import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.category.extensions.vanilla.crafting.ICraftingCategoryExtension;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.RecipeHolder;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class ComponentTransferringShapelessExtension implements ICraftingCategoryExtension<ComponentTransferringRecipe> {
+public class ComponentTransferringShapelessExtension implements ICraftingCategoryExtension {
+
+    private final ComponentTransferringRecipe recipe;
+
+    public ComponentTransferringShapelessExtension(ComponentTransferringRecipe recipe) {
+        this.recipe = recipe;
+    }
+
     @Override
-    public void setRecipe(RecipeHolder<ComponentTransferringRecipe> recipeHolder, IRecipeLayoutBuilder builder,
+    public void setRecipe(IRecipeLayoutBuilder builder,
                           ICraftingGridHelper craftingGridHelper, IFocusGroup focuses) {
-        ComponentTransferringRecipe recipe = recipeHolder.value();
+        ComponentTransferringRecipe recipe = this.recipe;
 
         List<List<ItemStack>> inputs = recipe.getIngredients().stream()
                 .map(ingredient -> List.of(ingredient.getItems()))
                 .collect(Collectors.toList());
 
-        inputs.addFirst(List.of(recipe.getSourceIngredient().getItems()));
+        inputs.add(0,List.of(recipe.getSourceIngredient().getItems()));
 
         ItemStack resultItem = recipe.getResult();
 
-        int width = getWidth(recipeHolder);
-        int height = getHeight(recipeHolder);
+        int width = 3;//grecipe);
+        int height = 3;//getHeight(recipeHolder);todo
         craftingGridHelper.createAndSetInputs(builder, inputs, width, height);
         craftingGridHelper.createAndSetOutputs(builder, List.of(resultItem));
     }
+
 }

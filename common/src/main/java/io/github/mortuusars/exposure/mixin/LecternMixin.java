@@ -53,8 +53,6 @@ public abstract class LecternMixin {
             }
         };
 
-        PlatformHelper.openMenu(player, menuProvider, buffer -> {
-            ItemStack.STREAM_CODEC.encode(buffer, book);
-        });
+        PlatformHelper.openMenu(player, menuProvider, buffer -> buffer.writeItem(book));
     }
 }
