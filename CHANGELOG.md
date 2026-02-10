@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.9.14 - 2026-02-10
+- [Forge] Fixed High-Sensitivity film recipes. 
+
 ## 1.20.1 - 1.9.13 - 2026-02-05
 - Backport of latest version from 1.21.1 to 1.20.1.
   - Most of the work was done by _Tfarcenim_ who was commissioned by _MonoRedBaron_
