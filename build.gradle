@@ -266,7 +266,7 @@ publishMods {
         from cfOptions
         file project(":forge")
         modLoaders.add("forge")
-        displayName = "[Unstable] ${mod_name} - Forge ${minecraft_version} - ${mod_version}"
+        displayName = "${mod_name} - Forge ${minecraft_version} - ${mod_version}"
         optional("jei")
     }
 
@@ -274,7 +274,7 @@ publishMods {
         from cfOptions
         file project(":fabric")
         modLoaders.add("fabric")
-        displayName = "[Unstable] ${mod_name} - Fabric ${minecraft_version} - ${mod_version}"
+        displayName = "${mod_name} - Fabric ${minecraft_version} - ${mod_version}"
         requires("fabric-api")
         requires("forge-config-api-port")
         optional("jei")
@@ -284,7 +284,7 @@ publishMods {
         from mrOptions
         file project(":forge")
         modLoaders.add("forge")
-        displayName = "[Unstable] ${mod_name} - ${mod_version}"
+        displayName = "${mod_name} - ${mod_version}"
         optional("jei")
     }
 
@@ -292,7 +292,7 @@ publishMods {
         from mrOptions
         file project(":fabric")
         modLoaders.add("fabric")
-        displayName = "[Unstable] ${mod_name} - ${mod_version}"
+        displayName = "${mod_name} - ${mod_version}"
         requires("fabric-api")
         requires("forge-config-api-port")
         optional("jei")
