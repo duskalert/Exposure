@@ -185,12 +185,6 @@ public class PhotographScreen extends Screen {
         }
     }
 
-    //@Override
-    public void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        // Background is rendered manually in #render method.
-        // Otherwise, background will be rendered on top of a photograph.
-    }
-
     private void renderFrameInfoHint(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, ItemAndStack<PhotographItem> photograph) {
         if (Minecrft.get().player == null || !Minecrft.get().player.isCreative()) {
             return;

@@ -1,7 +1,9 @@
 # Changelog
 
-## 1.9.14 - 2026-02-10
-- [Forge] Fixed High-Sensitivity film recipes. 
+## 1.9.14 - 2026-02-18
+- [Forge] Fixed High-Sensitivity film recipes.
+- Added additional check to prevent attacking while in viewfinder of a camera on stand.
+  - Fixes incompatibility with some mods (Enchancement).
 
 ## 1.20.1 - 1.9.13 - 2026-02-05
 - Backport of latest version from 1.21.1 to 1.20.1.

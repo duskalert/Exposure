@@ -7,6 +7,7 @@ import io.github.mortuusars.exposure.client.camera.CameraClient;
 import io.github.mortuusars.exposure.client.input.*;
 import io.github.mortuusars.exposure.client.util.Minecrft;
 import io.github.mortuusars.exposure.world.camera.Camera;
+import io.github.mortuusars.exposure.world.entity.CameraStandEntity;
 import io.github.mortuusars.exposure.world.item.camera.CameraItem;
 import net.minecraft.client.CameraType;
 import net.minecraft.client.Minecraft;
@@ -115,8 +116,9 @@ public class Viewfinder {
     }
 
     public boolean canAttack() {
-        return Config.Server.CAMERA_VIEWFINDER_ATTACK.get()
-                && !camera.map(CameraItem::isInSelfieMode).orElse(false); // Attacking in selfie mode has weird anim.
+        if (!Config.Server.CAMERA_VIEWFINDER_ATTACK.get()) return false;
+        if (camera.getHolder() instanceof CameraStandEntity) return false;
+        return !camera.map(CameraItem::isInSelfieMode).orElse(false); // Attacking in selfie mode has weird anim.
     }
 
     public void openControlsScreen() {
