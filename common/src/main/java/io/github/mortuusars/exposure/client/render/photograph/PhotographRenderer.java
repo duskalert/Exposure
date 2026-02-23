@@ -10,6 +10,7 @@ import io.github.mortuusars.exposure.world.item.PhotographItem;
 import io.github.mortuusars.exposure.world.item.StackedPhotographsItem;
 import io.github.mortuusars.exposure.world.camera.frame.Frame;
 import io.github.mortuusars.exposure.world.item.util.ItemAndStack;
+import io.github.mortuusars.exposure.world.level.storage.ExposureIdentifier;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.world.item.ItemStack;
 
@@ -132,8 +133,8 @@ public class PhotographRenderer {
 
             poseStack.translate(0.5f, 0.5f, 0);
 
-            Frame frame = photograph.getItem().getFrame(photograph.getItemStack());
-            int rotation = frame.identifier().hashCode() % 4 * 90;
+            ExposureIdentifier identifier = photograph.getItem().getIdentifier(photograph.getItemStack());
+            int rotation = identifier.hashCode() % 4 * 90;
             poseStack.mulPose(Axis.ZP.rotationDegrees(rotation));
 
             poseStack.translate(-0.5f, -0.5f, 0);

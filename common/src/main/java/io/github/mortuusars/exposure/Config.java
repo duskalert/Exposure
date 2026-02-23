@@ -236,6 +236,7 @@ public class Config {
         public static final ForgeConfigSpec.BooleanValue SIGNED_ALBUM_GLINT;
         public static final ForgeConfigSpec.BooleanValue DIFFERENT_DEVELOPING_POTION_COLORS;
         public static final ForgeConfigSpec.BooleanValue GENERATE_LOOT;
+        public static final ForgeConfigSpec.BooleanValue DATAFIX_OLD_IDS;
 
         static {
             ForgeConfigSpec.Builder builder = new ForgeConfigSpec.Builder();
@@ -253,6 +254,10 @@ public class Config {
                 GENERATE_LOOT = builder
                         .comment("Generate photographs and film rolls in loot chests. Default: true")
                         .define("loot_chests", true);
+
+                DATAFIX_OLD_IDS = builder
+                      .comment("Convert old photograph IDs to the new system (1.7 -> 1.9 update). Makes old photos visible, but results may be undesirable (missing pixels, different colors, etc).", "Default: true")
+                      .define("datafix_old_ids", true);
             }
             builder.pop();
 

@@ -23,6 +23,7 @@ import io.github.mortuusars.exposure.world.camera.frame.Frame;
 import io.github.mortuusars.exposure.world.item.PhotographItem;
 import io.github.mortuusars.exposure.world.item.StackedPhotographsItem;
 import io.github.mortuusars.exposure.world.item.util.ItemAndStack;
+import io.github.mortuusars.exposure.world.level.storage.ExposureIdentifier;
 import io.github.mortuusars.exposure.world.photograph.PhotographType;
 import io.github.mortuusars.exposure.world.sound.SoundEffect;
 import net.minecraft.Util;
@@ -131,8 +132,7 @@ public class PhotographScreen extends Screen {
 
     protected void queryAllPhotographs(List<ItemAndStack<PhotographItem>> photographs) {
         for (ItemAndStack<PhotographItem> photograph : photographs) {
-            photograph.getItem().getFrame(photograph.getItemStack())
-                    .identifier()
+            photograph.getItem().getIdentifier(photograph.getItemStack())
                     .ifId(id -> ExposureClient.exposureStore().getOrRequest(id));
         }
     }
@@ -190,24 +190,24 @@ public class PhotographScreen extends Screen {
             return;
         }
 
-        Frame frame = photograph.getItem().getFrame(photograph.getItemStack());
-        if (frame == Frame.EMPTY) {
+        ExposureIdentifier identifier = photograph.getItem().getIdentifier(photograph.getItemStack());
+        if (identifier == ExposureIdentifier.EMPTY) {
             return;
         }
 
         guiGraphics.drawString(font, "?", width - font.width("?") - 10, 10, 0xFFFFFFFF);
 
         if (mouseX > width - 20 && mouseX < width && mouseY < 20) {
-            String exposureName = frame.identifier().map(id -> id, ResourceLocation::toString);
+            String exposureName = identifier.map(id -> id, ResourceLocation::toString);
 
             List<Component> lines = new ArrayList<>();
 
             lines.add(Component.literal(exposureName));
             lines.add(Component.translatable("gui.exposure.photograph_screen.drop_as_item_tooltip", Component.literal("CTRL + I")));
             lines.add(Component.translatable("gui.exposure.photograph_screen.copy_" +
-                    frame.identifier().map(id -> "id", texture -> "texture_path") + "_tooltip", "CTRL + C"));
+                    identifier.map(id -> "id", texture -> "texture_path") + "_tooltip", "CTRL + C"));
 
-            frame.identifier().getId().ifPresent(id -> {
+            identifier.getId().ifPresent(id -> {
                 if (savedExposureFiles.containsKey(id)) {
                     lines.add(Component.translatable("gui.exposure.photograph_screen.copy_saved_file_path_tooltip", Component.literal("CTRL + SHIFT + C")));
                     lines.add(Component.translatable("gui.exposure.photograph_screen.open_saved_file_tooltip", Component.literal("CTRL + S")));
@@ -280,11 +280,11 @@ public class PhotographScreen extends Screen {
     }
 
     protected boolean copyIdentifierToClipboard() {
-        Frame frame = getCurrentPhotograph().map(PhotographItem::getFrame);
-        if (!Minecrft.player().isCreative() || frame.equals(Frame.EMPTY)) {
+        ExposureIdentifier identifier = getCurrentPhotograph().map(PhotographItem::getIdentifier);
+        if (!Minecrft.player().isCreative() || identifier.equals(ExposureIdentifier.EMPTY)) {
             return false;
         }
-        String text = frame.identifier().map(id -> id, ResourceLocation::toString);
+        String text = identifier.map(id -> id, ResourceLocation::toString);
         Minecrft.get().keyboardHandler.setClipboard(text);
         Minecrft.player().displayClientMessage(
                 Component.translatable("gui.exposure.photograph_screen.copied_message", text), false);
@@ -293,8 +293,7 @@ public class PhotographScreen extends Screen {
 
     protected boolean copySavedFilePathToClipboard() {
         return getCurrentPhotograph()
-                .map(PhotographItem::getFrame)
-                .identifier()
+                .map(PhotographItem::getIdentifier)
                 .mapId(id -> {
                     File file = savedExposureFiles.get(id) ;
                         Minecrft.get().keyboardHandler.setClipboard(file.getAbsolutePath());
@@ -306,8 +305,7 @@ public class PhotographScreen extends Screen {
 
     protected boolean openSavedFile() {
         return getCurrentPhotograph()
-                .map(PhotographItem::getFrame)
-                .identifier()
+                .map(PhotographItem::getIdentifier)
                 .mapId(id -> {
                     File file = savedExposureFiles.get(id);
                         Util.getPlatform().openFile(file);

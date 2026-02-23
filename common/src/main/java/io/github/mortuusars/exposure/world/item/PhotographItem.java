@@ -42,9 +42,13 @@ public class PhotographItem extends Item {
         return Exposure.DataComponents.getPhotographFrame(stack, Frame.EMPTY);
     }
 
+    public ExposureIdentifier getIdentifier(ItemStack stack) {
+        return Exposure.DataComponents.getExposureIdentifier(stack);
+    }
+
     @Override
     public @NotNull Optional<TooltipComponent> getTooltipImage(@NotNull ItemStack stack) {
-        ExposureIdentifier identifier = getFrame(stack).identifier();
+        ExposureIdentifier identifier = getIdentifier(stack);
         return !identifier.isEmpty() ? Optional.of(new PhotographTooltip(List.of(new ItemAndStack<>(stack)))) : Optional.empty();
     }
 
@@ -88,8 +92,8 @@ public class PhotographItem extends Item {
     public @NotNull InteractionResultHolder<ItemStack> use(@NotNull Level level, Player player, @NotNull InteractionHand hand) {
         ItemStack itemInHand = player.getItemInHand(hand);
 
-        Frame frame = getFrame(itemInHand);
-        if (frame == Frame.EMPTY || frame.identifier().isEmpty()) {
+        ExposureIdentifier identifier = getIdentifier(itemInHand);
+        if (identifier == ExposureIdentifier.EMPTY || identifier.isEmpty()) {
             return InteractionResultHolder.pass(itemInHand);
         }
 

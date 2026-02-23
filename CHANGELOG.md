@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.9.15 - 2026-02-23
+- Added band-aid compatibility patch to make old (pre 1.9) Photographs and Film frames visible. Can be disabled by setting `misc.datafix_old_ids` to `false` in _exposure-common_ config.
+  - **_Note:_** Photos might have missing pixels, wrong colors, etc. It's not a proper conversion, as underlying image data between 1.7 and 1.9 was changed as well.
+- Small performance optimization for getting data from photographs.  
+
 ## 1.9.14 - 2026-02-18
 - [Forge] Fixed High-Sensitivity film recipes.
 - Added additional check to prevent attacking while in viewfinder of a camera on stand.

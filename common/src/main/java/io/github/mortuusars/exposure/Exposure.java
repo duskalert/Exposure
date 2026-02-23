@@ -3,6 +3,7 @@ package io.github.mortuusars.exposure;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.logging.LogUtils;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.Dynamic;
@@ -40,6 +41,7 @@ import io.github.mortuusars.exposure.world.item.component.album.SignedAlbumConte
 import io.github.mortuusars.exposure.world.item.crafting.recipe.serializer.ComponentTransferringRecipeSerializer;
 import io.github.mortuusars.exposure.world.item.interfaces.DefaultFilmStyle;
 import io.github.mortuusars.exposure.world.item.util.ItemAndStack;
+import io.github.mortuusars.exposure.world.level.storage.ExposureIdentifier;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.advancements.critereon.EntitySubPredicate;
 import net.minecraft.advancements.critereon.PlayerTrigger;
@@ -47,8 +49,7 @@ import net.minecraft.commands.synchronization.ArgumentTypeInfo;
 import net.minecraft.commands.synchronization.SingletonArgumentInfo;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.nbt.NbtOps;
-import net.minecraft.nbt.Tag;
+import net.minecraft.nbt.*;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -68,6 +69,7 @@ import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.MapColor;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 
@@ -600,6 +602,7 @@ public class Exposure {
         }
 
         public static List<Frame> getFilmFrames(ItemStack stack) {
+            dataFixFilmFrames(stack);
             return getValue(stack, "film_frames", Frame.CODEC.listOf());
         }
 
@@ -608,13 +611,78 @@ public class Exposure {
             return value == null ? fallback : value;
         }
 
+        private static void dataFixFilmFrames(ItemStack stack) {
+            if (!Config.Common.DATAFIX_OLD_IDS.get()) {
+                return;
+            }
+
+            @Nullable CompoundTag tag = stack.getTag();
+            if (tag != null && !tag.isEmpty() && !tag.contains("film_frames")) {
+                if (tag.contains("Frames", Tag.TAG_LIST)) {
+                    ListTag oldFrames = tag.getList("Frames", Tag.TAG_COMPOUND);
+                    ListTag newFrames = new ListTag();
+                    for (int i = 0; i < oldFrames.size(); i++) {
+                        CompoundTag frame = oldFrames.getCompound(i);
+                        if (frame.contains("Id", Tag.TAG_STRING)) {
+                            CompoundTag newFrame = new CompoundTag();
+                            newFrame.putString("identifier", frame.getString("Id"));
+                            newFrames.add(newFrame);
+                        } else if (frame.contains("Texture", Tag.TAG_STRING)) {
+                            CompoundTag newFrame = new CompoundTag();
+                            CompoundTag identifier = new CompoundTag();
+                            identifier.putString("texture", frame.getString("Texture"));
+                            newFrame.put("identifier", identifier);
+                            newFrames.add(newFrame);
+                        }
+                    }
+
+                    tag.put("film_frames", newFrames);
+                }
+            }
+        }
+
         // Photograph
+
+        private static void dataFixPhotographId(ItemStack stack) {
+            if (!Config.Common.DATAFIX_OLD_IDS.get()) {
+                return;
+            }
+
+            @Nullable CompoundTag tag = stack.getTag();
+            if (tag != null && !tag.isEmpty() && !tag.contains("photograph_frame")) {
+                if (tag.contains("Id", Tag.TAG_STRING)) {
+                    CompoundTag frame = new CompoundTag();
+                    frame.putString("identifier", tag.getString("Id"));
+                    tag.put("photograph_frame", frame);
+                } else if (tag.contains("Texture", Tag.TAG_STRING)) {
+                    CompoundTag frame = new CompoundTag();
+                    CompoundTag identifier = new CompoundTag();
+                    identifier.putString("texture", tag.getString("Texture"));
+                    frame.put("identifier", identifier);
+                    tag.put("photograph_frame", frame);
+                }
+            }
+        }
+
+        public static @NotNull ExposureIdentifier getExposureIdentifier(ItemStack stack) {
+            dataFixPhotographId(stack);
+
+            @Nullable CompoundTag tag = stack.getTag();
+            if (tag == null || tag.isEmpty()) {
+                return ExposureIdentifier.EMPTY;
+            }
+
+            return ExposureIdentifier.CODEC.parse(NbtOps.INSTANCE, tag.getCompound("photograph_frame").get("identifier"))
+                  .resultOrPartial(LOGGER::error)
+                  .orElse(ExposureIdentifier.EMPTY);
+        }
 
         public static void setPhotographFrame(ItemStack stack, Frame state) {
             setValue(stack, "photograph_frame", state, Frame.CODEC);
         }
 
         public static Frame getPhotographFrame(ItemStack stack) {
+            dataFixPhotographId(stack);
             return getValue(stack, "photograph_frame", Frame.CODEC);
         }
 
