@@ -5,6 +5,7 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import io.github.mortuusars.exposure.ExposureServer;
 import io.github.mortuusars.exposure.commands.argument.TextureLocationArgument;
 import io.github.mortuusars.exposure.commands.suggestion.ExposureIdSuggestionProvider;
+import io.github.mortuusars.exposure.network.packet.clientbound.ExposureDataChunkResponseBytesS2CP;
 import io.github.mortuusars.exposure.world.level.storage.ExposureIdentifier;
 import io.github.mortuusars.exposure.world.level.storage.RequestedPalettedExposure;
 import io.github.mortuusars.exposure.world.camera.frame.Frame;
@@ -68,6 +69,8 @@ public class ShowCommand {
             stack.sendFailure(Component.translatable("command.exposure.show.error.not_a_player"));
             return 1;
         }
+
+        ExposureServer.exposureRepository().handleClientRequest(player, id);
 
         RequestedPalettedExposure palettedExposure = ExposureServer.exposureRepository().load(id);
         if (palettedExposure.getData().isEmpty()) {

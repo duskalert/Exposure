@@ -31,6 +31,8 @@ public class ClientPackets {
         ClientPlayNetworking.registerGlobalReceiver(UniqueSoundStopS2CP.ID, new ClientHandler(UniqueSoundStopS2CP::fromPacket));
         ClientPlayNetworking.registerGlobalReceiver(ShowExposureCommandS2CP.ID, new ClientHandler(ShowExposureCommandS2CP::fromPacket));
         ClientPlayNetworking.registerGlobalReceiver(ExposureDataResponseS2CP.ID, new ClientHandler(ExposureDataResponseS2CP::fromPacket));
+        ClientPlayNetworking.registerGlobalReceiver(ExposureDataChunkResponseHeaderS2CP.ID, new ClientHandler(ExposureDataChunkResponseHeaderS2CP::fromPacket));
+        ClientPlayNetworking.registerGlobalReceiver(ExposureDataChunkResponseBytesS2CP.ID, new ClientHandler(ExposureDataChunkResponseBytesS2CP::fromPacket));
         ClientPlayNetworking.registerGlobalReceiver(CaptureStartS2CP.ID, new ClientHandler(CaptureStartS2CP::fromPacket));
         ClientPlayNetworking.registerGlobalReceiver(CaptureStartDebugRGBS2CP.ID, new ClientHandler(CaptureStartDebugRGBS2CP::fromPacket));
         ClientPlayNetworking.registerGlobalReceiver(ExportS2CP.ID, new ClientHandler(ExportS2CP::fromPacket));

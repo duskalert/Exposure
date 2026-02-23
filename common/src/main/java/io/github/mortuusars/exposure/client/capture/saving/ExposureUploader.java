@@ -7,6 +7,7 @@ import io.github.mortuusars.exposure.network.Packets;
 import io.github.mortuusars.exposure.network.packet.serverbound.ExposureDataC2SP;
 import io.github.mortuusars.exposure.network.packet.serverbound.ExposureDataChunkBytesC2SP;
 import io.github.mortuusars.exposure.network.packet.serverbound.ExposureDataChunkHeaderC2SP;
+import io.github.mortuusars.exposure.util.ByteArrayUtils;
 import io.github.mortuusars.exposure.world.level.storage.ExposureData;
 import org.slf4j.Logger;
 
@@ -40,26 +41,9 @@ public class ExposureUploader {
 
         int offset = 0;
 
-        for (byte[] chunk : splitToChunks(exposure.getPixels(), SINGLE_PACKET_DATA_LIMIT)) {
+        for (byte[] chunk : ByteArrayUtils.splitToChunks(exposure.getPixels(), SINGLE_PACKET_DATA_LIMIT)) {
             Packets.sendToServer(new ExposureDataChunkBytesC2SP(id, offset, chunk));
             offset += chunk.length;
         }
-    }
-
-    @SuppressWarnings("SameParameterValue")
-    private static byte[][] splitToChunks(byte[] input, int partSize) {
-        int parts = (int)Math.ceil(input.length / (double)partSize);
-        byte[][] output = new byte[parts][];
-
-        for(int part = 0; part < parts; part++) {
-            int start = part * partSize;
-            int length = Math.min(input.length - start, partSize);
-
-            byte[] bytes = new byte[length];
-            System.arraycopy(input, start, bytes, 0, length);
-            output[part] = bytes;
-        }
-
-        return output;
     }
 }

@@ -69,6 +69,8 @@ public class PacketsImpl {
         registerS2C(UniqueSoundStopS2CP.class, UniqueSoundStopS2CP::toPacket, UniqueSoundStopS2CP::fromPacket);
         registerS2C(ShowExposureCommandS2CP.class, ShowExposureCommandS2CP::toPacket, ShowExposureCommandS2CP::fromPacket);
         registerS2C(ExposureDataResponseS2CP.class, ExposureDataResponseS2CP::toPacket, ExposureDataResponseS2CP::fromPacket);
+        registerS2C(ExposureDataChunkResponseHeaderS2CP.class, ExposureDataChunkResponseHeaderS2CP::toPacket, ExposureDataChunkResponseHeaderS2CP::fromPacket);
+        registerS2C(ExposureDataChunkResponseBytesS2CP.class, ExposureDataChunkResponseBytesS2CP::toPacket, ExposureDataChunkResponseBytesS2CP::fromPacket);
         registerS2C(CaptureStartS2CP.class, CaptureStartS2CP::toPacket, CaptureStartS2CP::fromPacket);
         registerS2C(CaptureStartDebugRGBS2CP.class, CaptureStartDebugRGBS2CP::toPacket, CaptureStartDebugRGBS2CP::fromPacket);
         registerS2C(ExportS2CP.class, ExportS2CP::toPacket, ExportS2CP::fromPacket);

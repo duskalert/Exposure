@@ -1,7 +1,7 @@
 package io.github.mortuusars.exposure.util;
 
 public class ByteArrayUtils {
-    public static byte[][] splitToParts(byte[] input, int partSize) {
+    public static byte[][] splitToChunks(byte[] input, int partSize) {
         int parts = (int)Math.ceil(input.length / (double)partSize);
         byte[][] output = new byte[parts][];
 

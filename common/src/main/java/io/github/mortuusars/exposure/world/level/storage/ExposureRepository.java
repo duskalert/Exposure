@@ -4,14 +4,16 @@ import com.google.common.base.Preconditions;
 import com.mojang.logging.LogUtils;
 import io.github.mortuusars.exposure.network.Packets;
 import io.github.mortuusars.exposure.network.packet.clientbound.ExposureDataChangedS2CP;
+import io.github.mortuusars.exposure.network.packet.clientbound.ExposureDataChunkResponseBytesS2CP;
+import io.github.mortuusars.exposure.network.packet.clientbound.ExposureDataChunkResponseHeaderS2CP;
 import io.github.mortuusars.exposure.network.packet.clientbound.ExposureDataResponseS2CP;
+import io.github.mortuusars.exposure.util.ByteArrayUtils;
 import io.github.mortuusars.exposure.util.UnixTimestamp;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.storage.DimensionDataStorage;
 import net.minecraft.world.level.storage.LevelResource;
-import org.intellij.lang.annotations.Flow;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
@@ -129,7 +131,24 @@ public class ExposureRepository {
             result = load(id);
         }
 
-        Packets.sendToClient(new ExposureDataResponseS2CP(id, result), player);
+        boolean isOverSinglePacketLimit = result.getData()
+              .map(data -> data.getWidth() * data.getHeight() >= 1048576)
+              .orElse(false);
+
+        if (isOverSinglePacketLimit) {
+            ExposureData exposure = result.getData().orElseThrow();
+            Packets.sendToClient(new ExposureDataChunkResponseHeaderS2CP(id, exposure.getWidth(), exposure.getHeight(),
+                  exposure.getPaletteId(), exposure.getTag()), player);
+
+            int offset = 0;
+
+            for (byte[] chunk : ByteArrayUtils.splitToChunks(exposure.getPixels(), 1_000_000)) {
+                Packets.sendToClient(new ExposureDataChunkResponseBytesS2CP(id, offset, chunk), player);
+                offset += chunk.length;
+            }
+        } else {
+            Packets.sendToClient(new ExposureDataResponseS2CP(id, result), player);
+        }
     }
 
     public void receiveClientUpload(ServerPlayer player, String id, ExposureData exposure) {

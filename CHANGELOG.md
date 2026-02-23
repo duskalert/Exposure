@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.9.16 - 2026-02-23
+- Fixed sending large resolution images from server to client not working. 
+
 ## 1.9.15 - 2026-02-23
 - Added band-aid compatibility patch to make old (pre 1.9) Photographs and Film frames visible. Can be disabled by setting `misc.datafix_old_ids` to `false` in _exposure-common_ config.
   - **_Note:_** Photos might have missing pixels, wrong colors, etc. It's not a proper conversion, as underlying image data between 1.7 and 1.9 was changed as well.
