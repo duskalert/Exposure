@@ -629,6 +629,7 @@ public class CameraStandEntity extends Entity implements CameraHolder {
             setCamera(ItemStack.EMPTY);
 
             if (source.isCreativePlayer()) {
+//                setDeltaMovement(Vec3.ZERO);
                 return true; // Prevent discard at the same hit as removing the camera.
             }
 

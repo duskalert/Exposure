@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.9.17 - 2026-02-27
+- [Forge] Removed dependency on the specific **Create** version.
+
 ## 1.9.16 - 2026-02-23
 - Fixed sending large resolution images from server to client not working. 
 
