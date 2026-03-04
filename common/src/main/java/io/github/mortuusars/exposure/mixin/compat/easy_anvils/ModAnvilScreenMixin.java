@@ -1,31 +1,30 @@
-package io.github.mortuusars.exposure.mixin.client;
+package io.github.mortuusars.exposure.mixin.compat.easy_anvils;
 
+import fuzs.easyanvils.client.gui.screens.inventory.ModAnvilScreen;
 import io.github.mortuusars.exposure.Config;
 import io.github.mortuusars.exposure.world.item.BrokenInterplanarProjectorItem;
 import io.github.mortuusars.exposure.world.item.InterplanarProjectorItem;
-import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.inventory.AnvilScreen;
-import net.minecraft.client.gui.screens.inventory.ItemCombinerScreen;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.AnvilMenu;
 import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(AnvilScreen.class)
-public abstract class AnvilScreenMixin extends ItemCombinerScreen<AnvilMenu> {
-    @Shadow public EditBox name;
-
-    public AnvilScreenMixin(AnvilMenu menu, Inventory playerInventory, Component title, ResourceLocation menuResource) {
-        super(menu, playerInventory, title, menuResource);
+@Mixin(ModAnvilScreen.class)
+public abstract class ModAnvilScreenMixin extends AnvilScreen {
+    public ModAnvilScreenMixin(AnvilMenu menu, Inventory playerInventory, Component title) {
+        super(menu, playerInventory, title);
     }
 
+    /**
+     * Same mixin as {@link io.github.mortuusars.exposure.mixin.client.AnvilScreenMixin#onSlotChanged(AbstractContainerMenu, int, ItemStack, CallbackInfo)}
+     * needs to be applied, as Easy Anvils overwrote whole method.
+     */
     @Inject(method = "slotChanged", at = @At("HEAD"))
     private void onSlotChanged(AbstractContainerMenu containerToSend, int dataSlotIndex, ItemStack stack, CallbackInfo ci) {
         if (dataSlotIndex == 0 && Config.Server.INTERPLANAR_PROJECTOR_LARGER_RENAMING_LIMIT.isTrue()) {

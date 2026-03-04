@@ -48,6 +48,8 @@ dependencies {
 
     modRuntimeOnly("curse.maven:jade-324717:${jade_neoforge_id}") { transitive = false }
     modRuntimeOnly("curse.maven:yeetusexperimentus-635427:5444189") { transitive = false }
+//    modRuntimeOnly("maven.modrinth:puzzles-lib:${puzzles_lib_modrinth_neoforge_version}")
+//    modRuntimeOnly("maven.modrinth:easy-anvils:${easy_anvils_modrinth_neoforge_version}")
 
     modRuntimeOnly("curse.maven:embeddium-908741:6118392")
 

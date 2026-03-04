@@ -24,7 +24,8 @@
     "client.LocalPlayerMixin",
     "client.MinecraftMixin",
     "client.MouseHandlerMixin",
-    "client.MultiPlayerGameModeMixin"
+    "client.MultiPlayerGameModeMixin",
+    "compat.easy_anvils.ModAnvilScreenMixin"
   ],
   "mixins": [
     "AnvilMenuMixin",
@@ -39,7 +40,8 @@
     "PotionContentsMixin",
     "ServerEntityMixin",
     "ServerGamePacketListenerMixin",
-    "ServerPlayerMixin"
+    "ServerPlayerMixin",
+    "compat.easy_anvils.ModAnvilMenuMixin"
   ],
   "injectors": {
     "defaultRequire": 1

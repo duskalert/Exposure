@@ -28,3 +28,5 @@ accessible field net/minecraft/client/gui/screens/Screen renderables Ljava/util/
 accessible method net/minecraft/client/gui/screens/inventory/AbstractContainerScreen getTooltipFromContainerItem (Lnet/minecraft/world/item/ItemStack;)Ljava/util/List;
 
 accessible method net/minecraft/world/entity/monster/EnderMan isLookingAtMe (Lnet/minecraft/world/entity/player/Player;)Z
+
+accessible field net/minecraft/client/gui/screens/inventory/AnvilScreen name Lnet/minecraft/client/gui/components/EditBox;

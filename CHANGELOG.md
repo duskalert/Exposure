@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.9.14 - 2026-03-04
+- Added compatibility with **Easy Anvils** for Interplanar Projector extended renaming length.
+
 ## 1.9.13 - 2025-12-30
 - Capturing the image no longer sets the game to 'panoramic mode' by default.
   - Setting to enable it is added to config. Enable if world is not looking right in the photos.
