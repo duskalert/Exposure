@@ -2,6 +2,7 @@
 
 ## 1.9.14 - 2026-03-04
 - Added compatibility with **Easy Anvils** for Interplanar Projector extended renaming length.
+- Fixed mod icon.
 
 ## 1.9.13 - 2025-12-30
 - Capturing the image no longer sets the game to 'panoramic mode' by default.
