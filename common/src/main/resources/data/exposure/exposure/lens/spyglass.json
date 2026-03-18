@@ -1,6 +1,8 @@
 {
   "predicate": {
-    "items": "minecraft:spyglass"
+    "items": [
+      "minecraft:spyglass"
+    ]
   },
   "focal_range": {
     "min": 55,
