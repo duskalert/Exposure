@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.9.19 - 2026-03-18
+- Fixed spyglass lens being incorrectly defined, which prevented other custom lenses from working properly.
+
 ## 1.9.18 - 2026-03-04
 - Removed Photograph tooltip that explains copying recipe (when JEI is not installed) for the time being, because it was not working as expected.
 - Fixed log spam when trying to retrieve photograph id in some cases.
