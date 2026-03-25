@@ -12,6 +12,7 @@ import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 
 import javax.imageio.ImageIO;
+import javax.imageio.ImageReader;
 import java.awt.image.BufferedImage;
 import java.net.URL;
 import java.util.concurrent.CompletableFuture;
@@ -47,6 +48,11 @@ public class UrlCaptureTask extends Task<Result<Image>> {
 
                 if (image == null) {
                     LOGGER.error("Cannot load image from URL '{}'", url);
+                    return Result.error(ERROR_CANNOT_READ);
+                }
+
+                if (image.getWidth() > 10_000 || image.getHeight() > 10_000) {
+                    LOGGER.error("Cannot load image from URL '{}': image is too large.", url);
                     return Result.error(ERROR_CANNOT_READ);
                 }
 

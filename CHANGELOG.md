@@ -1,5 +1,8 @@
 # Changelog
 
+## UNRELEASED
+- Images loaded with Interplanar Projector are now limited to maximum of 10000x10000.
+
 ## 1.9.14 - 2026-03-04
 - Added compatibility with **Easy Anvils** for Interplanar Projector extended renaming length.
 - Fixed mod icon.
