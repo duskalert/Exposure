@@ -301,6 +301,7 @@ public class Config {
         public static final ForgeConfigSpec.ConfigValue<List<? extends String>> FORCE_DIRECT_CAPTURE_MODS;
         public static final ForgeConfigSpec.IntValue DIRECT_CAPTURE_DELAY_FRAMES;
         public static final ForgeConfigSpec.BooleanValue BACKGROUND_CAPTURE_USE_PANORAMIC_MODE;
+        public static final ForgeConfigSpec.BooleanValue FILE_LOADING_ONLY_RELATIVE_TO_EXPOSURES_DIR;
         public static final ForgeConfigSpec.EnumValue<UrlLoading> URL_LOADING;
         public static final ForgeConfigSpec.ConfigValue<List<? extends String>> URL_LOADING_ALLOWED_DOMAINS;
         public static final ForgeConfigSpec.ConfigValue<List<? extends String>> URL_LOADING_ALLOWED_SUBDOMAINS;
@@ -448,9 +449,15 @@ public class Config {
                 {
                     builder.push("loading");
 
+                    FILE_LOADING_ONLY_RELATIVE_TO_EXPOSURES_DIR = builder
+                          .comment("Loading from file will only accept a path relative to game directory, when on the dedicated server (multiplayer).",
+                                "This option is for protection against malicious actions using Projector or load commands.",
+                                "Default: false")
+                          .define("multiplayer_file_loading_only_from_game_dir", false);
+
                     URL_LOADING = builder
                           .comment("How loading from URL should behave when on the dedicated server (multiplayer).",
-                                "This option is for protection against malicious actions using Projector or load commands. ",
+                                "This option is for protection against malicious actions using Projector or load commands.",
                                 "Default: ONLY_ALLOWED_DOMAINS")
                           .defineEnum("multiplayer_url_loading", UrlLoading.ONLY_ALLOWED_DOMAINS);
 
