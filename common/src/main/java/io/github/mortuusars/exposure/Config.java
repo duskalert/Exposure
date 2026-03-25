@@ -295,7 +295,9 @@ public class Config {
         public static final ModConfigSpec.ConfigValue<List<? extends String>> FORCE_DIRECT_CAPTURE_MODS;
         public static final ModConfigSpec.IntValue DIRECT_CAPTURE_DELAY_FRAMES;
         public static final ModConfigSpec.BooleanValue BACKGROUND_CAPTURE_USE_PANORAMIC_MODE;
-
+        public static final ModConfigSpec.EnumValue<UrlLoading> URL_LOADING;
+        public static final ModConfigSpec.ConfigValue<List<? extends String>> URL_LOADING_ALLOWED_DOMAINS;
+        public static final ModConfigSpec.ConfigValue<List<? extends String>> URL_LOADING_ALLOWED_SUBDOMAINS;
         // RENDER
         public static final ModConfigSpec.BooleanValue PIXEL_PERFECT_PHOTOGRAPH_FRAME;
         public static final ModConfigSpec.BooleanValue PHOTOGRAPH_RENDERS_IN_ITEM_FRAME;
@@ -436,6 +438,36 @@ public class Config {
                             "If captured images are still not looking properly - enable 'force_direct_capture'.",
                             "Default: false")
                       .define("background_capture_use_panoramic_mode", false);
+                {
+                    builder.push("loading");
+
+                    URL_LOADING = builder
+                          .comment("How loading from URL should behave when on the dedicated server (multiplayer).",
+                                "This option is for protection against malicious actions using Projector or load commands. ",
+                                "Default: ONLY_ALLOWED_DOMAINS")
+                          .defineEnum("multiplayer_url_loading", UrlLoading.ONLY_ALLOWED_DOMAINS);
+
+                    URL_LOADING_ALLOWED_DOMAINS = builder
+                          .comment("List of allowed domains for loading from URl, if 'multiplayer_url_loading' is set to ONLY_ALLOWED_DOMAINS.")
+                          .defineListAllowEmpty(
+                                List.of("multiplayer_url_loading_allowed_domains"),
+                                () -> List.of("i.imgur.com",
+                                      "cdn.discordapp.com",
+                                      "media.discordapp.net",
+                                      "raw.githubusercontent.com"),
+                                o -> true);
+
+                    URL_LOADING_ALLOWED_SUBDOMAINS = builder
+                          .comment("List of allowed domains for loading from URl, if 'multiplayer_url_loading' is set to ONLY_ALLOWED_DOMAINS.")
+                          .defineListAllowEmpty(
+                                List.of("multiplayer_url_loading_allowed_subdomains"),
+                                () -> List.of(".imgur.com",
+                                      ".discordapp.com"),
+                                o -> true);
+
+                    builder.pop();
+                }
+
                 builder.pop();
             }
 
