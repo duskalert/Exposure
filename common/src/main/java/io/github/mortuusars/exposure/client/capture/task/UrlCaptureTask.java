@@ -9,6 +9,7 @@ import io.github.mortuusars.exposure.util.TranslatableError;
 import io.github.mortuusars.exposure.util.cycles.task.Result;
 import io.github.mortuusars.exposure.util.cycles.task.Task;
 import net.minecraft.ChatFormatting;
+import net.minecraft.SharedConstants;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
