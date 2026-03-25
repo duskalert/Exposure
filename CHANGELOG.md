@@ -1,5 +1,8 @@
 # Changelog
 
+## UNRELEASED
+- Images loaded with Interplanar Projector are now limited to maximum of 10000x10000. 
+
 ## 1.9.19 - 2026-03-18
 - Fixed spyglass lens being incorrectly defined, which prevented other custom lenses from working properly.
 
