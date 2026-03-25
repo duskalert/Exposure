@@ -1,5 +1,6 @@
 package io.github.mortuusars.exposure;
 
+import io.github.mortuusars.exposure.client.capture.task.UrlLoading;
 import io.github.mortuusars.exposure.world.block.FlashBlock;
 import io.github.mortuusars.exposure.world.camera.component.FocalRange;
 import io.github.mortuusars.exposure.util.color.Color;
@@ -295,6 +296,7 @@ public class Config {
         public static final ModConfigSpec.ConfigValue<List<? extends String>> FORCE_DIRECT_CAPTURE_MODS;
         public static final ModConfigSpec.IntValue DIRECT_CAPTURE_DELAY_FRAMES;
         public static final ModConfigSpec.BooleanValue BACKGROUND_CAPTURE_USE_PANORAMIC_MODE;
+        public static final ModConfigSpec.BooleanValue FILE_LOADING_ONLY_RELATIVE_TO_EXPOSURES_DIR;
         public static final ModConfigSpec.EnumValue<UrlLoading> URL_LOADING;
         public static final ModConfigSpec.ConfigValue<List<? extends String>> URL_LOADING_ALLOWED_DOMAINS;
         public static final ModConfigSpec.ConfigValue<List<? extends String>> URL_LOADING_ALLOWED_SUBDOMAINS;
@@ -441,9 +443,15 @@ public class Config {
                 {
                     builder.push("loading");
 
+                    FILE_LOADING_ONLY_RELATIVE_TO_EXPOSURES_DIR = builder
+                          .comment("Loading from file will only accept a path relative to game directory, when on the dedicated server (multiplayer).",
+                                "This option is for protection against malicious actions using Projector or load commands.",
+                                "Default: false")
+                          .define("multiplayer_file_loading_only_from_game_dir", false);
+
                     URL_LOADING = builder
                           .comment("How loading from URL should behave when on the dedicated server (multiplayer).",
-                                "This option is for protection against malicious actions using Projector or load commands. ",
+                                "This option is for protection against malicious actions using Projector or load commands.",
                                 "Default: ONLY_ALLOWED_DOMAINS")
                           .defineEnum("multiplayer_url_loading", UrlLoading.ONLY_ALLOWED_DOMAINS);
 
