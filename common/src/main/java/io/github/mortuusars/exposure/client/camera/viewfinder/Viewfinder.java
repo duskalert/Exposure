@@ -24,24 +24,24 @@ public class Viewfinder {
     protected final ViewfinderSelfie selfie;
 
     protected KeyBindings keyBindings = KeyBindings.of(
-            Key.press(Minecrft.options().keyAttack).executes(() -> !canAttack()),
-            Key.press(Minecrft.options().keyTogglePerspective).executes(() -> selfie().toggle()),
-            Key.press(Minecrft.options().keyInventory).or(Key.press(InputConstants.KEY_ESCAPE)).executes(() -> {
-                if (Minecrft.get().screen instanceof ViewfinderCameraControlsScreen viewfinderControlsScreen) {
-                    viewfinderControlsScreen.onClose();
-                    controlsScreen = null;
-                } else {
-                    CameraClient.deactivate();
-                    close();
-                }
-            }),
-            Key.press(KeyboardHandler.getCameraControlsKey())
-                    .onlyIf(this::isLookingThrough)
-                    .onlyIf(() -> !controlsActive())
-                    .executes(() -> {
-                        openControlsScreen();
-                        return false; // false not handle and keep moving/sneaking
-                    })
+          Key.press(Minecrft.options().keyAttack).executes(() -> !canAttack()),
+          Key.press(Minecrft.options().keyTogglePerspective).executes(() -> selfie().toggle()),
+          Key.press(Minecrft.options().keyInventory).or(Key.press(InputConstants.KEY_ESCAPE)).executes(() -> {
+              if (Minecrft.get().screen instanceof ViewfinderCameraControlsScreen viewfinderControlsScreen) {
+                  viewfinderControlsScreen.onClose();
+                  controlsScreen = null;
+              } else {
+                  CameraClient.deactivate();
+                  close();
+              }
+          }),
+          Key.press(KeyboardHandler.getCameraControlsKey())
+                .onlyIf(this::isLookingThrough)
+                .onlyIf(() -> !controlsActive())
+                .executes(() -> {
+                    openControlsScreen();
+                    return false; // false not handle and keep moving/sneaking
+                })
     );
 
     protected @Nullable ViewfinderCameraControlsScreen controlsScreen;
@@ -115,8 +115,9 @@ public class Viewfinder {
     }
 
     public boolean canAttack() {
-        return Config.Server.CAMERA_VIEWFINDER_ATTACK.get()
-                && !camera.map(CameraItem::isInSelfieMode).orElse(false); // Attacking in selfie mode has weird anim.
+        return Minecrft.get().getCurrentServer() != null
+              && Config.Server.CAMERA_VIEWFINDER_ATTACK.get()
+              && !camera.map(CameraItem::isInSelfieMode).orElse(false); // Attacking in selfie mode has weird anim.
     }
 
     public void openControlsScreen() {
@@ -137,8 +138,8 @@ public class Viewfinder {
 
     public boolean keyPressed(int key, int scanCode, int action, int modifiers) {
         return (action == InputConstants.PRESS && keyBindings.keyPressed(key, scanCode, modifiers))
-                || (action == InputConstants.RELEASE && keyBindings.keyReleased(key, scanCode, modifiers))
-                || zoom().keyPressed(key, scanCode, action, modifiers);
+              || (action == InputConstants.RELEASE && keyBindings.keyReleased(key, scanCode, modifiers))
+              || zoom().keyPressed(key, scanCode, action, modifiers);
     }
 
     public boolean mouseClicked(int button, int action) {
