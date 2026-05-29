@@ -53,6 +53,9 @@ dependencies {
 
     modRuntimeOnly("curse.maven:embeddium-908741:6118392")
 
+    modRuntimeOnly("maven.modrinth:essentialsmod:y6XzoYMQ")
+    modRuntimeOnly("maven.modrinth:crossroads:EgSYNn26")
+
     // Create
     modImplementation("com.simibubi.create:create-${minecraft_version}:${create_version}:slim") { transitive = false }
     modImplementation("net.createmod.ponder:Ponder-NeoForge-${minecraft_version}:${ponder_version}")
