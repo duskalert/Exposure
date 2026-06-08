@@ -26,10 +26,6 @@ public class ServerEvents {
 
     }
 
-    public static void syncDatapack(List<ServerPlayer> relevantPlayers) {
-
-    }
-
     public static void playerTick(ServerPlayer player) {
 
     }

@@ -57,8 +57,6 @@ public class ExposureFabric implements ModInitializer {
             ExposureFabric.server = null;
         });
 
-        ServerLifecycleEvents.SYNC_DATA_PACK_CONTENTS.register((player, joined) -> ServerEvents.syncDatapack(List.of(player)));
-
         LootTableEvents.MODIFY.register(ExposureFabric::modifyLoot);
 
         PacketsImpl.registerC2SPackets();

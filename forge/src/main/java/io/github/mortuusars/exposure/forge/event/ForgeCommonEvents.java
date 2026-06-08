@@ -20,7 +20,6 @@ import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
-import net.minecraftforge.event.OnDatapackSyncEvent;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.server.ServerStartedEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -79,11 +78,6 @@ public class ForgeCommonEvents {
         @SubscribeEvent
         public static void serverStarted(ServerStartedEvent event) {
             ServerEvents.serverStarted(event.getServer());
-        }
-
-        @SubscribeEvent
-        public static void onDatapackSync(OnDatapackSyncEvent event) {
-            ServerEvents.syncDatapack(event.getPlayers());
         }
 
         @SubscribeEvent

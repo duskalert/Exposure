@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.9.21 - 2026-06-09
+- [Forge] Slight change to the code to support older forge versions. 
+
 ## 1.9.20 - 2026-03-25
 - Images loaded with Interplanar Projector are now limited to maximum of 10000x10000. 
 - While playing on the multiplayer server - projecting images from URL will only work for allowed domains by default (configurable). This is a client-only setting, so players can change it at any time.
