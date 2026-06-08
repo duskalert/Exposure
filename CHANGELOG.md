@@ -1,7 +1,8 @@
 # Changelog
 
-## UNRELEASED
+## 1.9.17 - 2026-06-08
 - Fixed dedicated server crash with Crossroads.
+- Potential fix related to larger anvil renaming limit of Interplanar Projector.
 
 ## 1.9.16 - 2026-04-02
 - Attempt to fix weird issue with config "not being loaded".  
