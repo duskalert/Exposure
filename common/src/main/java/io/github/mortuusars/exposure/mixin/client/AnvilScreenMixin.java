@@ -20,7 +20,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(AnvilScreen.class)
 public abstract class AnvilScreenMixin extends ItemCombinerScreen<AnvilMenu> {
-    @Shadow public EditBox name;
+    @Shadow
+    public EditBox name;
 
     public AnvilScreenMixin(AnvilMenu menu, Inventory playerInventory, Component title, ResourceLocation menuResource) {
         super(menu, playerInventory, title, menuResource);
@@ -28,8 +29,11 @@ public abstract class AnvilScreenMixin extends ItemCombinerScreen<AnvilMenu> {
 
     @Inject(method = "slotChanged", at = @At("HEAD"))
     private void onSlotChanged(AbstractContainerMenu containerToSend, int dataSlotIndex, ItemStack stack, CallbackInfo ci) {
-        if (dataSlotIndex == 0 && Config.Server.INTERPLANAR_PROJECTOR_LARGER_RENAMING_LIMIT.isTrue()) {
-            int maxLength = stack.getItem() instanceof InterplanarProjectorItem || stack.getItem() instanceof BrokenInterplanarProjectorItem ? 150 : 50;
+        if (dataSlotIndex == 0
+              && Config.Server.SPEC.isLoaded()
+              && Config.Server.INTERPLANAR_PROJECTOR_LARGER_RENAMING_LIMIT.get()) {
+            int maxLength = stack.getItem() instanceof InterplanarProjectorItem
+                  || stack.getItem() instanceof BrokenInterplanarProjectorItem ? 150 : 50;
             this.name.setMaxLength(maxLength);
         }
     }

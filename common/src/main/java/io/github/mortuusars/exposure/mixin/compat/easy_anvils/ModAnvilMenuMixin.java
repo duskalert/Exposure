@@ -2,6 +2,7 @@ package io.github.mortuusars.exposure.mixin.compat.easy_anvils;
 
 import fuzs.easyanvils.world.inventory.ModAnvilMenu;
 import io.github.mortuusars.exposure.Config;
+import io.github.mortuusars.exposure.world.item.BrokenInterplanarProjectorItem;
 import io.github.mortuusars.exposure.world.item.InterplanarProjectorItem;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AnvilMenu;
@@ -17,8 +18,10 @@ public abstract class ModAnvilMenuMixin extends AnvilMenu {
 
     @ModifyConstant(method = "setItemName", constant = @Constant(intValue = 50))
     private int onSetItemName(int constant) {
-        if (Config.Server.INTERPLANAR_PROJECTOR_LARGER_RENAMING_LIMIT.get()
-              && inputSlots.getItem(0).getItem() instanceof InterplanarProjectorItem) {
+        if (Config.Server.SPEC.isLoaded()
+              && Config.Server.INTERPLANAR_PROJECTOR_LARGER_RENAMING_LIMIT.get()
+              && (inputSlots.getItem(0).getItem() instanceof InterplanarProjectorItem
+                || inputSlots.getItem(0).getItem() instanceof BrokenInterplanarProjectorItem)) {
             return 150;
         }
         return 50;
