@@ -97,7 +97,7 @@ public class PhotographRenderer {
     public boolean renderStackedPhotographs(StackedPhotographsItem stackedPhotographsItem, ItemStack stack,
                                                 PoseStack poseStack, MultiBufferSource bufferSource,
                                                 int packedLight, int r, int g, int b, int a) {
-        List<ItemAndStack<PhotographItem>> photographs = stackedPhotographsItem.getPhotographs(stack);
+        List<ItemAndStack<PhotographItem>> photographs = stackedPhotographsItem.getPhotographs(stack).photographsItemAndStacks();
         return renderStackedPhotographs(photographs, poseStack, bufferSource, packedLight, r, g, b, a);
     }
 

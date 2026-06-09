@@ -31,6 +31,7 @@ import io.github.mortuusars.exposure.world.camera.frame.Frame;
 import io.github.mortuusars.exposure.world.inventory.*;
 import io.github.mortuusars.exposure.world.item.*;
 import io.github.mortuusars.exposure.world.item.camera.CameraItem;
+import io.github.mortuusars.exposure.world.item.component.StackedPhotographs;
 import io.github.mortuusars.exposure.world.item.component.StoredItemStack;
 import io.github.mortuusars.exposure.world.item.component.album.AlbumContent;
 import io.github.mortuusars.exposure.world.item.component.album.SignedAlbumContent;
@@ -356,10 +357,9 @@ public class Exposure {
         public static final DataComponentType<Integer> PHOTOGRAPH_GENERATION = Register.dataComponentType("photograph_generation",
                 arg -> arg.persistent(ExtraCodecs.intRange(0, 3)).networkSynchronized(ByteBufCodecs.VAR_INT));
 
-        public static final DataComponentType<List<ItemAndStack<PhotographItem>>> STACKED_PHOTOGRAPHS =
+        public static final DataComponentType<StackedPhotographs> STACKED_PHOTOGRAPHS =
                 Register.dataComponentType("stacked_photographs",
-                        arg -> arg.persistent(StackedPhotographsItem.PHOTOGRAPH_ITEM_AND_STACK_CODEC.listOf(0, 64))
-                                .networkSynchronized(StackedPhotographsItem.PHOTOGRAPH_ITEM_AND_STACK_STREAM_CODEC.apply(ByteBufCodecs.list())));
+                      arg -> arg.persistent(StackedPhotographs.CODEC).networkSynchronized(StackedPhotographs.STREAM_CODEC).cacheEncoding());
 
         // Album
 

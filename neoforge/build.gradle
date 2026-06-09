@@ -55,6 +55,7 @@ dependencies {
 
     modRuntimeOnly("maven.modrinth:essentialsmod:y6XzoYMQ")
     modRuntimeOnly("maven.modrinth:crossroads:EgSYNn26")
+    modRuntimeOnly("maven.modrinth:refined-storage:lHHiI26k")
 
     // Create
     modImplementation("com.simibubi.create:create-${minecraft_version}:${create_version}:slim") { transitive = false }

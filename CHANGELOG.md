@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.9.18 - 2026-06-10
+- Fixed Stacked Photographs item not behaving correctly in Refined Storage or Create Stock Ticker. 
+
 ## 1.9.17 - 2026-06-08
 - Fixed dedicated server crash with Crossroads.
 - Potential fix related to larger anvil renaming limit of Interplanar Projector.

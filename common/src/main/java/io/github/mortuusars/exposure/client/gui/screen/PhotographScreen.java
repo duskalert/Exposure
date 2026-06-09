@@ -420,7 +420,7 @@ public class PhotographScreen extends Screen {
                 }
 
                 if (stack.getItem() instanceof StackedPhotographsItem stackedPhotographsItem) {
-                    return stackedPhotographsItem.getPhotographs(stack);
+                    return stackedPhotographsItem.getPhotographs(stack).photographsItemAndStacks();
                 }
 
                 return Collections.emptyList();
