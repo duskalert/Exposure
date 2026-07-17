@@ -2,7 +2,7 @@ package io.github.mortuusars.exposure.integration;
 
 import io.github.mortuusars.exposure.Exposure;
 import io.github.mortuusars.exposure.PlatformHelper;
-import io.github.mortuusars.exposure.integration.compat.RealCameraCompat;
+//import io.github.mortuusars.exposure.integration.compat.RealCameraCompat;
 
 public class ModCompatibilityClient {
     private static final String REAL_CAMERA = "realcamera";

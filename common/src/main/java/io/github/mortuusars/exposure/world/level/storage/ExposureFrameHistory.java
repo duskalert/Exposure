@@ -10,6 +10,7 @@ import net.minecraft.nbt.*;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.saveddata.SavedData;
+import net.minecraft.world.level.saveddata.SavedDataType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -79,8 +80,9 @@ public class ExposureFrameHistory extends SavedData {
         return tag;
     }
 
-    public static SavedData.Factory<ExposureFrameHistory> factory() {
-        return new SavedData.Factory<>(() -> new ExposureFrameHistory(new HashMap<>()), ExposureFrameHistory::load, null);
+    public static SavedDataType<ExposureFrameHistory> factory() {
+        return new SavedDataType<>(Exposure.resource("exposure_frame_history"),
+                () -> new ExposureFrameHistory(new HashMap<>()), CODEC, null);
     }
 
     public static ExposureFrameHistory load(CompoundTag tag, HolderLookup.Provider levelRegistry) {

@@ -9,7 +9,7 @@ import io.github.mortuusars.exposure.util.UnixTimestamp;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.StringUtil;
-import net.minecraft.world.level.storage.DimensionDataStorage;
+
 import net.minecraft.world.level.storage.LevelResource;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -31,7 +31,7 @@ public class ExposureRepository {
     private static final Logger LOGGER = LogUtils.getLogger();
 
     protected final MinecraftServer server;
-    protected final DimensionDataStorage dataStorage;
+    protected final net.minecraft.world.level.storage.SavedDataStorage dataStorage;
     protected final Path worldFolderPath;
     protected final Path exposuresFolderPath;
 

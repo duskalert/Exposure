@@ -61,7 +61,7 @@ public class RegisterImpl {
     }
 
     public static <T extends BlockEntity> BlockEntityType<T> newBlockEntityType(Register.BlockEntitySupplier<T> blockEntitySupplier, Block... validBlocks) {
-        return BlockEntityType.Builder.of(blockEntitySupplier::create, validBlocks).build(null);
+        return new BlockEntityType<>(blockEntitySupplier::create, java.util.Set.of(validBlocks));
     }
 
     public static <T extends Item> Supplier<T> item(String id, Supplier<T> supplier) {
