@@ -50,6 +50,10 @@ dependencies {
     compileOnly("mezz.jei:jei-${minecraft_version}-common-api:${jei_version}")
     compileOnly("mezz.jei:jei-${minecraft_version}-neoforge-api:${jei_version}")
 
+    // Sodium & Iris (runtime - for testing)
+    runtimeOnly("maven.modrinth:sodium:mc${minecraft_version}-0.9.1-neoforge")
+    runtimeOnly("maven.modrinth:iris:1.11.2+26.1-neoforge")
+
     // KubeJS
     compileOnly("dev.latvian.mods:rhino:$rhino_version") { transitive(false) }
     compileOnly("dev.latvian.mods:kubejs-neoforge:$kubejs_version")
