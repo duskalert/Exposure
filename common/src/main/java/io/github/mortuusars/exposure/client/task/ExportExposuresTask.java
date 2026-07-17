@@ -46,7 +46,7 @@ public class ExportExposuresTask extends Task<Result<Boolean>> {
 
     public static boolean start(List<String> ids, ExportSize size, ExportLook look) {
         if (ExportExposuresTask.isRunning()) {
-            Minecrft.player().displayClientMessage(Component.translatable("task.exposure.export.already_running"), false);
+            Minecrft.player().sendSystemMessage(Component.translatable("task.exposure.export.already_running"), false);
             return false;
         }
         ExposureClient.cycles().addParallelTask(new ExportExposuresTask(ids, size, look));
@@ -150,10 +150,10 @@ public class ExportExposuresTask extends Task<Result<Boolean>> {
     }
 
     protected void print(MutableComponent message) {
-        Minecrft.execute(() -> Minecrft.player().displayClientMessage(message, false));
+        Minecrft.execute(() -> Minecrft.player().sendSystemMessage(message, false));
     }
 
     protected void updateStatus(MutableComponent status) {
-        Minecrft.execute(() -> Minecrft.player().displayClientMessage(status, true));
+        Minecrft.execute(() -> Minecrft.player().sendSystemMessage(status, true));
     }
 }

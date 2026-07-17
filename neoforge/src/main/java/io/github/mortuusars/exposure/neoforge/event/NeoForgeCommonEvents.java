@@ -31,7 +31,7 @@ import net.neoforged.neoforge.registries.DataPackRegistryEvent;
 
 @SuppressWarnings("unused")
 public class NeoForgeCommonEvents {
-    @EventBusSubscriber(modid = Exposure.ID, bus = EventBusSubscriber.Bus.MOD)
+    @EventBusSubscriber(modid = Exposure.ID)
     public static class ModBus {
         @SubscribeEvent
         public static void commonSetup(FMLCommonSetupEvent event) {
@@ -78,20 +78,23 @@ public class NeoForgeCommonEvents {
         }
     }
 
-    @EventBusSubscriber(modid = Exposure.ID, bus = EventBusSubscriber.Bus.GAME)
     public static class GameBus {
-        @SubscribeEvent
-        public static void serverStarted(ServerStartedEvent event) {
+        public static void register() {
+            var bus = net.neoforged.neoforge.common.NeoForge.EVENT_BUS;
+            bus.addListener(GameBus::serverStarted);
+            bus.addListener(GameBus::onDatapackSync);
+            bus.addListener(GameBus::registerCommands);
+        }
+
+        private static void serverStarted(ServerStartedEvent event) {
             ServerEvents.serverStarted(event.getServer());
         }
 
-        @SubscribeEvent
-        public static void onDatapackSync(OnDatapackSyncEvent event) {
+        private static void onDatapackSync(OnDatapackSyncEvent event) {
             ServerEvents.syncDatapack(event.getRelevantPlayers());
         }
 
-        @SubscribeEvent
-        public static void registerCommands(RegisterCommandsEvent event) {
+        private static void registerCommands(RegisterCommandsEvent event) {
             CommonEvents.registerCommands(event.getDispatcher(), event.getBuildContext(), event.getCommandSelection());
         }
     }

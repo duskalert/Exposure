@@ -24,7 +24,7 @@ import net.neoforged.neoforge.client.event.*;
 
 @SuppressWarnings("unused")
 public class NeoForgeClientEvents {
-    @EventBusSubscriber(modid = Exposure.ID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
+    @EventBusSubscriber(modid = Exposure.ID, value = {Dist.CLIENT})
     public static class ModBus {
         @SubscribeEvent
         public static void clientSetup(FMLClientSetupEvent event) {
@@ -78,10 +78,12 @@ public class NeoForgeClientEvents {
         }
     }
 
-    @EventBusSubscriber(modid = Exposure.ID, bus = EventBusSubscriber.Bus.GAME, value = Dist.CLIENT)
     public static class GameBus {
-        @SubscribeEvent
-        public static void onRenderGuiPost(RenderGuiEvent.Post event) {
+        public static void register() {
+            net.neoforged.neoforge.common.NeoForge.EVENT_BUS.addListener(GameBus::onRenderGuiPost);
+        }
+
+        private static void onRenderGuiPost(net.neoforged.neoforge.client.event.RenderGuiEvent.Post event) {
             CameraStandTooltip.render(event.getGuiGraphicsExtractor(), event.getPartialTick());
         }
     }

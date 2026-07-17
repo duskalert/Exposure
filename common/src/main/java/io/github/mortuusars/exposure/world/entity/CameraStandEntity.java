@@ -271,7 +271,7 @@ public class CameraStandEntity extends Entity implements CameraHolder {
     @Override
     public @NotNull InteractionResult interact(Player player, InteractionHand hand) {
         if (!canUse(player)) {
-            player.displayClientMessage(Component.translatable("gui.exposure.camera_stand.error.in_use")
+            player.sendSystemMessage(Component.translatable("gui.exposure.camera_stand.error.in_use")
                     .withStyle(ChatFormatting.RED), true);
             return InteractionResult.FAIL;
         }
@@ -279,7 +279,7 @@ public class CameraStandEntity extends Entity implements CameraHolder {
         if (isMalfunctioned()) {
             if (!isClientSide()) {
                 setMalfunctioned(false);
-                player.displayClientMessage(Component.translatable("gui.exposure.camera_stand.malfunction_fixed"), true);
+                player.sendSystemMessage(Component.translatable("gui.exposure.camera_stand.malfunction_fixed"), true);
                 playSound(SoundEvents.SMITHING_TABLE_USE, 0.9f, 1.3f);
                 showRepairingParticles();
             }
@@ -365,7 +365,7 @@ public class CameraStandEntity extends Entity implements CameraHolder {
 
     public InteractionResult openAttachmentsMenu(Player player, InteractionHand hand) {
         if (!canUse(player)) {
-            player.displayClientMessage(Component.translatable("gui.exposure.camera_stand.error.in_use")
+            player.sendSystemMessage(Component.translatable("gui.exposure.camera_stand.error.in_use")
                     .withStyle(ChatFormatting.RED), true);
             return InteractionResult.FAIL;
         }
@@ -376,7 +376,7 @@ public class CameraStandEntity extends Entity implements CameraHolder {
             return InteractionResult.FAIL;
 
         if (cameraItem.getShutter().isOpen(cameraStack)) {
-            player.displayClientMessage(Component.translatable("item.exposure.camera.camera_attachments.fail.shutter_open")
+            player.sendSystemMessage(Component.translatable("item.exposure.camera.camera_attachments.fail.shutter_open")
                     .withStyle(ChatFormatting.RED), true);
             return InteractionResult.FAIL;
         }

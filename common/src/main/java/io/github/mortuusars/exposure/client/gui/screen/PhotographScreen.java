@@ -280,7 +280,7 @@ public class PhotographScreen extends Screen {
         droppedStack.set(Exposure.DataComponents.PHOTOGRAPH_TYPE, type);
 
         Minecrft.gameMode().handleCreativeModeItemDrop(droppedStack);
-        Minecrft.player().displayClientMessage(Component.translatable("gui.exposure.photograph_screen.item_dropped_message",
+        Minecrft.player().sendSystemMessage(Component.translatable("gui.exposure.photograph_screen.item_dropped_message",
                 droppedStack.getDisplayName()), false);
         return true;
     }
@@ -292,7 +292,7 @@ public class PhotographScreen extends Screen {
         }
         String text = frame.identifier().map(id -> id, Identifier::toString);
         Minecrft.get().keyboardHandler.setClipboard(text);
-        Minecrft.player().displayClientMessage(
+        Minecrft.player().sendSystemMessage(
                 Component.translatable("gui.exposure.photograph_screen.copied_message", text), false);
         return true;
     }
@@ -304,7 +304,7 @@ public class PhotographScreen extends Screen {
                 .mapId(id -> {
                     if (savedExposureFiles.get(id) instanceof File file) {
                         Minecrft.get().keyboardHandler.setClipboard(file.getAbsolutePath());
-                        Minecrft.player().displayClientMessage(
+                        Minecrft.player().sendSystemMessage(
                                 Component.translatable("gui.exposure.photograph_screen.copied_message", file.getAbsolutePath()), false);
                         return true;
                     }

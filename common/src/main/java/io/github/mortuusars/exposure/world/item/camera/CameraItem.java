@@ -395,7 +395,7 @@ public class CameraItem extends Item {
 
         if (getShutter().isOpen(stack)) {
             player.playSound(Exposure.SoundEvents.CAMERA_LENS_RING_CLICK.get(), 0.9f, 1f);
-            player.displayClientMessage(Component.translatable("item.exposure.camera.camera_attachments.fail.shutter_open")
+            player.sendSystemMessage(Component.translatable("item.exposure.camera.camera_attachments.fail.shutter_open")
                     .withStyle(ChatFormatting.RED), true);
             return true;
         }
@@ -499,7 +499,7 @@ public class CameraItem extends Item {
                 "Item in slotIndex '%s' is not a CameraItem but '%s'.", slotIndex, stack);
 
         if (getShutter().isOpen(stack)) {
-            player.displayClientMessage(Component.translatable("item.exposure.camera.camera_attachments.fail.shutter_open")
+            player.sendSystemMessage(Component.translatable("item.exposure.camera.camera_attachments.fail.shutter_open")
                     .withStyle(ChatFormatting.RED), true);
             return InteractionResult.FAIL;
         }

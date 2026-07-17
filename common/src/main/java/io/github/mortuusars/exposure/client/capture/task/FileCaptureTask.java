@@ -85,7 +85,7 @@ public class FileCaptureTask extends Task<Result<Image>> {
             if (file.isAbsolute()) {
                 LOGGER.error("Absolute paths are not supported. Path: {}", filepath);
                 LOGGER.info("Place image into a game directory and use a relative path.");
-                Minecrft.player().displayClientMessage(Component.literal("Absolute path is not allowed for image projecting. Loading is allowed only from a game directory.")
+                Minecrft.player().sendSystemMessage(Component.literal("Absolute path is not allowed for image projecting. Loading is allowed only from a game directory.")
                       .withStyle(ChatFormatting.RED), false);
                 return Result.error(ERROR_PATH_INVALID);
             }

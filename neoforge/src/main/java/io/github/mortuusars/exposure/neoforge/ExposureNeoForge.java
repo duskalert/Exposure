@@ -52,8 +52,10 @@ public class ExposureNeoForge {
         RegisterImpl.CUSTOM_STATS.register(modEventBus);
         LootModifiers.LOOT_MODIFIERS.register(modEventBus);
 
+        io.github.mortuusars.exposure.neoforge.event.NeoForgeCommonEvents.GameBus.register();
         if (FMLEnvironment.dist == Dist.CLIENT) {
             ExposureNeoForgeClient.init(container);
+            io.github.mortuusars.exposure.neoforge.event.NeoForgeClientEvents.GameBus.register();
         }
     }
 

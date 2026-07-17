@@ -61,7 +61,7 @@ public interface CaptureTemplate {
 
     default @NotNull Consumer<TranslatableError> printCasualErrorInChat() {
         return err -> {
-            Minecrft.execute(() -> Minecrft.player().displayClientMessage(
+            Minecrft.execute(() -> Minecrft.player().sendSystemMessage(
                     err.casual().withStyle(ChatFormatting.RED), false));
             Exposure.LOGGER.error(err.technical().getString());
         };
