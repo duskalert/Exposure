@@ -8,7 +8,7 @@ import io.github.mortuusars.exposure.client.render.photograph.PhotographStyle;
 import io.github.mortuusars.exposure.client.util.Minecrft;
 import io.github.mortuusars.exposure.world.item.PhotographItem;
 import io.github.mortuusars.exposure.world.item.util.ItemAndStack;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractorExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.gui.narration.NarratedElementType;
@@ -16,7 +16,7 @@ import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.navigation.CommonInputs;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.tooltip.DefaultTooltipPositioner;
-import net.minecraft.client.renderer.LightTexture;
+import net.minecraft.client.renderer.Lightmap;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.Component;
@@ -77,7 +77,7 @@ public class PhotographSlotWidget extends AbstractWidget {
     }
 
     @Override
-    protected void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+    protected void renderWidget(GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick) {
         ItemStack photograph = getPhotograph();
 
         if (photograph.getItem() instanceof PhotographItem) {
@@ -86,27 +86,27 @@ public class PhotographSlotWidget extends AbstractWidget {
             PhotographStyle photographStyle = PhotographStyle.of(photograph);
 
             // Paper
-            guiGraphics.blit(photographStyle.albumPaperTexture(),
+            GuiGraphicsExtractor.blit(photographStyle.albumPaperTexture(),
                     getX(), getY(), 0, 0, 0, width, height, width, height);
 
             // Exposure
-            guiGraphics.pose().pushPose();
+            GuiGraphicsExtractor.pose().pushPose();
             float scale = 96;
-            guiGraphics.pose().translate(getX() + 6, getY() + 6, 1);
-            guiGraphics.pose().scale(scale, scale, scale);
+            GuiGraphicsExtractor.pose().translate(getX() + 6, getY() + 6, 1);
+            GuiGraphicsExtractor.pose().scale(scale, scale, scale);
             MultiBufferSource.BufferSource bufferSource = Minecrft.get().renderBuffers().bufferSource();
             ExposureClient.photographRenderer().render(photograph, false, false,
-                    guiGraphics.pose(), bufferSource, LightTexture.FULL_BRIGHT);
+                    GuiGraphicsExtractor.pose(), bufferSource, Lightmap.FULL_BRIGHT);
             bufferSource.endBatch();
-            guiGraphics.pose().popPose();
+            GuiGraphicsExtractor.pose().popPose();
 
             // Paper overlay
             if (photographStyle.hasAlbumOverlayTexture()) {
-                guiGraphics.pose().pushPose();
-                guiGraphics.pose().translate(0, 0, 2);
-                guiGraphics.blit(photographStyle.albumOverlayTexture(),
+                GuiGraphicsExtractor.pose().pushPose();
+                GuiGraphicsExtractor.pose().translate(0, 0, 2);
+                GuiGraphicsExtractor.blit(photographStyle.albumOverlayTexture(),
                         getX(), getY(), 0, 0, 0, width, height, width, height);
-                guiGraphics.pose().popPose();
+                GuiGraphicsExtractor.pose().popPose();
             }
         }
         else {
@@ -118,12 +118,12 @@ public class PhotographSlotWidget extends AbstractWidget {
         if (!editable && !hasPhotograph) {
             Identifier = sprites.get(isActive(), false);
         }
-        guiGraphics.blitSprite(Identifier, getX(), getY(), width, height);
+        GuiGraphicsExtractor.blitSprite(Identifier, getX(), getY(), width, height);
     }
 
-    public void renderTooltip(GuiGraphics guiGraphics, int mouseX, int mouseY) {
+    public void renderTooltip(GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY) {
         if (editable && !hasPhotograph) {
-            guiGraphics.renderTooltip(Minecrft.get().font, Component.translatable("gui.exposure.album.add_photograph"), mouseX, mouseY);
+            GuiGraphicsExtractor.renderTooltip(Minecrft.get().font, Component.translatable("gui.exposure.album.add_photograph"), mouseX, mouseY);
             return;
         }
 
@@ -139,11 +139,11 @@ public class PhotographSlotWidget extends AbstractWidget {
         // Photograph image in tooltip is not rendered
 
         if (isFocused()) {
-            guiGraphics.renderTooltip(Minecrft.get().font, Lists.transform(itemTooltip,
+            GuiGraphicsExtractor.renderTooltip(Minecrft.get().font, Lists.transform(itemTooltip,
                     Component::getVisualOrderText), DefaultTooltipPositioner.INSTANCE, mouseX, mouseY);
         }
         else
-            guiGraphics.renderTooltip(Minecrft.get().font, itemTooltip, Optional.empty(), mouseX, mouseY);
+            GuiGraphicsExtractor.renderTooltip(Minecrft.get().font, itemTooltip, Optional.empty(), mouseX, mouseY);
     }
 
     @Override

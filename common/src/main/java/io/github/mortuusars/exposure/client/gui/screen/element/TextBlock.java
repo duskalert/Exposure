@@ -2,7 +2,7 @@ package io.github.mortuusars.exposure.client.gui.screen.element;
 
 import io.github.mortuusars.exposure.client.gui.screen.element.textbox.HorizontalAlignment;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractorExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarratedElementType;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
@@ -94,22 +94,22 @@ public class TextBlock extends AbstractWidget {
     }
 
     @Override
-    protected void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+    protected void renderWidget(GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick) {
         for (int i = 0; i < renderedLines.size(); i++) {
             FormattedCharSequence line = renderedLines.get(i);
 
             int x = getX() + alignment.align(getWidth(), font.width(line));
-            guiGraphics.drawString(font, line, x, getY() + font.lineHeight * i, fontColor, drawShadow);
+            GuiGraphicsExtractor.drawString(font, line, x, getY() + font.lineHeight * i, fontColor, drawShadow);
         }
 
         if (isHovered()) {
             Style style = getClickedComponentStyleAt(mouseX, mouseY);
             if (style != null)
-                guiGraphics.renderComponentHoverEffect(this.font, style, mouseX, mouseY);
+                GuiGraphicsExtractor.renderComponentHoverEffect(this.font, style, mouseX, mouseY);
         }
 
         if (!tooltipLines.isEmpty() && isMouseOver(mouseX, mouseY))
-            guiGraphics.renderTooltip(font, tooltipLines, DefaultTooltipPositioner.INSTANCE, mouseX, mouseY);
+            GuiGraphicsExtractor.renderTooltip(font, tooltipLines, DefaultTooltipPositioner.INSTANCE, mouseX, mouseY);
     }
 
     public @Nullable Style getClickedComponentStyleAt(double mouseX, double mouseY) {

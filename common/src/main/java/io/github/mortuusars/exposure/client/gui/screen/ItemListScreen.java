@@ -7,11 +7,11 @@ import io.github.mortuusars.exposure.client.animation.Animation;
 import io.github.mortuusars.exposure.client.animation.EasingFunction;
 import io.github.mortuusars.exposure.client.util.Minecrft;
 import net.minecraft.util.Util;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractorExtractor;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.GameRenderer;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
@@ -102,28 +102,28 @@ public class ItemListScreen extends Screen {
     }
 
     @Override
-    public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+    public void render(GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick) {
         int left = leftPos;
         int top = topPos;
 
-        renderTransparentBackground(guiGraphics);
+        renderTransparentBackground(GuiGraphicsExtractor);
 
-        guiGraphics.pose().pushPose();
-        guiGraphics.pose().translate((width / 2f), (height / 2f), 0.0f);
+        GuiGraphicsExtractor.pose().pushPose();
+        GuiGraphicsExtractor.pose().translate((width / 2f), (height / 2f), 0.0f);
         float animProgress = (float)openingAnimation.getValue();
-        guiGraphics.pose().scale(animProgress, animProgress, animProgress);
-        guiGraphics.pose().translate(-(width / 2f), -(height / 2f), 0.0f);
+        GuiGraphicsExtractor.pose().scale(animProgress, animProgress, animProgress);
+        GuiGraphicsExtractor.pose().translate(-(width / 2f), -(height / 2f), 0.0f);
 
-        renderBg(guiGraphics, mouseX, mouseY, partialTick);
+        renderBg(GuiGraphicsExtractor, mouseX, mouseY, partialTick);
         RenderSystem.disableDepthTest();
-        super.render(guiGraphics, mouseX, mouseY, partialTick);
+        super.render(GuiGraphicsExtractor, mouseX, mouseY, partialTick);
         {
-            guiGraphics.pose().pushPose();
-            guiGraphics.pose().translate(left, top, 0.0f);
+            GuiGraphicsExtractor.pose().pushPose();
+            GuiGraphicsExtractor.pose().translate(left, top, 0.0f);
             hoveredSlot = null;
             for (Slot slot : slots) {
                 if (slot.isActive()) {
-                    renderSlot(guiGraphics, slot);
+                    renderSlot(GuiGraphicsExtractor, slot);
                 }
                 if (!isHovering(slot, mouseX, mouseY) || !slot.isActive()) {
                     continue;
@@ -132,58 +132,58 @@ public class ItemListScreen extends Screen {
                 if (!hoveredSlot.isHighlightable()) {
                     continue;
                 }
-                renderSlotHighlight(guiGraphics, slot.x, slot.y, 0);
+                renderSlotHighlight(GuiGraphicsExtractor, slot.x, slot.y, 0);
             }
-            this.renderLabels(guiGraphics, mouseX, mouseY);
-            guiGraphics.pose().popPose();
+            this.renderLabels(GuiGraphicsExtractor, mouseX, mouseY);
+            GuiGraphicsExtractor.pose().popPose();
         }
         RenderSystem.enableDepthTest();
-        guiGraphics.pose().popPose();
+        GuiGraphicsExtractor.pose().popPose();
 
-        renderTooltip(guiGraphics, mouseX, mouseY);
+        renderTooltip(GuiGraphicsExtractor, mouseX, mouseY);
     }
 
     @Override
-    public void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+    public void renderBackground(GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick) {
 
     }
 
-    protected void renderBg(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+    protected void renderBg(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick) {
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
 
         // Render BG expanding it according to number of rows
-        guiGraphics.blit(TEXTURE, leftPos, topPos, 0, 0, imageWidth, 17);
+        GuiGraphicsExtractor.blit(TEXTURE, leftPos, topPos, 0, 0, imageWidth, 17);
         for (int i = 0; i < rowsCount; i++) {
-            guiGraphics.blit(TEXTURE, leftPos, topPos + 17 + (i * 18), 0, 17, imageWidth, 18);
+            GuiGraphicsExtractor.blit(TEXTURE, leftPos, topPos + 17 + (i * 18), 0, 17, imageWidth, 18);
         }
-        guiGraphics.blit(TEXTURE, leftPos, topPos + 17 + (rowsCount * 18), 0, 35, imageWidth, 7);
+        GuiGraphicsExtractor.blit(TEXTURE, leftPos, topPos + 17 + (rowsCount * 18), 0, 35, imageWidth, 7);
 
         for (Slot slot : slots) {
-            guiGraphics.blit(TEXTURE, leftPos + slot.x - 1, topPos + slot.y - 1, 176, 0, 18, 18);
+            GuiGraphicsExtractor.blit(TEXTURE, leftPos + slot.x - 1, topPos + slot.y - 1, 176, 0, 18, 18);
         }
     }
 
-    protected void renderLabels(GuiGraphics guiGraphics, int mouseX, int mouseY) {
-        guiGraphics.drawString(this.font, this.title, this.titleLabelX, this.titleLabelY, 0x404040, false);
+    protected void renderLabels(GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY) {
+        GuiGraphicsExtractor.drawString(this.font, this.title, this.titleLabelX, this.titleLabelY, 0x404040, false);
     }
 
-    protected void renderSlot(GuiGraphics guiGraphics, Slot slot) {
+    protected void renderSlot(GuiGraphicsExtractor GuiGraphicsExtractor, Slot slot) {
         int x = slot.x;
         int y = slot.y;
         ItemStack itemStack = slot.getItem();
-        guiGraphics.pose().pushPose();
-        guiGraphics.pose().translate(0.0f, 0.0f, 100.0f);
-        guiGraphics.renderItem(itemStack, x, y, slot.x + slot.y * imageWidth);
-        guiGraphics.renderItemDecorations(font, itemStack, x, y, null);
-        guiGraphics.pose().popPose();
+        GuiGraphicsExtractor.pose().pushPose();
+        GuiGraphicsExtractor.pose().translate(0.0f, 0.0f, 100.0f);
+        GuiGraphicsExtractor.renderItem(itemStack, x, y, slot.x + slot.y * imageWidth);
+        GuiGraphicsExtractor.renderItemDecorations(font, itemStack, x, y, null);
+        GuiGraphicsExtractor.pose().popPose();
     }
 
-    public static void renderSlotHighlight(GuiGraphics guiGraphics, int x, int y, int blitOffset) {
-        guiGraphics.fillGradient(RenderType.guiOverlay(), x, y, x + 16, y + 16, -2130706433, -2130706433, blitOffset);
+    public static void renderSlotHighlight(GuiGraphicsExtractor GuiGraphicsExtractor, int x, int y, int blitOffset) {
+        GuiGraphicsExtractor.fillGradient(RenderType.guiOverlay(), x, y, x + 16, y + 16, -2130706433, -2130706433, blitOffset);
     }
 
-    protected void renderTooltip(GuiGraphics guiGraphics, int x, int y) {
+    protected void renderTooltip(GuiGraphicsExtractor GuiGraphicsExtractor, int x, int y) {
         if (hoveredSlot != null && hoveredSlot.hasItem()) {
             ItemStack itemStack = hoveredSlot.getItem();
 
@@ -191,7 +191,7 @@ public class ItemListScreen extends Screen {
                     ? abstractContainerScreen.getTooltipFromContainerItem(itemStack)
                     : Screen.getTooltipFromItem(Minecrft.get(), itemStack);
 
-            guiGraphics.renderTooltip(font, tooltipLines, itemStack.getTooltipImage(), x, y);
+            GuiGraphicsExtractor.renderTooltip(font, tooltipLines, itemStack.getTooltipImage(), x, y);
         }
     }
 

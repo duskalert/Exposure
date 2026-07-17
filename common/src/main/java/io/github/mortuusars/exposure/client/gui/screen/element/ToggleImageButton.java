@@ -1,6 +1,6 @@
 package io.github.mortuusars.exposure.client.gui.screen.element;
 
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractorExtractor;
 import net.minecraft.client.gui.components.ImageButton;
 import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.resources.Identifier;
@@ -47,9 +47,9 @@ public class ToggleImageButton extends ImageButton {
     }
 
     @Override
-    public void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+    public void renderWidget(GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick) {
         WidgetSprites sprites = isOn() ? onSprites : this.sprites;
         Identifier Identifier = sprites.get(this.isActive(), this.isHoveredOrFocused());
-        guiGraphics.blitSprite(Identifier, this.getX(), this.getY(), this.width, this.height);
+        GuiGraphicsExtractor.blitSprite(Identifier, this.getX(), this.getY(), this.width, this.height);
     }
 }

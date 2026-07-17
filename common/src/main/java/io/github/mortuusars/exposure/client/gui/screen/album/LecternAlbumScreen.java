@@ -4,7 +4,7 @@ import io.github.mortuusars.exposure.Config;
 import io.github.mortuusars.exposure.client.util.Minecrft;
 import io.github.mortuusars.exposure.world.inventory.LecternAlbumMenu;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractorExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.inventory.MenuAccess;
 import net.minecraft.network.chat.CommonComponents;
@@ -97,32 +97,32 @@ public class LecternAlbumScreen extends AlbumViewScreen implements MenuAccess<Le
     }
 
     @Override
-    protected void drawPageNumbers(GuiGraphics guiGraphics, int currentSpreadIndex, int mouseX, int mouseY) {
-        super.drawPageNumbers(guiGraphics, currentSpreadIndex, mouseX, mouseY);
+    protected void drawPageNumbers(GuiGraphicsExtractor GuiGraphicsExtractor, int currentSpreadIndex, int mouseX, int mouseY) {
+        super.drawPageNumbers(GuiGraphicsExtractor, currentSpreadIndex, mouseX, mouseY);
 
         int page = getMenu().getPage();
         String leftPageNumber = Integer.toString(currentSpreadIndex * 2 + 1);
         String rightPageNumber = Integer.toString(currentSpreadIndex * 2 + 2);
 
         if (page % 2 == 1 && isHovering(70, 167, 17, 7, mouseX, mouseY)) {
-            guiGraphics.drawString(font, leftPageNumber, leftPos + 71 + (8 - font.width(leftPageNumber) / 2),
+            GuiGraphicsExtractor.drawString(font, leftPageNumber, leftPos + 71 + (8 - font.width(leftPageNumber) / 2),
                     topPos + 167, Config.getColor(Config.Client.ALBUM_FONT_MAIN_COLOR), false);
         } else if (page % 2 == 0 && isHovering(210, 167, 17, 7, mouseX, mouseY)) {
-            guiGraphics.drawString(font, rightPageNumber, leftPos + 212 + (8 - font.width(rightPageNumber) / 2),
+            GuiGraphicsExtractor.drawString(font, rightPageNumber, leftPos + 212 + (8 - font.width(rightPageNumber) / 2),
                     topPos + 167, Config.getColor(Config.Client.ALBUM_FONT_MAIN_COLOR), false);
         }
     }
 
     @Override
-    protected void renderTooltip(GuiGraphics guiGraphics, int x, int y) {
-        super.renderTooltip(guiGraphics, x, y);
+    protected void renderTooltip(GuiGraphicsExtractor GuiGraphicsExtractor, int x, int y) {
+        super.renderTooltip(GuiGraphicsExtractor, x, y);
 
         int page = getMenu().getPage();
 
         if (page % 2 == 1 && isHovering(70, 167, 17, 7, x, y)) {
-            guiGraphics.renderTooltip(font, Component.translatable("gui.exposure.album.lectern.set_current_page"), x, y);
+            GuiGraphicsExtractor.renderTooltip(font, Component.translatable("gui.exposure.album.lectern.set_current_page"), x, y);
         } else if (page % 2 == 0 && isHovering(210, 167, 17, 7, x, y)) {
-            guiGraphics.renderTooltip(font, Component.translatable("gui.exposure.album.lectern.set_current_page"), x, y);
+            GuiGraphicsExtractor.renderTooltip(font, Component.translatable("gui.exposure.album.lectern.set_current_page"), x, y);
         }
     }
 

@@ -4,7 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import io.github.mortuusars.exposure.ExposureClient;
 import io.github.mortuusars.exposure.world.item.PhotographItem;
-import net.minecraft.client.renderer.LightTexture;
+import net.minecraft.client.renderer.Lightmap;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.entity.EntityType;
@@ -15,7 +15,7 @@ public class ItemFramePhotographRenderer {
     public static void render(ItemFrame itemFrame, PoseStack poseStack, MultiBufferSource bufferSource,
                                  int packedLight, PhotographItem item, ItemStack stack) {
         if (itemFrame.getType() == EntityType.GLOW_ITEM_FRAME)
-            packedLight = LightTexture.FULL_BRIGHT;
+            packedLight = Lightmap.FULL_BRIGHT;
 
         poseStack.pushPose();
 

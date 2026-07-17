@@ -7,12 +7,12 @@ import com.mojang.datafixers.util.Pair;
 import io.github.mortuusars.exposure.client.util.Minecrft;
 import net.minecraft.client.InputType;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractorExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarratedElementType;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.navigation.CommonInputs;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -189,32 +189,32 @@ public class Slider extends AbstractWidget {
     // -- Render
 
     @Override
-    public void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+    public void renderWidget(GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick) {
         Minecraft minecraft = Minecraft.getInstance();
-        guiGraphics.setColor(1.0F, 1.0F, 1.0F, alpha);
+        GuiGraphicsExtractor.setColor(1.0F, 1.0F, 1.0F, alpha);
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
         RenderSystem.enableDepthTest();
-        guiGraphics.blitSprite(getSprite(), getX(), getY(), getWidth(), getHeight());
+        GuiGraphicsExtractor.blitSprite(getSprite(), getX(), getY(), getWidth(), getHeight());
 
         if (active && horizontalGradient != null) {
-            fillHorizontalGradient(guiGraphics, getX() + 1, getY() + 1, getX() + getWidth() - 1,
+            fillHorizontalGradient(GuiGraphicsExtractor, getX() + 1, getY() + 1, getX() + getWidth() - 1,
                     getY() + getHeight() - 1, horizontalGradient.getFirst(), horizontalGradient.getSecond());
         }
 
-        guiGraphics.pose().pushPose();
-        guiGraphics.pose().translate(0, 0, 50);
+        GuiGraphicsExtractor.pose().pushPose();
+        GuiGraphicsExtractor.pose().translate(0, 0, 50);
 
-        guiGraphics.blitSprite(getHandleSprite(), getX() + (int)(position * (double)(width - HANDLE_WIDTH)), getY(), HANDLE_WIDTH, getHeight());
-        guiGraphics.setColor(1.0F, 1.0F, 1.0F, 1.0F);
+        GuiGraphicsExtractor.blitSprite(getHandleSprite(), getX() + (int)(position * (double)(width - HANDLE_WIDTH)), getY(), HANDLE_WIDTH, getHeight());
+        GuiGraphicsExtractor.setColor(1.0F, 1.0F, 1.0F, 1.0F);
         int textColor = (active ? 0xFFFFFF : 0xA0A0A0) | Mth.ceil(alpha * 255.0F) << 24;
-        renderScrollingString(guiGraphics, minecraft.font, TEXT_MARGIN, textColor);
-        guiGraphics.pose().popPose();
+        renderScrollingString(GuiGraphicsExtractor, minecraft.font, TEXT_MARGIN, textColor);
+        GuiGraphicsExtractor.pose().popPose();
     }
 
-    private void fillHorizontalGradient(GuiGraphics guiGraphics, int x1, int y1, int x2, int y2, int colorFrom, int colorTo) {
-        VertexConsumer consumer = guiGraphics.bufferSource().getBuffer(RenderType.gui());
-        Matrix4f matrix4f = guiGraphics.pose().last().pose();
+    private void fillHorizontalGradient(GuiGraphicsExtractor GuiGraphicsExtractor, int x1, int y1, int x2, int y2, int colorFrom, int colorTo) {
+        VertexConsumer consumer = GuiGraphicsExtractor.bufferSource().getBuffer(RenderType.gui());
+        Matrix4f matrix4f = GuiGraphicsExtractor.pose().last().pose();
         consumer.addVertex(matrix4f, (float)x1, (float)y1, 0).setColor(colorFrom);
         consumer.addVertex(matrix4f, (float)x1, (float)y2, 0).setColor(colorFrom);
         consumer.addVertex(matrix4f, (float)x2, (float)y2, 0).setColor(colorTo);

@@ -19,11 +19,11 @@ import io.github.mortuusars.exposure.world.camera.film.properties.Levels;
 import io.github.mortuusars.exposure.world.camera.component.ShutterSpeed;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractorExtractor;
 import net.minecraft.client.gui.components.*;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
@@ -355,20 +355,20 @@ public class TestImageScreen extends Screen {
     // --
 
     @Override
-    public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        super.render(guiGraphics, mouseX, mouseY, partialTick);
+    public void render(GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick) {
+        super.render(GuiGraphicsExtractor, mouseX, mouseY, partialTick);
 
-        fillHorizontalGradient(guiGraphics, width - 100, -500, width, height + 500, 0x00000000, 0xBB111111);
+        fillHorizontalGradient(GuiGraphicsExtractor, width - 100, -500, width, height + 500, 0x00000000, 0xBB111111);
 
         if (isCapturing) {
             String txt = "Capturing...";
-            guiGraphics.drawString(font, txt, width / 2 - font.width(txt) / 2, height / 2 - 4, 0xFFFFFFFF);
+            GuiGraphicsExtractor.drawString(font, txt, width / 2 - font.width(txt) / 2, height / 2 - 4, 0xFFFFFFFF);
             return;
         }
 
         if (renderableImage == null) {
             String txt = "<No Image>";
-            guiGraphics.drawString(font, txt, width / 2 - font.width(txt) / 2, height / 2 - 4, 0xFFFFFFFF);
+            GuiGraphicsExtractor.drawString(font, txt, width / 2 - font.width(txt) / 2, height / 2 - 4, 0xFFFFFFFF);
             return;
         }
 
@@ -376,20 +376,20 @@ public class TestImageScreen extends Screen {
             applyEdits();
         }
 
-        guiGraphics.pose().pushPose();
+        GuiGraphicsExtractor.pose().pushPose();
         float size = height * 0.8f * scale;
-        guiGraphics.pose().translate(width / 2f - size / 2f, height / 2f - size / 2f, -100);
+        GuiGraphicsExtractor.pose().translate(width / 2f - size / 2f, height / 2f - size / 2f, -100);
 
         float borderPercent = 0.02f;
-        guiGraphics.fill(Mth.floor(-size * borderPercent), Mth.floor(-size * borderPercent),
+        GuiGraphicsExtractor.fill(Mth.floor(-size * borderPercent), Mth.floor(-size * borderPercent),
                 Mth.ceil(size + (size * borderPercent)), Mth.ceil(size + (size * borderPercent)), 0xFFFFFFFF);
-        guiGraphics.pose().scale(size, size, size);
+        GuiGraphicsExtractor.pose().scale(size, size, size);
 
 
         MultiBufferSource.BufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
-        ExposureClient.imageRenderer().render(renderableImage, guiGraphics.pose(), bufferSource, RenderCoordinates.DEFAULT, Color.WHITE);
+        ExposureClient.imageRenderer().render(renderableImage, GuiGraphicsExtractor.pose(), bufferSource, RenderCoordinates.DEFAULT, Color.WHITE);
         bufferSource.endBatch();
-        guiGraphics.pose().popPose();
+        GuiGraphicsExtractor.pose().popPose();
     }
 
     @Override
@@ -444,9 +444,9 @@ public class TestImageScreen extends Screen {
         return true;
     }
 
-    private void fillHorizontalGradient(GuiGraphics guiGraphics, int x1, int y1, int x2, int y2, int colorFrom, int colorTo) {
-        VertexConsumer consumer = guiGraphics.bufferSource().getBuffer(RenderType.gui());
-        Matrix4f matrix4f = guiGraphics.pose().last().pose();
+    private void fillHorizontalGradient(GuiGraphicsExtractor GuiGraphicsExtractor, int x1, int y1, int x2, int y2, int colorFrom, int colorTo) {
+        VertexConsumer consumer = GuiGraphicsExtractor.bufferSource().getBuffer(RenderType.gui());
+        Matrix4f matrix4f = GuiGraphicsExtractor.pose().last().pose();
         consumer.addVertex(matrix4f, (float) x1, (float) y1, 0).setColor(colorFrom);
         consumer.addVertex(matrix4f, (float) x1, (float) y2, 0).setColor(colorFrom);
         consumer.addVertex(matrix4f, (float) x2, (float) y2, 0).setColor(colorTo);

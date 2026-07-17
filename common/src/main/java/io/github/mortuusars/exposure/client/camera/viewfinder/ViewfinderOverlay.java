@@ -20,7 +20,7 @@ import io.github.mortuusars.exposure.util.Rect2f;
 import net.minecraft.SharedConstants;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractorExtractor;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -87,7 +87,7 @@ public class ViewfinderOverlay {
         return scale;
     }
 
-    public void render(GuiGraphics guiGraphics, DeltaTracker deltaTracker) {
+    public void render(GuiGraphicsExtractor GuiGraphicsExtractor, DeltaTracker deltaTracker) {
         recalculateOpening();
         scale = Mth.lerp((float) scaleAnimation.getValue(), initialScale, 1f);
 
@@ -98,17 +98,17 @@ public class ViewfinderOverlay {
         final int width = Minecrft.get().getWindow().getGuiScaledWidth();
         final int height = Minecrft.get().getWindow().getGuiScaledHeight();
 
-        guiGraphics.pose().pushPose();
-        guiGraphics.pose().translate(width / 2f, height / 2f, 0);
-        guiGraphics.pose().scale(scale, scale, scale);
+        GuiGraphicsExtractor.pose().pushPose();
+        GuiGraphicsExtractor.pose().translate(width / 2f, height / 2f, 0);
+        GuiGraphicsExtractor.pose().scale(scale, scale, scale);
 
         if (Minecrft.options().bobView().get()) {
-            bobView(guiGraphics.pose(), deltaTracker);
+            bobView(GuiGraphicsExtractor.pose(), deltaTracker);
         }
-        applyAttackAnimation(guiGraphics.pose(), deltaTracker);
-        applyMovementDelay(guiGraphics.pose(), deltaTracker);
+        applyAttackAnimation(GuiGraphicsExtractor.pose(), deltaTracker);
+        applyMovementDelay(GuiGraphicsExtractor.pose(), deltaTracker);
 
-        guiGraphics.pose().translate(-width / 2f, -height / 2f, 0);
+        GuiGraphicsExtractor.pose().translate(-width / 2f, -height / 2f, 0);
 
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
@@ -117,45 +117,45 @@ public class ViewfinderOverlay {
 
         // -9999 to cover all screen when overlay is scaled down
         // Left
-        GuiUtil.drawRect(guiGraphics, opening.x, opening.y, -9999, opening.height, backgroundColor);
+        GuiUtil.drawRect(GuiGraphicsExtractor, opening.x, opening.y, -9999, opening.height, backgroundColor);
         // Right
-        GuiUtil.drawRect(guiGraphics, opening.x + opening.width, opening.y, 9999, opening.height, backgroundColor);
+        GuiUtil.drawRect(GuiGraphicsExtractor, opening.x + opening.width, opening.y, 9999, opening.height, backgroundColor);
         // Top
-        GuiUtil.drawRect(guiGraphics, -4999, opening.y, 9999, -9999, backgroundColor);
+        GuiUtil.drawRect(GuiGraphicsExtractor, -4999, opening.y, 9999, -9999, backgroundColor);
         // Bottom
-        GuiUtil.drawRect(guiGraphics, -4999, opening.y + opening.height, 9999, 9999, backgroundColor);
+        GuiUtil.drawRect(GuiGraphicsExtractor, -4999, opening.y + opening.height, 9999, 9999, backgroundColor);
 
         boolean drawGuide = true;
 
         StoredItemStack filter = Attachment.FILTER.get(camera.getItemStack());
         if (filter.getForReading().getItem() instanceof BrokenInterplanarProjectorItem brokenInterplanarProjector) {
             drawGuide = false;
-            renderBSOD(guiGraphics, brokenInterplanarProjector, filter.getForReading());
+            renderBSOD(GuiGraphicsExtractor, brokenInterplanarProjector, filter.getForReading());
             RenderSystem.enableBlend();
             RenderSystem.defaultBlendFunc();
             RenderSystem.enableDepthTest();
             RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
         }
 
-        drawShutter(guiGraphics);
-        drawViewfinderTexture(guiGraphics);
+        drawShutter(GuiGraphicsExtractor);
+        drawViewfinderTexture(GuiGraphicsExtractor);
 
         // Guide
         if (drawGuide) {
             Identifier guideTexture = CameraSettings.COMPOSITION_GUIDE.getOrDefault(camera.getItemStack()).overlayTextureLocation();
-            GuiUtil.blit(guideTexture, guiGraphics.pose(), opening, 0, 0, (int) opening.width, (int) opening.height, 0);
+            GuiUtil.blit(guideTexture, GuiGraphicsExtractor.pose(), opening, 0, 0, (int) opening.width, (int) opening.height, 0);
         }
 
         if (!(Minecrft.get().screen instanceof ViewfinderCameraControlsScreen)) {
-            renderStatusIcons(guiGraphics.pose(), camera.getItemStack());
+            renderStatusIcons(GuiGraphicsExtractor.pose(), camera.getItemStack());
         }
 
-        guiGraphics.pose().popPose();
+        GuiGraphicsExtractor.pose().popPose();
         RenderSystem.disableDepthTest();
     }
 
-    protected void drawViewfinderTexture(GuiGraphics guiGraphics) {
-        GuiUtil.blit(VIEWFINDER_TEXTURE, guiGraphics.pose(), opening, 0, 0, (int) opening.width, (int) opening.height, 0);
+    protected void drawViewfinderTexture(GuiGraphicsExtractor GuiGraphicsExtractor) {
+        GuiUtil.blit(VIEWFINDER_TEXTURE, GuiGraphicsExtractor.pose(), opening, 0, 0, (int) opening.width, (int) opening.height, 0);
     }
 
     /**
@@ -164,9 +164,9 @@ public class ViewfinderOverlay {
      * So we force shutter to render for at least some time when shutter is open. <br><br>
      * Combination of timestamp and next frame check is for cases where lag takes so long that 'forceDrawShutterUntil' is passed without rendering.
      */
-    protected void drawShutter(GuiGraphics guiGraphics) {
+    protected void drawShutter(GuiGraphicsExtractor GuiGraphicsExtractor) {
         if (camera.isShutterOpen() || forceDrawShutterOnNextFrame || forceDrawShutterUntil - System.currentTimeMillis() > 0) {
-            GuiUtil.drawRect(guiGraphics, opening, 0xfa1f1d1b);
+            GuiUtil.drawRect(GuiGraphicsExtractor, opening, 0xfa1f1d1b);
             forceDrawShutterOnNextFrame = false;
         }
     }
@@ -176,7 +176,7 @@ public class ViewfinderOverlay {
         forceDrawShutterUntil = UnixTimestamp.Milliseconds.now() + SharedConstants.MILLIS_PER_TICK * 2;
     }
 
-    protected void renderBSOD(GuiGraphics guiGraphics, BrokenInterplanarProjectorItem item, ItemStack stack) {
+    protected void renderBSOD(GuiGraphicsExtractor GuiGraphicsExtractor, BrokenInterplanarProjectorItem item, ItemStack stack) {
         Font font = Minecrft.get().font;
 
         int yCenter = (int) (opening.y + opening.height / 2);
@@ -186,13 +186,13 @@ public class ViewfinderOverlay {
         int y = yCenter;
 
         int sadFaceSize = font.lineHeight * 5;
-        guiGraphics.blit(BSOD_SAD_FACE_TEXTURE, x, y - sadFaceSize - margin, 0, 0, sadFaceSize, sadFaceSize, sadFaceSize, sadFaceSize);
+        GuiGraphicsExtractor.blit(BSOD_SAD_FACE_TEXTURE, x, y - sadFaceSize - margin, 0, 0, sadFaceSize, sadFaceSize, sadFaceSize, sadFaceSize);
 
         MutableComponent message = Component.translatable("item.exposure.broken_interplanar_projector.viewfinder.message");
         List<FormattedCharSequence> messageLines = font.split(message, (int) (opening.width * 0.75f));
 
         for (FormattedCharSequence line : messageLines) {
-            guiGraphics.drawString(font, line, x, y, 0xFFFFFFFF, false);
+            GuiGraphicsExtractor.drawString(font, line, x, y, 0xFFFFFFFF, false);
             y += font.lineHeight;
         }
 
@@ -204,13 +204,13 @@ public class ViewfinderOverlay {
             case 2 -> qrCodeTextureSize * 2;
             default -> qrCodeTextureSize;
         };
-        guiGraphics.blit(BSOD_QR_CODE_TEXTURE, x, y, 0, 0, qrCodeSize, qrCodeSize, qrCodeSize, qrCodeSize);
+        GuiGraphicsExtractor.blit(BSOD_QR_CODE_TEXTURE, x, y, 0, 0, qrCodeSize, qrCodeSize, qrCodeSize, qrCodeSize);
 
         MutableComponent errorCode = Component.translatable("item.exposure.broken_interplanar_projector.viewfinder.error_code");
-        guiGraphics.drawString(font, errorCode, x + qrCodeSize + margin, y, 0xFFFFFFFF, false);
+        GuiGraphicsExtractor.drawString(font, errorCode, x + qrCodeSize + margin, y, 0xFFFFFFFF, false);
         y += font.lineHeight;
         String code = item.getErrorCode(stack);
-        guiGraphics.drawString(font, code, x + qrCodeSize + margin, y, 0xFFFFFFFF, false);
+        GuiGraphicsExtractor.drawString(font, code, x + qrCodeSize + margin, y, 0xFFFFFFFF, false);
     }
 
     public void bobView(PoseStack poseStack, DeltaTracker deltaTracker) {

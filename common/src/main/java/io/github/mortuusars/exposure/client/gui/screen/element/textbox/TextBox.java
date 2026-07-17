@@ -7,14 +7,14 @@ import net.minecraft.util.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.StringSplitter;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractorExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.font.TextFieldHelper;
 import net.minecraft.client.gui.narration.NarratedElementType;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.Rect2i;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
@@ -135,37 +135,37 @@ public class TextBox extends AbstractWidget {
     }
 
     @Override
-    protected void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+    protected void renderWidget(GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick) {
         DisplayCache displayCache = this.getDisplayCache();
         for (DisplayCache.LineInfo lineInfo : displayCache.lines) {
-            guiGraphics.drawString(this.font, lineInfo.asComponent, getX() + lineInfo.x, getY() + lineInfo.y, getCurrentFontColor(), false);
+            GuiGraphicsExtractor.drawString(this.font, lineInfo.asComponent, getX() + lineInfo.x, getY() + lineInfo.y, getCurrentFontColor(), false);
         }
-        this.renderHighlight(guiGraphics, displayCache.selectionAreas);
+        this.renderHighlight(GuiGraphicsExtractor, displayCache.selectionAreas);
         if (isFocused())
-            this.renderCursor(guiGraphics, displayCache.cursorPos, displayCache.cursorAtEnd);
+            this.renderCursor(GuiGraphicsExtractor, displayCache.cursorPos, displayCache.cursorAtEnd);
     }
 
-    protected void renderHighlight(GuiGraphics guiGraphics, Rect2i[] highlightAreas) {
+    protected void renderHighlight(GuiGraphicsExtractor GuiGraphicsExtractor, Rect2i[] highlightAreas) {
         for (Rect2i selection : highlightAreas) {
             int x = getX() + selection.getX();
             int y = getY() + selection.getY();
             int x1 = x + selection.getWidth();
             int y1 = y + selection.getHeight();
-            guiGraphics.fill(RenderType.guiTextHighlight(), x, y - 1, x1, y1, isFocused() ? selectionColor : selectionUnfocusedColor);
+            GuiGraphicsExtractor.fill(RenderType.guiTextHighlight(), x, y - 1, x1, y1, isFocused() ? selectionColor : selectionUnfocusedColor);
         }
     }
 
-    protected void renderCursor(GuiGraphics guiGraphics, Pos2i cursorPos, boolean isEndOfText) {
+    protected void renderCursor(GuiGraphicsExtractor GuiGraphicsExtractor, Pos2i cursorPos, boolean isEndOfText) {
         if (this.frameTick / 6 % 2 == 0) {
             cursorPos = convertLocalToScreen(cursorPos);
             if (isEndOfText)
-                guiGraphics.drawString(this.font, "_", cursorPos.x, cursorPos.y, getCurrentFontColor(), false);
+                GuiGraphicsExtractor.drawString(this.font, "_", cursorPos.x, cursorPos.y, getCurrentFontColor(), false);
             else {
-                guiGraphics.pose().pushPose();
-                guiGraphics.pose().translate(0, 0, 50);
+                GuiGraphicsExtractor.pose().pushPose();
+                GuiGraphicsExtractor.pose().translate(0, 0, 50);
                 RenderSystem.disableBlend();
-                guiGraphics.fill(cursorPos.x, cursorPos.y - 1, cursorPos.x + 1, cursorPos.y + this.font.lineHeight, getCurrentFontColor());
-                guiGraphics.pose().popPose();
+                GuiGraphicsExtractor.fill(cursorPos.x, cursorPos.y - 1, cursorPos.x + 1, cursorPos.y + this.font.lineHeight, getCurrentFontColor());
+                GuiGraphicsExtractor.pose().popPose();
             }
         }
     }

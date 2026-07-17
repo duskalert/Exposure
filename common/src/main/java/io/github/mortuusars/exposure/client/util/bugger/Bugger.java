@@ -9,7 +9,7 @@ import io.github.mortuusars.exposure.client.gui.screen.test.TestImageScreen;
 import io.github.mortuusars.exposure.client.util.Minecrft;
 import io.github.mortuusars.exposure.mixin.client.BuggerScreenRenderLinesInvoker;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractorExtractor;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
@@ -83,16 +83,16 @@ public class Bugger {
         }
     }
 
-    public static void renderMainPage(GuiGraphics guiGraphics) {
+    public static void renderMainPage(GuiGraphicsExtractor GuiGraphicsExtractor) {
         float scale = (zoom + 100) / 100f;
 
-        guiGraphics.pose().pushPose();
-        guiGraphics.pose().scale(scale, scale, scale);
+        GuiGraphicsExtractor.pose().pushPose();
+        GuiGraphicsExtractor.pose().scale(scale, scale, scale);
         List<String> leftLines = collectLeftLines().stream().skip(scroll).toList();
-        ((BuggerScreenRenderLinesInvoker) Minecraft.getInstance().getDebugOverlay()).drawLines(guiGraphics, leftLines, true);
+        ((BuggerScreenRenderLinesInvoker) Minecraft.getInstance().getDebugOverlay()).drawLines(GuiGraphicsExtractor, leftLines, true);
         List<String> rightLines = collectRightLines().stream().skip(scroll).toList();
-        ((BuggerScreenRenderLinesInvoker) Minecraft.getInstance().getDebugOverlay()).drawLines(guiGraphics, rightLines, false);
-        guiGraphics.pose().popPose();
+        ((BuggerScreenRenderLinesInvoker) Minecraft.getInstance().getDebugOverlay()).drawLines(GuiGraphicsExtractor, rightLines, false);
+        GuiGraphicsExtractor.pose().popPose();
     }
 
     private static List<String> collectLeftLines() {
@@ -124,7 +124,7 @@ public class Bugger {
         return ret;
     }
 
-    public static void renderTagPage(GuiGraphics guiGraphics) {
+    public static void renderTagPage(GuiGraphicsExtractor GuiGraphicsExtractor) {
         List<String> tagLines = getTagPageLines();
 
         int maxScroll = Math.max(tagLines.size() - 8, 0);
@@ -134,10 +134,10 @@ public class Bugger {
 
         float scale = (zoom + 100) / 100f;
 
-        guiGraphics.pose().pushPose();
-        guiGraphics.pose().scale(scale, scale, scale);
-        ((BuggerScreenRenderLinesInvoker) Minecrft.get().getDebugOverlay()).drawLines(guiGraphics, lines, true);
-        guiGraphics.pose().popPose();
+        GuiGraphicsExtractor.pose().pushPose();
+        GuiGraphicsExtractor.pose().scale(scale, scale, scale);
+        ((BuggerScreenRenderLinesInvoker) Minecrft.get().getDebugOverlay()).drawLines(GuiGraphicsExtractor, lines, true);
+        GuiGraphicsExtractor.pose().popPose();
     }
 
     private static @NotNull List<String> getTagPageLines() {

@@ -7,7 +7,7 @@ import io.github.mortuusars.exposure.client.gui.screen.element.textbox.Horizonta
 import io.github.mortuusars.exposure.client.gui.screen.element.textbox.TextBox;
 import io.github.mortuusars.exposure.client.util.Minecrft;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractorExtractor;
 import net.minecraft.client.gui.components.ImageButton;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.components.WidgetSprites;
@@ -89,25 +89,25 @@ public class AlbumSigningScreen extends Screen {
     }
 
     @Override
-    public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+    public void render(GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick) {
         updateButtons();
-        super.render(guiGraphics, mouseX, mouseY, partialTick);
-        renderLabels(guiGraphics);
+        super.render(GuiGraphicsExtractor, mouseX, mouseY, partialTick);
+        renderLabels(GuiGraphicsExtractor);
     }
 
     @Override
-    public void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        renderTransparentBackground(guiGraphics);
-        guiGraphics.blit(AlbumGUI.TEXTURE, leftPos, topPos, 0, 298,
+    public void renderBackground(GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick) {
+        renderTransparentBackground(GuiGraphicsExtractor);
+        GuiGraphicsExtractor.blit(AlbumGUI.TEXTURE, leftPos, topPos, 0, 298,
                 0, imageWidth, imageHeight, 512, 512);
     }
 
-    private void renderLabels(GuiGraphics guiGraphics) {
+    private void renderLabels(GuiGraphicsExtractor GuiGraphicsExtractor) {
         MutableComponent component = Component.translatable("gui.exposure.album.enter_title");
-        guiGraphics.drawString(font, component,  leftPos + 149 / 2 - font.width(component) / 2, topPos + 50, 0xf5ebd0, false);
+        GuiGraphicsExtractor.drawString(font, component,  leftPos + 149 / 2 - font.width(component) / 2, topPos + 50, 0xf5ebd0, false);
 
         component = Component.translatable("gui.exposure.album.by_author", Minecrft.player().getScoreboardName());
-        guiGraphics.drawString(font, component, leftPos + 149 / 2 - font.width(component) / 2, topPos + 84, 0xc7b496, false);
+        GuiGraphicsExtractor.drawString(font, component, leftPos + 149 / 2 - font.width(component) / 2, topPos + 84, 0xc7b496, false);
     }
 
     protected void signAlbum() {

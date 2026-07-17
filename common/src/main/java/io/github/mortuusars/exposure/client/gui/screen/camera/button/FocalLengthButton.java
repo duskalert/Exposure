@@ -5,7 +5,7 @@ import io.github.mortuusars.exposure.client.util.Minecrft;
 import io.github.mortuusars.exposure.util.Fov;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractorExtractor;
 import net.minecraft.client.gui.components.ImageButton;
 import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.network.chat.Component;
@@ -23,8 +23,8 @@ public class FocalLengthButton extends ImageButton {
     }
 
     @Override
-    public void renderWidget(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        super.renderWidget(guiGraphics, mouseX, mouseY, partialTick);
+    public void renderWidget(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick) {
+        super.renderWidget(GuiGraphicsExtractor, mouseX, mouseY, partialTick);
 
         int focalLength = (int)Math.round(Fov.fovToFocalLength(getCurrentFov()));
 
@@ -33,8 +33,8 @@ public class FocalLengthButton extends ImageButton {
         int textWidth = font.width(text);
         int xPos = 17 + (29 - textWidth) / 2;
 
-        guiGraphics.drawString(font, text, getX() + xPos, getY() + 8, secondaryFontColor, false);
-        guiGraphics.drawString(font, text, getX() + xPos, getY() + 7, mainFontColor, false);
+        GuiGraphicsExtractor.drawString(font, text, getX() + xPos, getY() + 8, secondaryFontColor, false);
+        GuiGraphicsExtractor.drawString(font, text, getX() + xPos, getY() + 7, mainFontColor, false);
     }
 
     protected double getCurrentFov() {

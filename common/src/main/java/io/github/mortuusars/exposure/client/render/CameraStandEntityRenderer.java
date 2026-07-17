@@ -8,7 +8,7 @@ import io.github.mortuusars.exposure.client.util.Minecrft;
 import io.github.mortuusars.exposure.world.entity.CameraStandEntity;
 import io.github.mortuusars.exposure.world.item.camera.CameraItem;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
@@ -21,7 +21,7 @@ import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-public class CameraStandEntityRenderer <T extends CameraStandEntity> extends EntityRenderer<T> {
+public class CameraStandEntityRenderer <T extends CameraStandEntity> extends EntityRenderer<T, net.minecraft.client.renderer.entity.state.EntityRenderState> {
     public static final Identifier TEXTURE_LOCATION = Identifier.withDefaultNamespace("textures/item/camera.png");
     public static final float MOUNT_SCALE = 0.9f;
 

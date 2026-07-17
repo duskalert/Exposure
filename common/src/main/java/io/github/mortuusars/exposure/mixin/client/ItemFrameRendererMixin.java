@@ -13,7 +13,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(ItemFrameRenderer.class)
-public abstract class ItemFrameRendererMixin<T extends ItemFrame> extends EntityRenderer<T> {
+public abstract class ItemFrameRendererMixin<T extends ItemFrame> extends EntityRenderer<T, net.minecraft.client.renderer.entity.state.ItemFrameRenderState> {
     protected ItemFrameRendererMixin(EntityRendererProvider.Context context) {
         super(context);
     }

@@ -5,7 +5,7 @@ import com.mojang.blaze3d.vertex.*;
 import io.github.mortuusars.exposure.util.Rect2f;
 import net.minecraft.util.Util;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractorExtractor;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
@@ -60,12 +60,12 @@ public class GuiUtil {
 
     // --
 
-    public static void drawRect(GuiGraphics guiGraphics, Rect2f rect, int color) {
-        drawRect(guiGraphics, rect.x, rect.y, rect.width, rect.height, color);
+    public static void drawRect(GuiGraphicsExtractor GuiGraphicsExtractor, Rect2f rect, int color) {
+        drawRect(GuiGraphicsExtractor, rect.x, rect.y, rect.width, rect.height, color);
     }
 
-    public static void drawRect(GuiGraphics guiGraphics, float x, float y, float width, float height, int color) {
-        drawRect(guiGraphics.pose(), x, y, x + width, y + height, color);
+    public static void drawRect(GuiGraphicsExtractor GuiGraphicsExtractor, float x, float y, float width, float height, int color) {
+        drawRect(GuiGraphicsExtractor.pose(), x, y, x + width, y + height, color);
     }
 
     public static void drawRect(PoseStack poseStack, float minX, float minY, float maxX, float maxY, int color) {
@@ -93,16 +93,16 @@ public class GuiUtil {
 
     // --
 
-    public static void renderScrollingString(GuiGraphics guiGraphics, Font font, Component text, int x, int y, int width, int color) {
-        renderScrollingString(guiGraphics, font, text, x, y, x + width, y + font.lineHeight, color);
+    public static void renderScrollingString(GuiGraphicsExtractor GuiGraphicsExtractor, Font font, Component text, int x, int y, int width, int color) {
+        renderScrollingString(GuiGraphicsExtractor, font, text, x, y, x + width, y + font.lineHeight, color);
     }
 
-    public static void renderScrollingString(GuiGraphics guiGraphics, Font font, Component text, int minX, int minY, int maxX, int maxY, int color) {
-        renderScrollingString(guiGraphics, font, text, (minX + maxX) / 2, minX, minY, maxX, maxY, color);
+    public static void renderScrollingString(GuiGraphicsExtractor GuiGraphicsExtractor, Font font, Component text, int minX, int minY, int maxX, int maxY, int color) {
+        renderScrollingString(GuiGraphicsExtractor, font, text, (minX + maxX) / 2, minX, minY, maxX, maxY, color);
     }
 
     // Doesn't work in toast for some reason.
-    public static void renderScrollingString(GuiGraphics guiGraphics, Font font, Component text, int centerX, int minX, int minY, int maxX, int maxY, int color) {
+    public static void renderScrollingString(GuiGraphicsExtractor GuiGraphicsExtractor, Font font, Component text, int centerX, int minX, int minY, int maxX, int maxY, int color) {
         int fontWidth = font.width(text);
         int y = (minY + maxY - 9) / 2 + 1;
         int width = maxX - minX;
@@ -112,12 +112,12 @@ public class GuiUtil {
             double e = Math.max((double)remaining * 0.5, 3.0);
             double f = Math.sin((Math.PI / 2) * Math.cos((Math.PI * 2) * d / e)) / 2.0 + 0.5;
             double g = Mth.lerp(f, 0.0, remaining);
-            guiGraphics.enableScissor(minX, minY, maxX, maxY);
-            guiGraphics.drawString(font, text, minX - (int)g, y, color, false);
-            guiGraphics.disableScissor();
+            GuiGraphicsExtractor.enableScissor(minX, minY, maxX, maxY);
+            GuiGraphicsExtractor.drawString(font, text, minX - (int)g, y, color, false);
+            GuiGraphicsExtractor.disableScissor();
         } else {
             int l = Mth.clamp(centerX, minX + fontWidth / 2, maxX - fontWidth / 2);
-            guiGraphics.drawCenteredString(font, text, l, y, color);
+            GuiGraphicsExtractor.drawCenteredString(font, text, l, y, color);
         }
     }
 }

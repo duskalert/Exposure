@@ -20,7 +20,7 @@ import io.github.mortuusars.exposure.world.item.component.album.SignedAlbumPage;
 import io.github.mortuusars.exposure.world.item.util.ItemAndStack;
 import io.github.mortuusars.exposure.world.sound.SoundEffect;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractorExtractor;
 import net.minecraft.client.gui.components.*;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.GameRenderer;
@@ -156,54 +156,54 @@ public class AlbumViewScreen extends Screen {
     }
 
     @Override
-    public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        super.render(guiGraphics, mouseX, mouseY, partialTick);
-        renderTooltip(guiGraphics, mouseX, mouseY);
+    public void render(GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick) {
+        super.render(GuiGraphicsExtractor, mouseX, mouseY, partialTick);
+        renderTooltip(GuiGraphicsExtractor, mouseX, mouseY);
 
         for (Page page : pages) {
             AbstractWidget noteWidget = page.noteWidget();
             if (noteWidget instanceof TextBlock textBlock) {
-                textBlock.render(guiGraphics, mouseX, mouseY, partialTick);
+                textBlock.render(GuiGraphicsExtractor, mouseX, mouseY, partialTick);
             }
         }
 
-        this.renderTooltip(guiGraphics, mouseX, mouseY);
+        this.renderTooltip(GuiGraphicsExtractor, mouseX, mouseY);
     }
 
-    protected void renderTooltip(GuiGraphics guiGraphics, int x, int y) {
+    protected void renderTooltip(GuiGraphicsExtractor GuiGraphicsExtractor, int x, int y) {
         for (Page page : pages) {
             if (page.photographWidget().isHoveredOrFocused()) {
-                page.photographWidget().renderTooltip(guiGraphics, x, y);
+                page.photographWidget().renderTooltip(GuiGraphicsExtractor, x, y);
                 return;
             }
         }
     }
 
     @Override
-    public void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        renderTransparentBackground(guiGraphics);
+    public void renderBackground(GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick) {
+        renderTransparentBackground(GuiGraphicsExtractor);
 
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
-        guiGraphics.blit(AlbumGUI.TEXTURE, leftPos, topPos, 0, 0, 0,
+        GuiGraphicsExtractor.blit(AlbumGUI.TEXTURE, leftPos, topPos, 0, 0, 0,
                 imageWidth, imageHeight, 512, 512);
 
         int currentSpreadIndex = getCurrentSpreadIndex();
-        drawPageNumbers(guiGraphics, currentSpreadIndex, mouseX, mouseY);
+        drawPageNumbers(GuiGraphicsExtractor, currentSpreadIndex, mouseX, mouseY);
     }
 
-    protected void drawPageNumbers(GuiGraphics guiGraphics, int currentSpreadIndex, int mouseX, int mouseY) {
+    protected void drawPageNumbers(GuiGraphicsExtractor GuiGraphicsExtractor, int currentSpreadIndex, int mouseX, int mouseY) {
         Font font = Minecrft.get().font;
 
         String leftPageNumber = Integer.toString(currentSpreadIndex * 2 + 1);
         String rightPageNumber = Integer.toString(currentSpreadIndex * 2 + 2);
 
-        guiGraphics.drawString(font, leftPageNumber, leftPos + 71 + (8 - font.width(leftPageNumber) / 2),
+        GuiGraphicsExtractor.drawString(font, leftPageNumber, leftPos + 71 + (8 - font.width(leftPageNumber) / 2),
                 topPos + 167, Config.getColor(Config.Client.ALBUM_FONT_SECONDARY_COLOR), false);
 
-        guiGraphics.drawString(font, rightPageNumber, leftPos + 212 + (8 - font.width(rightPageNumber) / 2),
+        GuiGraphicsExtractor.drawString(font, rightPageNumber, leftPos + 212 + (8 - font.width(rightPageNumber) / 2),
                 topPos + 167, Config.getColor(Config.Client.ALBUM_FONT_SECONDARY_COLOR), false);
     }
 

@@ -25,10 +25,10 @@ import io.github.mortuusars.exposure.world.item.util.ItemAndStack;
 import io.github.mortuusars.exposure.util.PagingDirection;
 import io.github.mortuusars.exposure.world.sound.SoundEffect;
 import net.minecraft.util.Util;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractorExtractor;
 import net.minecraft.client.gui.components.ImageButton;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.renderer.LightTexture;
+import net.minecraft.client.renderer.Lightmap;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
@@ -147,7 +147,7 @@ public class PhotographScreen extends Screen {
     }
 
     @Override
-    public void render(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+    public void render(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick) {
         float zoomFactor = height * 0.8f;
         float scale = (float) (zoom.get() * zoomFactor);
 
@@ -155,30 +155,30 @@ public class PhotographScreen extends Screen {
         RenderSystem.defaultBlendFunc();
         RenderSystem.disableDepthTest();
 
-        renderTransparentBackground(guiGraphics);
+        renderTransparentBackground(GuiGraphicsExtractor);
 
-        guiGraphics.pose().pushPose();
-        guiGraphics.pose().translate(x, y, 0);
-        guiGraphics.pose().translate(width / 2f, height / 2f, 50);
-        guiGraphics.pose().scale(scale, scale, scale);
-        guiGraphics.pose().translate(-0.5, -0.5, 0);
+        GuiGraphicsExtractor.pose().pushPose();
+        GuiGraphicsExtractor.pose().translate(x, y, 0);
+        GuiGraphicsExtractor.pose().translate(width / 2f, height / 2f, 50);
+        GuiGraphicsExtractor.pose().scale(scale, scale, scale);
+        GuiGraphicsExtractor.pose().translate(-0.5, -0.5, 0);
 
         MultiBufferSource.BufferSource bufferSource = Minecrft.get().renderBuffers().bufferSource();
 
-        ExposureClient.photographRenderer().renderStackedPhotographs(photographs, guiGraphics.pose(), bufferSource,
-                LightTexture.FULL_BRIGHT, 255, 255, 255, 255);
+        ExposureClient.photographRenderer().renderStackedPhotographs(photographs, GuiGraphicsExtractor.pose(), bufferSource,
+                Lightmap.FULL_BRIGHT, 255, 255, 255, 255);
 
         bufferSource.endBatch();
-        guiGraphics.pose().popPose();
+        GuiGraphicsExtractor.pose().popPose();
 
         ItemAndStack<PhotographItem> photograph = getCurrentPhotograph();
 
-        guiGraphics.pose().pushPose();
+        GuiGraphicsExtractor.pose().pushPose();
         // Places widgets above photograph, because they will be covered when photo is zoomed in
-        guiGraphics.pose().translate(0, 0, 100);
-        super.render(guiGraphics, mouseX, mouseY, partialTick);
-        renderFrameInfoHint(guiGraphics, mouseX, mouseY, photograph);
-        guiGraphics.pose().popPose();
+        GuiGraphicsExtractor.pose().translate(0, 0, 100);
+        super.render(GuiGraphicsExtractor, mouseX, mouseY, partialTick);
+        renderFrameInfoHint(GuiGraphicsExtractor, mouseX, mouseY, photograph);
+        GuiGraphicsExtractor.pose().popPose();
 
         if (Config.Client.EXPORT_PHOTOGRAPH_WHEN_VIEWED.get()) {
             trySaveToFile(photograph);
@@ -186,12 +186,12 @@ public class PhotographScreen extends Screen {
     }
 
     @Override
-    public void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+    public void renderBackground(GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick) {
         // Background is rendered manually in #render method.
         // Otherwise, background will be rendered on top of a photograph.
     }
 
-    private void renderFrameInfoHint(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, ItemAndStack<PhotographItem> photograph) {
+    private void renderFrameInfoHint(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, ItemAndStack<PhotographItem> photograph) {
         if (Minecrft.get().player == null || !Minecrft.get().player.isCreative()) {
             return;
         }
@@ -201,7 +201,7 @@ public class PhotographScreen extends Screen {
             return;
         }
 
-        guiGraphics.drawString(font, "?", width - font.width("?") - 10, 10, 0xFFFFFFFF);
+        GuiGraphicsExtractor.drawString(font, "?", width - font.width("?") - 10, 10, 0xFFFFFFFF);
 
         if (mouseX > width - 20 && mouseX < width && mouseY < 20) {
             String exposureName = frame.identifier().map(id -> id, Identifier::toString);
@@ -220,7 +220,7 @@ public class PhotographScreen extends Screen {
                 }
             });
 
-            guiGraphics.renderTooltip(font, lines, Optional.empty(), mouseX, mouseY + 20);
+            GuiGraphicsExtractor.renderTooltip(font, lines, Optional.empty(), mouseX, mouseY + 20);
         }
     }
 

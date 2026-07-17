@@ -2,7 +2,7 @@ package io.github.mortuusars.exposure.client.gui.toast;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import io.github.mortuusars.exposure.Exposure;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractorExtractor;
 import net.minecraft.client.gui.components.toasts.TutorialToast;
 import net.minecraft.resources.Identifier;
 
@@ -18,7 +18,7 @@ public interface ToastIcon {
     ToastIcon F1 = new SpriteIcon(Exposure.resource("toast/f1"));
     ToastIcon HEADS_UP = new SpriteIcon(Exposure.resource("toast/heads_up"));
 
-    void render(GuiGraphics guiGraphics, int x, int y);
+    void render(GuiGraphicsExtractor GuiGraphicsExtractor, int x, int y);
 
     class SpriteIcon implements ToastIcon {
         protected final Identifier sprite;
@@ -27,9 +27,9 @@ public interface ToastIcon {
             this.sprite = sprite;
         }
 
-        public void render(GuiGraphics guiGraphics, int x, int y) {
+        public void render(GuiGraphicsExtractor GuiGraphicsExtractor, int x, int y) {
             RenderSystem.enableBlend();
-            guiGraphics.blitSprite(this.sprite, x, y, 20, 20);
+            GuiGraphicsExtractor.blitSprite(this.sprite, x, y, 20, 20);
         }
     }
 
@@ -41,8 +41,8 @@ public interface ToastIcon {
         }
 
         @Override
-        public void render(GuiGraphics guiGraphics, int x, int y) {
-            icon.render(guiGraphics, x, y);
+        public void render(GuiGraphicsExtractor GuiGraphicsExtractor, int x, int y) {
+            icon.render(GuiGraphicsExtractor, x, y);
         }
     }
 }

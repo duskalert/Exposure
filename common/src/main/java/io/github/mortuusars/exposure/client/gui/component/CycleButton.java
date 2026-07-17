@@ -4,7 +4,7 @@ import com.google.common.base.Preconditions;
 import io.github.mortuusars.exposure.client.gui.Tooltips;
 import io.github.mortuusars.exposure.client.gui.Widgets;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractorExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.components.WidgetSprites;
@@ -145,12 +145,12 @@ public class CycleButton<T> extends Button {
     }
 
     @Override
-    public void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+    public void renderWidget(GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick) {
         @Nullable WidgetSprites sprites = spritesMap.get(getCurrentValue());
         Identifier spriteLocation = sprites != null
                 ? sprites.get(isActive(), isHoveredOrFocused())
                 : TextureManager.INTENTIONAL_MISSING_TEXTURE;
-        guiGraphics.blitSprite(spriteLocation, getX(), getY(), getWidth(), getHeight());
+        GuiGraphicsExtractor.blitSprite(spriteLocation, getX(), getY(), getWidth(), getHeight());
     }
 
     @Override

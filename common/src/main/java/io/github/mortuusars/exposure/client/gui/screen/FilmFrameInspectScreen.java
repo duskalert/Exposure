@@ -20,7 +20,7 @@ import io.github.mortuusars.exposure.world.camera.FilmColor;
 import io.github.mortuusars.exposure.world.camera.frame.Frame;
 import io.github.mortuusars.exposure.world.sound.SoundEffect;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractorExtractor;
 import net.minecraft.client.gui.components.ImageButton;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -113,51 +113,51 @@ public class FilmFrameInspectScreen extends Screen {
     }
 
     @Override
-    public void render(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+    public void render(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick) {
         float scale = (float) (zoom.get() * zoomFactor);
 
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
         RenderSystem.disableDepthTest();
 
-        renderTransparentBackground(guiGraphics);
+        renderTransparentBackground(GuiGraphicsExtractor);
 
-        guiGraphics.pose().pushPose();
-        guiGraphics.pose().translate(x, y, 0);
-        guiGraphics.pose().translate(width / 2f, height / 2f, 50);
-        guiGraphics.pose().scale(scale, scale, scale);
+        GuiGraphicsExtractor.pose().pushPose();
+        GuiGraphicsExtractor.pose().translate(x, y, 0);
+        GuiGraphicsExtractor.pose().translate(width / 2f, height / 2f, 50);
+        GuiGraphicsExtractor.pose().scale(scale, scale, scale);
 
-        guiGraphics.pose().translate(BG_SIZE / -2f, BG_SIZE / -2f, 0);
+        GuiGraphicsExtractor.pose().translate(BG_SIZE / -2f, BG_SIZE / -2f, 0);
 
         RenderSystem.setShaderTexture(0, TEXTURE);
-        GuiUtil.blit(guiGraphics.pose(), 0, 0, BG_SIZE, BG_SIZE, 0, 0, 256, 256, 0);
+        GuiUtil.blit(GuiGraphicsExtractor.pose(), 0, 0, BG_SIZE, BG_SIZE, 0, 0, 256, 256, 0);
 
         Frame frame = getCurrentFrame();
         ExposureType filmType = frame.type();
         FilmColor filmColor = filmType.getFilmColor();
 
         RenderSystem.setShaderColor(filmColor.r(), filmColor.g(), filmColor.b(), filmColor.a());
-        GuiUtil.blit(guiGraphics.pose(), 0, 0, BG_SIZE, BG_SIZE, 0, BG_SIZE, 256, 256, 0);
+        GuiUtil.blit(GuiGraphicsExtractor.pose(), 0, 0, BG_SIZE, BG_SIZE, 0, BG_SIZE, 256, 256, 0);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
 
-        guiGraphics.pose().translate(12, 12, 0);
+        GuiGraphicsExtractor.pose().translate(12, 12, 0);
         RenderableImage image = ExposureClient.renderedExposures().getOrCreate(frame).modifyWith(ImageEffect.NEGATIVE_FILM);
         MultiBufferSource.BufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
-        ExposureClient.imageRenderer().render(image,  guiGraphics.pose(), bufferSource,
+        ExposureClient.imageRenderer().render(image,  GuiGraphicsExtractor.pose(), bufferSource,
                 new RenderCoordinates(0, 0, FRAME_SIZE, FRAME_SIZE), filmType.getImageColor());
         bufferSource.endBatch();
 
-        guiGraphics.pose().popPose();
+        GuiGraphicsExtractor.pose().popPose();
 
-        guiGraphics.pose().pushPose();
+        GuiGraphicsExtractor.pose().pushPose();
         // Places widgets above, because they will be covered when photo is zoomed in
-//        guiGraphics.pose().translate(0, 0, 100);
-        super.render(guiGraphics, mouseX, mouseY, partialTick);
-        guiGraphics.pose().popPose();
+//        GuiGraphicsExtractor.pose().translate(0, 0, 100);
+        super.render(GuiGraphicsExtractor, mouseX, mouseY, partialTick);
+        GuiGraphicsExtractor.pose().popPose();
     }
 
     @Override
-    public void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+    public void renderBackground(GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick) {
         // Background is rendered manually in #render method.
         // Otherwise, background will be rendered on top
     }

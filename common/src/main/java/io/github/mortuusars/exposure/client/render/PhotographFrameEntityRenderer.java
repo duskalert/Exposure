@@ -15,9 +15,9 @@ import io.github.mortuusars.exposure.world.entity.PhotographFrameEntity;
 import io.github.mortuusars.exposure.world.item.PhotographItem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.renderer.LightTexture;
+import net.minecraft.client.renderer.Lightmap;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.Sheets;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
 import net.minecraft.client.renderer.entity.EntityRenderer;
@@ -39,7 +39,7 @@ import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Matrix4f;
 
-public class PhotographFrameEntityRenderer<T extends PhotographFrameEntity> extends EntityRenderer<T> {
+public class PhotographFrameEntityRenderer<T extends PhotographFrameEntity> extends EntityRenderer<T, net.minecraft.client.renderer.entity.state.EntityRenderState> {
     protected final BlockRenderDispatcher blockRenderer;
 
     public PhotographFrameEntityRenderer(EntityRendererProvider.Context context) {
@@ -141,7 +141,7 @@ public class PhotographFrameEntityRenderer<T extends PhotographFrameEntity> exte
 
         boolean isGlowing = entity.isGlowing();
         if (isGlowing) {
-            packedLight = LightTexture.FULL_BRIGHT;
+            packedLight = Lightmap.FULL_BRIGHT;
         }
 
         int brightness = isGlowing ? 255 : getPhotographBrightness(entity);

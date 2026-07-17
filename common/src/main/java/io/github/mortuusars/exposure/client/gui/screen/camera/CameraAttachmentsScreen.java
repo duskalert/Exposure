@@ -22,7 +22,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.util.Util;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractorExtractor;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.gui.screens.ConfirmLinkScreen;
@@ -145,56 +145,56 @@ public class CameraAttachmentsScreen extends AbstractContainerScreen<AbstractCam
     }
 
     @Override
-    public void render(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        super.render(guiGraphics, mouseX, mouseY, partialTick);
+    public void render(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick) {
+        super.render(GuiGraphicsExtractor, mouseX, mouseY, partialTick);
 
         // Disabled slot overlay
         for (Slot slot : getMenu().slots) {
             if (!slot.mayPickup(player)) {
-                guiGraphics.renderItem(slot.getItem(), leftPos + slot.x, topPos + slot.y);
+                GuiGraphicsExtractor.renderItem(slot.getItem(), leftPos + slot.x, topPos + slot.y);
                 RenderSystem.enableBlend();
                 RenderSystem.defaultBlendFunc();
-                guiGraphics.blit(TEXTURE, leftPos + slot.x - 2, topPos + slot.y - 2, 350, 236, 92, 20, 20, 256, 256);
+                GuiGraphicsExtractor.blit(TEXTURE, leftPos + slot.x - 2, topPos + slot.y - 2, 350, 236, 92, 20, 20, 256, 256);
                 RenderSystem.disableBlend();
             }
         }
 
-        this.renderTooltip(guiGraphics, mouseX, mouseY);
+        this.renderTooltip(GuiGraphicsExtractor, mouseX, mouseY);
     }
 
     @Override
-    protected void renderBg(@NotNull GuiGraphics guiGraphics, float partialTick, int mouseX, int mouseY) {
+    protected void renderBg(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, float partialTick, int mouseX, int mouseY) {
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
-        guiGraphics.blit(TEXTURE, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight);
+        GuiGraphicsExtractor.blit(TEXTURE, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight);
 
-        renderSlotPlaceholders(guiGraphics, mouseX, mouseY, partialTick);
+        renderSlotPlaceholders(GuiGraphicsExtractor, mouseX, mouseY, partialTick);
 
-        renderAttachments(guiGraphics, mouseX, mouseY, partialTick);
+        renderAttachments(GuiGraphicsExtractor, mouseX, mouseY, partialTick);
 
         for (Slot slot : getMenu().slots) {
             if (!slot.mayPickup(player)) {
-                guiGraphics.blit(TEXTURE, leftPos + slot.x - 2, topPos + slot.y - 2, 236, 72, 20, 20);
+                GuiGraphicsExtractor.blit(TEXTURE, leftPos + slot.x - 2, topPos + slot.y - 2, 236, 72, 20, 20);
             }
         }
 
         RenderSystem.disableBlend();
     }
 
-    protected void renderAttachments(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+    protected void renderAttachments(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick) {
         if (getMenu().getSlot(1).hasItem()) {
             int vOffset = isMouseOver(flash, mouseX, mouseY) ? 28 : 0;
-            guiGraphics.blit(TEXTURE, leftPos + 96, topPos + 11, 176, vOffset, 28, 28);
+            GuiGraphicsExtractor.blit(TEXTURE, leftPos + 96, topPos + 11, 176, vOffset, 28, 28);
         }
 
         boolean hasLens = getMenu().getSlot(2).hasItem();
         if (hasLens) {
             int vOffset = isMouseOver(lens, mouseX, mouseY) && !isMouseOver(filterOnLens, mouseX, mouseY) ? 37 : 0;
-            guiGraphics.blit(TEXTURE, leftPos + 93, topPos + 47, 176, 56 + vOffset, 35, 37);
+            GuiGraphicsExtractor.blit(TEXTURE, leftPos + 93, topPos + 47, 176, 56 + vOffset, 35, 37);
         } else if (isMouseOver(lensBuiltIn, mouseX, mouseY) && !isMouseOver(filter, mouseX, mouseY)) {
-            guiGraphics.blit(TEXTURE, leftPos + 93, topPos + 47, 176, 130, 31, 35);
+            GuiGraphicsExtractor.blit(TEXTURE, leftPos + 93, topPos + 47, 176, 130, 31, 35);
         }
 
         Slot filterSlot = getMenu().getSlot(3);
@@ -202,28 +202,28 @@ public class CameraAttachmentsScreen extends AbstractContainerScreen<AbstractCam
         int filterY = hasLens ? 54 : 52;
         if (filterSlot.hasItem()) {
             Filters.of(Minecrft.registryAccess(), filterSlot.getItem()).ifPresent(filter -> {
-                renderFilter(guiGraphics, mouseX, mouseY, filter, filterX, filterY);
+                renderFilter(GuiGraphicsExtractor, mouseX, mouseY, filter, filterX, filterY);
             });
         } else if (isMouseOver(filterOnLens, mouseX, mouseY)) {
             RenderSystem.enableBlend();
             RenderSystem.defaultBlendFunc();
-            guiGraphics.blit(TEXTURE, leftPos + 110, topPos + 58, 176, 165, 15, 23);
+            GuiGraphicsExtractor.blit(TEXTURE, leftPos + 110, topPos + 58, 176, 165, 15, 23);
         } else if (isMouseOver(filter, mouseX, mouseY)) {
             RenderSystem.enableBlend();
             RenderSystem.defaultBlendFunc();
-            guiGraphics.blit(TEXTURE, leftPos + 106, topPos + 56, 176, 165, 15, 23);
+            GuiGraphicsExtractor.blit(TEXTURE, leftPos + 106, topPos + 56, 176, 165, 15, 23);
         } else if (isMouseOver(viewfinder, mouseX, mouseY) && !isMouseOver(flash, mouseX, mouseY)) {
-            guiGraphics.blit(TEXTURE, leftPos + 65, topPos + 24, 42, 185, 49, 26);
+            GuiGraphicsExtractor.blit(TEXTURE, leftPos + 65, topPos + 24, 42, 185, 49, 26);
         } else if (isMouseOver(film, mouseX, mouseY)) {
-            guiGraphics.blit(TEXTURE, leftPos + 47, topPos + 20, 0, 185, 42, 52);
+            GuiGraphicsExtractor.blit(TEXTURE, leftPos + 47, topPos + 20, 0, 185, 42, 52);
         } else if (isMouseOver(shutterSpeedKnob, mouseX, mouseY)) {
-            guiGraphics.blit(TEXTURE, leftPos + 68, topPos + 49, 148, 185, 21, 26);
+            GuiGraphicsExtractor.blit(TEXTURE, leftPos + 68, topPos + 49, 148, 185, 21, 26);
         } else if (isMouseOver(selfTimer, mouseX, mouseY)) {
-            guiGraphics.blit(TEXTURE, leftPos + 93, topPos + 78, 169, 185, 4, 5);
+            GuiGraphicsExtractor.blit(TEXTURE, leftPos + 93, topPos + 78, 169, 185, 4, 5);
         }
     }
 
-    protected void renderFilter(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, Filter filter, int filterX, int filterY) {
+    protected void renderFilter(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, Filter filter, int filterX, int filterY) {
         Color tint = filter.attachmentTintColor();
         float r = tint.getRF();
         float g = tint.getGF();
@@ -240,7 +240,7 @@ public class CameraAttachmentsScreen extends AbstractContainerScreen<AbstractCam
         RenderSystem.defaultBlendFunc();
 
         Identifier filterTexture = filter.attachmentTexture();
-        guiGraphics.blit(filterTexture, leftPos + filterX, topPos + filterY, 0, 0, 32, 32, 32, 32);
+        GuiGraphicsExtractor.blit(filterTexture, leftPos + filterX, topPos + filterY, 0, 0, 32, 32, 32, 32);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
     }
 
@@ -262,23 +262,23 @@ public class CameraAttachmentsScreen extends AbstractContainerScreen<AbstractCam
         return false;
     }
 
-    protected void renderSlotPlaceholders(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+    protected void renderSlotPlaceholders(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick) {
         for (int slotIndex : slotPlaceholders.keySet()) {
             Slot slot = getMenu().getSlot(slotIndex);
             if (!slot.hasItem()) {
                 Rect2i placeholder = slotPlaceholders.get(slotIndex);
-                guiGraphics.blit(TEXTURE, leftPos + slot.x - 1, topPos + slot.y - 1,
+                GuiGraphicsExtractor.blit(TEXTURE, leftPos + slot.x - 1, topPos + slot.y - 1,
                         placeholder.getX(), placeholder.getY(), placeholder.getWidth(), placeholder.getHeight());
             }
         }
     }
 
     @Override
-    protected void renderTooltip(GuiGraphics guiGraphics, int x, int y) {
+    protected void renderTooltip(GuiGraphicsExtractor GuiGraphicsExtractor, int x, int y) {
         boolean hoveredOverPart = true; // easier to set it to false in else block, than in every if block.
 
         if (isMouseOver(flash, x, y)) {
-            guiGraphics.renderTooltip(font, getTooltipLines(translate("flash.tooltip")), x, y);
+            GuiGraphicsExtractor.renderTooltip(font, getTooltipLines(translate("flash.tooltip")), x, y);
         } else if (isMouseOver(viewfinder, x, y)) {
             Component controlsKey = translateKey(KeyboardHandler.getCameraControlsKey(), ChatFormatting.GRAY);
             Component middleClick = Config.Client.VIEWFINDER_MIDDLE_CLICK_CONTROLS.get()
@@ -286,25 +286,25 @@ public class CameraAttachmentsScreen extends AbstractContainerScreen<AbstractCam
                     : Component.empty();
             Component selfieKey = translateKey(Minecrft.options().keyTogglePerspective, ChatFormatting.GRAY);
             Component sprintKey = translateKey(Minecrft.options().keySprint, ChatFormatting.GRAY);
-            guiGraphics.renderTooltip(font, getTooltipLines(
+            GuiGraphicsExtractor.renderTooltip(font, getTooltipLines(
                     translate("viewfinder.tooltip", controlsKey, middleClick, selfieKey, sprintKey)), x, y);
         } else if (isMouseOver(shutterSpeedKnob, x, y)) {
-            guiGraphics.renderTooltip(font, getTooltipLines(translate("shutter_speed.tooltip")), x, y);
+            GuiGraphicsExtractor.renderTooltip(font, getTooltipLines(translate("shutter_speed.tooltip")), x, y);
         } else if (isMouseOver(filter, x, y) || isMouseOver(filterOnLens, x, y)) {
-            guiGraphics.renderTooltip(font, getTooltipLines(translate("filter.tooltip")), x, y);
+            GuiGraphicsExtractor.renderTooltip(font, getTooltipLines(translate("filter.tooltip")), x, y);
         } else if (isMouseOver(lens, x, y) || isMouseOver(lensBuiltIn, x, y)) {
-            guiGraphics.renderTooltip(font, getTooltipLines(translate("lens.tooltip")), x, y);
+            GuiGraphicsExtractor.renderTooltip(font, getTooltipLines(translate("lens.tooltip")), x, y);
         } else if (isMouseOver(film, x, y)) {
-            guiGraphics.renderTooltip(font, getTooltipLines(translate("film.tooltip")), x, y);
+            GuiGraphicsExtractor.renderTooltip(font, getTooltipLines(translate("film.tooltip")), x, y);
         } else if (isMouseOver(selfTimer, x, y)) {
             MutableComponent tooltip = translate("self_timer.tooltip");
             if (Config.Server.TIMER_ATTRACTS_MOB_ATTENTION.get()) {
                 tooltip.append(translate("self_timer_attention.tooltip"));
             }
-            guiGraphics.renderTooltip(font, getTooltipLines(tooltip), x, y);
+            GuiGraphicsExtractor.renderTooltip(font, getTooltipLines(tooltip), x, y);
         } else {
             hoveredOverPart = false;
-            super.renderTooltip(guiGraphics, x, y);
+            super.renderTooltip(GuiGraphicsExtractor, x, y);
         }
 
         if (!hasHoveredOverPart && hoveredOverPart && System.currentTimeMillis() - openedAt > 3000) {

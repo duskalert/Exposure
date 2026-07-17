@@ -4,7 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import io.github.mortuusars.exposure.client.image.renderable.RenderableImage;
 import io.github.mortuusars.exposure.client.image.renderable.RenderableImageIdentifier;
 import io.github.mortuusars.exposure.util.color.Color;
-import net.minecraft.client.renderer.LightTexture;
+import net.minecraft.client.renderer.Lightmap;
 import net.minecraft.client.renderer.MultiBufferSource;
 
 import java.util.HashMap;
@@ -15,7 +15,7 @@ public class ImageRenderer implements AutoCloseable {
     private final Map<RenderableImageIdentifier, RenderedImageInstance> cache = new HashMap<>();
 
     public void render(RenderableImage image, PoseStack poseStack, MultiBufferSource bufferSource, RenderCoordinates coords, Color color) {
-        this.render(image, poseStack, bufferSource, coords, LightTexture.FULL_BRIGHT, color);
+        this.render(image, poseStack, bufferSource, coords, Lightmap.FULL_BRIGHT, color);
     }
 
     public void render(RenderableImage image, PoseStack poseStack, MultiBufferSource bufferSource, RenderCoordinates coords,

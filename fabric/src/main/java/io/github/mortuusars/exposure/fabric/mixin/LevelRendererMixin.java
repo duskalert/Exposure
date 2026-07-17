@@ -26,7 +26,7 @@ public abstract class LevelRendererMixin {
     @Shadow private void renderEntity(Entity entity, double camX, double camY, double camZ, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource) {}
 
     @Inject(method = "renderLevel", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/multiplayer/ClientLevel;entitiesForRendering()Ljava/lang/Iterable;"))
-    private void onRenderLevel(DeltaTracker deltaTracker, boolean renderBlockOutline, Camera camera, GameRenderer gameRenderer, LightTexture lightTexture, Matrix4f frustumMatrix, Matrix4f projectionMatrix, CallbackInfo ci) {
+    private void onRenderLevel(DeltaTracker deltaTracker, boolean renderBlockOutline, Camera camera, GameRenderer gameRenderer, Lightmap Lightmap, Matrix4f frustumMatrix, Matrix4f projectionMatrix, CallbackInfo ci) {
         if (camera.getEntity() instanceof CameraStandEntity) {
             exposure$renderEntity(deltaTracker, camera, Minecrft.player());
         }

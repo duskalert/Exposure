@@ -22,7 +22,7 @@ import io.github.mortuusars.exposure.util.PagingDirection;
 import io.github.mortuusars.exposure.util.Side;
 import io.github.mortuusars.exposure.world.sound.SoundEffect;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractorExtractor;
 import net.minecraft.client.gui.components.*;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.GameRenderer;
@@ -192,18 +192,18 @@ public class AlbumScreen extends AbstractContainerScreen<AlbumMenu> {
     // RENDER
 
     @Override
-    public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+    public void render(GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick) {
         updateWidgetVisibility();
 
         inventoryLabelY = isInAddingMode() ? getMenu().getPlayerInventorySlots().getFirst().y - 12 : -999;
 
-        super.render(guiGraphics, mouseX, mouseY, partialTick);
-        renderTooltip(guiGraphics, mouseX, mouseY);
+        super.render(GuiGraphicsExtractor, mouseX, mouseY, partialTick);
+        renderTooltip(GuiGraphicsExtractor, mouseX, mouseY);
 
         for (Page page : pages) {
             AbstractWidget noteWidget = page.getNoteWidget();
             if (noteWidget instanceof TextBlock textBlock) {
-                textBlock.render(guiGraphics, mouseX, mouseY, partialTick);
+                textBlock.render(GuiGraphicsExtractor, mouseX, mouseY, partialTick);
             }
         }
 
@@ -212,14 +212,14 @@ public class AlbumScreen extends AbstractContainerScreen<AlbumMenu> {
             RenderSystem.defaultBlendFunc();
             for (Slot slot : getMenu().slots) {
                 if (!slot.getItem().isEmpty() && !(slot.getItem().getItem() instanceof PhotographItem)) {
-                    guiGraphics.blit(AlbumGUI.TEXTURE, leftPos + slot.x - 1, topPos + slot.y - 1, 350, 176, 188,
+                    GuiGraphicsExtractor.blit(AlbumGUI.TEXTURE, leftPos + slot.x - 1, topPos + slot.y - 1, 350, 176, 188,
                             18, 18, 512, 512);
                 }
             }
             RenderSystem.disableBlend();
         }
 
-        this.renderTooltip(guiGraphics, mouseX, mouseY);
+        this.renderTooltip(GuiGraphicsExtractor, mouseX, mouseY);
     }
 
     private void updateWidgetVisibility() {
@@ -237,22 +237,22 @@ public class AlbumScreen extends AbstractContainerScreen<AlbumMenu> {
     }
 
     @Override
-    public void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        renderTransparentBackground(guiGraphics);
-        renderBg(guiGraphics, partialTick, mouseX, mouseY);
+    public void renderBackground(GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick) {
+        renderTransparentBackground(GuiGraphicsExtractor);
+        renderBg(GuiGraphicsExtractor, partialTick, mouseX, mouseY);
     }
 
     @Override
-    protected void renderLabels(GuiGraphics guiGraphics, int mouseX, int mouseY) {
-        guiGraphics.pose().pushPose();
-        guiGraphics.pose().translate(0, 0, 15);
-        super.renderLabels(guiGraphics, mouseX, mouseY);
+    protected void renderLabels(GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY) {
+        GuiGraphicsExtractor.pose().pushPose();
+        GuiGraphicsExtractor.pose().translate(0, 0, 15);
+        super.renderLabels(GuiGraphicsExtractor, mouseX, mouseY);
 
-        guiGraphics.pose().popPose();
+        GuiGraphicsExtractor.pose().popPose();
     }
 
     @Override
-    protected void renderTooltip(GuiGraphics guiGraphics, int x, int y) {
+    protected void renderTooltip(GuiGraphicsExtractor GuiGraphicsExtractor, int x, int y) {
         if (isInAddingMode() && hoveredSlot != null && !hoveredSlot.getItem()
                 .isEmpty() && !(hoveredSlot.getItem().getItem() instanceof PhotographItem)) {
             return; // Do not render tooltips for greyed-out items
@@ -261,7 +261,7 @@ public class AlbumScreen extends AbstractContainerScreen<AlbumMenu> {
         if (!isInAddingMode()) {
             for (Page page : pages) {
                 if (page.photographWidget.isHoveredOrFocused()) {
-                    page.photographWidget.renderTooltip(guiGraphics, x, y);
+                    page.photographWidget.renderTooltip(GuiGraphicsExtractor, x, y);
                     return;
                 }
 
@@ -276,14 +276,14 @@ public class AlbumScreen extends AbstractContainerScreen<AlbumMenu> {
                     if (hasText)
                         tooltip.add(Component.translatable("gui.exposure.album.right_click_to_clear"));
 
-                    guiGraphics.renderTooltip(this.font, tooltip, Optional.empty(), x, y);
+                    GuiGraphicsExtractor.renderTooltip(this.font, tooltip, Optional.empty(), x, y);
 
                     return;
                 }
             }
         }
 
-        super.renderTooltip(guiGraphics, x, y);
+        super.renderTooltip(GuiGraphicsExtractor, x, y);
     }
 
     @Override
@@ -298,48 +298,48 @@ public class AlbumScreen extends AbstractContainerScreen<AlbumMenu> {
     }
 
     @Override
-    protected void renderBg(GuiGraphics guiGraphics, float partialTick, int mouseX, int mouseY) {
+    protected void renderBg(GuiGraphicsExtractor GuiGraphicsExtractor, float partialTick, int mouseX, int mouseY) {
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
-        guiGraphics.blit(AlbumGUI.TEXTURE, leftPos, topPos, 0, 0, 0,
+        GuiGraphicsExtractor.blit(AlbumGUI.TEXTURE, leftPos, topPos, 0, 0, 0,
                 imageWidth, imageHeight, 512, 512);
 
         if (enterSignModeButton != null && enterSignModeButton.visible) {
-            guiGraphics.blit(AlbumGUI.TEXTURE, leftPos - 27, topPos + 14, 447, 0,
+            GuiGraphicsExtractor.blit(AlbumGUI.TEXTURE, leftPos - 27, topPos + 14, 447, 0,
                     27, 28, 512, 512);
         }
 
         int currentSpreadIndex = getMenu().getCurrentSpreadIndex();
-        drawPageNumbers(guiGraphics, currentSpreadIndex);
+        drawPageNumbers(GuiGraphicsExtractor, currentSpreadIndex);
 
         if (isInAddingMode()) {
             AlbumPlayerInventorySlot firstSlot = getMenu().getPlayerInventorySlots().getFirst();
             int x = firstSlot.x - 8;
             int y = firstSlot.y - 18;
-            guiGraphics.blit(AlbumGUI.TEXTURE, leftPos + x, topPos + y, 10, 0, 188, 176, 100, 512, 512);
+            GuiGraphicsExtractor.blit(AlbumGUI.TEXTURE, leftPos + x, topPos + y, 10, 0, 188, 176, 100, 512, 512);
 
             @Nullable Side pageBeingAddedTo = getMenu().getSideBeingAddedTo();
             for (Page page : pages) {
                 if (page.side == pageBeingAddedTo) {
-                    guiGraphics.blitSprite(PhotographSlotWidget.EMPTY_SPRITES.enabledFocused(),
+                    GuiGraphicsExtractor.blitSprite(PhotographSlotWidget.EMPTY_SPRITES.enabledFocused(),
                             page.photoArea.getX(), page.photoArea.getY(), page.photoArea.getWidth(), page.photoArea.getHeight());
                 }
             }
         }
     }
 
-    protected void drawPageNumbers(GuiGraphics guiGraphics, int currentSpreadIndex) {
+    protected void drawPageNumbers(GuiGraphicsExtractor GuiGraphicsExtractor, int currentSpreadIndex) {
         Font font = Minecrft.get().font;
 
         String leftPageNumber = Integer.toString(currentSpreadIndex * 2 + 1);
         String rightPageNumber = Integer.toString(currentSpreadIndex * 2 + 2);
 
-        guiGraphics.drawString(font, leftPageNumber, leftPos + 71 + (8 - font.width(leftPageNumber) / 2),
+        GuiGraphicsExtractor.drawString(font, leftPageNumber, leftPos + 71 + (8 - font.width(leftPageNumber) / 2),
                 topPos + 167, Config.getColor(Config.Client.ALBUM_FONT_SECONDARY_COLOR), false);
 
-        guiGraphics.drawString(font, rightPageNumber, leftPos + 212 + (8 - font.width(rightPageNumber) / 2),
+        GuiGraphicsExtractor.drawString(font, rightPageNumber, leftPos + 212 + (8 - font.width(rightPageNumber) / 2),
                 topPos + 167, Config.getColor(Config.Client.ALBUM_FONT_SECONDARY_COLOR), false);
     }
 

@@ -12,7 +12,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.*;
 import org.jetbrains.annotations.NotNull;
 
-public class ComponentTransferringRecipeSerializer<T extends ComponentTransferringRecipe> implements RecipeSerializer<T> {
+public class ComponentTransferringRecipeSerializer<T extends ComponentTransferringRecipe> {
     private final MapCodec<T> codec;
     private final StreamCodec<RegistryFriendlyByteBuf, T> streamCodec;
 
@@ -27,6 +27,18 @@ public class ComponentTransferringRecipeSerializer<T extends ComponentTransferri
 
     public ComponentTransferringRecipeSerializer(RecipeConstructor<T> constructor) {
         this("component_transferring", "source_ingredient", constructor);
+    }
+
+    public @NotNull MapCodec<T> codec() {
+        return codec;
+    }
+
+    public @NotNull StreamCodec<RegistryFriendlyByteBuf, T> streamCodec() {
+        return streamCodec;
+    }
+
+    public RecipeSerializer<T> build() {
+        return new RecipeSerializer<>(codec, streamCodec);
     }
 
     protected @NotNull MapCodec<T> createCodec(String recipeTypeName, String sourceIngredientName, RecipeConstructor<T> constructor) {
@@ -62,16 +74,6 @@ public class ComponentTransferringRecipeSerializer<T extends ComponentTransferri
                 ByteBufCodecs.collection(NonNullList::createWithCapacity, Ingredient.CONTENTS_STREAM_CODEC), ComponentTransferringRecipe::getIngredients,
                 ItemStack.STREAM_CODEC, ComponentTransferringRecipe::getResult,
                 constructor::create);
-    }
-
-    @Override
-    public @NotNull MapCodec<T> codec() {
-        return codec;
-    }
-
-    @Override
-    public @NotNull StreamCodec<RegistryFriendlyByteBuf, T> streamCodec() {
-        return streamCodec;
     }
 
     @FunctionalInterface

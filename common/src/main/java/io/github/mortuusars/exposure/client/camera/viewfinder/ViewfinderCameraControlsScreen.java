@@ -21,7 +21,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Options;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractorExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.ImageWidget;
 import net.minecraft.client.gui.components.Tooltip;
@@ -236,7 +236,7 @@ public class ViewfinderCameraControlsScreen extends Screen {
     }
 
     @Override
-    public void render(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+    public void render(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick) {
         if (!viewfinder.isLookingThrough()) {
             this.onClose();
             return;
@@ -244,22 +244,22 @@ public class ViewfinderCameraControlsScreen extends Screen {
 
         if (Minecrft.options().hideGui) return;
 
-        guiGraphics.pose().pushPose();
+        GuiGraphicsExtractor.pose().pushPose();
 
         float viewfinderScale = viewfinder.overlay().getScale();
         if (viewfinderScale != 1.0f) {
-            guiGraphics.pose().translate(width / 2f, height / 2f, 0);
-            guiGraphics.pose().scale(viewfinderScale, viewfinderScale, viewfinderScale);
-            guiGraphics.pose().translate(-width / 2f, -height / 2f, 0);
+            GuiGraphicsExtractor.pose().translate(width / 2f, height / 2f, 0);
+            GuiGraphicsExtractor.pose().scale(viewfinderScale, viewfinderScale, viewfinderScale);
+            GuiGraphicsExtractor.pose().translate(-width / 2f, -height / 2f, 0);
         }
 
-        super.render(guiGraphics, mouseX, mouseY, partialTick);
+        super.render(GuiGraphicsExtractor, mouseX, mouseY, partialTick);
 
-        guiGraphics.pose().popPose();
+        GuiGraphicsExtractor.pose().popPose();
     }
 
     @Override
-    public void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+    public void renderBackground(GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick) {
         // Prevents blur from rendering.
     }
 

@@ -4,7 +4,7 @@ import com.mojang.blaze3d.platform.InputConstants;
 import io.github.mortuusars.exposure.Exposure;
 import io.github.mortuusars.exposure.client.util.Minecrft;
 import io.github.mortuusars.exposure.util.PagingDirection;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractorExtractor;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
@@ -31,8 +31,8 @@ public class LightroomFrameInspectScreen extends FilmFrameInspectScreen {
     }
 
     @Override
-    public void render(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        super.render(guiGraphics, mouseX, mouseY, partialTick);
+    public void render(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick) {
+        super.render(GuiGraphicsExtractor, mouseX, mouseY, partialTick);
 
         if (zoom.get() < zoom.getMin() + 0.1f && zoom.getTarget() < zoom.getMin() + 0.1f) {
             Minecrft.get().setScreen(lightroomScreen);

@@ -5,7 +5,7 @@ import io.github.mortuusars.exposure.Exposure;
 import io.github.mortuusars.exposure.client.gui.Widgets;
 import io.github.mortuusars.exposure.world.inventory.ItemRenameMenu;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractorExtractor;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.ImageButton;
 import net.minecraft.client.gui.components.Tooltip;
@@ -87,20 +87,20 @@ public class ItemRenameScreen extends AbstractContainerScreen<ItemRenameMenu> {
 //    }
 
     @Override
-    public void render(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        super.render(guiGraphics, mouseX, mouseY, partialTick);
-        this.name.render(guiGraphics, mouseX, mouseY, partialTick);
-        renderTooltip(guiGraphics, mouseX, mouseY);
+    public void render(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick) {
+        super.render(GuiGraphicsExtractor, mouseX, mouseY, partialTick);
+        this.name.render(GuiGraphicsExtractor, mouseX, mouseY, partialTick);
+        renderTooltip(GuiGraphicsExtractor, mouseX, mouseY);
     }
 
     @Override
-    protected void renderTooltip(GuiGraphics guiGraphics, int x, int y) {
-        super.renderTooltip(guiGraphics, x, y);
+    protected void renderTooltip(GuiGraphicsExtractor GuiGraphicsExtractor, int x, int y) {
+        super.renderTooltip(GuiGraphicsExtractor, x, y);
     }
 
     @Override
-    protected void renderBg(GuiGraphics guiGraphics, float partialTick, int mouseX, int mouseY) {
-        guiGraphics.blit(TEXTURE, leftPos, topPos, 0, 0, imageWidth, imageHeight);
+    protected void renderBg(GuiGraphicsExtractor GuiGraphicsExtractor, float partialTick, int mouseX, int mouseY) {
+        GuiGraphicsExtractor.blit(TEXTURE, leftPos, topPos, 0, 0, imageWidth, imageHeight);
     }
 
     protected void onNameChanged(String name) {

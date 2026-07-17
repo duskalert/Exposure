@@ -435,7 +435,7 @@ public class Exposure {
 
         private static <T extends ComponentTransferringRecipe> Supplier<RecipeSerializer<?>> registerTransferring(
                 String name, String sourceName, ComponentTransferringRecipeSerializer.RecipeConstructor<T> recipeConstructor) {
-            return Register.recipeSerializer(name, () -> new ComponentTransferringRecipeSerializer<>(name, sourceName, recipeConstructor));
+            return Register.recipeSerializer(name, () -> new ComponentTransferringRecipeSerializer<>(name, sourceName, recipeConstructor).build());
         }
 
         static void init() {

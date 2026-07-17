@@ -2,7 +2,7 @@ package io.github.mortuusars.exposure.client.render;
 
 import io.github.mortuusars.exposure.ExposureClient;
 import io.github.mortuusars.exposure.world.entity.GlassPhotographFrameEntity;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.Sheets;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.resources.model.ModelResourceLocation;
