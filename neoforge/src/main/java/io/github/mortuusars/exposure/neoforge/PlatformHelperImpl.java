@@ -67,7 +67,7 @@ public class PlatformHelperImpl {
     }
 
     public static boolean isInDevEnv() {
-        return !FMLEnvironment.production;
+        return !FMLEnvironment.isProduction();
     }
 
     // --

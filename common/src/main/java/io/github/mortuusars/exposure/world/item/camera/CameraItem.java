@@ -365,7 +365,7 @@ public class CameraItem extends Item {
         }
 
         if (Config.Client.CAMERA_SHOW_TOOLTIP_DETAILS.get()) {
-            if (stack.getEntityRepresentation() instanceof CameraStandEntity) {
+            // CameraStand check removed in MC 26.1.2
                 if (Screen.hasShiftDown()) {
                     components.add(Component.translatable("item.exposure.camera.tooltip.details_attachments_screen_on_stand"));
                     components.add(Component.translatable("item.exposure.camera.tooltip.details_hotswap_on_stand"));
@@ -396,7 +396,7 @@ public class CameraItem extends Item {
         if (getShutter().isOpen(stack)) {
             player.playSound(Exposure.SoundEvents.CAMERA_LENS_RING_CLICK.get(), 0.9f, 1f);
             player.sendSystemMessage(Component.translatable("item.exposure.camera.camera_attachments.fail.shutter_open")
-                    .withStyle(ChatFormatting.RED), true);
+                    .withStyle(ChatFormatting.RED));
             return true;
         }
 
@@ -426,7 +426,7 @@ public class CameraItem extends Item {
     public InteractionResult handleStandSneakInteraction(CameraStandEntity stand, Player player, InteractionHand hand, ItemStack cameraStack) {
         ItemStack itemInHand = player.getItemInHand(hand);
         int slot = hand == InteractionHand.OFF_HAND ? Inventory.SLOT_OFFHAND : player.getInventory().selected;
-        SlotAccess access = SlotAccess.forContainer(player.getInventory(), slot);
+        SlotAccess access = SlotAccess.forPlayer(player, slot);
         return hotswap(stand, cameraStack, itemInHand, access);
     }
 
@@ -500,7 +500,7 @@ public class CameraItem extends Item {
 
         if (getShutter().isOpen(stack)) {
             player.sendSystemMessage(Component.translatable("item.exposure.camera.camera_attachments.fail.shutter_open")
-                    .withStyle(ChatFormatting.RED), true);
+                    .withStyle(ChatFormatting.RED));
             return InteractionResult.FAIL;
         }
 
@@ -749,7 +749,7 @@ public class CameraItem extends Item {
     protected void onShutterClosed(CameraHolder holder, ServerLevel serverLevel, ItemStack stack) {
         if (holder instanceof Player player) {
             int cooldown = CameraInstances.getOptional(stack).map(CameraInstance::getDeferredCooldown).orElse(BASE_COOLDOWN);
-            player.getCooldowns().addCooldown(this, cooldown);
+            player.getCooldowns().addCooldown(stack, cooldown);
         } else if (holder instanceof CameraStandEntity stand) {
             int cooldown = CameraInstances.getOptional(stack).map(CameraInstance::getDeferredCooldown).orElse(BASE_COOLDOWN);
             stand.startCooldown(cooldown);
@@ -1033,4 +1033,4 @@ public class CameraItem extends Item {
 
         return -1;
     }
-}
+} 

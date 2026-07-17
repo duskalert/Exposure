@@ -57,7 +57,7 @@ public class NeoForgeClientEvents {
         }
 
         private static void onRenderGuiPost(net.neoforged.neoforge.client.event.RenderGuiEvent.Post event) {
-            CameraStandTooltip.render(event.getGuiGraphicsExtractor(), event.getPartialTick());
+            CameraStandTooltip.render(event.getGuiGraphics(), event.getPartialTick());
         }
     }
 }

@@ -271,14 +271,14 @@ public class CameraStandEntity extends Entity implements CameraHolder {
     public @NotNull InteractionResult interact(Player player, InteractionHand hand) {
         if (!canUse(player)) {
             player.sendSystemMessage(Component.translatable("gui.exposure.camera_stand.error.in_use")
-                    .withStyle(ChatFormatting.RED), true);
+                    .withStyle(ChatFormatting.RED));
             return InteractionResult.FAIL;
         }
 
         if (isMalfunctioned()) {
             if (!isClientSide()) {
                 setMalfunctioned(false);
-                player.sendSystemMessage(Component.translatable("gui.exposure.camera_stand.malfunction_fixed"), true);
+                player.sendSystemMessage(Component.translatable("gui.exposure.camera_stand.malfunction_fixed"));
                 playSound(SoundEvents.SMITHING_TABLE_USE, 0.9f, 1.3f);
                 showRepairingParticles();
             }
@@ -365,7 +365,7 @@ public class CameraStandEntity extends Entity implements CameraHolder {
     public InteractionResult openAttachmentsMenu(Player player, InteractionHand hand) {
         if (!canUse(player)) {
             player.sendSystemMessage(Component.translatable("gui.exposure.camera_stand.error.in_use")
-                    .withStyle(ChatFormatting.RED), true);
+                    .withStyle(ChatFormatting.RED));
             return InteractionResult.FAIL;
         }
 
@@ -376,7 +376,7 @@ public class CameraStandEntity extends Entity implements CameraHolder {
 
         if (cameraItem.getShutter().isOpen(cameraStack)) {
             player.sendSystemMessage(Component.translatable("item.exposure.camera.camera_attachments.fail.shutter_open")
-                    .withStyle(ChatFormatting.RED), true);
+                    .withStyle(ChatFormatting.RED));
             return InteractionResult.FAIL;
         }
 
@@ -619,7 +619,7 @@ public class CameraStandEntity extends Entity implements CameraHolder {
 
         if (!getCamera().isEmpty()) {
             if (!isClientSide()) {
-                @Nullable ItemEntity itemEntity = spawnAtLocation(getCamera(), getEyeHeight());
+                @Nullable ItemEntity itemEntity = spawnAtLocation((ServerLevel) level(), getCamera());
                 if (itemEntity != null) {
                     itemEntity.setPickUpDelay(5);
                 }
@@ -686,11 +686,11 @@ public class CameraStandEntity extends Entity implements CameraHolder {
     }
 
     public void destroy(Item dropItem) {
-        this.kill();
+        this.kill((ServerLevel) this.level());
         if (this.level().getGameRules().getBoolean(GameRules.RULE_DOENTITYDROPS).orElse(false)) {
             ItemStack itemStack = new ItemStack(dropItem);
             itemStack.set(DataComponents.CUSTOM_NAME, this.getCustomName());
-            this.spawnAtLocation(itemStack, 0.5f);
+            this.spawnAtLocation((ServerLevel) level(), itemStack);
         }
     }
 
@@ -792,8 +792,8 @@ public class CameraStandEntity extends Entity implements CameraHolder {
     }
 
     @Override
-    public boolean isControlledByLocalInstance() {
-        return operator() instanceof Player player && player.isLocalPlayer() || super.isControlledByLocalInstance();
+    public boolean isControlledByLocalPlayer() {
+        return operator() instanceof Player player && player.isLocalPlayer() || super.isControlledByLocalPlayer();
     }
 
     // --

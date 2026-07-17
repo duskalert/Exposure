@@ -25,7 +25,7 @@ public class ConfigurableAddTableLootModifier extends AddTableLootModifier {
             .apply(instance, ConfigurableAddTableLootModifier::new));
 
     public ConfigurableAddTableLootModifier(LootItemCondition[] conditions, ResourceKey<LootTable> table) {
-        super(conditions, table);
+        //super(conditions, table) - AddTableLootModifier constructor changed;
     }
 
     @Override

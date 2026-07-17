@@ -68,7 +68,7 @@ public class UrlCaptureTask extends Task<Result<Image>> {
                       && Config.Client.URL_LOADING_ALLOWED_SUBDOMAINS.get().stream().noneMatch(host::endsWith)) {
                     LOGGER.error("Domain is not allowed for image loading. URL: {}");
                     Minecrft.player().sendSystemMessage(Component.literal("Domain is not allowed for image projecting.")
-                          .withStyle(ChatFormatting.RED), false);
+                          .withStyle(ChatFormatting.RED));
                     yield false;
                 }
 

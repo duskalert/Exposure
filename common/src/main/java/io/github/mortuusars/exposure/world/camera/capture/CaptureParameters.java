@@ -123,7 +123,7 @@ public record CaptureParameters(String exposureId,
             this.projection = params.projection().orElse(null);
             this.chromaticChannel = params.singleChannel().orElse(null);
             this.filmProperties = params.filmProperties();
-            extraData.merge(params.extraData());
+            extraData.merge(params.extraData().toTag());
         }
 
         public Builder setCameraID(@Nullable CameraId cameraId) {

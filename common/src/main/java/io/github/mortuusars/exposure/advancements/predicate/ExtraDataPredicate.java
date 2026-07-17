@@ -15,10 +15,10 @@ import org.jetbrains.annotations.Nullable;
 public record ExtraDataPredicate(ExtraData data) {
     public static final Codec<ExtraDataPredicate> CODEC = TagParser.LENIENT_CODEC.xmap(
             tag -> new ExtraDataPredicate(new ExtraData(tag)),
-            predicate -> predicate.data);
+            predicate -> predicate.data.toTag());
     public static final StreamCodec<ByteBuf, ExtraDataPredicate> STREAM_CODEC = ByteBufCodecs.COMPOUND_TAG.map(
             tag -> new ExtraDataPredicate(new ExtraData(tag)),
-            predicate -> predicate.data);
+            predicate -> predicate.data.toTag());
 
     public boolean matches(@Nullable Tag tag) {
         return tag != null && compareNbt(tag);

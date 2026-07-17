@@ -77,7 +77,7 @@ public class ClientPacketsHandler {
     public static void stopExportTask() {
         if (!ExportExposuresTask.stopCurrentTask()) {
             Minecrft.player().sendSystemMessage(Component.translatable("task.exposure.export.not_running")
-                    .withStyle(ChatFormatting.RED), false);
+                    .withStyle(ChatFormatting.RED));
         }
     }
 

@@ -280,7 +280,7 @@ public class TestImageScreen extends Screen {
     protected void capture() {
         if (isCapturing) {
             Minecrft.get().getSoundManager().play(SimpleSoundInstance.forUI(Exposure.SoundEvents.CAMERA_GENERIC_CLICK.get(), 1f));
-            Minecrft.player().sendSystemMessage(Component.literal("Capture is in progress."), false);
+            Minecrft.player().sendSystemMessage(Component.literal("Capture is in progress."));
             return;
         }
         isCapturing = true;
@@ -289,17 +289,17 @@ public class TestImageScreen extends Screen {
 
         ExposureClient.cycles().enqueueTask(Capture.of(Capture.screenshot(), CaptureAction.hideGui())
                 .handleErrorAndGetResult(err -> Minecrft.execute(() ->
-                        Minecrft.player().sendSystemMessage(err.casual().withStyle(ChatFormatting.RED), false)))
+                        Minecrft.player().sendSystemMessage(err.casual().withStyle(ChatFormatting.RED))))
                 .thenAsync(ImageEffect.Crop.SQUARE_CENTER::modify)
                 .onError(err -> Minecrft.execute(() ->
-                        Minecrft.player().sendSystemMessage(err.casual().withStyle(ChatFormatting.RED), false)))
+                        Minecrft.player().sendSystemMessage(err.casual().withStyle(ChatFormatting.RED))))
                 .accept(this::setImage));
     }
 
     protected void applyEdits() {
         if (renderableImage == null) {
             Minecrft.get().getSoundManager().play(SimpleSoundInstance.forUI(Exposure.SoundEvents.CAMERA_GENERIC_CLICK.get(), 1f));
-            Minecrft.player().sendSystemMessage(Component.literal("No image to modify."), false);
+            Minecrft.player().sendSystemMessage(Component.literal("No image to modify."));
             return;
         }
 
@@ -330,7 +330,7 @@ public class TestImageScreen extends Screen {
             ExposureClient.imageRenderer().clearCacheOf("test_image");
         } catch (Exception e) {
             Minecrft.get().getSoundManager().play(SimpleSoundInstance.forUI(Exposure.SoundEvents.CAMERA_GENERIC_CLICK.get(), 1f));
-            Minecrft.player().sendSystemMessage(Component.literal("Failed to apply edits. " + e.getMessage()), false);
+            Minecrft.player().sendSystemMessage(Component.literal("Failed to apply edits. " + e.getMessage()));
             Exposure.LOGGER.error("Failed to apply edits: ", e);
         }
         applyEditsAt = -1;
