@@ -1,7 +1,6 @@
 package io.github.mortuusars.exposure.neoforge;
 
 import com.google.common.collect.ImmutableMap;
-import net.neoforged.fml.loading.LoadingModList;
 import org.objectweb.asm.tree.ClassNode;
 import org.spongepowered.asm.mixin.extensibility.IMixinConfigPlugin;
 import org.spongepowered.asm.mixin.extensibility.IMixinInfo;
@@ -14,15 +13,15 @@ import java.util.function.Supplier;
 public class ExposureMixinPlugin implements IMixinConfigPlugin {
 
     private static final Map<String, Supplier<Boolean>> CONDITIONS = ImmutableMap.of(
-            "io.github.mortuusars.exposure.forge.mixin.create.CreateJEICompatMixin", ExposureMixinPlugin::isCorrectCreateVersion,
-            "io.github.mortuusars.exposure.fabric.mixin.create.SpoutDevelopingMixin", ExposureMixinPlugin::isCorrectCreateVersion
+//            "io.github.mortuusars.exposure.forge.mixin.create.CreateJEICompatMixin", ExposureMixinPlugin::isCorrectCreateVersion,
+//            "io.github.mortuusars.exposure.fabric.mixin.create.SpoutDevelopingMixin", ExposureMixinPlugin::isCorrectCreateVersion
     );
 
-    private static boolean isCorrectCreateVersion() {
-        return LoadingModList.get().getMods().stream().filter(i -> i.getModId().equals("create")).limit(1).findFirst()
-                        .map(c -> c.getVersion().toString().startsWith("0.5.1.f"))
-                        .orElse(false);
-    }
+//    private static boolean isCorrectCreateVersion() {
+//        return LoadingModList.get().getMods().stream().filter(i -> i.getModId().equals("create")).limit(1).findFirst()
+//                        .map(c -> c.getVersion().toString().startsWith("0.5.1.f"))
+//                        .orElse(false);
+//    }
 
     @Override
     public void onLoad(String mixinPackage) {

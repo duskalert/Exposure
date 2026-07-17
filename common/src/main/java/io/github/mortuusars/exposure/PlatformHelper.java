@@ -87,6 +87,7 @@ public class PlatformHelper {
 
     @ExpectPlatform
     public static boolean isCreateDeployer(Player player, InteractionHand hand) {
-        throw new AssertionError();
+        return false;
+//        throw new AssertionError();
     }
 }

@@ -4,7 +4,7 @@ import io.github.mortuusars.exposure.integration.Mods;
 import io.github.mortuusars.exposure.neoforge.api.event.ModifyEntityInFrameDataEvent;
 import io.github.mortuusars.exposure.neoforge.api.event.FrameAddedEvent;
 import io.github.mortuusars.exposure.neoforge.api.event.ModifyFrameExtraDataEvent;
-import io.github.mortuusars.exposure.neoforge.integration.CreateIntegration;
+//import io.github.mortuusars.exposure.neoforge.integration.CreateIntegration;
 import io.github.mortuusars.exposure.util.ExtraData;
 import io.github.mortuusars.exposure.world.camera.capture.CaptureParameters;
 import io.github.mortuusars.exposure.world.camera.frame.Frame;
@@ -73,9 +73,9 @@ public class PlatformHelperImpl {
     // --
 
     public static boolean isCreateDeployer(Player player, InteractionHand hand) {
-        if (Mods.CREATE.isLoaded()) {
-            return CreateIntegration.isDeployer(player);
-        }
+//        if (Mods.CREATE.isLoaded()) {
+//            return CreateIntegration.isDeployer(player);
+//        }
         return false;
     }
 

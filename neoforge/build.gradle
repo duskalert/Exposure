@@ -57,12 +57,12 @@ dependencies {
     modRuntimeOnly("maven.modrinth:crossroads:EgSYNn26")
     modRuntimeOnly("maven.modrinth:refined-storage:lHHiI26k")
 
-    // Create
-    modImplementation("com.simibubi.create:create-${minecraft_version}:${create_version}:slim") { transitive = false }
-    modImplementation("net.createmod.ponder:Ponder-NeoForge-${minecraft_version}:${ponder_version}")
-    modCompileOnly("dev.engine-room.flywheel:flywheel-neoforge-api-${minecraft_version}:${flywheel_version}")
-    modRuntimeOnly("dev.engine-room.flywheel:flywheel-neoforge-${minecraft_version}:${flywheel_version}")
-    modImplementation("com.tterrag.registrate:Registrate:${registrate_version}")
+    // Create - Commented out for NeoForge 26.1 migration
+//    modImplementation("com.simibubi.create:create-${minecraft_version}:${create_version}:slim") { transitive = false }
+//    modImplementation("net.createmod.ponder:Ponder-NeoForge-${minecraft_version}:${ponder_version}")
+//    modCompileOnly("dev.engine-room.flywheel:flywheel-neoforge-api-${minecraft_version}:${flywheel_version}")
+//    modRuntimeOnly("dev.engine-room.flywheel:flywheel-neoforge-${minecraft_version}:${flywheel_version}")
+//    modImplementation("com.tterrag.registrate:Registrate:${registrate_version}")
 
     //runtimeOnly("curse.maven:refined-storage-243076:6391989")
     //runtimeOnly("maven.modrinth:DistantHorizons:2.3.0-b-1.21.1")

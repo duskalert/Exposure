@@ -317,7 +317,7 @@ public class CameraStandEntity extends Entity implements CameraHolder {
         if (cameraStack.isEmpty()) return InteractionResult.PASS;
         if (!(cameraStack.getItem() instanceof CameraItem cameraItem)) return InteractionResult.PASS;
 
-        if (PlatformHelper.isCreateDeployer(player, hand)) {
+        if (false) {  // PlatformHelper.isCreateDeployer disabled for 26.1 migration
             if (Config.Server.CREATE_DEPLOYER_STAND_HOTSWAP.get()) {
                 return handleSneakInteraction(player, hand, cameraItem, cameraStack, handStack);
             }
