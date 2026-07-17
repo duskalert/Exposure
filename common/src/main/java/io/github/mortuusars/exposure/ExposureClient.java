@@ -22,7 +22,7 @@ import io.github.mortuusars.exposure.world.item.camera.CameraItem;
 import io.github.mortuusars.exposure.world.item.ChromaticSheetItem;
 import io.github.mortuusars.exposure.world.item.StackedPhotographsItem;
 import net.minecraft.client.renderer.item.ItemProperties;
-import net.minecraft.client.resources.model.ModelResourceLocation;
+
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.resources.Identifier;
 
@@ -130,28 +130,28 @@ public class ExposureClient {
     }
 
     public static class Models {
-        public static final Set<ModelResourceLocation> MODELS = new HashSet<>();
+        public static final Set<Identifier> MODELS = new HashSet<>();
 
-        public static final ModelResourceLocation CAMERA_GUI = register("item/camera_gui");
-        public static final ModelResourceLocation CAMERA_ACTIVE = register("item/camera_active");
-        public static final ModelResourceLocation CAMERA_SELFIE = register("item/camera_selfie");
-        public static final ModelResourceLocation CAMERA_VIEWFINDER = register("item/camera_parts/viewfinder");
-        public static final ModelResourceLocation CAMERA_FLASH = register("item/camera_parts/flash");
-        public static final ModelResourceLocation CAMERA_LENS = register("item/camera_parts/lens");
-        public static final ModelResourceLocation CAMERA_SELFIE_STICK = register("item/camera_parts/selfie_stick");
-        public static final ModelResourceLocation SELFIE_STICK = register("item/selfie_stick");
+        public static final Identifier CAMERA_GUI = register("item/camera_gui");
+        public static final Identifier CAMERA_ACTIVE = register("item/camera_active");
+        public static final Identifier CAMERA_SELFIE = register("item/camera_selfie");
+        public static final Identifier CAMERA_VIEWFINDER = register("item/camera_parts/viewfinder");
+        public static final Identifier CAMERA_FLASH = register("item/camera_parts/flash");
+        public static final Identifier CAMERA_LENS = register("item/camera_parts/lens");
+        public static final Identifier CAMERA_SELFIE_STICK = register("item/camera_parts/selfie_stick");
+        public static final Identifier SELFIE_STICK = register("item/selfie_stick");
 
-        public static final ModelResourceLocation PHOTOGRAPH_FRAME_SMALL = register("block/photograph_frame_small");
-        public static final ModelResourceLocation PHOTOGRAPH_FRAME_MEDIUM = register("block/photograph_frame_medium");
-        public static final ModelResourceLocation PHOTOGRAPH_FRAME_LARGE = register("block/photograph_frame_large");
-        public static final ModelResourceLocation CLEAR_PHOTOGRAPH_FRAME_SMALL = register("block/glass_photograph_frame_small");
-        public static final ModelResourceLocation CLEAR_PHOTOGRAPH_FRAME_MEDIUM = register("block/glass_photograph_frame_medium");
-        public static final ModelResourceLocation CLEAR_PHOTOGRAPH_FRAME_LARGE = register("block/glass_photograph_frame_large");
-        public static final ModelResourceLocation CAMERA_STAND = register("block/camera_stand");
-        public static final ModelResourceLocation CAMERA_STAND_MOUNT = register("block/camera_stand_mount");
+        public static final Identifier PHOTOGRAPH_FRAME_SMALL = register("block/photograph_frame_small");
+        public static final Identifier PHOTOGRAPH_FRAME_MEDIUM = register("block/photograph_frame_medium");
+        public static final Identifier PHOTOGRAPH_FRAME_LARGE = register("block/photograph_frame_large");
+        public static final Identifier CLEAR_PHOTOGRAPH_FRAME_SMALL = register("block/glass_photograph_frame_small");
+        public static final Identifier CLEAR_PHOTOGRAPH_FRAME_MEDIUM = register("block/glass_photograph_frame_medium");
+        public static final Identifier CLEAR_PHOTOGRAPH_FRAME_LARGE = register("block/glass_photograph_frame_large");
+        public static final Identifier CAMERA_STAND = register("block/camera_stand");
+        public static final Identifier CAMERA_STAND_MOUNT = register("block/camera_stand_mount");
 
-        public static ModelResourceLocation register(String path) {
-            ModelResourceLocation location = new ModelResourceLocation(Exposure.resource(path), "standalone");
+        public static Identifier register(String path) {
+            Identifier location = Identifier.of(Exposure.resource(path), "standalone");
             MODELS.add(location);
             return location;
         }
