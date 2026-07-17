@@ -1,20 +1,20 @@
 package io.github.mortuusars.exposure.client.render.model;
 
-import io.github.mortuusars.exposure.ExposureClient;
+import io.github.mortuusars.exposure.Exposure;
 import io.github.mortuusars.exposure.world.item.camera.Attachment;
 import io.github.mortuusars.exposure.world.item.camera.CameraItem;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.item.ItemModel;
 import net.minecraft.client.renderer.item.ItemModelResolver;
 import net.minecraft.client.renderer.item.ItemStackRenderState;
-import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.ItemOwner;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 
 public class CameraItemModel implements ItemModel {
+    private static boolean resolving = false;
+
     private final ItemModel baseModel;
 
     public CameraItemModel(ItemModel baseModel) {
@@ -24,35 +24,31 @@ public class CameraItemModel implements ItemModel {
     @Override
     public void update(ItemStackRenderState state, ItemStack stack, ItemModelResolver resolver,
                        ItemDisplayContext displayContext, ClientLevel level, ItemOwner owner, int seed) {
+        // Render base camera model
         baseModel.update(state, stack, resolver, displayContext, level, owner, seed);
 
+        if (resolving) return;
         if (!(stack.getItem() instanceof CameraItem camera)) return;
         if (displayContext == ItemDisplayContext.GUI) return;
 
-        LivingEntity livingEntity = owner instanceof LivingEntity le ? le : null;
-        boolean isActive = camera.isActive(stack);
-        boolean isSelfie = camera.isInSelfieMode(stack);
+        resolving = true;
+        try {
+            LivingEntity entity = owner instanceof LivingEntity le ? le : null;
+            boolean isActive = camera.isActive(stack);
+            boolean isSelfie = camera.isInSelfieMode(stack);
 
-        if (isSelfie) {
-            addModelLayer(state, resolver, ExposureClient.Models.CAMERA_SELFIE_STICK, stack, displayContext, livingEntity, seed);
-        }
-
-        if (isActive) {
-            addModelLayer(state, resolver, ExposureClient.Models.CAMERA_VIEWFINDER, stack, displayContext, livingEntity, seed);
-        }
-
-        if (Attachment.FLASH.isPresent(stack)) {
-            addModelLayer(state, resolver, ExposureClient.Models.CAMERA_FLASH, stack, displayContext, livingEntity, seed);
-        }
-
-        if (Attachment.LENS.isPresent(stack)) {
-            addModelLayer(state, resolver, ExposureClient.Models.CAMERA_LENS, stack, displayContext, livingEntity, seed);
+            if (isSelfie) renderPart(state, resolver, Exposure.Items.CAMERA.get().getDefaultInstance(), displayContext, entity);
+            if (isActive) renderPart(state, resolver, Exposure.Items.CAMERA.get().getDefaultInstance(), displayContext, entity);
+            if (Attachment.FLASH.isPresent(stack)) renderPart(state, resolver, Exposure.Items.CAMERA.get().getDefaultInstance(), displayContext, entity);
+            if (Attachment.LENS.isPresent(stack)) renderPart(state, resolver, Exposure.Items.CAMERA.get().getDefaultInstance(), displayContext, entity);
+        } finally {
+            resolving = false;
         }
     }
 
-    private void addModelLayer(ItemStackRenderState state, ItemModelResolver resolver, Identifier modelId,
-                               ItemStack stack, ItemDisplayContext displayContext, LivingEntity entity, int seed) {
+    private void renderPart(ItemStackRenderState state, ItemModelResolver resolver, ItemStack partStack,
+                            ItemDisplayContext displayContext, LivingEntity entity) {
         var layer = state.newLayer();
-        resolver.updateForLiving(layer, stack, displayContext, entity);
+        resolver.updateForLiving(layer, partStack, displayContext, entity);
     }
 }
