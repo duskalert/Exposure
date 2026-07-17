@@ -11,8 +11,8 @@ import io.github.mortuusars.exposure.network.packet.clientbound.CameraStandStopC
 import io.github.mortuusars.exposure.world.camera.CameraId;
 import io.github.mortuusars.exposure.world.inventory.CameraOnStandAttachmentsMenu;
 import io.github.mortuusars.exposure.world.item.InterplanarProjectorItem;
-import io.github.mortuusars.exposure.world.item.camera.Attachment;
-import io.github.mortuusars.exposure.world.item.camera.CameraItem;
+import io.github.mortuusars.exposure.world.item.camcom.Attachment;
+import io.github.mortuusars.exposure.world.item.camcom.CameraItem;
 import io.github.mortuusars.exposure.world.sound.Sound;
 import net.minecraft.ChatFormatting;
 import net.minecraft.util.Util;

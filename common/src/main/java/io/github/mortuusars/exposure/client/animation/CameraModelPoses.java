@@ -1,7 +1,7 @@
 package io.github.mortuusars.exposure.client.animation;
 
 import com.google.common.base.Preconditions;
-import io.github.mortuusars.exposure.world.item.camera.CameraItem;
+import io.github.mortuusars.exposure.world.item.camcom.CameraItem;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;

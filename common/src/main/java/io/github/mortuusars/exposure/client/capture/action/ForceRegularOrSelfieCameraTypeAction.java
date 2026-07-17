@@ -2,7 +2,7 @@ package io.github.mortuusars.exposure.client.capture.action;
 
 import io.github.mortuusars.exposure.world.camera.CameraInHand;
 import io.github.mortuusars.exposure.world.entity.CameraHolder;
-import io.github.mortuusars.exposure.world.item.camera.CameraItem;
+import io.github.mortuusars.exposure.world.item.camcom.CameraItem;
 import net.minecraft.client.CameraType;
 import net.minecraft.client.Minecraft;
 import org.jetbrains.annotations.Nullable;

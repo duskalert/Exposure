@@ -13,12 +13,12 @@ import io.github.mortuusars.exposure.client.render.photograph.PhotographRenderer
 import io.github.mortuusars.exposure.client.render.photograph.PhotographStyles;
 import io.github.mortuusars.exposure.client.util.Minecrft;
 import io.github.mortuusars.exposure.world.camera.capture.CaptureType;
-import io.github.mortuusars.exposure.world.item.camera.Attachment;
+import io.github.mortuusars.exposure.world.item.camcom.Attachment;
 import io.github.mortuusars.exposure.world.photograph.PhotographType;
 import io.github.mortuusars.exposure.util.cycles.Cycles;
 import io.github.mortuusars.exposure.client.ExposureStore;
 import io.github.mortuusars.exposure.world.item.AlbumItem;
-import io.github.mortuusars.exposure.world.item.camera.CameraItem;
+import io.github.mortuusars.exposure.world.item.camcom.CameraItem;
 import io.github.mortuusars.exposure.world.item.ChromaticSheetItem;
 import io.github.mortuusars.exposure.world.item.StackedPhotographsItem;
 //import net.minecraft.client.renderer.item.ItemProperties;

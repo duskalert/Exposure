@@ -1,4 +1,4 @@
-package io.github.mortuusars.exposure.world.item.camera;
+package io.github.mortuusars.exposure.world.item.camcom;
 
 import io.github.mortuusars.exposure.Exposure;
 import io.github.mortuusars.exposure.world.block.FlashBlock;

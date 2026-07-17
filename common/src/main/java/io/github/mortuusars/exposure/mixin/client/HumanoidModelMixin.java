@@ -9,7 +9,7 @@
 //import io.github.mortuusars.exposure.world.camera.CameraOnStand;
 //import io.github.mortuusars.exposure.world.entity.CameraHolder;
 //import io.github.mortuusars.exposure.world.entity.CameraOperator;
-//import io.github.mortuusars.exposure.world.item.camera.CameraItem;
+//import io.github.mortuusars.exposure.world.item.camcom.CameraItem;
 //import net.minecraft.client.Minecraft;
 //import net.minecraft.client.model.AgeableListModel;
 //import net.minecraft.client.model.AnimationUtils;

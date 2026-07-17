@@ -3,8 +3,8 @@
 //import io.github.mortuusars.exposure.ExposureClient;
 //import io.github.mortuusars.exposure.PlatformHelperClient;
 //import io.github.mortuusars.exposure.client.util.Minecrft;
-//import io.github.mortuusars.exposure.world.item.camera.Attachment;
-//import io.github.mortuusars.exposure.world.item.camera.CameraItem;
+//import io.github.mortuusars.exposure.world.item.camcom.Attachment;
+//import io.github.mortuusars.exposure.world.item.camcom.CameraItem;
 //import net.minecraft.client.multiplayer.ClientLevel;
 //import net.minecraft.client.resources.model.BakedModel;
 //import net.minecraft.client.resources.model.ModelResourceLocation;

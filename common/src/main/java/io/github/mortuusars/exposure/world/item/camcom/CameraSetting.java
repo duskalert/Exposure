@@ -1,4 +1,4 @@
-package io.github.mortuusars.exposure.world.item.camera;
+package io.github.mortuusars.exposure.world.item.camcom;
 
 import com.mojang.serialization.Codec;
 import io.github.mortuusars.exposure.network.Packets;

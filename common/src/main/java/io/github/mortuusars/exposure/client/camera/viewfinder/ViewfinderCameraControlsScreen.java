@@ -14,7 +14,7 @@ import io.github.mortuusars.exposure.client.util.Minecrft;
 import io.github.mortuusars.exposure.client.util.ZoomDirection;
 import io.github.mortuusars.exposure.world.camera.Camera;
 import io.github.mortuusars.exposure.world.camera.component.*;
-import io.github.mortuusars.exposure.world.item.camera.CameraSettings;
+import io.github.mortuusars.exposure.world.item.camcom.CameraSettings;
 import io.github.mortuusars.exposure.network.Packets;
 import io.github.mortuusars.exposure.network.packet.serverbound.ActiveCameraReleaseC2SP;
 import net.minecraft.ChatFormatting;
