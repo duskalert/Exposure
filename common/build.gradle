@@ -1,28 +1,10 @@
-architectury {
-    common rootProject.enabled_platforms.split(',')
+plugins {
+    id 'java'
 }
 
-loom {
-    accessWidenerPath = file("src/main/resources/exposure.accesswidener")
+java {
+    toolchain.languageVersion = JavaLanguageVersion.of(25)
 }
 
-configurations {
-    create("junit")
-}
-
-dependencies {
-    modCompileOnlyApi "mezz.jei:jei-${minecraft_version}-common-api:${jei_version}"
-
-    modCompileOnly("maven.modrinth:easy-anvils:${easy_anvils_modrinth_neoforge_version}")
-
-    testImplementation(platform("org.junit:junit-bom:${project.property("jupiterVersion")}"))
-    testImplementation("org.junit.jupiter:junit-jupiter")
-    "junit"(platform("org.junit:junit-bom:${project.property("jupiterVersion")}"))
-    "junit"("org.junit.jupiter:junit-jupiter")
-}
-
-tasks {
-    test {
-        useJUnitPlatform()
-    }
-}
+// Common module - sources are included in neoforge module via sourceSets
+// The actual build logic is in neoforge/build.gradle
