@@ -14,7 +14,7 @@ repositories {
 
 allprojects {
     tasks.withType(JavaCompile).configureEach {
-        options.release = 25
+        options.release = 26
         options.encoding = 'UTF-8'
     }
 }
