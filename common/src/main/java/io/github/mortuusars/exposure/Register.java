@@ -2,10 +2,9 @@ package io.github.mortuusars.exposure;
 
 import com.mojang.brigadier.arguments.ArgumentType;
 import com.mojang.serialization.MapCodec;
-import dev.architectury.injectables.annotations.ExpectPlatform;
+import io.github.mortuusars.exposure.neoforge.RegisterImpl;
 import net.minecraft.advancements.CriterionTrigger;
 import net.minecraft.advancements.criterion.EntitySubPredicate;
-import net.minecraft.advancements.criterion.ItemSubPredicate;
 import net.minecraft.commands.synchronization.ArgumentTypeInfo;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponentType;
@@ -38,58 +37,48 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public class Register {
-    @ExpectPlatform
     public static <T extends Block> Supplier<T> block(String id, Supplier<T> supplier) {
-        throw new AssertionError();
+        return RegisterImpl.block(id, supplier);
     }
 
-    @ExpectPlatform
     public static <T extends BlockEntityType<E>, E extends BlockEntity> Supplier<T> blockEntityType(String id, Supplier<T> sup) {
-        throw new AssertionError();
+        return RegisterImpl.blockEntityType(id, sup);
     }
 
-    @ExpectPlatform
     public static <T extends BlockEntity> BlockEntityType<T> newBlockEntityType(BlockEntitySupplier<T> blockEntitySupplier, Block... validBlocks) {
-        throw new AssertionError();
+        return RegisterImpl.newBlockEntityType(blockEntitySupplier, validBlocks);
     }
 
     @FunctionalInterface
     public interface BlockEntitySupplier<T extends BlockEntity> {
-
         @NotNull T create(BlockPos pos, BlockState state);
     }
 
-    @ExpectPlatform
     public static <T extends Item> Supplier<T> item(String id, Supplier<T> supplier) {
-        throw new AssertionError();
+        return RegisterImpl.item(id, supplier);
     }
 
-    @ExpectPlatform
     public static <T extends CreativeModeTab> Supplier<T> creativeTab(String id, Supplier<T> supplier) {
-        throw new AssertionError();
+        return RegisterImpl.creativeTab(id, supplier);
     }
 
-    @ExpectPlatform
     public static <T extends Entity> Supplier<EntityType<T>> entityType(String id, EntityType.EntityFactory<T> factory,
                                                                         MobCategory category, float width, float height,
                                                                         int clientTrackingRange, boolean velocityUpdates, int updateInterval) {
-        throw new AssertionError();
+        return RegisterImpl.entityType(id, factory, category, width, height, clientTrackingRange, velocityUpdates, updateInterval);
     }
 
-    @ExpectPlatform
     public static <T extends Entity> Supplier<EntityType<T>> entityType(String id, EntityType.EntityFactory<T> factory, MobCategory category,
                                                                         boolean receiveVelocityUpdates, Consumer<EntityType.Builder<T>> typeBuilder) {
-        throw new AssertionError();
+        return RegisterImpl.entityType(id, factory, category, receiveVelocityUpdates, typeBuilder);
     }
 
-    @ExpectPlatform
     public static <T extends SoundEvent> Supplier<T> soundEvent(String id, Supplier<T> supplier) {
-        throw new AssertionError();
+        return RegisterImpl.soundEvent(id, supplier);
     }
 
-    @ExpectPlatform
     public static <T extends MenuType<E>, E extends AbstractContainerMenu> Supplier<T> menuType(String id, MenuTypeSupplier<E> supplier) {
-        throw new AssertionError();
+        return RegisterImpl.menuType(id, supplier);
     }
 
     @FunctionalInterface
@@ -97,49 +86,36 @@ public class Register {
         @NotNull T create(int windowId, Inventory playerInv, RegistryFriendlyByteBuf extraData);
     }
 
-    @ExpectPlatform
     public static <T extends Recipe<I>, I extends RecipeInput> Supplier<RecipeType<T>> recipeType(String name, Supplier<RecipeType<T>> supplier) {
-        throw new AssertionError();
+        return RegisterImpl.recipeType(name, supplier);
     }
 
-    @ExpectPlatform
     public static Supplier<RecipeSerializer<?>> recipeSerializer(String name, Supplier<RecipeSerializer<?>> supplier) {
-        throw new AssertionError();
+        return RegisterImpl.recipeSerializer(name, supplier);
     }
 
-    @ExpectPlatform
     public static <T extends CriterionTrigger<?>> Supplier<T> criterionTrigger(String name, Supplier<T> supplier) {
-        throw new AssertionError();
+        return RegisterImpl.criterionTrigger(name, supplier);
     }
 
-    @ExpectPlatform
-    public static <T extends ItemSubPredicate.Type<?>> Supplier<T> itemSubPredicate(String name, Supplier<T> supplier) {
-        throw new AssertionError();
-    }
-
-    @ExpectPlatform
     public static <T extends EntitySubPredicate> Supplier<MapCodec<T>> entitySubPredicate(String name, Supplier<MapCodec<T>> supplier) {
-        throw new AssertionError();
+        return RegisterImpl.entitySubPredicate(name, supplier);
     }
 
-    @ExpectPlatform
     public static <A extends ArgumentType<?>, T extends ArgumentTypeInfo.Template<A>, I extends ArgumentTypeInfo<A, T>>
     Supplier<ArgumentTypeInfo<A, T>> commandArgumentType(String id, Class<A> infoClass, I argumentTypeInfo) {
-        throw new AssertionError();
+        return RegisterImpl.commandArgumentType(id, infoClass, argumentTypeInfo);
     }
 
-    @ExpectPlatform
     public static <T extends FeatureConfiguration> Supplier<Feature<?>> worldGenFeature(String name, Supplier<Feature<T>> featureSupplier) {
-        throw new AssertionError();
+        return RegisterImpl.worldGenFeature(name, featureSupplier);
     }
 
-    @ExpectPlatform
     public static <T> DataComponentType<T> dataComponentType(String name, Consumer<DataComponentType.Builder<T>> builderConsumer) {
-        throw new AssertionError();
+        return RegisterImpl.dataComponentType(name, builderConsumer);
     }
 
-    @ExpectPlatform
     public static <T extends ParticleType<? extends ParticleOptions>> Supplier<T> particleType(String name, Supplier<T> supplier) {
-        throw new AssertionError();
+        return RegisterImpl.particleType(name, supplier);
     }
 }

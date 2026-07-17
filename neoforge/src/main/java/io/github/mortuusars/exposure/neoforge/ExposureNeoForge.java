@@ -43,7 +43,6 @@ public class ExposureNeoForge {
         RegisterImpl.RECIPE_TYPES.register(modEventBus);
         RegisterImpl.RECIPE_SERIALIZERS.register(modEventBus);
         RegisterImpl.CRITERION_TRIGGERS.register(modEventBus);
-        RegisterImpl.ITEM_SUB_PREDICATES.register(modEventBus);
         RegisterImpl.ENTITY_SUB_PREDICATES.register(modEventBus);
         RegisterImpl.SOUND_EVENTS.register(modEventBus);
         RegisterImpl.COMMAND_ARGUMENT_TYPES.register(modEventBus);

@@ -42,7 +42,6 @@ import io.github.mortuusars.exposure.world.item.crafting.recipe.PhotographAgingR
 import io.github.mortuusars.exposure.world.item.crafting.recipe.PhotographCopyingRecipe;
 import io.github.mortuusars.exposure.world.item.crafting.recipe.serializer.ComponentTransferringRecipeSerializer;
 import io.github.mortuusars.exposure.world.item.util.ItemAndStack;
-import net.minecraft.advancements.criterion.ItemSubPredicate;
 import net.minecraft.advancements.criterion.PlayerTrigger;
 import net.minecraft.commands.synchronization.ArgumentTypeInfo;
 import net.minecraft.commands.synchronization.SingletonArgumentInfo;
@@ -92,7 +91,6 @@ public class Exposure {
         CreativeTabs.init();
         DataComponents.init();
         CriteriaTriggers.init();
-        ItemSubPredicates.init();
         EntitySubPredicates.init();
         MenuTypes.init();
         RecipeSerializers.init();
@@ -527,14 +525,6 @@ public class Exposure {
         public static Supplier<FramePrintedTrigger> FRAME_PRINTED = Register.criterionTrigger("frame_printed", FramePrintedTrigger::new);
         public static Supplier<PlayerTrigger> PHOTOGRAPH_ENDERMAN_EYES = Register.criterionTrigger("photograph_enderman_eyes", PlayerTrigger::new);
         public static Supplier<PlayerTrigger> SUCCESSFULLY_PROJECT_IMAGE = Register.criterionTrigger("successfully_project_image", PlayerTrigger::new);
-
-        public static void init() {
-        }
-    }
-
-    public static class ItemSubPredicates {
-        public static Supplier<ItemSubPredicate.Type<FramePredicate>> FRAME = Register.itemSubPredicate("frame",
-                () -> new ItemSubPredicate.Type<>(FramePredicate.CODEC));
 
         public static void init() {
         }

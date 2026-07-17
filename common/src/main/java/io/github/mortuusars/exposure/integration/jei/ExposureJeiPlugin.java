@@ -1,7 +1,7 @@
 package io.github.mortuusars.exposure.integration.jei;
 
 import com.google.common.collect.ImmutableList;
-import dev.architectury.injectables.annotations.ExpectPlatform;
+
 import io.github.mortuusars.exposure.Config;
 import io.github.mortuusars.exposure.Exposure;
 import io.github.mortuusars.exposure.PlatformHelper;
@@ -77,9 +77,7 @@ public class ExposureJeiPlugin implements IModPlugin {
         }
     }
 
-    @ExpectPlatform
     public static void addSequencedDevelopingRecipes(@NotNull IRecipeRegistration registration) {
-        throw new AssertionError();
     }
 
     @Override
