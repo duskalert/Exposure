@@ -33,8 +33,8 @@ import java.util.Collections;
 import java.util.List;
 
 public class FilmRollItem extends Item implements SensitiveFilmItem {
-    public static final int BAR_BLACK_AND_WHITE = Mth.color(0.8F, 0.8F, 0.9F);
-    public static final int BAR_COLOR = Mth.color(0.4F, 0.4F, 1.0F);
+    public static final int BAR_BLACK_AND_WHITE = ARGB.color(0.8F, 0.8F, 0.9F);
+    public static final int BAR_COLOR = ARGB.color(0.4F, 0.4F, 1.0F);
 
     protected final ExposureType type;
     protected final int barColor;

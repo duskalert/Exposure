@@ -156,7 +156,7 @@ public class LightroomBlockEntity extends BaseContainerBlockEntity implements Wo
     }
 
     protected boolean canEjectFilm() {
-        if (level == null || level.isClientSide || getItem(Lightroom.FILM_SLOT).isEmpty())
+        if (level == null || level.isClientSide() || getItem(Lightroom.FILM_SLOT).isEmpty())
             return false;
 
         BlockPos pos = getBlockPos();
@@ -166,7 +166,7 @@ public class LightroomBlockEntity extends BaseContainerBlockEntity implements Wo
     }
 
     protected void ejectFilm() {
-        if (level == null || level.isClientSide || getItem(Lightroom.FILM_SLOT).isEmpty())
+        if (level == null || level.isClientSide() || getItem(Lightroom.FILM_SLOT).isEmpty())
             return;
 
         BlockPos pos = getBlockPos();
@@ -707,7 +707,7 @@ public class LightroomBlockEntity extends BaseContainerBlockEntity implements Wo
     @Override
     public void setChanged() {
         super.setChanged();
-        if (level != null && !level.isClientSide) {
+        if (level != null && !level.isClientSide()) {
             level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), Block.UPDATE_CLIENTS);
         }
     }

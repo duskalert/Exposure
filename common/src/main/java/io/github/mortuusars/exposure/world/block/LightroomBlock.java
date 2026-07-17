@@ -110,12 +110,12 @@ public class LightroomBlock extends Block implements EntityBlock {
             PlatformHelper.openMenu(serverPlayer, lightroomBlockEntity, buffer -> buffer.writeBlockPos(pos));
         }
 
-        return InteractionResult.sidedSuccess(level.isClientSide);
+        return InteractionResult.sidedSuccess(level.isClientSide());
     }
 
     @Override
     public void neighborChanged(@NotNull BlockState state, Level level, @NotNull BlockPos pos, @NotNull Block block, @NotNull BlockPos fromPos, boolean pIsMoving) {
-        if (!level.isClientSide) {
+        if (!level.isClientSide()) {
             if (!state.getValue(PRINTING)) {
                 for (Direction direction : Direction.values()) {
                     BlockPos relative = pos.relative(direction);
@@ -150,7 +150,7 @@ public class LightroomBlock extends Block implements EntityBlock {
     }
 
     public static <T extends BlockEntity> BlockEntityTicker<T> getBlockTicker(Level level, BlockState state, BlockEntityType<T> blockEntityType) {
-        if (!level.isClientSide && blockEntityType.equals(Exposure.BlockEntityTypes.LIGHTROOM.get()))
+        if (!level.isClientSide() && blockEntityType.equals(Exposure.BlockEntityTypes.LIGHTROOM.get()))
             return LightroomBlockEntity::serverTick;
 
         return null;

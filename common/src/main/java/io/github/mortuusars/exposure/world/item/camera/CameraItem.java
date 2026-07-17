@@ -303,7 +303,7 @@ public class CameraItem extends Item {
 
     public @NotNull InteractionResult activateInHand(Player player, ItemStack stack, @NotNull InteractionHand hand) {
         player.setActiveExposureCamera(new CameraInHand(player, getOrCreateId(stack), hand));
-        if (player.level().isClientSide) {
+        if (player.level().isClientSide()) {
             Minecrft.releaseUseButton(); // Releasing use key to not take a shot immediately, if right click is still held.
         }
         return activate(player, stack);
@@ -311,7 +311,7 @@ public class CameraItem extends Item {
 
     public @NotNull InteractionResult activateOnStand(Player player, ItemStack stack, CameraStandEntity cameraStand) {
         player.setActiveExposureCamera(new CameraOnStand(player, cameraStand, getOrCreateId(stack)));
-        if (player.level().isClientSide) {
+        if (player.level().isClientSide()) {
             Minecrft.releaseUseButton(); // Releasing use key to not take a shot immediately, if right click is still held.
         }
         return activate(player, stack);
@@ -542,7 +542,7 @@ public class CameraItem extends Item {
 
         tick(holder, stack);
 
-        if (level.isClientSide && entity instanceof Player player) {
+        if (level.isClientSide() && entity instanceof Player player) {
             boolean matchesActive = player.getActiveExposureCameraOptional()
                     .map(camera -> camera.idMatches(getOrCreateId(stack)))
                     .orElse(false);
@@ -669,7 +669,7 @@ public class CameraItem extends Item {
 
         Sound.playSided(entity, getReleaseButtonSound(), entity.getSoundSource(), 0.3f, 1f, 0.1f);
 
-        if (level.isClientSide || !canTakePhoto(holder, stack)) {
+        if (level.isClientSide() || !canTakePhoto(holder, stack)) {
             return InteractionResult.CONSUME.heldItemTransformedTo(stack);
         }
 
@@ -689,7 +689,7 @@ public class CameraItem extends Item {
     }
 
     protected void takePhoto(CameraHolder holder, ServerPlayer executingPlayer, ItemStack stack) {
-        ServerLevel level = executingPlayer.serverLevel();
+        ServerLevel level = (ServerLevel) executingPlayer.level();
         Entity entity = holder.asHolderEntity();
 
         ShutterSpeed shutterSpeed = CameraSettings.SHUTTER_SPEED.getOrDefault(stack);
@@ -1003,7 +1003,7 @@ public class CameraItem extends Item {
     }
 
     protected void testPositionsInFrame(ItemStack stack, Level level, Player player) {
-        if (level.isClientSide && level.getGameTime() % 2 == 0) {
+        if (level.isClientSide() && level.getGameTime() % 2 == 0) {
             List<BlockPos> positionsInFrame = getPositionsInFrame(player, getPointOfView(player, stack), getViewfinderFov(level, stack));
             for (BlockPos pos : positionsInFrame) {
                 level.addAlwaysVisibleParticle(ParticleTypes.EXPLOSION, true, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 0, 0, 0);

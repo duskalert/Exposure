@@ -77,8 +77,7 @@ public class CameraStandEntity extends Entity implements CameraHolder {
     protected static final EntityDataAccessor<Boolean> DATA_ID_MALFUNCTIONED =
             SynchedEntityData.defineId(CameraStandEntity.class, EntityDataSerializers.BOOLEAN);
 
-    protected static final Predicate<Entity> RIDABLE_MINECARTS = entity -> entity instanceof AbstractMinecart
-            && ((AbstractMinecart) entity).getMinecartType() == AbstractMinecart.Type.RIDEABLE;
+    protected static final Predicate<Entity> RIDABLE_MINECARTS = entity -> entity instanceof AbstractMinecart;
 
     protected CameraStandRedstoneControl redstoneControl = new CameraStandRedstoneControl(this);
     protected UUID ownerPlayerId = Util.NIL_UUID;
@@ -539,7 +538,7 @@ public class CameraStandEntity extends Entity implements CameraHolder {
             this.setUnderLavaMovement();
         }
 
-        if (this.level().isClientSide) {
+        if (this.level().isClientSide()) {
             this.noPhysics = false;
         } else {
             this.noPhysics = !this.level().noCollision(this, this.getBoundingBox().deflate(1.0E-7));
@@ -591,7 +590,7 @@ public class CameraStandEntity extends Entity implements CameraHolder {
     protected void checkForMinecarts() {
         if (!isClientSide() && !isPassenger()) {
             List<Entity> minecarts = level().getEntities(this, getBoundingBox().inflate(0.4F, 0.2F, 0.4F),
-                    e -> e instanceof AbstractMinecart cart && cart.getMinecartType() == AbstractMinecart.Type.RIDEABLE);
+                    e -> e instanceof AbstractMinecart);
             for (Entity entity : minecarts) {
                 AbstractMinecart minecart = ((AbstractMinecart) entity);
                 if (!minecart.isVehicle()) {
@@ -789,7 +788,7 @@ public class CameraStandEntity extends Entity implements CameraHolder {
     }
 
     public boolean isClientSide() {
-        return level().isClientSide;
+        return level().isClientSide();
     }
 
     @Override
