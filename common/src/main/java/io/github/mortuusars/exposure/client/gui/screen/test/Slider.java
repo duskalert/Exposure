@@ -11,7 +11,7 @@ import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarratedElementType;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
-import net.minecraft.client.gui.navigation.CommonInputs;
+//import net.minecraft.client.gui.navigation.CommonInputs;
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
@@ -167,24 +167,24 @@ public class Slider extends AbstractWidget {
         super.onDrag(mouseX, mouseY, dragX, dragY);
     }
 
-    @Override
-    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        if (CommonInputs.selected(keyCode)) {
-            this.canChangeValue = !this.canChangeValue;
-            return true;
-        } else {
-            if (this.canChangeValue) {
-                boolean bl = keyCode == 263;
-                if (bl || keyCode == 262) {
-                    float f = bl ? -1.0F : 1.0F;
-                    this.setPosition(position + (double)(f / (float)(width - HANDLE_WIDTH)));
-                    return true;
-                }
-            }
-
-            return false;
-        }
-    }
+//    @Override
+//    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+//        if (CommonInputs.selected(keyCode)) {
+//            this.canChangeValue = !this.canChangeValue;
+//            return true;
+//        } else {
+//            if (this.canChangeValue) {
+//                boolean bl = keyCode == 263;
+//                if (bl || keyCode == 262) {
+//                    float f = bl ? -1.0F : 1.0F;
+//                    this.setPosition(position + (double)(f / (float)(width - HANDLE_WIDTH)));
+//                    return true;
+//                }
+//            }
+//
+//            return false;
+//        }
+//    }
 
     // -- Render
 

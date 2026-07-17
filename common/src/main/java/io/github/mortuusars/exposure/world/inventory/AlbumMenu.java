@@ -298,7 +298,7 @@ public class AlbumMenu extends AbstractContainerMenu {
     }
 
     @Override
-    public void clicked(int slotId, int button, ClickType clickType, Player player) {
+    public void clicked(int slotId, int button, ContainerInput clickType, Player player) {
         // Both sides
 
         if (sideBeingAddedTo == null || slotId < 0 || slotId >= slots.size()) {

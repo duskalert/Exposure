@@ -11,7 +11,7 @@
     "client.CameraMixin",
     "client.ClientPacketListenerMixin",
     "client.EntityMixin",
-    "client.ExposureLightTextureMixin",
+    "client.ExposureLightmapMixin",
     "client.GameRendererMixin",
     "client.GuiMixin",
     "client.HumanoidModelMixin",

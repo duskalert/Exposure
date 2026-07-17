@@ -11,7 +11,7 @@ import io.github.mortuusars.exposure.util.color.Color;
 import net.minecraft.util.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderStateShard;
+//import net.minecraft.client.renderer.RenderStateShard;
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.renderer.texture.SpriteContents;
@@ -27,18 +27,18 @@ import java.util.function.Function;
  * And to <a href="https://github.com/bravely-beep">bravely-beep</a> for pointing me to it.
  */
 public class RenderedImageInstance implements AutoCloseable {
-    private static final Function<Identifier, RenderType> TEXT_MIPMAP = Util.memoize(texture -> RenderType.create("exposure_mipmap",
-            DefaultVertexFormat.POSITION_COLOR_TEX_LIGHTMAP,
-            VertexFormat.Mode.QUADS,
-            786432,
-            false,
-            true,
-            RenderType.CompositeState.builder()
-                    .setShaderState(RenderType.RENDERTYPE_TEXT_SHADER)
-                    .setTextureState(new RenderStateShard.TextureStateShard(texture, false, true))
-                    .setTransparencyState(RenderType.TRANSLUCENT_TRANSPARENCY)
-                    .setLightmapState(RenderType.LIGHTMAP)
-                    .createCompositeState(false)));
+//    private static final Function<Identifier, RenderType> TEXT_MIPMAP = Util.memoize(texture -> RenderType.create("exposure_mipmap",
+//            DefaultVertexFormat.POSITION_COLOR_TEX_LIGHTMAP,
+//            VertexFormat.Mode.QUADS,
+//            786432,
+//            false,
+//            true,
+//            RenderType.CompositeState.builder()
+//                    .setShaderState(RenderType.RENDERTYPE_TEXT_SHADER)
+//                    .setTextureState(new RenderStateShard.TextureStateShard(texture, false, true))
+//                    .setTransparencyState(RenderType.TRANSLUCENT_TRANSPARENCY)
+//                    .setLightmapState(RenderType.LIGHTMAP)
+//                    .createCompositeState(false)));
 
     protected final Identifier textureLocation;
     protected RenderableImage image;
@@ -53,7 +53,7 @@ public class RenderedImageInstance implements AutoCloseable {
         Minecraft.getInstance().getTextureManager().register(textureLocation, this.texture);
 
         int mipmapLevel = Minecraft.getInstance().options.mipmapLevels().get();
-        renderType = mipmapLevel > 0 ? TEXT_MIPMAP.apply(textureLocation) : RenderType.text(textureLocation);
+        renderType = RenderType.text(textureLocation);
 
         forceUpload();
     }

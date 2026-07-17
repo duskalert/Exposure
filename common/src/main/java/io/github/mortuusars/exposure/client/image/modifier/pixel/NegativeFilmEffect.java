@@ -1,6 +1,6 @@
 package io.github.mortuusars.exposure.client.image.modifier.pixel;
 
-import net.minecraft.util.FastColor;
+import net.minecraft.util.ARGB;
 import net.minecraft.util.Mth;
 
 public class NegativeFilmEffect implements PixelEffect {
@@ -10,10 +10,10 @@ public class NegativeFilmEffect implements PixelEffect {
     }
 
     public int modify(int ARGB) {
-        int alpha = FastColor.ARGB32.alpha(ARGB);
-        int red = FastColor.ARGB32.red(ARGB);
-        int green = FastColor.ARGB32.green(ARGB);
-        int blue = FastColor.ARGB32.blue(ARGB);
+        int alpha = ARGB.alpha(ARGB);
+        int red = ARGB.red(ARGB);
+        int green = ARGB.green(ARGB);
+        int blue = ARGB.blue(ARGB);
 
         // Modify opacity to make lighter colors transparent, like in real film.
         int lightness = (red + green + blue) / 3;
@@ -25,6 +25,6 @@ public class NegativeFilmEffect implements PixelEffect {
         green = 255 - green;
         blue = 255 - blue;
 
-        return FastColor.ARGB32.color(alpha, red, green, blue);
+        return ARGB.color(alpha, red, green, blue);
     }
 }

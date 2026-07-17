@@ -16,7 +16,9 @@ import net.minecraft.nbt.NbtOps;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.Identifier;
+import net.minecraft.util.datafix.DataFixTypes;
 import net.minecraft.world.level.saveddata.SavedData;
+import net.minecraft.world.level.saveddata.SavedDataType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -123,10 +125,10 @@ public class ExposureData extends SavedData {
         return tag;
     }
 
-    public static SavedData.Factory<ExposureData> factory() {
-        return new SavedData.Factory<>(() -> {
+    public static SavedDataType<ExposureData> factory() {
+        return new SavedDataType<>(Exposure.resource("exposure_data"), () -> {
             throw new IllegalStateException("Should never create an empty exposure saved data");
-        }, ExposureData::load, null);
+        }, CODEC, DataFixTypes.LEVEL);
     }
 
     public static ExposureData load(CompoundTag tag, HolderLookup.Provider levelRegistry) {

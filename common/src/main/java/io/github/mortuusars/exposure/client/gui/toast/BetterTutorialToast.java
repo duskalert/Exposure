@@ -2,7 +2,7 @@ package io.github.mortuusars.exposure.client.gui.toast;
 
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.toasts.Toast;
-import net.minecraft.client.gui.components.toasts.ToastComponent;
+//import net.minecraft.client.gui.components.toasts.ToastComponent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.NotNull;
@@ -55,22 +55,22 @@ public class BetterTutorialToast implements Toast {
         this.visibility = Toast.Visibility.HIDE;
     }
 
-    @Override
-    public @NotNull Visibility render(GuiGraphicsExtractor GuiGraphicsExtractor, ToastComponent toastComponent, long timeSinceLastVisible) {
-        if (visibility == Visibility.SHOW && hideIf.get() || (showDurationMs > 0 && System.currentTimeMillis() > shownAt + showDurationMs)) {
-            hide();
-            onHide.run();
-        }
-
-        GuiGraphicsExtractor.blitSprite(backgroundSprite, 0, 0, this.width(), this.height());
-        this.icon.render(GuiGraphicsExtractor, 6, 6);
-        if (this.message == null) {
-            GuiGraphicsExtractor.drawString(toastComponent.getMinecraft().font, this.title, 30, 12, 0xFF500050, false);
-        } else {
-            GuiGraphicsExtractor.drawString(toastComponent.getMinecraft().font, this.title, 30, 7, 0xFF500050, false);
-            GuiGraphicsExtractor.drawString(toastComponent.getMinecraft().font, this.message, 30, 18, 0xFF000000, false);
-        }
-
-        return this.visibility;
-    }
+//    @Override
+//    public @NotNull Visibility render(GuiGraphicsExtractor GuiGraphicsExtractor, ToastComponent toastComponent, long timeSinceLastVisible) {
+//        if (visibility == Visibility.SHOW && hideIf.get() || (showDurationMs > 0 && System.currentTimeMillis() > shownAt + showDurationMs)) {
+//            hide();
+//            onHide.run();
+//        }
+//
+//        GuiGraphicsExtractor.blitSprite(backgroundSprite, 0, 0, this.width(), this.height());
+//        this.icon.render(GuiGraphicsExtractor, 6, 6);
+//        if (this.message == null) {
+//            GuiGraphicsExtractor.drawString(toastComponent.getMinecraft().font, this.title, 30, 12, 0xFF500050, false);
+//        } else {
+//            GuiGraphicsExtractor.drawString(toastComponent.getMinecraft().font, this.title, 30, 7, 0xFF500050, false);
+//            GuiGraphicsExtractor.drawString(toastComponent.getMinecraft().font, this.message, 30, 18, 0xFF000000, false);
+//        }
+//
+//        return this.visibility;
+//    }
 }

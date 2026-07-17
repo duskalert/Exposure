@@ -13,7 +13,7 @@ import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.gui.narration.NarratedElementType;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
-import net.minecraft.client.gui.navigation.CommonInputs;
+//import net.minecraft.client.gui.navigation.CommonInputs;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.tooltip.DefaultTooltipPositioner;
 import net.minecraft.client.renderer.Lightmap;
@@ -169,19 +169,19 @@ public class PhotographSlotWidget extends AbstractWidget {
         return super.mouseScrolled(mouseX, mouseY, scrollX, scrollY);
     }
 
-    @Override
-    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        if (this.active && this.visible && CommonInputs.selected(keyCode)) {
-            if (Screen.hasShiftDown()) {
-                secondaryAction.accept(this);
-            } else {
-                primaryAction.accept(this);
-            }
-            return true;
-        }
-
-        return super.keyPressed(keyCode, scanCode, modifiers);
-    }
+//    @Override
+//    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+//        if (this.active && this.visible && CommonInputs.selected(keyCode)) {
+//            if (Screen.hasShiftDown()) {
+//                secondaryAction.accept(this);
+//            } else {
+//                primaryAction.accept(this);
+//            }
+//            return true;
+//        }
+//
+//        return super.keyPressed(keyCode, scanCode, modifiers);
+//    }
 
     @Override
     protected void updateWidgetNarration(NarrationElementOutput narrationElementOutput) {

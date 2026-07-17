@@ -6,7 +6,7 @@ import io.github.mortuusars.exposure.world.entity.CameraStandEntity;
 import net.minecraft.client.Camera;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.renderer.*;
-import net.minecraft.util.FastColor;
+import net.minecraft.util.ARGB;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Matrix4f;
@@ -46,7 +46,7 @@ public abstract class LevelRendererMixin {
             OutlineBufferSource outlineBufferSource = this.renderBuffers.outlineBufferSource();
             multiBufferSource = outlineBufferSource;
             int i = entity.getTeamColor();
-            outlineBufferSource.setColor(FastColor.ARGB32.red(i), FastColor.ARGB32.green(i), FastColor.ARGB32.blue(i), 255);
+            outlineBufferSource.setColor(ARGB.red(i), ARGB.green(i), ARGB.blue(i), 255);
         } else {
             multiBufferSource = this.renderBuffers.bufferSource();
         }
