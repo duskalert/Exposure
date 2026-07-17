@@ -1,4 +1,4 @@
-package io.github.mortuusars.exposure.world.item.camera;
+﻿package io.github.mortuusars.exposure.world.item.camera;
 
 import com.google.common.base.Preconditions;
 import io.github.mortuusars.exposure.*;
