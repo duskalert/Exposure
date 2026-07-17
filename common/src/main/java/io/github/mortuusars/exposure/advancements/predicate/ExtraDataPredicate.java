@@ -25,28 +25,23 @@ public record ExtraDataPredicate(ExtraData data) {
     }
 
     private boolean compareNbt(@Nullable Tag other) {
-        if (data == other) {
-            return true;
-        } else if (data == null) {
-            return true;
-        } else if (other == null) {
-            return false;
-        } else if (data instanceof CompoundTag compoundTag) {
-            CompoundTag compoundTag2 = (CompoundTag)other;
-            if (compoundTag2.size() < compoundTag.size()) {
-                return false;
-            } else {
-                for (String string : compoundTag.getAllKeys()) {
-                    Tag tag2 = compoundTag.get(string);
-                    if (!NbtUtils.compareNbt(tag2, compoundTag2.get(string), true)) {
-                        return false;
-                    }
-                }
-
-                return true;
-            }
-        } else {
-            return data.equals(other);
+        if (data == null || other == null) {
+            return data == other;
         }
+
+        CompoundTag thisTag = data.toTag();
+        if (other instanceof CompoundTag otherTag) {
+            if (otherTag.size() < thisTag.size()) {
+                return false;
+            }
+            for (String key : thisTag.getAllKeys()) {
+                Tag tag2 = thisTag.get(key);
+                if (!NbtUtils.compareNbt(tag2, otherTag.get(key), true)) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        return false;
     }
 }

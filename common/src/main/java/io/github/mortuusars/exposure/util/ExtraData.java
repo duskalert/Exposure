@@ -19,33 +19,32 @@ import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
-/**
- * Extension of CompoundTag to allow better type safety. <br>
- * {@link Type} is meant to be stored in a static final field in appropriate places.
- */
-public class ExtraData extends CompoundTag {
-    public static final Codec<ExtraData> CODEC = CompoundTag.CODEC.xmap(ExtraData::new, data -> data);
-    public static final StreamCodec<ByteBuf, ExtraData> STREAM_CODEC = ByteBufCodecs.COMPOUND_TAG.map(ExtraData::new, data -> data);
+public class ExtraData {
+    public static final Codec<ExtraData> CODEC = CompoundTag.CODEC.xmap(ExtraData::new, ExtraData::toTag);
+    public static final StreamCodec<ByteBuf, ExtraData> STREAM_CODEC = ByteBufCodecs.COMPOUND_TAG.map(ExtraData::new, ExtraData::toTag);
 
-    public static final ExtraData EMPTY = new ExtraData(Collections.emptyMap());
-    private final Map<String, Tag> tags;
+    public static final ExtraData EMPTY = new ExtraData(new CompoundTag());
+
+    private final CompoundTag tag;
 
     protected ExtraData(Map<String, Tag> tags) {
-        super(tags);
-        this.tags = tags;
+        this.tag = new CompoundTag(tags);
     }
 
     public ExtraData() {
-        this(new HashMap<>());
+        this.tag = new CompoundTag();
     }
 
     public ExtraData(CompoundTag tag) {
-        this(new HashMap<>());
-        merge(tag);
+        this.tag = tag.copy();
+    }
+
+    public CompoundTag toTag() {
+        return tag.copy();
     }
 
     public <T> Optional<T> get(@NotNull ExtraData.Type<T> type) {
-        if (!contains(type.key())) return Optional.empty();
+        if (!tag.contains(type.key())) return Optional.empty();
         try {
             return Optional.ofNullable(type.getter().apply(this, type.key()));
         } catch (Exception e) {
@@ -55,7 +54,7 @@ public class ExtraData extends CompoundTag {
     }
 
     public <T> T getOrDefault(@NotNull ExtraData.Type<T> type, T defaultValue) {
-        if (!contains(type.key())) return defaultValue;
+        if (!tag.contains(type.key())) return defaultValue;
         try {
             @Nullable T value = type.getter().apply(this, type.key());
             return value != null ? value : defaultValue;
@@ -71,38 +70,56 @@ public class ExtraData extends CompoundTag {
     }
 
     public <T> void remove(Type<T> type) {
-        remove(type.key());
+        tag.remove(type.key());
     }
 
-    // --
+    // Delegate methods for CompoundTag operations used by Types
+    public String getString(String key) { return tag.getString(key); }
+    public void putString(String key, String value) { tag.putString(key, value); }
+    public boolean getBoolean(String key) { return tag.getBoolean(key); }
+    public void putBoolean(String key, boolean value) { tag.putBoolean(key, value); }
+    public int getInt(String key) { return tag.getInt(key); }
+    public void putInt(String key, int value) { tag.putInt(key, value); }
+    public long getLong(String key) { return tag.getLong(key); }
+    public void putLong(String key, long value) { tag.putLong(key, value); }
+    public float getFloat(String key) { return tag.getFloat(key); }
+    public void putFloat(String key, float value) { tag.putFloat(key, value); }
+    public double getDouble(String key) { return tag.getDouble(key); }
+    public void putDouble(String key, double value) { tag.putDouble(key, value); }
+    public ListTag getList(String key, int type) { return tag.getList(key, type); }
+    public void put(String key, Tag value) { tag.put(key, value); }
+    public Set<String> getAllKeys() { return tag.getAllKeys(); }
+    public Tag get(String key) { return tag.get(key); }
+    public CompoundTag getCompound(String key) { return tag.getCompound(key); }
+    public boolean contains(String key) { return tag.contains(key); }
+    public boolean contains(String key, int type) { return tag.contains(key, type); }
 
     @Override
+    public @NotNull ExtraData clone() {
+        return new ExtraData(tag.copy());
+    }
+
     public @NotNull ExtraData copy() {
-        Map<String, Tag> map = Maps.newHashMap(Maps.transformValues(this.tags, Tag::copy));
-        return new ExtraData(map);
+        return new ExtraData(tag.copy());
     }
 
-    @Override
     public @NotNull ExtraData merge(CompoundTag other) {
         for (String key : other.getAllKeys()) {
-            Tag tag = other.get(key);
-            assert tag != null;
-            if (tag.getId() == 10) {
-                if (this.contains(key, 10)) {
-                    CompoundTag compoundTag = this.getCompound(key);
-                    compoundTag.merge((CompoundTag) tag);
+            Tag value = other.get(key);
+            if (value != null) {
+                if (value.getId() == 10) {
+                    if (tag.contains(key, 10)) {
+                        tag.getCompound(key).merge((CompoundTag) value);
+                    } else {
+                        tag.put(key, value.copy());
+                    }
                 } else {
-                    this.put(key, tag.copy());
+                    tag.put(key, value.copy());
                 }
-            } else {
-                this.put(key, tag.copy());
             }
         }
-
         return this;
     }
-
-    // --
 
     public record Type<T>(String key, BiFunction<ExtraData, String, @Nullable T> getter,
                           TriConsumer<ExtraData, String, T> setter) {
