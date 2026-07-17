@@ -2,7 +2,7 @@ package io.github.mortuusars.exposure.client.gui.toast;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import io.github.mortuusars.exposure.Exposure;
-import net.minecraft.client.gui.GuiGraphicsExtractorExtractor;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.toasts.TutorialToast;
 import net.minecraft.resources.Identifier;
 

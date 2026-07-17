@@ -19,7 +19,7 @@ import io.github.mortuusars.exposure.world.camera.film.properties.Levels;
 import io.github.mortuusars.exposure.world.camera.component.ShutterSpeed;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphicsExtractorExtractor;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.*;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.MultiBufferSource;

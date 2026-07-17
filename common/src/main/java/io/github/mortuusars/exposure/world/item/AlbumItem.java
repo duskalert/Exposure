@@ -14,7 +14,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -56,7 +56,7 @@ public class AlbumItem extends Item {
     }
 
     @Override
-    public @NotNull InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand usedHand) {
+    public @NotNull InteractionResult use(Level level, Player player, InteractionHand usedHand) {
         ItemStack itemStack = player.getItemInHand(usedHand);
 
         if (player instanceof ServerPlayer serverPlayer) {
@@ -65,7 +65,7 @@ public class AlbumItem extends Item {
         }
 
         player.awardStat(Stats.ITEM_USED.get(this));
-        return InteractionResultHolder.sidedSuccess(itemStack, level.isClientSide());
+        return (level.isClientSide() ? InteractionResult.SUCCESS : InteractionResult.CONSUME).heldItemTransformedTo(itemStack);
     }
 
     @Override
@@ -75,7 +75,7 @@ public class AlbumItem extends Item {
         BlockState blockState = level.getBlockState(blockPos);
         if (blockState.is(Blocks.LECTERN))
             return LecternBlock.tryPlaceBook(context.getPlayer(), level, blockPos, blockState,
-                    context.getItemInHand()) ? InteractionResult.sidedSuccess(level.isClientSide) : InteractionResult.PASS;
+                    context.getItemInHand()) ? InteractionResult.SUCCESS : InteractionResult.PASS;
         return InteractionResult.PASS;
     }
 

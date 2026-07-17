@@ -46,7 +46,6 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -302,7 +301,7 @@ public class CameraItem extends Item {
         holder.asHolderEntity().gameEvent(GameEvent.ITEM_INTERACT_FINISH);
     }
 
-    public @NotNull InteractionResultHolder<ItemStack> activateInHand(Player player, ItemStack stack, @NotNull InteractionHand hand) {
+    public @NotNull InteractionResult activateInHand(Player player, ItemStack stack, @NotNull InteractionHand hand) {
         player.setActiveExposureCamera(new CameraInHand(player, getOrCreateId(stack), hand));
         if (player.level().isClientSide) {
             Minecrft.releaseUseButton(); // Releasing use key to not take a shot immediately, if right click is still held.
@@ -310,7 +309,7 @@ public class CameraItem extends Item {
         return activate(player, stack);
     }
 
-    public @NotNull InteractionResultHolder<ItemStack> activateOnStand(Player player, ItemStack stack, CameraStandEntity cameraStand) {
+    public @NotNull InteractionResult activateOnStand(Player player, ItemStack stack, CameraStandEntity cameraStand) {
         player.setActiveExposureCamera(new CameraOnStand(player, cameraStand, getOrCreateId(stack)));
         if (player.level().isClientSide) {
             Minecrft.releaseUseButton(); // Releasing use key to not take a shot immediately, if right click is still held.
@@ -318,20 +317,20 @@ public class CameraItem extends Item {
         return activate(player, stack);
     }
 
-    public @NotNull InteractionResultHolder<ItemStack> activate(Entity entity, ItemStack stack) {
+    public @NotNull InteractionResult activate(Entity entity, ItemStack stack) {
         setActive(stack, true);
         setDisassembled(stack, false);
         Sound.play(entity, getViewfinderOpenSound(), entity.getSoundSource(), 0.35f, 0.9f, 0.2f);
         entity.gameEvent(GameEvent.EQUIP);
-        return InteractionResultHolder.consume(stack);
+        return InteractionResult.CONSUME.heldItemTransformedTo(stack);
     }
 
-    public @NotNull InteractionResultHolder<ItemStack> deactivate(Entity entity, ItemStack stack) {
+    public @NotNull InteractionResult deactivate(Entity entity, ItemStack stack) {
         setActive(stack, false);
         CameraSettings.SELFIE_MODE.set(stack, false);
         Sound.play(entity, getViewfinderCloseSound(), entity.getSoundSource(), 0.35f, 0.9f, 0.2f);
         entity.gameEvent(GameEvent.EQUIP);
-        return InteractionResultHolder.consume(stack);
+        return InteractionResult.CONSUME.heldItemTransformedTo(stack);
     }
 
     public int calculateCooldownAfterShot(ItemStack stack, CaptureParameters captureParameters) {
@@ -480,19 +479,19 @@ public class CameraItem extends Item {
         return InteractionResult.PASS;
     }
 
-    public InteractionResultHolder<ItemStack> openCameraAttachments(@NotNull Player player, ItemStack stack, boolean openedFromGUI) {
+    public InteractionResult openCameraAttachments(@NotNull Player player, ItemStack stack, boolean openedFromGUI) {
         Preconditions.checkArgument(stack.getItem() instanceof CameraItem, "%s is not a CameraItem.", stack);
 
         int cameraSlot = getMatchingSlotInInventory(player.getInventory(), stack);
         if (cameraSlot < 0) {
             Exposure.LOGGER.error("Cannot open camera attachments: slot index is not found for item '{}'.", stack);
-            return InteractionResultHolder.fail(stack);
+            return InteractionResult.FAIL;
         }
 
         return openCameraAttachments(player, cameraSlot, openedFromGUI);
     }
 
-    public InteractionResultHolder<ItemStack> openCameraAttachments(@NotNull Player player, int slotIndex, boolean openedFromGUI) {
+    public InteractionResult openCameraAttachments(@NotNull Player player, int slotIndex, boolean openedFromGUI) {
         Preconditions.checkArgument(slotIndex >= 0,
                 "slotIndex '%s' is invalid. Should be larger than 0", slotIndex);
         ItemStack stack = player.getInventory().getItem(slotIndex);
@@ -502,7 +501,7 @@ public class CameraItem extends Item {
         if (getShutter().isOpen(stack)) {
             player.displayClientMessage(Component.translatable("item.exposure.camera.camera_attachments.fail.shutter_open")
                     .withStyle(ChatFormatting.RED), true);
-            return InteractionResultHolder.fail(stack);
+            return InteractionResult.FAIL;
         }
 
         getOrCreateId(stack);
@@ -532,7 +531,7 @@ public class CameraItem extends Item {
         setDisassembled(stack, true);
         Sound.play(player, Exposure.SoundEvents.CAMERA_GENERIC_CLICK.get(), SoundSource.PLAYERS, 0.9f, 0.9f, 0.2f);
 
-        return InteractionResultHolder.success(stack);
+        return InteractionResult.SUCCESS.heldItemTransformedTo(stack);
     }
 
     // --
@@ -616,13 +615,13 @@ public class CameraItem extends Item {
     }
 
     @Override
-    public @NotNull InteractionResultHolder<ItemStack> use(@NotNull Level level, @NotNull Player player, @NotNull InteractionHand hand) {
+    public @NotNull InteractionResult use(@NotNull Level level, @NotNull Player player, @NotNull InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
 
         if (hand == InteractionHand.MAIN_HAND
                 && player.getOffhandItem().getItem() instanceof CameraItem offhandCameraItem
                 && offhandCameraItem.isActive(player.getOffhandItem())) {
-            return InteractionResultHolder.pass(stack);
+            return InteractionResult.PASS;
         }
 
         if (!isActive(stack)) {
@@ -664,21 +663,21 @@ public class CameraItem extends Item {
         return 0;
     }
 
-    public @NotNull InteractionResultHolder<ItemStack> release(CameraHolder holder, ItemStack stack) {
+    public @NotNull InteractionResult release(CameraHolder holder, ItemStack stack) {
         Entity entity = holder.asHolderEntity();
         Level level = entity.level();
 
         Sound.playSided(entity, getReleaseButtonSound(), entity.getSoundSource(), 0.3f, 1f, 0.1f);
 
         if (level.isClientSide || !canTakePhoto(holder, stack)) {
-            return InteractionResultHolder.consume(stack);
+            return InteractionResult.CONSUME.heldItemTransformedTo(stack);
         }
 
         if (getTimer().getEndTick(stack) != level.getGameTime()) {
             SelfTimer selfTimer = CameraSettings.SELF_TIMER.getOrDefault(stack);
             if (selfTimer != SelfTimer.OFF) {
                 getTimer().set(holder, stack, selfTimer.getTicks());
-                return InteractionResultHolder.consume(stack);
+                return InteractionResult.CONSUME.heldItemTransformedTo(stack);
             }
         }
 
@@ -686,7 +685,7 @@ public class CameraItem extends Item {
                 player -> takePhoto(holder, player, stack),
                 () -> Exposure.LOGGER.error("Cannot start capture: photographer '{}' does not have valid executing player.", holder));
 
-        return InteractionResultHolder.consume(stack);
+        return InteractionResult.CONSUME.heldItemTransformedTo(stack);
     }
 
     protected void takePhoto(CameraHolder holder, ServerPlayer executingPlayer, ItemStack stack) {

@@ -3,7 +3,7 @@ package io.github.mortuusars.exposure.mixin.client;
 import io.github.mortuusars.exposure.PlatformHelper;
 import io.github.mortuusars.exposure.client.util.bugger.Bugger;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphicsExtractorExtractor;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.DebugScreenOverlay;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
