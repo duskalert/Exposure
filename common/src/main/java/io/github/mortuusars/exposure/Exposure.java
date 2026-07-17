@@ -146,6 +146,16 @@ public class Exposure {
                         .stacksTo(1)
                         .component(DataComponents.CAMERA_ACTIVE, false)));
 
+        // Camera part items (used for rendering attachments, not obtainable in survival)
+        public static final Supplier<Item> CAMERA_FLASH = Register.item("camera_flash",
+                () -> new Item(new Item.Properties().stacksTo(1)));
+        public static final Supplier<Item> CAMERA_LENS = Register.item("camera_lens",
+                () -> new Item(new Item.Properties().stacksTo(1)));
+        public static final Supplier<Item> CAMERA_VIEWFINDER = Register.item("camera_viewfinder",
+                () -> new Item(new Item.Properties().stacksTo(1)));
+        public static final Supplier<Item> CAMERA_SELFIE_STICK = Register.item("camera_selfie_stick",
+                () -> new Item(new Item.Properties().stacksTo(1)));
+
         public static final Supplier<FilmRollItem> BLACK_AND_WHITE_FILM = Register.item("black_and_white_film",
                 () -> new FilmRollItem(ExposureType.BLACK_AND_WHITE, FilmRollItem.BAR_BLACK_AND_WHITE,
                         new Item.Properties()

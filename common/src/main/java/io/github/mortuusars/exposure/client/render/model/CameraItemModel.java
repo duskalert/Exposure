@@ -13,8 +13,6 @@ import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 
 public class CameraItemModel implements ItemModel {
-    private static boolean resolving = false;
-
     private final ItemModel baseModel;
 
     public CameraItemModel(ItemModel baseModel) {
@@ -24,31 +22,34 @@ public class CameraItemModel implements ItemModel {
     @Override
     public void update(ItemStackRenderState state, ItemStack stack, ItemModelResolver resolver,
                        ItemDisplayContext displayContext, ClientLevel level, ItemOwner owner, int seed) {
-        // Render base camera model
         baseModel.update(state, stack, resolver, displayContext, level, owner, seed);
 
-        if (resolving) return;
         if (!(stack.getItem() instanceof CameraItem camera)) return;
         if (displayContext == ItemDisplayContext.GUI) return;
 
-        resolving = true;
-        try {
-            LivingEntity entity = owner instanceof LivingEntity le ? le : null;
-            boolean isActive = camera.isActive(stack);
-            boolean isSelfie = camera.isInSelfieMode(stack);
+        boolean isActive = camera.isActive(stack);
+        boolean isSelfie = camera.isInSelfieMode(stack);
 
-            if (isSelfie) renderPart(state, resolver, Exposure.Items.CAMERA.get().getDefaultInstance(), displayContext, entity);
-            if (isActive) renderPart(state, resolver, Exposure.Items.CAMERA.get().getDefaultInstance(), displayContext, entity);
-            if (Attachment.FLASH.isPresent(stack)) renderPart(state, resolver, Exposure.Items.CAMERA.get().getDefaultInstance(), displayContext, entity);
-            if (Attachment.LENS.isPresent(stack)) renderPart(state, resolver, Exposure.Items.CAMERA.get().getDefaultInstance(), displayContext, entity);
-        } finally {
-            resolving = false;
+        LivingEntity entity = owner instanceof LivingEntity le ? le : null;
+
+        if (isSelfie) {
+            var layer = state.newLayer();
+            resolver.updateForLiving(layer, new ItemStack(Exposure.Items.CAMERA_SELFIE_STICK.get()), displayContext, entity);
         }
-    }
 
-    private void renderPart(ItemStackRenderState state, ItemModelResolver resolver, ItemStack partStack,
-                            ItemDisplayContext displayContext, LivingEntity entity) {
-        var layer = state.newLayer();
-        resolver.updateForLiving(layer, partStack, displayContext, entity);
+        if (isActive) {
+            var layer = state.newLayer();
+            resolver.updateForLiving(layer, new ItemStack(Exposure.Items.CAMERA_VIEWFINDER.get()), displayContext, entity);
+        }
+
+        if (Attachment.FLASH.isPresent(stack)) {
+            var layer = state.newLayer();
+            resolver.updateForLiving(layer, new ItemStack(Exposure.Items.CAMERA_FLASH.get()), displayContext, entity);
+        }
+
+        if (Attachment.LENS.isPresent(stack)) {
+            var layer = state.newLayer();
+            resolver.updateForLiving(layer, new ItemStack(Exposure.Items.CAMERA_LENS.get()), displayContext, entity);
+        }
     }
 }
