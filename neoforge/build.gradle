@@ -104,15 +104,10 @@ neoForge {
 
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
-    // Workaround JDK 25 ZIP detection false positive on Windows
+    // Workaround JDK 25 ZIP detection false positive: disable ZIP filesystem provider
     options.forkOptions.jvmArgs += ['--add-opens', 'java.base/java.lang=ALL-UNNAMED',
-                                     '--add-opens', 'java.base/java.util=ALL-UNNAMED']
-}
-// Alternative: use file manager to disable ZIP detection
-compileJava.doFirst {
-    // Force locale to US to prevent encoding issues
-    System.setProperty('user.language', 'en')
-    System.setProperty('user.country', 'US')
+                                     '--add-opens', 'java.base/java.util=ALL-UNNAMED',
+                                     '-Djava.nio.file.spi.DefaultFileSystemProvider=']
 }
 
 java {
