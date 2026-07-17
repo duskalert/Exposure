@@ -348,7 +348,7 @@ public class PhotographScreen extends Screen {
         ExposureClient.exposureStore().getOrRequest(id).getData().ifPresent(exposure -> {
             savedExposureIds.add(filename);
 
-            CompletableFuture.runAsync(() -> new ImageExporter(exposure, filename)
+            CompletableFuture.runAsync(() -> new ImageExporter(exposure)
                             .modify(ImageEffect.chain(
                                     photographStyle.modifier(),
                                     ImageEffect.Resize.multiplier(Config.Client.EXPORT_SIZE_MULTIPLIER.get())

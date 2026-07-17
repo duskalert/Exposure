@@ -40,8 +40,8 @@ public class CameraStandRedstoneControl {
     }
 
     public void load(CompoundTag tag) {
-        hasSignal = tag.getBoolean("HasRedstoneSignal");
-        releaseDelay = tag.getInt("RedstoneReleaseDelay");
+        hasSignal = tag.getBoolean("HasRedstoneSignal").orElse(false);
+        releaseDelay = tag.getIntOr("RedstoneReleaseDelay", 0);
     }
 
     public void save(CompoundTag tag) {

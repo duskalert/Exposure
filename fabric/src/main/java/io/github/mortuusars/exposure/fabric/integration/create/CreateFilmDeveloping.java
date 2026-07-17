@@ -77,7 +77,7 @@ public class CreateFilmDeveloping {
 //        if (tag == null || tag.isEmpty())
 //            return fillingSteps.get(0);
 //
-//        int nextStep = tag.getInt(CURRENT_STEP_TAG) + 1;
+//        int nextStep = tag.getIntOr(CURRENT_STEP_TAG, 0) + 1;
 //        if (nextStep > fillingSteps.size())
 //            return null;
 //
@@ -122,7 +122,7 @@ public class CreateFilmDeveloping {
 //    }
 //
 //    public static int getNextStep(ItemStack stack) {
-//        return stack.getTag() != null ? stack.getTag().getInt(CURRENT_STEP_TAG) + 1 : 1;
+//        return stack.getTag() != null ? stack.getTag().getIntOr(CURRENT_STEP_TAG, 0) + 1 : 1;
 //    }
 //
 //    public static void clearCachedData() {

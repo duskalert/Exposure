@@ -130,23 +130,23 @@ public class PhotographFrameEntity extends HangingEntity {
 
     public void readAdditionalSaveData(@NotNull CompoundTag tag) {
         super.readAdditionalSaveData(tag);
-        CompoundTag frameItemTag = tag.getCompound("FrameItem");
+        CompoundTag frameItemTag = tag.getCompoundOrEmpty("FrameItem");
         if (!frameItemTag.isEmpty()) {
             ItemStack stack = ItemStack.parse(registryAccess(), frameItemTag).orElse(new ItemStack(getBaseFrameItem()));
             setFrameItem(stack);
         }
 
-        CompoundTag itemTag = tag.getCompound("Item");
+        CompoundTag itemTag = tag.getCompoundOrEmpty("Item");
         if (!itemTag.isEmpty()) {
             ItemStack itemstack = ItemStack.parse(registryAccess(), itemTag).orElse(ItemStack.EMPTY);
             setItem(itemstack);
-            setGlowing(tag.getBoolean("IsGlowing")); // "Glowing" is used in vanilla
+            setGlowing(tag.getBoolean("IsGlowing").orElse(false)); // "Glowing" is used in vanilla
             setItemRotation(tag.getByte("ItemRotation"));
         }
 
         setSize(tag.getByte("Size"));
         setDirection(Direction.from3DDataValue(tag.getByte("Facing")));
-        setInvisible(tag.getBoolean("Invisible"));
+        setInvisible(tag.getBoolean("Invisible").orElse(false));
     }
 
     @Override
@@ -381,7 +381,7 @@ public class PhotographFrameEntity extends HangingEntity {
         ItemStack itemStack = getItem();
         setItem(ItemStack.EMPTY);
 
-        if (!level().getGameRules().getBoolean(GameRules.RULE_DOENTITYDROPS)) return;
+        if (!level().getGameRules().getBoolean(GameRules.RULE_DOENTITYDROPS).orElse(false)) return;
         if (entity instanceof Player player && player.isCreative()) return;
 
         // Prevent item phasing through the block when placed on the ceiling (pointing DOWN)

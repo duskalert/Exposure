@@ -30,21 +30,21 @@ public class PaletteCommand {
                                         .then(argument("file_path", StringArgumentType.string())
                                                 .executes(context -> exportAsJson(context.getSource(),
                                                         ColorPaletteArgument.getId(context, "palette"),
-                                                        StringArgumentType.getString(context, "file_path")))))
+                                                        StringArgumentType.getStringOr(context, "file_path", "")))))
                                 .then(literal("png")
                                         .then(argument("file_path", StringArgumentType.string())
                                                 .executes(context -> exportAsPng(context.getSource(),
                                                         ColorPaletteArgument.getId(context, "palette"),
-                                                        StringArgumentType.getString(context, "file_path")))))))
+                                                        StringArgumentType.getStringOr(context, "file_path", "")))))))
                 .then(literal("convert")
                         .then(literal("json_to_png")
                                 .then(argument("file_path", StringArgumentType.string())
                                         .executes(context -> convertJsonToPng(context.getSource(),
-                                                StringArgumentType.getString(context, "file_path")))))
+                                                StringArgumentType.getStringOr(context, "file_path", "")))))
                         .then(literal("png_to_json")
                                 .then(argument("file_path", StringArgumentType.string())
                                         .executes(context -> convertPngToJson(context.getSource(),
-                                                StringArgumentType.getString(context, "file_path"))))));
+                                                StringArgumentType.getStringOr(context, "file_path", ""))))));
     }
 
     private static int exportAsJson(CommandSourceStack source, Identifier paletteId, String filePath) {

@@ -40,7 +40,7 @@ public class EntitiesInFrame {
             if (!(entity instanceof LivingEntity livingEntity)) continue;
             if (!livingEntity.isAlive()) continue;
             if (!frustum.contains(entity.getEyePosition())) continue; // Not in frame
-            if (calculateVisibleDistance(pov.pos(), entity) > focalLength) continue; // Too far to be in frame
+            if (calculateVisibleDistance(pov.pos()) > focalLength) continue; // Too far to be in frame
             if (!hasLineOfSight(pov.pos(), entity)) continue; // Not visible
 
             entitiesInFrame.add(livingEntity);

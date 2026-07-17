@@ -34,7 +34,7 @@ public record ExtraDataPredicate(ExtraData data) {
             if (otherTag.size() < thisTag.size()) {
                 return false;
             }
-            for (String key : thisTag.getAllKeys()) {
+            for (String key : thisTag.keySet()) {
                 Tag tag2 = thisTag.get(key);
                 if (!NbtUtils.compareNbt(tag2, otherTag.get(key), true)) {
                     return false;

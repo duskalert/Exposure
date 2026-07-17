@@ -44,17 +44,17 @@ public class ExportCommand {
                 .then(argument("id", StringArgumentType.string())
                         .suggests(new ExposureIdSuggestionProvider())
                         .executes(context -> exportExposures(context.getSource(),
-                                List.of(StringArgumentType.getString(context, "id")),
+                                List.of(StringArgumentType.getStringOr(context, "id", "")),
                                 ExportSize.X1,
                                 ExportLook.REGULAR))
                         .then(argument("size", new SizeMultiplierArgument())
                                 .executes(context -> exportExposures(context.getSource(),
-                                        List.of(StringArgumentType.getString(context, "id")),
+                                        List.of(StringArgumentType.getStringOr(context, "id", "")),
                                         SizeMultiplierArgument.getSize(context, "size"),
                                         ExportLook.REGULAR))
                                 .then(argument("look", new ExposureLookArgument())
                                         .executes(context -> exportExposures(context.getSource(),
-                                                List.of(StringArgumentType.getString(context, "id")),
+                                                List.of(StringArgumentType.getStringOr(context, "id", "")),
                                                 SizeMultiplierArgument.getSize(context, "size"),
                                                 ExposureLookArgument.getLook(context, "look"))))));
     }

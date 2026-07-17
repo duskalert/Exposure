@@ -120,16 +120,16 @@ public class CameraStandEntity extends Entity implements CameraHolder {
         redstoneControl.save(tag);
 
         if (!ownerPlayerId.equals(Util.NIL_UUID)) {
-            tag.putUUID("Owner", ownerPlayerId);
+            tag.putUuid("Owner", ownerPlayerId);
         }
     }
 
     @Override
     protected void readAdditionalSaveData(CompoundTag tag) {
-        setCooldownTime(tag.getInt("CooldownTime"));
-        setCooldown(tag.getInt("Cooldown"));
-        setMalfunctioned(tag.getBoolean("Malfunctioned"));
-        setCamera(ItemStack.parseOptional(registryAccess(), tag.getCompound("Camera")));
+        setCooldownTime(tag.getIntOr("CooldownTime", 0));
+        setCooldown(tag.getIntOr("Cooldown", 0));
+        setMalfunctioned(tag.getBoolean("Malfunctioned").orElse(false));
+        setCamera(ItemStack.parseOptional(registryAccess(), tag.getCompoundOrEmpty("Camera")));
 
         redstoneControl.load(tag);
 
@@ -687,7 +687,7 @@ public class CameraStandEntity extends Entity implements CameraHolder {
 
     public void destroy(Item dropItem) {
         this.kill();
-        if (this.level().getGameRules().getBoolean(GameRules.RULE_DOENTITYDROPS)) {
+        if (this.level().getGameRules().getBoolean(GameRules.RULE_DOENTITYDROPS).orElse(false)) {
             ItemStack itemStack = new ItemStack(dropItem);
             itemStack.set(DataComponents.CUSTOM_NAME, this.getCustomName());
             this.spawnAtLocation(itemStack, 0.5f);

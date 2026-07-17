@@ -28,14 +28,14 @@
 //    public void appendTooltip(ITooltip tooltip, BlockAccessor accessor, IPluginConfig iPluginConfig) {
 //        CompoundTag tag = accessor.getServerData();
 //
-//        if (tag.getBoolean("Empty"))
+//        if (tag.getBoolean("Empty").orElse(false))
 //            return;
 //
 //        IElementHelper helper = IElementHelper.get();
 //
 //        tooltip.add(helper.spacer(0, 0));
 //
-//        ItemStack film = ItemStack.parseOptional(accessor.getLevel().registryAccess(), tag.getCompound("Film"));
+//        ItemStack film = ItemStack.parseOptional(accessor.getLevel().registryAccess(), tag.getCompoundOrEmpty("Film"));
 //        if (!film.isEmpty()) {
 //            tooltip.append(helper.item(film));
 //            tooltip.append(helper.text(Component.literal("|").withStyle(ChatFormatting.GRAY))
@@ -44,7 +44,7 @@
 //                    .message(null));
 //        }
 //
-//        ItemStack paper = ItemStack.parseOptional(accessor.getLevel().registryAccess(), tag.getCompound("Paper"));
+//        ItemStack paper = ItemStack.parseOptional(accessor.getLevel().registryAccess(), tag.getCompoundOrEmpty("Paper"));
 //        if (!paper.isEmpty()) {
 //            tooltip.append(helper.item(paper));
 //            tooltip.append(helper.text(Component.literal("+").withStyle(ChatFormatting.GRAY))
@@ -54,17 +54,17 @@
 //        }
 //
 //        for (String dye : new String[] {"Cyan", "Yellow", "Magenta", "Black"}) {
-//            ItemStack stack = ItemStack.parseOptional(accessor.getLevel().registryAccess(), tag.getCompound(dye));
+//            ItemStack stack = ItemStack.parseOptional(accessor.getLevel().registryAccess(), tag.getCompoundOrEmpty(dye));
 //            if (!stack.isEmpty())
 //                tooltip.append(helper.item(stack));
 //        }
 //
-//        tooltip.append(helper.progress(tag.getFloat("Progress")));
+//        tooltip.append(helper.progress(tag.getFloatOr("Progress", 0.0f)));
 //
-//        tooltip.append(helper.item(ItemStack.parseOptional(accessor.getLevel().registryAccess(), tag.getCompound("Result"))));
+//        tooltip.append(helper.item(ItemStack.parseOptional(accessor.getLevel().registryAccess(), tag.getCompoundOrEmpty("Result"))));
 //
 //
-//        PrintingMode process = PrintingMode.fromStringOrDefault(tag.getString("Process"), PrintingMode.REGULAR);
+//        PrintingMode process = PrintingMode.fromStringOrDefault(tag.getStringOr("Process", ""), PrintingMode.REGULAR);
 //        if (process != PrintingMode.REGULAR)
 //            tooltip.add(helper.text(Component.translatable("gui.exposure.lightroom.printing_mode." + process.getSerializedName())));
 //

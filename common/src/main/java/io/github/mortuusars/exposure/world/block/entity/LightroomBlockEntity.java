@@ -608,12 +608,12 @@ public class LightroomBlockEntity extends BaseContainerBlockEntity implements Wo
 
         // Backwards compatibility:
         if (tag.contains("Inventory", Tag.TAG_COMPOUND)) {
-            CompoundTag inventory = tag.getCompound("Inventory");
+            CompoundTag inventory = tag.getCompoundOrEmpty("Inventory");
             ListTag itemsList = inventory.getList("Items", Tag.TAG_COMPOUND);
 
             for (int i = 0; i < itemsList.size(); i++) {
-                CompoundTag itemTag = itemsList.getCompound(i);
-                int slot = itemTag.getInt("Slot");
+                CompoundTag itemTag = itemsList.getCompoundOrEmpty(i);
+                int slot = itemTag.getIntOr("Slot", 0);
 
                 if (slot >= 0 && slot < items.size()) {
                     ItemStack.parse(registries, itemTag).ifPresent(stack -> items.set(slot, stack));
@@ -621,12 +621,12 @@ public class LightroomBlockEntity extends BaseContainerBlockEntity implements Wo
             }
         }
 
-        this.setSelectedFrameIndex(tag.getInt("SelectedFrame"));
-        this.progress = tag.getInt("Progress");
-        this.printTime = tag.getInt("PrintTime");
-        this.storedExperience = tag.getInt("PrintedPhotographsCount");
-        this.advanceFrame = tag.getBoolean("AdvanceFrame");
-        this.printingMode = PrintingMode.fromStringOrDefault(tag.getString("PrintMode"), PrintingMode.REGULAR);
+        this.setSelectedFrameIndex(tag.getIntOr("SelectedFrame", 0));
+        this.progress = tag.getIntOr("Progress", 0);
+        this.printTime = tag.getIntOr("PrintTime", 0);
+        this.storedExperience = tag.getIntOr("PrintedPhotographsCount", 0);
+        this.advanceFrame = tag.getBoolean("AdvanceFrame").orElse(false);
+        this.printingMode = PrintingMode.fromStringOrDefault(tag.getStringOr("PrintMode", ""), PrintingMode.REGULAR);
         if (tag.contains("LastPlayerId", Tag.TAG_INT_ARRAY)) {
             this.lastPlayerId = tag.getUUID("LastPlayerId");
         }
@@ -649,7 +649,7 @@ public class LightroomBlockEntity extends BaseContainerBlockEntity implements Wo
         if (printingMode != PrintingMode.REGULAR)
             tag.putString("PrintMode", printingMode.getSerializedName());
         if (!lastPlayerId.equals(Util.NIL_UUID))
-            tag.putUUID("LastPlayerId", lastPlayerId);
+            tag.putUuid("LastPlayerId", lastPlayerId);
     }
 
     protected @NotNull NonNullList<ItemStack> getItems() {
