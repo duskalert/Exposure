@@ -50,9 +50,9 @@ dependencies {
     compileOnly("mezz.jei:jei-${minecraft_version}-common-api:${jei_version}")
     compileOnly("mezz.jei:jei-${minecraft_version}-neoforge-api:${jei_version}")
 
-    // KubeJS (TODO: find correct version for 26.1.2)
-//    compileOnly("dev.latvian.mods:rhino:$rhino_version") { transitive(false) }
-//    compileOnly("dev.latvian.mods:kubejs-neoforge:$kubejs_version")
+    // KubeJS
+    compileOnly("dev.latvian.mods:rhino:$rhino_version") { transitive(false) }
+    compileOnly("dev.latvian.mods:kubejs-neoforge:$kubejs_version")
 }
 
 sourceSets {
