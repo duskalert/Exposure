@@ -1,0 +1,16 @@
+{
+  "model": {
+    "type": "minecraft:select",
+    "property": "exposure:camera_mode",
+    "cases": [
+      { "when": "gui", "model": { "type": "minecraft:model", "model": "exposure:item/camera_gui" } },
+      { "when": "active", "model": { "type": "minecraft:model", "model": "exposure:item/camera_active" } },
+      { "when": "selfie", "model": { "type": "minecraft:model", "model": "exposure:item/camera_selfie" } },
+      { "when": "gold_gui", "model": { "type": "minecraft:model", "model": "exposure:item/camera_gold_gui" } },
+      { "when": "gold_active", "model": { "type": "minecraft:model", "model": "exposure:item/camera_gold_active" } },
+      { "when": "gold_selfie", "model": { "type": "minecraft:model", "model": "exposure:item/camera_gold_selfie" } },
+      { "when": "gold_default", "model": { "type": "minecraft:model", "model": "exposure:item/camera_gold" } }
+    ],
+    "fallback": { "type": "minecraft:model", "model": "exposure:item/camera" }
+  }
+}
