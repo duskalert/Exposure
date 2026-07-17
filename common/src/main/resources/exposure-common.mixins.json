@@ -17,7 +17,7 @@
     "client.HumanoidModelMixin",
     "client.ItemFrameRendererMixin",
     "client.ItemInHandRendererMixin",
-    "client.ItemRendererMixin",
+//    "client.ItemRendererMixin",
     "client.KeyBindTooltipMixin",
     "client.KeyboardHandlerMixin",
     "client.KeyMappingMixin",
