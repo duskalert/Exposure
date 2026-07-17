@@ -8,7 +8,7 @@ import io.github.mortuusars.exposure.client.util.Minecrft;
 import io.github.mortuusars.exposure.client.util.Shader;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.PostChain;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -22,7 +22,7 @@ public class CaptureShader {
         return shader != null;
     }
 
-    public static void apply(ResourceLocation shaderLocation) {
+    public static void apply(Identifier shaderLocation) {
         if (shader != null) {
             if (shader.getName().equals(shaderLocation.toString())) {
                 return;
@@ -80,7 +80,7 @@ public class CaptureShader {
      */
     public static void process(@NotNull PostChain shader, @NotNull RenderTarget renderTarget) {
         try {
-            ResourceLocation shaderLocation = ResourceLocation.parse(shader.getName());
+            Identifier shaderLocation = Identifier.parse(shader.getName());
 
             PostChain tempShader = new PostChain(Minecrft.get().getTextureManager(), Minecrft.get().getResourceManager(),
                     renderTarget, shaderLocation);

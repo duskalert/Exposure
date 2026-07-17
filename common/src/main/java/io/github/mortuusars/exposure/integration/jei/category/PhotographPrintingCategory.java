@@ -18,7 +18,7 @@ import mezz.jei.api.recipe.category.IRecipeCategory;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class PhotographPrintingCategory implements IRecipeCategory<PhotographPrintingJeiRecipe> {
-    private static final ResourceLocation TEXTURE = Exposure.resource("textures/gui/jei/photograph_printing.png");
+    private static final Identifier TEXTURE = Exposure.resource("textures/gui/jei/photograph_printing.png");
     private final Component title;
     private final IDrawable background;
     private final IDrawable icon;

@@ -10,7 +10,7 @@ import io.github.mortuusars.exposure.data.Filters;
 import io.github.mortuusars.exposure.world.item.camera.Attachment;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.PostChain;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
@@ -32,7 +32,7 @@ public class ViewfinderShader implements AutoCloseable {
         this.update();
     }
 
-    public void apply(ResourceLocation shaderLocation) {
+    public void apply(Identifier shaderLocation) {
         if (shader != null) {
             if (shader.getName().equals(shaderLocation.toString())) {
                 return;

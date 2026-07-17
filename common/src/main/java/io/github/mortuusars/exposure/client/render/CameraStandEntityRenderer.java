@@ -15,14 +15,14 @@ import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.ModelResourceLocation;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 public class CameraStandEntityRenderer <T extends CameraStandEntity> extends EntityRenderer<T> {
-    public static final ResourceLocation TEXTURE_LOCATION = ResourceLocation.withDefaultNamespace("textures/item/camera.png");
+    public static final Identifier TEXTURE_LOCATION = Identifier.withDefaultNamespace("textures/item/camera.png");
     public static final float MOUNT_SCALE = 0.9f;
 
     protected final BlockRenderDispatcher blockRenderer;
@@ -33,7 +33,7 @@ public class CameraStandEntityRenderer <T extends CameraStandEntity> extends Ent
     }
 
     @Override
-    public @NotNull ResourceLocation getTextureLocation(T entity) {
+    public @NotNull Identifier getTextureLocation(T entity) {
         return TEXTURE_LOCATION;
     }
 

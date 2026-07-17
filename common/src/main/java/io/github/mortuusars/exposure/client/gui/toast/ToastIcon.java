@@ -4,7 +4,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import io.github.mortuusars.exposure.Exposure;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.toasts.TutorialToast;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 public interface ToastIcon {
     ToastIcon MOVEMENT_KEYS = new TutorialIcon(TutorialToast.Icons.MOVEMENT_KEYS);
@@ -21,9 +21,9 @@ public interface ToastIcon {
     void render(GuiGraphics guiGraphics, int x, int y);
 
     class SpriteIcon implements ToastIcon {
-        protected final ResourceLocation sprite;
+        protected final Identifier sprite;
 
-        public SpriteIcon(ResourceLocation sprite) {
+        public SpriteIcon(Identifier sprite) {
             this.sprite = sprite;
         }
 

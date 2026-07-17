@@ -24,7 +24,7 @@ import io.github.mortuusars.exposure.world.item.StackedPhotographsItem;
 import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.core.component.DataComponents;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -158,16 +158,16 @@ public class ExposureClient {
     }
 
     public static class Textures {
-        public static final ResourceLocation EMPTY = Exposure.resource("textures/empty.png");
+        public static final Identifier EMPTY = Exposure.resource("textures/empty.png");
 
         public static class Photograph {
-            public static final ResourceLocation REGULAR_PAPER = Exposure.resource("textures/photograph/photograph.png");
-            public static final ResourceLocation REGULAR_ALBUM_PAPER = Exposure.resource("textures/photograph/photograph_album.png");
+            public static final Identifier REGULAR_PAPER = Exposure.resource("textures/photograph/photograph.png");
+            public static final Identifier REGULAR_ALBUM_PAPER = Exposure.resource("textures/photograph/photograph_album.png");
 
-            public static final ResourceLocation AGED_PAPER = Exposure.resource("textures/photograph/aged_photograph.png");
-            public static final ResourceLocation AGED_OVERLAY = Exposure.resource("textures/photograph/aged_photograph_overlay.png");
-            public static final ResourceLocation AGED_ALBUM_PAPER = Exposure.resource("textures/photograph/aged_photograph_album.png");
-            public static final ResourceLocation AGED_ALBUM_OVERLAY = Exposure.resource("textures/photograph/aged_photograph_album_overlay.png");
+            public static final Identifier AGED_PAPER = Exposure.resource("textures/photograph/aged_photograph.png");
+            public static final Identifier AGED_OVERLAY = Exposure.resource("textures/photograph/aged_photograph_overlay.png");
+            public static final Identifier AGED_ALBUM_PAPER = Exposure.resource("textures/photograph/aged_photograph_album.png");
+            public static final Identifier AGED_ALBUM_OVERLAY = Exposure.resource("textures/photograph/aged_photograph_album_overlay.png");
         }
     }
 }

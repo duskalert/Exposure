@@ -11,7 +11,7 @@ import io.github.mortuusars.exposure.data.ColorPalette;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.Nullable;
 
 import javax.imageio.ImageIO;
@@ -47,7 +47,7 @@ public class PaletteCommand {
                                                 StringArgumentType.getString(context, "file_path"))))));
     }
 
-    private static int exportAsJson(CommandSourceStack source, ResourceLocation paletteId, String filePath) {
+    private static int exportAsJson(CommandSourceStack source, Identifier paletteId, String filePath) {
         @Nullable ColorPalette palette = source.registryAccess().registryOrThrow(Exposure.Registries.COLOR_PALETTE).get(paletteId);
         if (palette == null) {
             source.sendFailure(Component.literal(paletteId + " is not found."));
@@ -69,7 +69,7 @@ public class PaletteCommand {
         return 0;
     }
 
-    private static int exportAsPng(CommandSourceStack source, ResourceLocation paletteId, String filePath) {
+    private static int exportAsPng(CommandSourceStack source, Identifier paletteId, String filePath) {
         @Nullable ColorPalette palette = source.registryAccess().registryOrThrow(Exposure.Registries.COLOR_PALETTE).get(paletteId);
         if (palette == null) {
             source.sendFailure(Component.literal(paletteId + " is not found."));

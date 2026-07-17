@@ -28,7 +28,7 @@ import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.core.Direction;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.EntityAttachment;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.item.ItemDisplayContext;
@@ -48,7 +48,7 @@ public class PhotographFrameEntityRenderer<T extends PhotographFrameEntity> exte
     }
 
     @Override
-    public @NotNull ResourceLocation getTextureLocation(@NotNull T pEntity) {
+    public @NotNull Identifier getTextureLocation(@NotNull T pEntity) {
         return InventoryMenu.BLOCK_ATLAS;
     }
 

@@ -20,7 +20,7 @@ import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.List;
@@ -114,11 +114,11 @@ public class PhotographSlotWidget extends AbstractWidget {
         }
 
         WidgetSprites sprites = hasPhotograph ? SPRITES : EMPTY_SPRITES;
-        ResourceLocation resourceLocation = sprites.get(isActive(), isHoveredOrFocused());
+        Identifier Identifier = sprites.get(isActive(), isHoveredOrFocused());
         if (!editable && !hasPhotograph) {
-            resourceLocation = sprites.get(isActive(), false);
+            Identifier = sprites.get(isActive(), false);
         }
-        guiGraphics.blitSprite(resourceLocation, getX(), getY(), width, height);
+        guiGraphics.blitSprite(Identifier, getX(), getY(), width, height);
     }
 
     public void renderTooltip(GuiGraphics guiGraphics, int mouseX, int mouseY) {

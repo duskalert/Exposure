@@ -46,8 +46,9 @@ dependencies {
     compileOnly(annotationProcessor("io.github.llamalad7:mixinextras-common:0.5.4"))
     implementation("io.github.llamalad7:mixinextras-neoforge:0.5.4")
 
-    // JEI (TODO: find correct version for 26.1.2)
-//    compileOnly("mezz.jei:jei-${minecraft_version}-neoforge-api:${jei_version}")
+    // JEI
+    compileOnly("mezz.jei:jei-${minecraft_version}-common-api:${jei_version}")
+    compileOnly("mezz.jei:jei-${minecraft_version}-neoforge-api:${jei_version}")
 
     // KubeJS (TODO: find correct version for 26.1.2)
 //    compileOnly("dev.latvian.mods:rhino:$rhino_version") { transitive(false) }

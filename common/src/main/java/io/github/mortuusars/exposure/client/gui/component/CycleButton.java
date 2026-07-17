@@ -14,7 +14,7 @@ import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.client.sounds.SoundManager;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.util.Mth;
 import org.jetbrains.annotations.NotNull;
@@ -147,7 +147,7 @@ public class CycleButton<T> extends Button {
     @Override
     public void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
         @Nullable WidgetSprites sprites = spritesMap.get(getCurrentValue());
-        ResourceLocation spriteLocation = sprites != null
+        Identifier spriteLocation = sprites != null
                 ? sprites.get(isActive(), isHoveredOrFocused())
                 : TextureManager.INTENTIONAL_MISSING_TEXTURE;
         guiGraphics.blitSprite(spriteLocation, getX(), getY(), getWidth(), getHeight());

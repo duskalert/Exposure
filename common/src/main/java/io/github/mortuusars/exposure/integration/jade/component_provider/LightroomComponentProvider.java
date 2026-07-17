@@ -8,7 +8,7 @@ import io.github.mortuusars.exposure.integration.jade.ExposureJadePlugin;
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec2;
 import org.jetbrains.annotations.Nullable;
@@ -98,12 +98,12 @@ public enum LightroomComponentProvider implements IBlockComponentProvider, IServ
     }
 
     @Override
-    public ResourceLocation getUid() {
+    public Identifier getUid() {
         return ExposureJadePlugin.LIGHTROOM;
     }
 
     public static class EmptyItemStackExtensionProvider implements IServerExtensionProvider<ItemStack>, IClientExtensionProvider<ItemStack, ItemView> {
-        public static final ResourceLocation ID = Exposure.resource("empty");
+        public static final Identifier ID = Exposure.resource("empty");
 
         public static final EmptyItemStackExtensionProvider INSTANCE = new EmptyItemStackExtensionProvider();
 
@@ -117,7 +117,7 @@ public enum LightroomComponentProvider implements IBlockComponentProvider, IServ
         }
 
         @Override
-        public ResourceLocation getUid() {
+        public Identifier getUid() {
             return ID;
         }
 

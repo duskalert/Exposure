@@ -2,17 +2,17 @@ package io.github.mortuusars.exposure.client.capture.action;
 
 import io.github.mortuusars.exposure.client.util.Minecrft;
 import net.minecraft.client.renderer.PostChain;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.Nullable;
 
 public class SetPostEffectAction implements CaptureAction {
     @Nullable
-    private ResourceLocation currentEffect;
+    private Identifier currentEffect;
     private boolean effectActive;
 
-    private final ResourceLocation effect;
+    private final Identifier effect;
 
-    public SetPostEffectAction(ResourceLocation effect) {
+    public SetPostEffectAction(Identifier effect) {
         this.effect = effect;
     }
 
@@ -20,7 +20,7 @@ public class SetPostEffectAction implements CaptureAction {
     public void beforeCapture() {
         PostChain currentEffect = Minecrft.get().gameRenderer.currentEffect();
         if (currentEffect != null) {
-            this.currentEffect = ResourceLocation.parse(currentEffect.getName());
+            this.currentEffect = Identifier.parse(currentEffect.getName());
         }
         this.effectActive = Minecrft.get().gameRenderer.effectActive;
 

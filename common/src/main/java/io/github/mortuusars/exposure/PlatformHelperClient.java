@@ -3,7 +3,7 @@ package io.github.mortuusars.exposure;
 import dev.architectury.injectables.annotations.ExpectPlatform;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.ModelResourceLocation;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 public class PlatformHelperClient {
     @ExpectPlatform
