@@ -1,10 +1,4 @@
-plugins {
-    id 'java'
-}
-
-java {
-    toolchain.languageVersion = JavaLanguageVersion.of(25)
-}
-
-// Common module - sources are included in neoforge module via sourceSets
-// The actual build logic is in neoforge/build.gradle
+// Common module - sources are compiled as part of the neoforge module.
+// This file exists only to satisfy Gradle project structure.
+// Do NOT apply the java plugin here - it would cause duplicate compilation
+// without the correct classpath (NeoForge, Minecraft, etc.).
