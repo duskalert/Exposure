@@ -14,21 +14,22 @@
     "client.ExposureLightmapMixin",
     "client.GameRendererMixin",
     "client.GuiMixin",
-    "client.HumanoidModelMixin",
+//    "client.HumanoidModelMixin",
     "client.ItemFrameRendererMixin",
     "client.ItemInHandRendererMixin",
 //    "client.ItemRendererMixin",
+    "client.SelectItemModelPropertiesMixin",
     "client.KeyBindTooltipMixin",
     "client.KeyboardHandlerMixin",
     "client.KeyMappingMixin",
     "client.LocalPlayerMixin",
-    "client.MinecraftMixin",
+//    "client.MinecraftMixin",
     "client.MouseHandlerMixin",
     "client.MultiPlayerGameModeMixin",
-    "compat.easy_anvils.ModAnvilScreenMixin"
+//    "compat.easy_anvils.ModAnvilScreenMixin"
   ],
   "mixins": [
-    "AnvilMenuMixin",
+//    "AnvilMenuMixin",
     "BoatMixin",
     "EntityMixin",
     "LecternBlockEntityAccessor",
@@ -41,7 +42,7 @@
     "ServerEntityMixin",
     "ServerGamePacketListenerMixin",
     "ServerPlayerMixin",
-    "compat.easy_anvils.ModAnvilMenuMixin"
+//    "compat.easy_anvils.ModAnvilMenuMixin"
   ],
   "injectors": {
     "defaultRequire": 1

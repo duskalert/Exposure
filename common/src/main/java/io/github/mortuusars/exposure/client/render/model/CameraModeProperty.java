@@ -8,12 +8,16 @@ import net.minecraft.client.renderer.item.properties.select.SelectItemModelPrope
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
+import org.jetbrains.annotations.Nullable;
 
 public class CameraModeProperty implements SelectItemModelProperty<String> {
-    public static final MapCodec<CameraModeProperty> CODEC = MapCodec.unit(CameraModeProperty::new);
+    public static final MapCodec<CameraModeProperty> CODEC = MapCodec.unit(new CameraModeProperty());
+    public static final SelectItemModelProperty.Type<CameraModeProperty, String> TYPE =
+            SelectItemModelProperty.Type.create(CODEC, Codec.STRING);
 
     @Override
-    public String get(ItemStack stack, ClientLevel level, LivingEntity entity, int seed, ItemDisplayContext displayContext) {
+    public String get(ItemStack stack, @Nullable ClientLevel level, @Nullable LivingEntity entity,
+                      int seed, ItemDisplayContext displayContext) {
         if (!(stack.getItem() instanceof CameraItem camera)) return "default";
 
         boolean isGold = camera.isGold(stack);
@@ -25,7 +29,7 @@ public class CameraModeProperty implements SelectItemModelProperty<String> {
         if (isGui) return prefix + "gui";
         if (isSelfie) return prefix + "selfie";
         if (isActive) return prefix + "active";
-        return "default";
+        return isGold ? "gold_default" : "default";
     }
 
     @Override
@@ -35,6 +39,6 @@ public class CameraModeProperty implements SelectItemModelProperty<String> {
 
     @Override
     public Type<? extends SelectItemModelProperty<String>, String> type() {
-        return CameraModelProperties.CAMERA_MODE;
+        return TYPE;
     }
 }
