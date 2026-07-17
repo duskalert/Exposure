@@ -1033,4 +1033,4 @@ public class CameraItem extends Item {
 
         return -1;
     }
-} 
+}
