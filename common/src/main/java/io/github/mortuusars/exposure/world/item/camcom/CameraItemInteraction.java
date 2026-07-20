@@ -216,6 +216,7 @@ public class CameraItemInteraction {
             if (item.isActive(stack) && !matchesActive) {
                 item.setActive(stack, false);
             }
+        }
     }
 
     // === Delegate methods moved from CameraItem ===
@@ -260,7 +261,7 @@ public class CameraItemInteraction {
         if (captureParameters.getFlash()) return item.getFlash().getCooldown();
         return CameraItem.BASE_COOLDOWN;
     }
-}
+
     public static boolean tick(CameraItem item, CameraHolder holder, ItemStack stack) {
         Level level = holder.asHolderEntity().level();
         if (!(level instanceof ServerLevel serverLevel)) return false;

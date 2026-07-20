@@ -7,13 +7,27 @@ import io.github.mortuusars.exposure.data.Filters;
 import io.github.mortuusars.exposure.data.Lens;
 import io.github.mortuusars.exposure.data.Lenses;
 import io.github.mortuusars.exposure.world.camera.*;
+import io.github.mortuusars.exposure.world.camera.capture.CaptureParameters;
+import io.github.mortuusars.exposure.world.camera.capture.CaptureType;
+import io.github.mortuusars.exposure.world.camera.capture.Projection;
 import io.github.mortuusars.exposure.world.camera.component.FocalRange;
 import io.github.mortuusars.exposure.world.camera.component.ShutterSpeed;
+import io.github.mortuusars.exposure.world.camera.film.properties.FilmProperties;
+import io.github.mortuusars.exposure.world.camera.frame.*;
+import io.github.mortuusars.exposure.world.entity.CameraHolder;
+import io.github.mortuusars.exposure.world.entity.CameraStandEntity;
 import io.github.mortuusars.exposure.world.item.FilmRollItem;
+import io.github.mortuusars.exposure.world.item.SensitiveFilmItem;
 import io.github.mortuusars.exposure.world.sound.Sound;
+import io.github.mortuusars.exposure.server.CameraInstance;
+import io.github.mortuusars.exposure.util.*;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.core.*;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
@@ -222,15 +236,6 @@ public class CameraItem extends Item {
         }
 
         if (Config.Client.CAMERA_SHOW_TOOLTIP_DETAILS.get()) {
-            // CameraStand check removed in MC 26.1.2
-                if (Screen.hasShiftDown()) {
-                    components.add(Component.translatable("item.exposure.camera.tooltip.details_attachments_screen_on_stand"));
-                    components.add(Component.translatable("item.exposure.camera.tooltip.details_hotswap_on_stand"));
-                } else
-                    components.add(Component.translatable("tooltip.exposure.hold_for_details"));
-                return;
-            }
-
             boolean rClickAttachments = Config.Server.CAMERA_GUI_RIGHT_CLICK_OPEN_ATTACHMENTS.get();
             boolean rClickHotswap = Config.Server.CAMERA_GUI_RIGHT_CLICK_HOTSWAP.get();
 
