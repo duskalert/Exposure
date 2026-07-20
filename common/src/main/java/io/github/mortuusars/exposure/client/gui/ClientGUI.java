@@ -64,6 +64,8 @@ public class ClientGUI {
             return;
         }
 
+        // TODO: MC 26.1 - recipe API changed (getAllRecipesFor, getIngredients)
+        /*
         Optional<NonNullList<Ingredient>> recipeIngredients = Minecraft.getInstance().level
                 .recipeAccess()
                 .getAllRecipesFor(RecipeType.CRAFTING)
@@ -99,5 +101,6 @@ public class ClientGUI {
                 tooltipComponents.add(Component.literal("  ").append(stacks[index].getHoverName().copy().withStyle(yellow)));
             }
         }
-    }
+    }*/
+}
 }

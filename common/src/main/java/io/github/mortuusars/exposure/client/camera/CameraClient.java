@@ -7,6 +7,7 @@ import io.github.mortuusars.exposure.world.camera.Camera;
 import io.github.mortuusars.exposure.network.Packets;
 import io.github.mortuusars.exposure.network.packet.common.ActiveCameraDeactivateCommonPacket;
 import io.github.mortuusars.exposure.world.camera.CameraOnStand;
+import io.github.mortuusars.exposure.world.entity.CameraOperator;
 import net.minecraft.client.CameraType;
 import net.minecraft.world.entity.Entity;
 import org.jetbrains.annotations.NotNull;
