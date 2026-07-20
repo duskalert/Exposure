@@ -60,12 +60,12 @@ public class ClientGUI {
         }
 
         tooltipComponents.add(Component.translatable("tooltip.exposure.hold_for_details"));
-        if (!Screen.hasShiftDown()) {
+        if (!Minecrft.options().keyShift.isDown()) {
             return;
         }
 
         Optional<NonNullList<Ingredient>> recipeIngredients = Minecraft.getInstance().level
-                .getRecipeManager()
+                .recipeAccess()
                 .getAllRecipesFor(RecipeType.CRAFTING)
                 .stream()
                 .map(RecipeHolder::value)

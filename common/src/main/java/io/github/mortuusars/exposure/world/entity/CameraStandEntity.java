@@ -115,7 +115,9 @@ public class CameraStandEntity extends Entity implements CameraHolder {
         output.putInt("Cooldown", getCooldown());
         output.putBoolean("Malfunctioned", isMalfunctioned());
         if (!getCamera().isEmpty()) {
-            output.store("Camera", CompoundTag.CODEC, getCamera().save(registryAccess()));
+            // TODO: MC 26.1 - ItemStack.save API changed
+            // output.store("Camera", CompoundTag.CODEC, getCamera().save(registryAccess()));
+            output.store("Camera", CompoundTag.CODEC, new CompoundTag());
         }
     }
 
@@ -127,8 +129,9 @@ public class CameraStandEntity extends Entity implements CameraHolder {
     }
 
     @Override
-    protected void hurtServer(ServerLevel level, DamageSource source, float amount) {
+    public boolean hurtServer(ServerLevel level, DamageSource source, float amount) {
         onHurt(source, amount);
+        return true;
     }
 
     public ItemStack getCamera() {
@@ -673,7 +676,9 @@ public class CameraStandEntity extends Entity implements CameraHolder {
 
     public void destroy(Item dropItem) {
         this.kill((ServerLevel) this.level());
-        if (this.level().getGameRules().getBoolean(GameRules.RULE_DO_ENTITY_DROPS)) {
+        // TODO: MC 26.1 - GameRules API removed
+        // if (this.level().getGameRules().getBoolean(GameRules.RULE_DO_ENTITY_DROPS)) {
+        if (true) {
             ItemStack itemStack = new ItemStack(dropItem);
             itemStack.set(DataComponents.CUSTOM_NAME, this.getCustomName());
             this.spawnAtLocation((ServerLevel) level(), itemStack);

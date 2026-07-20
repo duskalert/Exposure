@@ -83,7 +83,8 @@ public class Flash {
     protected void sendParticles(CameraHolder holder, ServerLevel level) {
         Vec3 pos = getFlashEffectsPosition(holder);
 
-        level.sendParticles(Exposure.Particles.FLASH.get(), pos.x, pos.y, pos.z, 0, 0, 0, 0, 0);
+        // TODO: MC 26.1 - FLASH particle registration API changed
+        // level.sendParticles(Exposure.Particles.FLASH.get(), pos.x, pos.y, pos.z, 0, 0, 0, 0, 0);
         level.sendParticles(ParticleTypes.END_ROD, pos.x, pos.y, pos.z, 4, 0.2, 0.2, 0.2, 0.1);
     }
 
