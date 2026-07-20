@@ -15,7 +15,6 @@ public class BrokenInterplanarProjectorItem extends Item {
         super(properties);
     }
 
-    @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
         if (stack.has(DataComponents.CUSTOM_NAME)) {
             tooltipComponents.add(Component.translatable("item.exposure.broken_interplanar_projector.tooltip.broken").withStyle(ChatFormatting.DARK_RED));

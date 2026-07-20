@@ -77,7 +77,7 @@ public class Register {
         return RegisterImpl.soundEvent(id, supplier);
     }
 
-    public static <T extends MenuType<E>, E extends AbstractContainerMenu> Supplier<T> menuType(String id, MenuTypeSupplier<E> supplier) {
+    public static <E extends AbstractContainerMenu> Supplier<MenuType<E>> menuType(String id, MenuTypeSupplier<E> supplier) {
         return RegisterImpl.menuType(id, supplier);
     }
 
@@ -86,7 +86,7 @@ public class Register {
         @NotNull T create(int windowId, Inventory playerInv, RegistryFriendlyByteBuf extraData);
     }
 
-    public static <T extends Recipe<I>, I extends RecipeInput> Supplier<RecipeType<T>> recipeType(String name, Supplier<RecipeType<T>> supplier) {
+    public static Supplier<RecipeType<?>> recipeType(String name, Supplier<RecipeType<?>> supplier) {
         return RegisterImpl.recipeType(name, supplier);
     }
 
@@ -98,7 +98,7 @@ public class Register {
         return RegisterImpl.criterionTrigger(name, supplier);
     }
 
-    public static <T extends EntitySubPredicate> Supplier<MapCodec<T>> entitySubPredicate(String name, Supplier<MapCodec<T>> supplier) {
+    public static <T extends MapCodec<EntitySubPredicate>> Supplier<T> entitySubPredicate(String name, Supplier<T> supplier) {
         return RegisterImpl.entitySubPredicate(name, supplier);
     }
 
@@ -115,7 +115,7 @@ public class Register {
         return RegisterImpl.dataComponentType(name, builderConsumer);
     }
 
-    public static <T extends ParticleType<? extends ParticleOptions>> Supplier<T> particleType(String name, Supplier<T> supplier) {
+    public static <T extends ParticleType<? extends ParticleOptions>> Supplier<ParticleType<?>> particleType(String name, Supplier<T> supplier) {
         return RegisterImpl.particleType(name, supplier);
     }
 }

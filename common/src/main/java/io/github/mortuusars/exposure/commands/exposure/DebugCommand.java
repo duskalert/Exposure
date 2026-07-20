@@ -100,7 +100,7 @@ public class DebugCommand {
             double fov = cameraItem.getViewfinderFov(player.level(), cameraStack);
             List<BlockPos> positions = cameraItem.getPositionsInFrame(player, pov, fov);
             List<LivingEntity> entities = EntitiesInFrame.get((CameraHolder) player, pov, fov);
-            Frame frame = cameraItem.createFrame(player, player.serverLevel(), cameraStack, params, positions, entities);
+            Frame frame = cameraItem.createFrame(player, player.level(), cameraStack, params, positions, entities);
 
             Supplier<Component> msg = () -> {
                 ItemStack photograph = new ItemStack(Exposure.Items.PHOTOGRAPH.get());

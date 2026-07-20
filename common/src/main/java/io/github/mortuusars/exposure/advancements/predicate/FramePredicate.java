@@ -42,11 +42,6 @@ public record FramePredicate(Optional<ExposureIdentifier> identifier,
         return Exposure.DataComponents.PHOTOGRAPH_FRAME;
     }
 
-    @Override
-    public boolean matches(ItemStack stack, Frame frame) {
-        return matches(frame);
-    }
-
     public boolean matches(Frame frame) {
         return (identifier.isEmpty() || identifier.get().equals(frame.identifier()))
                 && (type.isEmpty() || type.get().equals(frame.type().getSerializedName()))
@@ -57,6 +52,6 @@ public record FramePredicate(Optional<ExposureIdentifier> identifier,
                 && (dayTime.isEmpty() || frame.extraData().get(Frame.DAY_TIME).map(dayTime.get()::matches).orElse(false))
                 && (entitiesInFrameCount.isEmpty() || entitiesInFrameCount.get().matches(frame.entitiesInFrame().size()))
                 && (entitiesInFrame.isEmpty() || entitiesInFrame.get().stream().allMatch(predicate -> predicate.matches(frame.entitiesInFrame())))
-                && (extraData.isEmpty() || extraData.get().matches(frame.extraData()));
+                && (extraData.isEmpty() || extraData.get().matches(frame.extraData().toTag()));
     }
 }

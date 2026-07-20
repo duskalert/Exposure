@@ -149,10 +149,10 @@ public class Viewfinder {
 
         if (controlsActive()) return false;
 
-        if (!canAttack() && Minecrft.options().keyAttack.matchesMouse(button))
+        if (!canAttack() && Minecrft.options().keyAttack.getKey().getType() == InputConstants.Type.MOUSE && Minecrft.options().keyAttack.getKey().getValue() == button)
             return true; // Block attacks
 
-        if (KeyboardHandler.getCameraControlsKey().matchesMouse(button)) {
+        if (KeyboardHandler.getCameraControlsKey().getKey().getType() == InputConstants.Type.MOUSE && KeyboardHandler.getCameraControlsKey().getKey().getValue() == button) {
             openControlsScreen();
             return false; // Do not cancel the event to keep sneaking
         }

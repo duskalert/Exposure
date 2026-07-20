@@ -25,8 +25,11 @@ public record ExtraDataPredicate(ExtraData data) {
     }
 
     private boolean compareNbt(@Nullable Tag other) {
-        if (data == null || other == null) {
-            return data == other;
+        if (data == null) {
+            return other == null;
+        }
+        if (other == null) {
+            return false;
         }
 
         CompoundTag thisTag = data.toTag();

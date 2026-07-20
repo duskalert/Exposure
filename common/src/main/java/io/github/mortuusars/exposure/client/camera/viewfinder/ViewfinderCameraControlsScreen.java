@@ -92,7 +92,6 @@ public class ViewfinderCameraControlsScreen extends Screen {
     @Override
     public void tick() {
         refreshMovementKeys();
-        Minecraft.getInstance().handleKeybinds();
     }
 
     @Override
@@ -217,11 +216,10 @@ public class ViewfinderCameraControlsScreen extends Screen {
      */
     protected void refreshMovementKeys() {
         Consumer<KeyMapping> update = keyMapping -> {
-            if (keyMapping.key.getType() == InputConstants.Type.MOUSE) {
-                keyMapping.setDown(MouseHandler.isMouseButtonHeld(keyMapping.key.getValue()));
+            if (keyMapping.getKey().getType() == InputConstants.Type.MOUSE) {
+                keyMapping.setDown(MouseHandler.isMouseButtonHeld(keyMapping.getKey().getValue()));
             } else {
-                long windowId = Minecraft.getInstance().getWindow().getWindow();
-                keyMapping.setDown(InputConstants.isKeyDown(windowId, keyMapping.key.getValue()));
+                keyMapping.setDown(InputConstants.isKeyDown(Minecraft.getInstance().getWindow(), keyMapping.getKey().getValue()));
             }
         };
 
@@ -236,7 +234,7 @@ public class ViewfinderCameraControlsScreen extends Screen {
     }
 
     @Override
-    public void render(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick) {
+    public void render(@NotNull GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTick) {
         if (!viewfinder.isLookingThrough()) {
             this.onClose();
             return;
@@ -244,26 +242,25 @@ public class ViewfinderCameraControlsScreen extends Screen {
 
         if (Minecrft.options().hideGui) return;
 
-        GuiGraphicsExtractor.pose().pushPose();
+        guiGraphics.pose().pushMatrix();
 
         float viewfinderScale = viewfinder.overlay().getScale();
         if (viewfinderScale != 1.0f) {
-            GuiGraphicsExtractor.pose().translate(width / 2f, height / 2f, 0);
-            GuiGraphicsExtractor.pose().scale(viewfinderScale, viewfinderScale, viewfinderScale);
-            GuiGraphicsExtractor.pose().translate(-width / 2f, -height / 2f, 0);
+            guiGraphics.pose().translate(width / 2f, height / 2f);
+            guiGraphics.pose().scale(viewfinderScale, viewfinderScale);
+            guiGraphics.pose().translate(-width / 2f, -height / 2f);
         }
 
-        super.render(GuiGraphicsExtractor, mouseX, mouseY, partialTick);
+        super.render(guiGraphics, mouseX, mouseY, partialTick);
 
-        GuiGraphicsExtractor.pose().popPose();
+        guiGraphics.pose().popMatrix();
     }
 
     @Override
-    public void renderBackground(GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick) {
+    public void renderBackground(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTick) {
         // Prevents blur from rendering.
     }
 
-    @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
         if (super.mouseClicked(mouseX, mouseY, button)) return true;
 
@@ -280,7 +277,7 @@ public class ViewfinderCameraControlsScreen extends Screen {
 
     @Override
     public boolean mouseReleased(double mouseX, double mouseY, int button) {
-        if (KeyboardHandler.getCameraControlsKey().matchesMouse(button)
+        if ((KeyboardHandler.getCameraControlsKey().getKey().getType() == InputConstants.Type.MOUSE && KeyboardHandler.getCameraControlsKey().getKey().getValue() == button)
                 || (Config.Client.VIEWFINDER_MIDDLE_CLICK_CONTROLS.get() && button == InputConstants.MOUSE_BUTTON_MIDDLE)) {
             if (isToggleTimeReached()) {
                 this.onClose();
@@ -298,7 +295,7 @@ public class ViewfinderCameraControlsScreen extends Screen {
 
         if (button != InputConstants.MOUSE_BUTTON_LEFT) return false;
 
-        if (camera.inSelfieMode() && Minecrft.options().keySprint.isDown) {
+        if (camera.inSelfieMode() && Minecrft.options().keySprint.isDown()) {
             // Parameters are correct. Stop nagging me, Intellij
             //noinspection SuspiciousNameCombination
             viewfinder.selfie.rotateCamera(dragY, dragX, true);

@@ -118,7 +118,7 @@ public record Frame(ExposureIdentifier identifier,
 
         ExtraData mergedTag = frames.stream()
                 .map(f -> f.extraData.copy())
-                .reduce(new ExtraData(), ExtraData::merge);
+                .reduce(new ExtraData(), (e1, e2) -> e1.merge(e2.toTag()));
         result.setTag(mergedTag);
 
         return result.toImmutable();

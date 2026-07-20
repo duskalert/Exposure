@@ -22,6 +22,7 @@ import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.util.ARGB;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
@@ -33,8 +34,8 @@ import java.util.Collections;
 import java.util.List;
 
 public class FilmRollItem extends Item implements SensitiveFilmItem {
-    public static final int BAR_BLACK_AND_WHITE = ARGB.color(0.8F, 0.8F, 0.9F);
-    public static final int BAR_COLOR = ARGB.color(0.4F, 0.4F, 1.0F);
+    public static final int BAR_BLACK_AND_WHITE = ARGB.color(128, 128, 145);
+    public static final int BAR_COLOR = ARGB.color(65, 65, 165);
 
     protected final ExposureType type;
     protected final int barColor;
@@ -68,8 +69,7 @@ public class FilmRollItem extends Item implements SensitiveFilmItem {
 
     // --
 
-    @Override
-    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> list, TooltipFlag tooltipFlag) {
+    public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> list, TooltipFlag tooltipFlag) {
         int exposedFrames = getStoredFramesCount(stack);
         if (exposedFrames > 0) {
             int totalFrames = getMaxFrameCount(stack);

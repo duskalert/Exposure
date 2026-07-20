@@ -21,7 +21,6 @@ import io.github.mortuusars.exposure.world.item.SensitiveFilmItem;
 import io.github.mortuusars.exposure.world.sound.Sound;
 import io.github.mortuusars.exposure.server.CameraInstance;
 import io.github.mortuusars.exposure.util.*;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.*;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
@@ -41,8 +40,10 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.*;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class CameraItem extends Item {
@@ -225,13 +226,12 @@ public class CameraItem extends Item {
         return Attachment.FILM.map(stack, FilmRollItem::getBarColor).orElse(0);
     }
 
-    @Override
-    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> components, TooltipFlag tooltipFlag) {
+    public void appendHoverText(ItemStack stack, Item.TooltipContext context, TooltipFlag tooltipFlag, Consumer<Component> tooltipAdder) {
         if (Config.Client.CAMERA_SHOW_FILM_FRAMES_IN_TOOLTIP.get()) {
             Attachment.FILM.ifPresent(stack, (filmItem, filmStack) -> {
                 int exposed = filmItem.getStoredFramesCount(filmStack);
                 int max = filmItem.getMaxFrameCount(filmStack);
-                components.add(Component.translatable("item.exposure.camera.tooltip.film_roll_frames", exposed, max));
+                tooltipAdder.accept(Component.translatable("item.exposure.camera.tooltip.film_roll_frames", exposed, max));
             });
         }
 
@@ -240,13 +240,10 @@ public class CameraItem extends Item {
             boolean rClickHotswap = Config.Server.CAMERA_GUI_RIGHT_CLICK_HOTSWAP.get();
 
             if (rClickAttachments || rClickHotswap) {
-                if (Screen.hasShiftDown()) {
-                    if (rClickAttachments)
-                        components.add(Component.translatable("item.exposure.camera.tooltip.details_attachments_screen"));
-                    if (rClickHotswap)
-                        components.add(Component.translatable("item.exposure.camera.tooltip.details_hotswap"));
-                } else
-                    components.add(Component.translatable("tooltip.exposure.hold_for_details"));
+                if (rClickAttachments)
+                    tooltipAdder.accept(Component.translatable("item.exposure.camera.tooltip.details_attachments_screen"));
+                if (rClickHotswap)
+                    tooltipAdder.accept(Component.translatable("item.exposure.camera.tooltip.details_hotswap"));
             }
         }
     }
@@ -257,7 +254,7 @@ public class CameraItem extends Item {
     protected InteractionResult hotswap(CameraHolder holder, ItemStack stack, ItemStack otherStack, SlotAccess access) { return CameraItemInteraction.hotswap(this, holder, stack, otherStack, access); }
     public InteractionResult openCameraAttachments(@NotNull Player player, ItemStack stack, boolean openedFromGUI) { return CameraItemInteraction.openCameraAttachments(this, player, stack, openedFromGUI); }
     public InteractionResult openCameraAttachments(@NotNull Player player, int slotIndex, boolean openedFromGUI) { return CameraItemInteraction.openCameraAttachments(this, player, slotIndex, openedFromGUI); }
-    @Override public void inventoryTick(ItemStack stack, Level level, Entity entity, int slotId, boolean isSelected) { CameraItemInteraction.inventoryTick(this, stack, level, entity, slotId, isSelected); }
+    @Override public void inventoryTick(ItemStack stack, ServerLevel level, Entity entity, @Nullable EquipmentSlot slot) { CameraItemInteraction.inventoryTick(this, stack, level, entity, slot); }
     public boolean tick(CameraHolder holder, ItemStack stack) { return CameraItemInteraction.tick(this, holder, stack); }
     protected void grabAttentionOfNearbyMobs(CameraHolder holder, ItemStack stack) { CameraItemInteraction.grabAttentionOfNearbyMobs(this, holder, stack); }
     protected boolean canGrabAttentionOf(CameraHolder holder, Mob mob) { return CameraItemInteraction.canGrabAttentionOf(this, holder, mob); }

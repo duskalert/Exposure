@@ -33,44 +33,15 @@ public class ViewfinderShader implements AutoCloseable {
     }
 
     public void apply(Identifier shaderLocation) {
-        if (shader != null) {
-            if (shader.getName().equals(shaderLocation.toString())) {
-                return;
-            }
-
-            shader.close();
-        }
-
-        try {
-            shader = new PostChain(minecraft.getTextureManager(), minecraft.getResourceManager(),
-                    minecraft.getMainRenderTarget(), shaderLocation);
-            shader.resize(minecraft.getWindow().getWidth(), minecraft.getWindow().getHeight());
-            active = true;
-        } catch (IOException e) {
-            Exposure.LOGGER.warn("Failed to load shader: {}", shaderLocation, e);
-            active = false;
-        } catch (JsonSyntaxException e) {
-            Exposure.LOGGER.warn("Failed to parse shader: {}", shaderLocation, e);
-            active = false;
-        }
     }
 
     public void resize(int width, int height) {
-        if (shader != null) {
-            shader.resize(width, height);
-        }
     }
 
     /**
      * Processes current viewfinder shader (if it is present and active).
      */
     public void process() {
-        if (shader != null && active) {
-            RenderSystem.disableBlend();
-            RenderSystem.disableDepthTest();
-            RenderSystem.resetTextureMatrix();
-            shader.process(minecraft.getTimer().getGameTimeDeltaTicks());
-        }
     }
 
     public void update() {

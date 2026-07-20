@@ -13,6 +13,7 @@ import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -79,7 +80,7 @@ public class RegisterImpl {
                 .clientTrackingRange(clientTrackingRange)
                 .setShouldReceiveVelocityUpdates(velocityUpdates)
                 .updateInterval(updateInterval)
-                .build(id));
+                .build(ResourceKey.create(Registries.ENTITY_TYPE, Identifier.tryParse(Exposure.ID + ":" + id))));
     }
 
     public static <T extends Entity> Supplier<EntityType<T>> entityType(String id, EntityType.EntityFactory<T> factory, MobCategory category, boolean receiveVelocityUpdates, Consumer<EntityType.Builder<T>> typeBuilder) {
@@ -87,7 +88,7 @@ public class RegisterImpl {
             EntityType.Builder<T> builder = EntityType.Builder.of(factory, category);
             builder.setShouldReceiveVelocityUpdates(receiveVelocityUpdates);
             typeBuilder.accept(builder);
-            return builder.build(id);
+            return builder.build(ResourceKey.create(Registries.ENTITY_TYPE, Identifier.tryParse(Exposure.ID + ":" + id)));
         });
     }
 

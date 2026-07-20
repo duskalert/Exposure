@@ -28,7 +28,8 @@ public class ExtraData {
     private final CompoundTag tag;
 
     protected ExtraData(Map<String, Tag> tags) {
-        this.tag = new CompoundTag(tags);
+        this.tag = new CompoundTag();
+        tags.forEach(this.tag::put);
     }
 
     public ExtraData() {
@@ -109,7 +110,7 @@ public class ExtraData {
             if (value != null) {
                 if (value.getId() == 10) {
                     if (tag.contains(key)) {
-                        tag.getCompound(key).merge((CompoundTag) value);
+                        tag.getCompound(key).ifPresent(t -> t.merge((CompoundTag) value));
                     } else {
                         tag.put(key, value.copy());
                     }
@@ -149,7 +150,7 @@ public class ExtraData {
 
         public static <T extends StringRepresentable> Type<T> stringRepresentable(String key, Function<String, @Nullable T> deserializeFunction) {
             return new Type<>(key,
-                    (data, k) -> deserializeFunction.apply(data.getStringOr(k, "")),
+                    (data, k) -> deserializeFunction.apply(data.getString(k)),
                     (data, k, value) -> data.putString(k, value.getSerializedName()));
         }
 
@@ -170,13 +171,13 @@ public class ExtraData {
 
         public static Type<Identifier> Identifier(String key) {
             return new Type<>(key,
-                    (data, k) -> Identifier.parse(data.getStringOr(k, "")),
+                    (data, k) -> Identifier.parse(data.getString(k)),
                     (data, k, value) -> data.putString(k, value.toString()));
         }
 
         public static <T> Type<List<T>> list(String key, int tagType, Function<Tag, T> extractFunc, Function<T, Tag> packFunc) {
             return new Type<>(key,
-                    (data, k) -> data.getListOrEmpty(k).stream()
+                    (data, k) -> data.getList(k, tagType).stream()
                             .map(extractFunc)
                             .toList(),
                     (data, k, value) -> {
@@ -189,7 +190,7 @@ public class ExtraData {
         }
 
         public static <T> Type<List<T>> stringBasedList(String key, Function<String, T> extractFunc, Function<T, String> packFunc) {
-            return list(key, Tag.TAG_STRING, tag -> extractFunc.apply(tag.getAsString()), value -> StringTag.valueOf(packFunc.apply(value)));
+            return list(key, Tag.TAG_STRING, tag -> extractFunc.apply(((StringTag) tag).getValue()), value -> StringTag.valueOf(packFunc.apply(value)));
         }
     }
 }

@@ -43,6 +43,7 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.SlotAccess;
 import net.minecraft.world.entity.player.Inventory;
@@ -55,6 +56,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
@@ -204,7 +206,7 @@ public class CameraItemInteraction {
         return InteractionResult.SUCCESS.heldItemTransformedTo(stack);
     }
 
-    public static void inventoryTick(CameraItem item, ItemStack stack, Level level, Entity entity, int slotId, boolean isSelected) {
+    public static void inventoryTick(CameraItem item, ItemStack stack, ServerLevel level, Entity entity, @Nullable EquipmentSlot slot) {
         if (!(entity instanceof CameraHolder holder)) return;
 
         tick(item, holder, stack);
