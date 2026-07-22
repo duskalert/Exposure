@@ -1,5 +1,8 @@
 package io.github.mortuusars.exposure.world.item.camera;
 
+import io.github.mortuusars.exposure.world.entity.CameraOperator;
+import io.github.mortuusars.exposure.world.entity.CameraHolder;
+
 import com.google.common.base.Preconditions;
 import io.github.mortuusars.exposure.*;
 import io.github.mortuusars.exposure.data.*;
