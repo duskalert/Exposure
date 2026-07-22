@@ -97,7 +97,7 @@ public class CameraItemInteraction {
 
     public static InteractionResult handleStandSneakInteraction(CameraItem item, CameraStandEntity stand, Player player, InteractionHand hand, ItemStack cameraStack) {
         ItemStack itemInHand = player.getItemInHand(hand);
-        int slot = hand == InteractionHand.OFF_HAND ? Inventory.SLOT_OFFHAND : player.getInventory().selected;
+        int slot = hand == InteractionHand.OFF_HAND ? Inventory.SLOT_OFFHAND : player.getInventory().getSelectedSlot();
         SlotAccess access = SlotAccess.forPlayer(player, slot);
         return hotswap(item, stand, cameraStack, itemInHand, access);
     }
