@@ -39,6 +39,8 @@ import java.util.Optional;
 import java.util.function.Consumer;
 
 public class AlbumViewScreen extends Screen {
+    // TODO: MC 26.1 - Screen/Rendering API redesigned. Method bodies stubbed.
+
     protected final Pager pager = new Pager()
             .setChangeSound(new SoundEffect(() -> SoundEvents.BOOK_PAGE_TURN))
             .onPageChanged(this::onSpreadChanged);
@@ -64,64 +66,18 @@ public class AlbumViewScreen extends Screen {
         this.albumAccess = albumAccess;
     }
 
-    @Override
+    // TODO: MC 26.1
     public boolean isPauseScreen() {
         return false;
     }
 
-    @Override
+    // TODO: MC 26.1
     protected void init() {
-        this.imageWidth = 298;
-        this.imageHeight = 188;
-        this.leftPos = (this.width - this.imageWidth) / 2;
-        this.topPos = (this.height - this.imageHeight) / 2;
-
-        pages.clear();
-
-        // LEFT:
-        Page leftPage = createPage(Side.LEFT, 0);
-        pages.add(leftPage);
-
-        ImageButton previousPageButton = new ImageButton(leftPos + 12, topPos + 164, 13, 15,
-                AlbumGUI.PREVIOUS_PAGE_BUTTON_SPRITES, button -> pager.changePage(PagingDirection.PREVIOUS), Component.translatable("gui.exposure.previous_page"));
-        previousPageButton.setTooltip(Tooltip.create(Component.translatable("gui.exposure.previous_page")));
-        addRenderableWidget(previousPageButton);
-
-        // RIGHT:
-        Page rightPage = createPage(Side.RIGHT, 140);
-        pages.add(rightPage);
-
-        ImageButton nextPageButton = new ImageButton(leftPos + 273, topPos + 164, 13, 15,
-                AlbumGUI.NEXT_PAGE_BUTTON_SPRITES, button -> pager.changePage(PagingDirection.NEXT), Component.translatable("gui.exposure.next_page"));
-        nextPageButton.setTooltip(Tooltip.create(Component.translatable("gui.exposure.next_page")));
-        addRenderableWidget(nextPageButton);
-
-        int spreadsCount = (int) Math.ceil(albumAccess.pages().size() / 2f);
-        pager.setPagesCount(spreadsCount)
-                .setPreviousPageButton(previousPageButton)
-                .setNextPageButton(nextPageButton);
+        // Stubbed
     }
 
     protected Page createPage(Side side, int xOffset) {
-        int x = leftPos + xOffset;
-        int y = topPos;
-
-        PhotographSlotWidget photographWidget = new PhotographSlotWidget(this, x + 25, y + 21, 108, 108,
-                () -> getPage(side).orElse(PageContent.EMPTY).photograph())
-                .editable(false)
-                .primaryAction(widget -> inspectPhotograph(widget.getPhotograph()));
-
-        addRenderableWidget(photographWidget);
-
-        TextBlock noteWidget = new TextBlock(font, x + 22, y + 133, 114, 27,
-                getPage(side).orElse(PageContent.EMPTY).note(), this::handleComponentClicked);
-        noteWidget.fontColor = Config.getColor(Config.Client.ALBUM_FONT_MAIN_COLOR);
-        noteWidget.alignment = HorizontalAlignment.CENTER;
-        noteWidget.drawShadow = false;
-        //  TextBlock is rendered manually to not be a part of TAB navigation.
-        //  addRenderableWidget(noteWidget);
-
-        return new Page(side, photographWidget, noteWidget);
+        return null;
     }
 
     public List<PageContent> getPages() {
@@ -131,7 +87,6 @@ public class AlbumViewScreen extends Screen {
     public Optional<PageContent> getPage(int pageIndex) {
         if (pageIndex <= getPages().size() - 1)
             return Optional.ofNullable(getPages().get(pageIndex));
-
         return Optional.empty();
     }
 
@@ -144,10 +99,7 @@ public class AlbumViewScreen extends Screen {
     }
 
     protected void onSpreadChanged(int oldSpread, int newSpread) {
-        forEachPage(page -> {
-            Component note = getPage(page.side).orElse(PageContent.EMPTY).note();
-            page.noteWidget().setMessage(note);
-        });
+        // Stubbed
     }
 
     public void setAlbumAccess(AlbumAccess albumAccess) {
@@ -155,115 +107,54 @@ public class AlbumViewScreen extends Screen {
         pager.setPagesCount(albumAccess.getPageCount() / 2);
     }
 
-    @Override
-    public void render(GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick) {
-        super.render(GuiGraphicsExtractor, mouseX, mouseY, partialTick);
-        renderTooltip(GuiGraphicsExtractor, mouseX, mouseY);
-
-        for (Page page : pages) {
-            AbstractWidget noteWidget = page.noteWidget();
-            if (noteWidget instanceof TextBlock textBlock) {
-                textBlock.render(GuiGraphicsExtractor, mouseX, mouseY, partialTick);
-            }
-        }
-
-        this.renderTooltip(GuiGraphicsExtractor, mouseX, mouseY);
+    // TODO: MC 26.1 - render signature changed
+    public void render(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTick) {
+        // Stubbed
     }
 
-    protected void renderTooltip(GuiGraphicsExtractor GuiGraphicsExtractor, int x, int y) {
-        for (Page page : pages) {
-            if (page.photographWidget().isHoveredOrFocused()) {
-                page.photographWidget().renderTooltip(GuiGraphicsExtractor, x, y);
-                return;
-            }
-        }
+    // TODO: MC 26.1 - renderTooltip stubbed
+    protected void renderTooltip(GuiGraphicsExtractor guiGraphics, int x, int y) {
+        // Stubbed
     }
 
-    @Override
-    public void renderBackground(GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick) {
-        renderTransparentBackground(GuiGraphicsExtractor);
-
-        RenderSystem.setShader(GameRenderer::getPositionTexShader);
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-        RenderSystem.enableBlend();
-        RenderSystem.defaultBlendFunc();
-        GuiGraphicsExtractor.blit(AlbumGUI.TEXTURE, leftPos, topPos, 0, 0, 0,
-                imageWidth, imageHeight, 512, 512);
-
-        int currentSpreadIndex = getCurrentSpreadIndex();
-        drawPageNumbers(GuiGraphicsExtractor, currentSpreadIndex, mouseX, mouseY);
+    // TODO: MC 26.1 - renderBackground signature changed
+    public void renderBackground(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTick) {
+        // Stubbed
     }
 
-    protected void drawPageNumbers(GuiGraphicsExtractor GuiGraphicsExtractor, int currentSpreadIndex, int mouseX, int mouseY) {
-        Font font = Minecrft.get().font;
-
-        String leftPageNumber = Integer.toString(currentSpreadIndex * 2 + 1);
-        String rightPageNumber = Integer.toString(currentSpreadIndex * 2 + 2);
-
-        GuiGraphicsExtractor.drawString(font, leftPageNumber, leftPos + 71 + (8 - font.width(leftPageNumber) / 2),
-                topPos + 167, Config.getColor(Config.Client.ALBUM_FONT_SECONDARY_COLOR), false);
-
-        GuiGraphicsExtractor.drawString(font, rightPageNumber, leftPos + 212 + (8 - font.width(rightPageNumber) / 2),
-                topPos + 167, Config.getColor(Config.Client.ALBUM_FONT_SECONDARY_COLOR), false);
+    // TODO: MC 26.1 - drawPageNumbers stubbed
+    protected void drawPageNumbers(GuiGraphicsExtractor guiGraphics, int currentSpreadIndex, int mouseX, int mouseY) {
+        // Stubbed
     }
 
-    // --
-
-    @Override
+    // TODO: MC 26.1 - mouseClicked now takes MouseButtonEvent
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        if (super.mouseClicked(mouseX, mouseY, button)) return true;
-
-        for (Page page : pages) {
-            if (page.noteWidget().mouseClicked(mouseX, mouseY, button)) {
-                return true;
-            }
-        }
-
         return false;
     }
 
-    @Override
+    // TODO: MC 26.1 - handleComponentClicked signature changed
     public boolean handleComponentClicked(@Nullable Style style) {
-        if (style == null)
-            return false;
-
-        ClickEvent clickEvent = style.getClickEvent();
-        if (clickEvent == null)
-            return false;
-        else if (clickEvent.getAction() == ClickEvent.Action.CHANGE_PAGE) {
-            String pageIndexStr = clickEvent.getValue();
-            int pageIndex = Integer.parseInt(pageIndexStr) - 1;
-            forcePage(pageIndex);
-            return true;
-        }
-
-        boolean handled = super.handleComponentClicked(style);
-        if (handled && clickEvent.getAction() == ClickEvent.Action.RUN_COMMAND)
-            onClose();
-        return handled;
+        return false;
     }
 
     protected void forcePage(int pageIndex) {
         pager.changePage(pageIndex / 2);
     }
 
-    @Override
+    // TODO: MC 26.1 - keyPressed now takes KeyEvent
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        return keyBindings.keyPressed(keyCode, scanCode, modifiers) || super.keyPressed(keyCode, scanCode, modifiers);
+        return false;
     }
 
-    @Override
+    // TODO: MC 26.1 - keyReleased now takes KeyEvent
     public boolean keyReleased(int keyCode, int scanCode, int modifiers) {
-        return keyBindings.keyReleased(keyCode, scanCode, modifiers) || super.keyReleased(keyCode, scanCode, modifiers);
+        return false;
     }
-
-    // --
 
     protected void inspectPhotograph(ItemStack photograph) {
         if (!(photograph.getItem() instanceof PhotographItem)) {
             return;
         }
-
         Minecrft.get().setScreen(new ChildPhotographScreen(this, List.of(new ItemAndStack<>(photograph))));
         Minecrft.get().getSoundManager()
                 .play(SimpleSoundInstance.forUI(Exposure.SoundEvents.PHOTOGRAPH_RUSTLE.get(),
@@ -289,11 +180,9 @@ public class AlbumViewScreen extends Screen {
             if (stack.get(Exposure.DataComponents.ALBUM_CONTENT) instanceof AlbumContent content) {
                 return new AlbumAccess(content.pages().stream().map(PageContent::new).toList());
             }
-
             if (stack.get(Exposure.DataComponents.SIGNED_ALBUM_CONTENT) instanceof SignedAlbumContent content) {
                 return new AlbumAccess(content.pages().stream().map(PageContent::new).toList());
             }
-
             return EMPTY;
         }
     }

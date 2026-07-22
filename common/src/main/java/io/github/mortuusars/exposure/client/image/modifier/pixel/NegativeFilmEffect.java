@@ -9,11 +9,11 @@ public class NegativeFilmEffect implements PixelEffect {
         return "negative-film";
     }
 
-    public int modify(int ARGB) {
-        int alpha = ARGB.alpha(ARGB);
-        int red = ARGB.red(ARGB);
-        int green = ARGB.green(ARGB);
-        int blue = ARGB.blue(ARGB);
+    public int modify(int argb) {
+        int alpha = ARGB.alpha(argb);
+        int red = ARGB.red(argb);
+        int green = ARGB.green(argb);
+        int blue = ARGB.blue(argb);
 
         // Modify opacity to make lighter colors transparent, like in real film.
         int lightness = (red + green + blue) / 3;

@@ -50,7 +50,7 @@ public interface CaptureTemplate {
     }
 
     default Function<PalettedImage, ExposureData> convertToExposureData(Holder<ColorPalette> palette, ExposureData.Tag tag) {
-        Identifier paletteId = palette.unwrapKey().orElseThrow().registryKey().getValue();
+        Identifier paletteId = Exposure.resource("default"); // TODO: MC 26.1 - registryKey().getValue() removed
         return image -> new ExposureData(image.width(), image.height(), image.pixels(), paletteId, tag);
     }
 

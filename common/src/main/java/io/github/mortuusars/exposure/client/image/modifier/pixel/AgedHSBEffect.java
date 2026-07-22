@@ -28,11 +28,11 @@ public class AgedHSBEffect implements PixelEffect {
         return "aged";
     }
 
-    public int modify(int ARGB) {
-        int alpha = ARGB.alpha(ARGB);
-        int red = ARGB.red(ARGB);
-        int green = ARGB.green(ARGB);
-        int blue = ARGB.blue(ARGB);
+    public int modify(int argb) {
+        int alpha = ARGB.alpha(argb);
+        int red = ARGB.red(argb);
+        int green = ARGB.green(argb);
+        int blue = ARGB.blue(argb);
 
         // Modify black and white points to make the image appear faded:
         red = (int) Mth.map(red, 0, 255, blackPoint, whitePoint);

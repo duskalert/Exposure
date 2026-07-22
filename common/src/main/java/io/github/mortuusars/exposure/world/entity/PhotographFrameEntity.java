@@ -472,4 +472,10 @@ public class PhotographFrameEntity extends HangingEntity {
     public SoundEvent getRotateSound() {
         return Exposure.SoundEvents.PHOTOGRAPH_FRAME_ROTATE_ITEM.get();
     }
+
+    // TODO: MC 26.1 - abstract method
+    @Override
+    public void dropItem(net.minecraft.server.level.ServerLevel serverLevel, @Nullable net.minecraft.world.entity.Entity entity) {
+        // Stubbed
+    }
 }

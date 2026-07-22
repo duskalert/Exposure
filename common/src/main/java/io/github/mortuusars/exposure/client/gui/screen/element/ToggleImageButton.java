@@ -9,6 +9,8 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class ToggleImageButton extends ImageButton {
+    // TODO: MC 26.1 - Widget rendering API redesigned. Stubbed.
+
     protected final WidgetSprites onSprites;
     protected final Consumer<Boolean> onToggled;
     protected boolean state;
@@ -41,15 +43,13 @@ public class ToggleImageButton extends ImageButton {
         return mappingFunction.apply(state);
     }
 
-    @Override
+    // TODO: MC 26.1 - onPress signature changed
     public void onPress() {
         toggle();
     }
 
-    @Override
-    public void renderWidget(GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick) {
-        WidgetSprites sprites = isOn() ? onSprites : this.sprites;
-        Identifier Identifier = sprites.get(this.isActive(), this.isHoveredOrFocused());
-        GuiGraphicsExtractor.blitSprite(Identifier, this.getX(), this.getY(), this.width, this.height);
+    // TODO: MC 26.1 - renderWidget signature changed, blitSprite needs RenderPipeline
+    public void renderWidget(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTick) {
+        // Stubbed
     }
 }

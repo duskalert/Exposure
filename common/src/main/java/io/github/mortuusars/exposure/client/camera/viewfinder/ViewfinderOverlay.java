@@ -183,7 +183,7 @@ public class ViewfinderOverlay {
         List<FormattedCharSequence> messageLines = font.split(message, (int) (opening.width * 0.75f));
 
         for (FormattedCharSequence line : messageLines) {
-            GuiGraphicsExtractor.drawString(font, line, (float)x, (float)y, 0xFFFFFFFF);
+            // TODO: MC 26.1 - GuiGraphicsExtractor.drawString signature changed
             y += font.lineHeight;
         }
 
@@ -198,10 +198,10 @@ public class ViewfinderOverlay {
         GuiGraphicsExtractor.blit(BSOD_QR_CODE_TEXTURE, x, y, 0, 0, qrCodeSize, qrCodeSize, qrCodeSize, qrCodeSize);
 
         MutableComponent errorCode = Component.translatable("item.exposure.broken_interplanar_projector.viewfinder.error_code");
-        GuiGraphicsExtractor.drawString(font, errorCode, (float)(x + qrCodeSize + margin), (float)y, 0xFFFFFFFF);
+        // TODO: MC 26.1 - GuiGraphicsExtractor.drawString signature changed
         y += font.lineHeight;
         String code = item.getErrorCode(stack);
-        GuiGraphicsExtractor.drawString(font, code, (float)(x + qrCodeSize + margin), (float)y, 0xFFFFFFFF);
+        // TODO: MC 26.1 - GuiGraphicsExtractor.drawString signature changed
     }
 
     public void bobView(Matrix3x2fStack poseStack, DeltaTracker deltaTracker) {

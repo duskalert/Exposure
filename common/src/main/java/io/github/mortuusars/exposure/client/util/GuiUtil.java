@@ -57,7 +57,8 @@ public class GuiUtil {
         bufferBuilder.addVertex(matrix, maxX, maxY, zOffset).setUv(maxU, maxV);
         bufferBuilder.addVertex(matrix, maxX, minY, zOffset).setUv(maxU, minV);
         bufferBuilder.addVertex(matrix, minX, minY, zOffset).setUv(minU, minV);
-        BufferUploader.drawWithShader(bufferBuilder.buildOrThrow());
+        // TODO: MC 26.1 - BufferUploader.drawWithShader removed
+        // BufferUploader.drawWithShader(bufferBuilder.buildOrThrow());
     }
 
     // --
@@ -90,7 +91,7 @@ public class GuiUtil {
         bufferBuilder.addVertex(matrix, maxX, maxY, 0).setColor(color);
         bufferBuilder.addVertex(matrix, maxX, minY, 0).setColor(color);
         bufferBuilder.addVertex(matrix, minX, minY, 0).setColor(color);
-        BufferUploader.drawWithShader(bufferBuilder.buildOrThrow());
+        BufferUploader.drawWithShader(bufferBuilder.buildOrThrow()); // TODO: MC 26.1 - verify
     }
 
     // --

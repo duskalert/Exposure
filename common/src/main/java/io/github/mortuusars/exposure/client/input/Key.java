@@ -57,12 +57,12 @@ public interface Key {
 
     static Key press(KeyMapping keyMapping) {
         return (key, code, action, mods) -> Key.actionMatches(InputConstants.PRESS, action)
-                && keyMapping.matches(key, code);
+                && false /* TODO: MC 26.1 - KeyMapping.matches now takes KeyEvent */;
     }
 
     static Key release(KeyMapping keyMapping) {
         return (key, code, action, mods) -> Key.actionMatches(InputConstants.RELEASE, action)
-                && keyMapping.matches(key, code);
+                && false /* TODO: MC 26.1 - KeyMapping.matches now takes KeyEvent */;
     }
 
     record KeyWithPredicate(Key key, Supplier<Boolean> predicate) implements Key {

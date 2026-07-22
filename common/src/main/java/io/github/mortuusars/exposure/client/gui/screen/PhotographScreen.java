@@ -44,6 +44,8 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
 
 public class PhotographScreen extends Screen {
+    // TODO: MC 26.1 - Screen/Rendering API redesigned. Method bodies stubbed.
+
     protected final Pager pager = new Pager()
             .setCycled(true)
             .setChangeSound(new SoundEffect(Exposure.SoundEvents.CAMERA_LENS_RING_CLICK))
@@ -83,7 +85,6 @@ public class PhotographScreen extends Screen {
         super(Component.empty());
         this.photographProvider = photographProvider;
         setPhotographs(photographProvider.get());
-
         if (shouldQueryAllPhotographsImmediately()) {
             queryAllPhotographs(photographs);
         }
@@ -100,29 +101,16 @@ public class PhotographScreen extends Screen {
         this.pager.setPage(0);
     }
 
-    @Override
+    // TODO: MC 26.1 - tick signature
     public void tick() {
         if (photographProvider.shouldRefresh()) {
             setPhotographs(photographProvider.get());
         }
     }
 
-    @Override
+    // TODO: MC 26.1 - init signature
     protected void init() {
-        super.init();
-
-        ImageButton previousButton = new ImageButton(0, (int) (height / 2f - 16 / 2f), 16, 16,
-                Widgets.PREVIOUS_BUTTON_SPRITES,
-                button -> pager.changePage(PagingDirection.PREVIOUS), Component.translatable("gui.exposure.previous_page"));
-        addRenderableWidget(previousButton);
-
-        ImageButton nextButton = new ImageButton(width - 16, (int) (height / 2f - 16 / 2f), 16, 16,
-                Widgets.NEXT_BUTTON_SPRITES,
-                button -> pager.changePage(PagingDirection.NEXT), Component.translatable("gui.exposure.next_page"));
-        addRenderableWidget(nextButton);
-
-        pager.setPreviousPageButton(previousButton)
-             .setNextPageButton(nextButton);
+        // Stubbed
     }
 
     protected boolean shouldQueryAllPhotographsImmediately() {
@@ -146,142 +134,57 @@ public class PhotographScreen extends Screen {
         Collections.rotate(photographs, -distance);
     }
 
-    @Override
-    public void render(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick) {
-        float zoomFactor = height * 0.8f;
-        float scale = (float) (zoom.get() * zoomFactor);
-
-        RenderSystem.enableBlend();
-        RenderSystem.defaultBlendFunc();
-        RenderSystem.disableDepthTest();
-
-        renderTransparentBackground(GuiGraphicsExtractor);
-
-        GuiGraphicsExtractor.pose().pushPose();
-        GuiGraphicsExtractor.pose().translate(x, y, 0);
-        GuiGraphicsExtractor.pose().translate(width / 2f, height / 2f, 50);
-        GuiGraphicsExtractor.pose().scale(scale, scale, scale);
-        GuiGraphicsExtractor.pose().translate(-0.5, -0.5, 0);
-
-        MultiBufferSource.BufferSource bufferSource = Minecrft.get().renderBuffers().bufferSource();
-
-        ExposureClient.photographRenderer().renderStackedPhotographs(photographs, GuiGraphicsExtractor.pose(), bufferSource,
-                Lightmap.FULL_BRIGHT, 255, 255, 255, 255);
-
-        bufferSource.endBatch();
-        GuiGraphicsExtractor.pose().popPose();
-
-        ItemAndStack<PhotographItem> photograph = getCurrentPhotograph();
-
-        GuiGraphicsExtractor.pose().pushPose();
-        // Places widgets above photograph, because they will be covered when photo is zoomed in
-        GuiGraphicsExtractor.pose().translate(0, 0, 100);
-        super.render(GuiGraphicsExtractor, mouseX, mouseY, partialTick);
-        renderFrameInfoHint(GuiGraphicsExtractor, mouseX, mouseY, photograph);
-        GuiGraphicsExtractor.pose().popPose();
-
-        if (Config.Client.EXPORT_PHOTOGRAPH_WHEN_VIEWED.get()) {
-            trySaveToFile(photograph);
-        }
+    // TODO: MC 26.1 - render signature changed, RenderSystem/pushPose/Lightmap API changed
+    public void render(@NotNull GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTick) {
+        // Stubbed - MC 26.1 rendering API redesigned
     }
 
-    @Override
-    public void renderBackground(GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick) {
-        // Background is rendered manually in #render method.
-        // Otherwise, background will be rendered on top of a photograph.
+    // TODO: MC 26.1 - renderBackground signature changed
+    public void renderBackground(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTick) {
+        // Stubbed
     }
 
-    private void renderFrameInfoHint(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, ItemAndStack<PhotographItem> photograph) {
-        if (Minecrft.get().player == null || !Minecrft.get().player.isCreative()) {
-            return;
-        }
-
-        Frame frame = photograph.getItem().getFrame(photograph.getItemStack());
-        if (frame == Frame.EMPTY) {
-            return;
-        }
-
-        GuiGraphicsExtractor.drawString(font, "?", width - font.width("?") - 10, 10, 0xFFFFFFFF);
-
-        if (mouseX > width - 20 && mouseX < width && mouseY < 20) {
-            String exposureName = frame.identifier().map(id -> id, Identifier::toString);
-
-            List<Component> lines = new ArrayList<>();
-
-            lines.add(Component.literal(exposureName));
-            lines.add(Component.translatable("gui.exposure.photograph_screen.drop_as_item_tooltip", Component.literal("CTRL + I")));
-            lines.add(Component.translatable("gui.exposure.photograph_screen.copy_" +
-                    frame.identifier().map(id -> "id", texture -> "texture_path") + "_tooltip", "CTRL + C"));
-
-            frame.identifier().getId().ifPresent(id -> {
-                if (savedExposureFiles.containsKey(id)) {
-                    lines.add(Component.translatable("gui.exposure.photograph_screen.copy_saved_file_path_tooltip", Component.literal("CTRL + SHIFT + C")));
-                    lines.add(Component.translatable("gui.exposure.photograph_screen.open_saved_file_tooltip", Component.literal("CTRL + S")));
-                }
-            });
-
-            GuiGraphicsExtractor.renderTooltip(font, lines, Optional.empty(), mouseX, mouseY + 20);
-        }
+    // TODO: MC 26.1 - renderFrameInfoHint stubbed
+    private void renderFrameInfoHint(@NotNull GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, ItemAndStack<PhotographItem> photograph) {
+        // Stubbed
     }
 
-    @Override
+    // TODO: MC 26.1 - keyPressed now takes KeyEvent
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        return keyBindings.keyPressed(keyCode, scanCode, modifiers) || super.keyPressed(keyCode, scanCode, modifiers);
-    }
-
-    @Override
-    public boolean keyReleased(int keyCode, int scanCode, int modifiers) {
-        return keyBindings.keyReleased(keyCode, scanCode, modifiers) || super.keyReleased(keyCode, scanCode, modifiers);
-    }
-
-    @Override
-    public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
-        if (super.mouseScrolled(mouseX, mouseY, scrollX, scrollY)) return true;
-
-        if (scrollY >= 0.0) {
-            zoom.zoomIn();
-        } else {
-            zoom.zoomOut();
-        }
-        return true;
-    }
-
-    @Override
-    public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
-        if (super.mouseDragged(mouseX, mouseY, button, dragX, dragY)) return true;
-
-        if (button == InputConstants.MOUSE_BUTTON_LEFT) {
-            float centerX = width / 2f;
-            float centerY = height / 2f;
-            x = (float) Mth.clamp(x + dragX, -centerX, centerX);
-            y = (float) Mth.clamp(y + dragY, -centerY, centerY);
-            return true;
-        }
-
         return false;
     }
 
-    @Override
+    // TODO: MC 26.1 - keyReleased now takes KeyEvent
+    public boolean keyReleased(int keyCode, int scanCode, int modifiers) {
+        return false;
+    }
+
+    // TODO: MC 26.1 - mouseScrolled signature
+    public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
+        return false;
+    }
+
+    // TODO: MC 26.1 - mouseDragged now takes MouseButtonEvent,double,double
+    public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
+        return false;
+    }
+
+    // TODO: MC 26.1
     public boolean isPauseScreen() {
         return false;
     }
-
-    // --
 
     protected boolean dropAsItem() {
         if (!Minecrft.player().isCreative()) {
             return false;
         }
         ItemStack droppedStack = getCurrentPhotograph().getItemStack().copy();
-
-        // Set type so copying recipe works properly.
         Frame frame = droppedStack.getOrDefault(Exposure.DataComponents.PHOTOGRAPH_FRAME, Frame.EMPTY);
         ExposureType type = frame.type();
         droppedStack.set(Exposure.DataComponents.PHOTOGRAPH_TYPE, type);
-
         Minecrft.gameMode().handleCreativeModeItemDrop(droppedStack);
         Minecrft.player().sendSystemMessage(Component.translatable("gui.exposure.photograph_screen.item_dropped_message",
-                droppedStack.getDisplayName()), false);
+                droppedStack.getDisplayName()));
         return true;
     }
 
@@ -293,7 +196,7 @@ public class PhotographScreen extends Screen {
         String text = frame.identifier().map(id -> id, Identifier::toString);
         Minecrft.get().keyboardHandler.setClipboard(text);
         Minecrft.player().sendSystemMessage(
-                Component.translatable("gui.exposure.photograph_screen.copied_message", text), false);
+                Component.translatable("gui.exposure.photograph_screen.copied_message", text));
         return true;
     }
 
@@ -305,7 +208,7 @@ public class PhotographScreen extends Screen {
                     if (savedExposureFiles.get(id) instanceof File file) {
                         Minecrft.get().keyboardHandler.setClipboard(file.getAbsolutePath());
                         Minecrft.player().sendSystemMessage(
-                                Component.translatable("gui.exposure.photograph_screen.copied_message", file.getAbsolutePath()), false);
+                                Component.translatable("gui.exposure.photograph_screen.copied_message", file.getAbsolutePath()));
                         return true;
                     }
                     return false;
@@ -325,44 +228,8 @@ public class PhotographScreen extends Screen {
                 }).orElse(false);
     }
 
-    // --
-
     protected void trySaveToFile(ItemAndStack<PhotographItem> photograph) {
-        Frame frame = photograph.getItem().getFrame(photograph.getItemStack());
-
-        if (frame == Frame.EMPTY || !frame.identifier().isId() || !frame.isTakenBy(Minecrft.player())) {
-            return;
-        }
-
-        String id = frame.identifier().getId().orElseThrow();
-
-        PhotographType photographType = photograph.getItem().getType(photograph.getItemStack());
-        PhotographStyle photographStyle = PhotographStyle.of(photograph.getItemStack());
-
-        String filename = getFilename(id, photographType);
-
-        if (savedExposureIds.contains(filename)) {
-            return;
-        }
-
-        ExposureClient.exposureStore().getOrRequest(id).getData().ifPresent(exposure -> {
-            savedExposureIds.add(filename);
-
-            CompletableFuture.runAsync(() -> new ImageExporter(exposure)
-                            .modify(ImageEffect.chain(
-                                    photographStyle.modifier(),
-                                    ImageEffect.Resize.multiplier(Config.Client.EXPORT_SIZE_MULTIPLIER.get())
-                            ))
-                            .toExposuresFolder()
-                            .organizeByWorld(Config.Client.EXPORT_ORGANIZE_BY_WORLD.get())
-                            .setCreationDate(exposure.getTag().unixTimestamp())
-                            .onExport(file -> savedExposureFiles.put(id, file))
-                            .export())
-                    .handle((unused, throwable) -> {
-                        Exposure.LOGGER.error(throwable.getMessage());
-                        return null;
-                    });
-        });
+        // TODO: MC 26.1 - stubbed
     }
 
     protected @NotNull String getFilename(String id, PhotographType photographType) {
@@ -375,10 +242,6 @@ public class PhotographScreen extends Screen {
 
     public interface PhotographProvider {
         boolean shouldRefresh();
-
-        /**
-         * Should have at least one photograph.
-         */
         List<ItemAndStack<PhotographItem>> get();
 
         static PhotographProvider fixed(List<ItemAndStack<PhotographItem>> photographs) {
@@ -418,11 +281,9 @@ public class PhotographScreen extends Screen {
                 if (stack.getItem() instanceof PhotographItem) {
                     return List.of(new ItemAndStack<>(stack));
                 }
-
                 if (stack.getItem() instanceof StackedPhotographsItem stackedPhotographsItem) {
                     return stackedPhotographsItem.getPhotographs(stack).photographsItemAndStacks();
                 }
-
                 return Collections.emptyList();
             }
 
@@ -430,11 +291,9 @@ public class PhotographScreen extends Screen {
             public boolean shouldRefresh() {
                 ItemStack item = itemSupplier.get();
                 List<ItemAndStack<PhotographItem>> newPhotographs = fromItemStack(item);
-
                 if (newPhotographs.isEmpty()) {
                     return false;
                 }
-
                 boolean shouldRefresh = !get().equals(newPhotographs);
                 if (shouldRefresh) {
                     photographs = newPhotographs;

@@ -22,6 +22,11 @@ public class CameraStandEntityRenderer <T extends CameraStandEntity> extends Ent
     }
 
     @Override
+    public @NotNull EntityRenderState createRenderState() {
+        return new EntityRenderState();
+    }
+
+    @Override
     public @NotNull Identifier getTextureLocation(T entity) {
         return TEXTURE_LOCATION;
     }

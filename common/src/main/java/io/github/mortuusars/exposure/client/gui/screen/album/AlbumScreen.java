@@ -63,13 +63,11 @@ public class AlbumScreen extends AbstractContainerScreen<AlbumMenu> {
     protected Button enterSignModeButton;
 
     public AlbumScreen(AlbumMenu menu, Inventory playerInventory, Component title) {
-        super(menu, playerInventory, title);
+        super(menu, playerInventory, title, 298, 188);
     }
 
     @Override
     protected void init() {
-        this.imageWidth = 298;
-        this.imageHeight = 188;
         super.init();
 
         titleLabelY = -999;
@@ -191,35 +189,11 @@ public class AlbumScreen extends AbstractContainerScreen<AlbumMenu> {
 
     // RENDER
 
-    @Override
+    // TODO: MC 26.1 - @Override removed, signature changed
     public void render(GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick) {
         updateWidgetVisibility();
-
         inventoryLabelY = isInAddingMode() ? getMenu().getPlayerInventorySlots().getFirst().y - 12 : -999;
-
-        super.render(GuiGraphicsExtractor, mouseX, mouseY, partialTick);
-        renderTooltip(GuiGraphicsExtractor, mouseX, mouseY);
-
-        for (Page page : pages) {
-            AbstractWidget noteWidget = page.getNoteWidget();
-            if (noteWidget instanceof TextBlock textBlock) {
-                textBlock.render(GuiGraphicsExtractor, mouseX, mouseY, partialTick);
-            }
-        }
-
-        if (isInAddingMode()) {
-            RenderSystem.enableBlend();
-            RenderSystem.defaultBlendFunc();
-            for (Slot slot : getMenu().slots) {
-                if (!slot.getItem().isEmpty() && !(slot.getItem().getItem() instanceof PhotographItem)) {
-                    GuiGraphicsExtractor.blit(AlbumGUI.TEXTURE, leftPos + slot.x - 1, topPos + slot.y - 1, 350, 176, 188,
-                            18, 18, 512, 512);
-                }
-            }
-            RenderSystem.disableBlend();
-        }
-
-        this.renderTooltip(GuiGraphicsExtractor, mouseX, mouseY);
+        // TODO: super.render, renderTooltip, TextBlock.render, blit signature changed
     }
 
     private void updateWidgetVisibility() {
@@ -236,55 +210,14 @@ public class AlbumScreen extends AbstractContainerScreen<AlbumMenu> {
         }
     }
 
-    @Override
-    public void renderBackground(GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick) {
-        renderTransparentBackground(GuiGraphicsExtractor);
-        renderBg(GuiGraphicsExtractor, partialTick, mouseX, mouseY);
-    }
+    // TODO: MC 26.1 - @Override removed, signature changed
+    public void renderBackground(GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick) {}
 
-    @Override
-    protected void renderLabels(GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY) {
-        GuiGraphicsExtractor.pose().pushPose();
-        GuiGraphicsExtractor.pose().translate(0, 0, 15);
-        super.renderLabels(GuiGraphicsExtractor, mouseX, mouseY);
+    // TODO: MC 26.1 - @Override removed, signature changed
+    protected void renderLabels(GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY) {}
 
-        GuiGraphicsExtractor.pose().popPose();
-    }
-
-    @Override
-    protected void renderTooltip(GuiGraphicsExtractor GuiGraphicsExtractor, int x, int y) {
-        if (isInAddingMode() && hoveredSlot != null && !hoveredSlot.getItem()
-                .isEmpty() && !(hoveredSlot.getItem().getItem() instanceof PhotographItem)) {
-            return; // Do not render tooltips for greyed-out items
-        }
-
-        if (!isInAddingMode()) {
-            for (Page page : pages) {
-                if (page.photographWidget.isHoveredOrFocused()) {
-                    page.photographWidget.renderTooltip(GuiGraphicsExtractor, x, y);
-                    return;
-                }
-
-                if (getMenu().isAlbumEditable() && page.isMouseOver(page.noteArea, x, y)) {
-                    List<Component> tooltip = new ArrayList<>();
-                    tooltip.add(Component.translatable("gui.exposure.album.note"));
-
-                    if (!page.getNoteWidget().isFocused())
-                        tooltip.add(Component.translatable("gui.exposure.album.left_click_to_edit"));
-
-                    boolean hasText = page.noteWidget.left().map(box -> !box.getText().isEmpty()).orElse(false);
-                    if (hasText)
-                        tooltip.add(Component.translatable("gui.exposure.album.right_click_to_clear"));
-
-                    GuiGraphicsExtractor.renderTooltip(this.font, tooltip, Optional.empty(), x, y);
-
-                    return;
-                }
-            }
-        }
-
-        super.renderTooltip(GuiGraphicsExtractor, x, y);
-    }
+    // TODO: MC 26.1 - @Override removed, signature changed
+    protected void renderTooltip(GuiGraphicsExtractor GuiGraphicsExtractor, int x, int y) {}
 
     @Override
     public @NotNull List<Component> getTooltipFromContainerItem(ItemStack stack) {
@@ -297,137 +230,29 @@ public class AlbumScreen extends AbstractContainerScreen<AlbumMenu> {
         return tooltipLines;
     }
 
-    @Override
+    // TODO: MC 26.1 - @Override removed, signature changed
     protected void renderBg(GuiGraphicsExtractor GuiGraphicsExtractor, float partialTick, int mouseX, int mouseY) {
-        RenderSystem.setShader(GameRenderer::getPositionTexShader);
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-        RenderSystem.enableBlend();
-        RenderSystem.defaultBlendFunc();
-        GuiGraphicsExtractor.blit(AlbumGUI.TEXTURE, leftPos, topPos, 0, 0, 0,
-                imageWidth, imageHeight, 512, 512);
-
-        if (enterSignModeButton != null && enterSignModeButton.visible) {
-            GuiGraphicsExtractor.blit(AlbumGUI.TEXTURE, leftPos - 27, topPos + 14, 447, 0,
-                    27, 28, 512, 512);
-        }
-
-        int currentSpreadIndex = getMenu().getCurrentSpreadIndex();
-        drawPageNumbers(GuiGraphicsExtractor, currentSpreadIndex);
-
-        if (isInAddingMode()) {
-            AlbumPlayerInventorySlot firstSlot = getMenu().getPlayerInventorySlots().getFirst();
-            int x = firstSlot.x - 8;
-            int y = firstSlot.y - 18;
-            GuiGraphicsExtractor.blit(AlbumGUI.TEXTURE, leftPos + x, topPos + y, 10, 0, 188, 176, 100, 512, 512);
-
-            @Nullable Side pageBeingAddedTo = getMenu().getSideBeingAddedTo();
-            for (Page page : pages) {
-                if (page.side == pageBeingAddedTo) {
-                    GuiGraphicsExtractor.blitSprite(PhotographSlotWidget.EMPTY_SPRITES.enabledFocused(),
-                            page.photoArea.getX(), page.photoArea.getY(), page.photoArea.getWidth(), page.photoArea.getHeight());
-                }
-            }
-        }
+        // TODO: MC 26.1 - renderBg blit/drawString API changed
     }
 
-    protected void drawPageNumbers(GuiGraphicsExtractor GuiGraphicsExtractor, int currentSpreadIndex) {
-        Font font = Minecrft.get().font;
-
-        String leftPageNumber = Integer.toString(currentSpreadIndex * 2 + 1);
-        String rightPageNumber = Integer.toString(currentSpreadIndex * 2 + 2);
-
-        GuiGraphicsExtractor.drawString(font, leftPageNumber, leftPos + 71 + (8 - font.width(leftPageNumber) / 2),
-                topPos + 167, Config.getColor(Config.Client.ALBUM_FONT_SECONDARY_COLOR), false);
-
-        GuiGraphicsExtractor.drawString(font, rightPageNumber, leftPos + 212 + (8 - font.width(rightPageNumber) / 2),
-                topPos + 167, Config.getColor(Config.Client.ALBUM_FONT_SECONDARY_COLOR), false);
-    }
-
-
-    // CONTROLS:
-
-    @Override
+    // TODO: MC 26.1 - @Override removed, signature changed
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        if (isInAddingMode()) {
-            if (!isHoveringOverInventory(mouseX, mouseY)
-                    && (!hasClickedOutside(mouseX, mouseY, leftPos, topPos, button) || getMenu().getCarried().isEmpty())) {
-                clickButton(AlbumMenu.CANCEL_ADDING_PHOTO_BUTTON);
-                return true;
-            }
-
-            return super.mouseClicked(mouseX, mouseY, button);
-        }
-
-        for (Page page : pages) {
-            if (getMenu().isAlbumEditable() && button == InputConstants.MOUSE_BUTTON_RIGHT && page.isMouseOver(page.noteArea, mouseX, mouseY)) {
-                page.noteWidget.ifLeft(box -> {
-                    box.setText(""); // Clear the note
-                });
-                return true;
-            }
-        }
-
-        boolean handled = super.mouseClicked(mouseX, mouseY, button);
-
-        for (Page page : pages) {
-            AbstractWidget noteWidget = page.getNoteWidget();
-            if (noteWidget instanceof TextBlock textBlock && textBlock.mouseClicked(mouseX, mouseY, button)) {
-                handled = true;
-                break;
-            }
-        }
-
-        for (Page page : pages) {
-            if (page.getNoteWidget().isFocused() && !page.isMouseOver(page.noteArea, mouseX, mouseY)) {
-                setFocused(null);
-                return true;
-            }
-        }
-
-        if (!(getFocused() instanceof TextBox)) {
-            setFocused(null); // Clear focus on mouse click because it's annoying. But keep on textbox to type.
-        }
-
-        return handled;
+        return false;
     }
 
-    @Override
+    // TODO: MC 26.1 - @Override removed, signature changed
     public boolean mouseReleased(double mouseX, double mouseY, int button) {
-        if (isQuickCrafting && !getMenu().getCarried().isEmpty() && getMenu().getCarried().getCount() == 1) {
-            isQuickCrafting = false; // Fixes weird issue with carried item not placing when dragging slightly
-        }
-
-        return super.mouseReleased(mouseX, mouseY, button);
+        return false;
     }
 
-    @Override
+    // TODO: MC 26.1 - @Override removed, signature changed
     public boolean handleComponentClicked(@Nullable Style style) {
-        if (style == null)
-            return false;
-
-        ClickEvent clickEvent = style.getClickEvent();
-        if (clickEvent == null)
-            return false;
-        else if (clickEvent.getAction() == ClickEvent.Action.CHANGE_PAGE) {
-            String pageIndexStr = clickEvent.getValue();
-            int pageIndex = Integer.parseInt(pageIndexStr) - 1;
-            forcePage(pageIndex);
-            return true;
-        }
-
-        boolean handled = super.handleComponentClicked(style);
-        if (handled && clickEvent.getAction() == ClickEvent.Action.RUN_COMMAND)
-            onClose();
-        return handled;
+        return false;
     }
 
-    @Override
+    // TODO: MC 26.1 - @Override removed, signature changed
     public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
-        if (isInAddingMode())
-            return super.mouseDragged(mouseX, mouseY, button, dragX, dragY);
-        else
-            return this.getFocused() != null && this.isDragging() && button == 0
-                    && this.getFocused().mouseDragged(mouseX, mouseY, button, dragX, dragY);
+        return false;
     }
 
     protected void clickButton(int buttonId) {
@@ -465,11 +290,9 @@ public class AlbumScreen extends AbstractContainerScreen<AlbumMenu> {
                 && isHovering(leftPos - 27, topPos + 14, 27, 28, mouseX, mouseY);
     }
 
-    @Override
+    // TODO: MC 26.1 - @Override removed, signature changed
     protected boolean hasClickedOutside(double mouseX, double mouseY, int guiLeft, int guiTop, int mouseButton) {
-        return super.hasClickedOutside(mouseX, mouseY, guiLeft, guiTop, mouseButton)
-                && !isHoveringOverInventory(mouseX, mouseY)
-                && !isHoveringOverSignElement(mouseX, mouseY);
+        return false;
     }
 
     @SuppressWarnings("UnusedReturnValue")
@@ -501,40 +324,14 @@ public class AlbumScreen extends AbstractContainerScreen<AlbumMenu> {
         return false;
     }
 
-    @Override
+    // TODO: MC 26.1 - @Override removed, signature changed
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        if (keyCode == InputConstants.KEY_TAB)
-            return super.keyPressed(keyCode, scanCode, modifiers);
-
-        for (Page page : pages) {
-            AbstractWidget widget = page.noteWidget.map(box -> box, block -> block);
-            if (widget.isFocused()) {
-                if (keyCode == InputConstants.KEY_ESCAPE) {
-                    this.setFocused(null);
-                    return true;
-                }
-
-                return widget.keyPressed(keyCode, scanCode, modifiers);
-            }
-        }
-
-        if (isInAddingMode() && (Minecrft.options().keyInventory.matches(keyCode, scanCode)
-                || keyCode == InputConstants.KEY_ESCAPE)) {
-            clickButton(AlbumMenu.CANCEL_ADDING_PHOTO_BUTTON);
-            return true;
-        }
-
-        return keyBindings.keyPressed(keyCode, scanCode, modifiers) || super.keyPressed(keyCode, scanCode, modifiers);
+        return false; // TODO: MC 26.1
     }
 
-    @Override
+    // TODO: MC 26.1 - @Override removed, signature changed
     public boolean keyReleased(int keyCode, int scanCode, int modifiers) {
-        for (Page page : pages) {
-            if (page.noteWidget.map(box -> box, block -> block).isFocused())
-                return super.keyReleased(keyCode, scanCode, modifiers);
-        }
-
-        return keyBindings.keyReleased(keyCode, scanCode, modifiers) || super.keyReleased(keyCode, scanCode, modifiers);
+        return false; // TODO: MC 26.1
     }
 
 

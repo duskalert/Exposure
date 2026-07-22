@@ -8,11 +8,11 @@ public class NegativeEffect implements PixelEffect {
         return "negative";
     }
 
-    public int modify(int ARGB) {
-        int alpha = ARGB.alpha(ARGB);
-        int red = ARGB.red(ARGB);
-        int green = ARGB.green(ARGB);
-        int blue = ARGB.blue(ARGB);
+    public int modify(int argb) {
+        int alpha = ARGB.alpha(argb);
+        int red = ARGB.red(argb);
+        int green = ARGB.green(argb);
+        int blue = ARGB.blue(argb);
 
         // Invert
         red = 255 - red;

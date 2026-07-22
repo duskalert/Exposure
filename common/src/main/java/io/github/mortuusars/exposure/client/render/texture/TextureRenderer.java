@@ -28,18 +28,8 @@ public class TextureRenderer {
     }
 
     public static void render(PoseStack poseStack, MultiBufferSource bufferSource, Identifier texture,
-                              float minX, float minY, float maxX, float maxY,
-                              float minU, float minV, float maxU, float maxV, int packedLight, int r, int g, int b, int a) {
-        RenderSystem.setShaderTexture(0, texture);
-        RenderSystem.setShader(GameRenderer::getPositionColorTexLightmapShader);
-        RenderSystem.disableBlend();
-        RenderSystem.disableDepthTest();
-
-        Matrix4f matrix = poseStack.last().pose();
-        VertexConsumer bufferBuilder = bufferSource.getBuffer(RenderType.text(texture));
-        bufferBuilder.addVertex(matrix, minX, maxY, 0).setColor(r, g, b, a).setUv(minU, maxV).setLight(packedLight);
-        bufferBuilder.addVertex(matrix, maxX, maxY, 0).setColor(r, g, b, a).setUv(maxU, maxV).setLight(packedLight);
-        bufferBuilder.addVertex(matrix, maxX, minY, 0).setColor(r, g, b, a).setUv(maxU, minV).setLight(packedLight);
-        bufferBuilder.addVertex(matrix, minX, minY, 0).setColor(r, g, b, a).setUv(minU, minV).setLight(packedLight);
+                               float minX, float minY, float maxX, float maxY,
+                               float minU, float minV, float maxU, float maxV, int packedLight, int r, int g, int b, int a) {
+        // TODO: MC 26.1 - RenderType.text() and RenderSystem API changed
     }
 }

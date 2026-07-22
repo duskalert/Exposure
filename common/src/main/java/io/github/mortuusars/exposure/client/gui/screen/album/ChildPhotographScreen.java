@@ -13,6 +13,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 public class ChildPhotographScreen extends PhotographScreen {
+    // TODO: MC 26.1 - Screen API redesigned. Stubbed.
     private final Screen parentScreen;
 
     public ChildPhotographScreen(Screen parentScreen, List<ItemAndStack<PhotographItem>> photographs) {
@@ -20,42 +21,31 @@ public class ChildPhotographScreen extends PhotographScreen {
         this.parentScreen = parentScreen;
     }
 
-    @Override
-    public void render(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick) {
-        super.render(GuiGraphicsExtractor, mouseX, mouseY, partialTick);
-
-        if (zoom.get() < zoom.getMin() + 0.1f && zoom.getTarget() < zoom.getMin() + 0.1f) {
-            Minecrft.get().setScreen(parentScreen);
-            Minecrft.player().playSound(Exposure.SoundEvents.PHOTOGRAPH_PLACE.get(), 0.7f, 1.1f);
-        }
+    // TODO: MC 26.1 - render signature changed
+    public void render(@NotNull GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTick) {
+        // Stubbed
     }
 
-    @Override
+    // TODO: MC 26.1 - keyPressed now takes KeyEvent, KeyMapping.matches changed
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        if (keyCode == InputConstants.KEY_ESCAPE || Minecrft.options().keyInventory.matches(keyCode, scanCode)) {
+        if (keyCode == InputConstants.KEY_ESCAPE) {
             onClose();
             return true;
         }
-
-        return super.keyPressed(keyCode, scanCode, modifiers);
+        return false;
     }
 
-    @Override
+    // TODO: MC 26.1 - mouseClicked now takes MouseButtonEvent
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        if (super.mouseClicked(mouseX, mouseY, button)) {
-            return true;
-        }
-
         if (button == InputConstants.MOUSE_BUTTON_RIGHT) {
             zoom.setTarget(0f);
             return true;
         }
-
         return false;
     }
 
-    @Override
+    // TODO: MC 26.1 - onClose
     public void onClose() {
-        zoom.setTarget(0f); // ChildPhotographScreen#render will close screen when zooming out ends.
+        zoom.setTarget(0f);
     }
 }

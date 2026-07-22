@@ -49,7 +49,7 @@ public interface SensitiveFilmItem extends FilmItem {
     default void addPaletteToTooltip(ItemStack stack, List<Component> list) {
         ResourceKey<ColorPalette> palette = getColorPalette(stack);
         if (!palette.equals(ColorPalettes.DEFAULT)) {
-            list.add(Component.translatable("item.exposure.film_roll.tooltip.palette", palette.registryKey().getValue().toString())
+            list.add(Component.translatable("item.exposure.film_roll.tooltip.palette", "dummy_palette" /* TODO: MC 26.1 - registryKey().getValue() removed */)
                     .withStyle(ChatFormatting.DARK_GRAY));
         }
     }

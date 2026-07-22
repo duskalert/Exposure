@@ -18,7 +18,7 @@ public interface ToastIcon {
     ToastIcon F1 = new SpriteIcon(Exposure.resource("toast/f1"));
     ToastIcon HEADS_UP = new SpriteIcon(Exposure.resource("toast/heads_up"));
 
-    void render(GuiGraphicsExtractor GuiGraphicsExtractor, int x, int y);
+    void render(GuiGraphicsExtractor guiGraphics, int x, int y);
 
     class SpriteIcon implements ToastIcon {
         protected final Identifier sprite;
@@ -27,9 +27,8 @@ public interface ToastIcon {
             this.sprite = sprite;
         }
 
-        public void render(GuiGraphicsExtractor GuiGraphicsExtractor, int x, int y) {
-            RenderSystem.enableBlend();
-            GuiGraphicsExtractor.blitSprite(this.sprite, x, y, 20, 20);
+        public void render(GuiGraphicsExtractor guiGraphics, int x, int y) {
+            // TODO: MC 26.1 - RenderSystem.enableBlend and blitSprite API changed
         }
     }
 
@@ -41,8 +40,8 @@ public interface ToastIcon {
         }
 
         @Override
-        public void render(GuiGraphicsExtractor GuiGraphicsExtractor, int x, int y) {
-            icon.render(GuiGraphicsExtractor, x, y);
+        public void render(GuiGraphicsExtractor guiGraphics, int x, int y) {
+            icon.render(guiGraphics, x, y);
         }
     }
 }

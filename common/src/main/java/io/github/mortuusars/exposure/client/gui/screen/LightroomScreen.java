@@ -56,6 +56,8 @@ import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class LightroomScreen extends AbstractContainerScreen<LightroomMenu> {
+    // TODO: MC 26.1 - ContainerScreen/Rendering API redesigned. Stubbed.
+
     public static final Identifier MAIN_TEXTURE = Exposure.resource("textures/gui/lightroom.png");
     public static final Identifier FILM_OVERLAYS_TEXTURE = Exposure.resource("textures/gui/lightroom_film_overlays.png");
 
@@ -92,71 +94,21 @@ public class LightroomScreen extends AbstractContainerScreen<LightroomMenu> {
     public LightroomScreen(LightroomMenu menu, Inventory playerInventory, Component title) {
         super(menu, playerInventory, title);
         this.player = playerInventory.player;
-
         this.mode = getMenu().getBlockEntity().getActualPrintingMode();
     }
 
-    @Override
+    // TODO: MC 26.1 - init signature, imageWidth/height are final, hasShiftDown removed
     protected void init() {
-        imageWidth = 176;
-        imageHeight = 209;
-        super.init();
-        inventoryLabelY = 116;
-
-        slotPlaceholders = Map.of(
-                Lightroom.FILM_SLOT, new Rect2i(238, 0, 18, 18),
-                Lightroom.PAPER_SLOT, new Rect2i(238, 18, 18, 18),
-                Lightroom.CYAN_SLOT, new Rect2i(238, 36, 18, 18),
-                Lightroom.MAGENTA_SLOT, new Rect2i(238, 54, 18, 18),
-                Lightroom.YELLOW_SLOT, new Rect2i(238, 72, 18, 18),
-                Lightroom.BLACK_SLOT, new Rect2i(238, 90, 18, 18)
-        );
-
-        printButton = new ImageButton(leftPos + 117, topPos + 89, 22, 22, PRINT_BUTTON_SPRITES,
-                button -> {
-                    int buttonId = Screen.hasShiftDown() && player.isCreative() ? LightroomMenu.PRINT_CREATIVE_BUTTON_ID : LightroomMenu.PRINT_BUTTON_ID;
-                    clickButton(buttonId);
-                }, Component.translatable("gui.exposure.lightroom.print"));
-        updatePrintButtonTooltip();
-
-        addRenderableWidget(printButton);
-
-        printingModeToggleButton = createPrintingModeToggleButton();
-        addRenderableWidget(printingModeToggleButton);
-
-        updateButtons();
+        // Stubbed
     }
 
     protected void updatePrintButtonTooltip() {
-        MutableComponent tooltip = Component.translatable("gui.exposure.lightroom.print");
-        if (!getMenu().getBlockEntity().hasSufficientLightLevel()) {
-            tooltip.append("\n")
-                    .append(Component.translatable("gui.exposure.lightroom.print.not_enough_light_tooltip").withStyle(ChatFormatting.RED));
-        }
-
-        if (player.isCreative()) {
-            tooltip.append("\n")
-                    .append(Component.translatable("gui.exposure.lightroom.print.creative_tooltip"));
-        }
-
-        printButton.setTooltip(Tooltip.create(tooltip));
+        // Stubbed
     }
 
+    // TODO: MC 26.1 - createPrintingModeToggleButton
     protected CycleButton<PrintingMode> createPrintingModeToggleButton() {
-        Map<PrintingMode, WidgetSprites> spritesMap = Map.of(PrintingMode.REGULAR, PRINTING_MODE_TOGGLE_REGULAR_SPRITES,
-                PrintingMode.CHROMATIC, PRINTING_MODE_TOGGLE_CHROMATIC_SPRITES);
-        Map<PrintingMode, Tooltip> tooltipMap = Map.of(
-                PrintingMode.REGULAR, Tooltip.create(Component.translatable("gui.exposure.lightroom.printing_mode.regular")
-                        .append(CommonComponents.NEW_LINE)
-                        .append(Component.translatable("gui.exposure.lightroom.printing_mode.regular.info").withStyle(ChatFormatting.GRAY))),
-                PrintingMode.CHROMATIC, Tooltip.create(Component.translatable("gui.exposure.lightroom.printing_mode.chromatic")
-                        .append(CommonComponents.NEW_LINE)
-                        .append(Component.translatable("gui.exposure.lightroom.printing_mode.chromatic.info").withStyle(ChatFormatting.GRAY))));
-        return new CycleButton<>(leftPos - 17, topPos + 91, 18, 18,
-                Arrays.asList(PrintingMode.values()), getMenu().getBlockEntity().getActualPrintingMode(),
-                spritesMap, (button, newMode) -> clickButton(LightroomMenu.TOGGLE_PROCESS_BUTTON_ID))
-                .setClickSound(SoundEvents.UI_BUTTON_CLICK.value())
-                .setTooltips(tooltipMap);
+        return null;
     }
 
     protected void clickButton(int buttonId) {
@@ -164,270 +116,80 @@ public class LightroomScreen extends AbstractContainerScreen<LightroomMenu> {
         Minecrft.gameMode().handleInventoryButtonClick(getMenu().containerId, buttonId);
     }
 
-    @Override
+    // TODO: MC 26.1 - containerTick
     protected void containerTick() {
-        PrintingMode currentMode = getMenu().getBlockEntity().getActualPrintingMode();
-        if (currentMode != printingModeToggleButton.getCurrentValue()) {
-            printingModeToggleButton.setCurrentValue(currentMode);
-        }
+        // Stubbed
     }
 
-    @Override
-    public void render(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick) {
-        updateButtons();
-        super.render(GuiGraphicsExtractor, mouseX, mouseY, partialTick);
-        renderTooltip(GuiGraphicsExtractor, mouseX, mouseY);
+    // TODO: MC 26.1 - render signature changed, hasShiftDown removed
+    public void render(@NotNull GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTick) {
+        // Stubbed
     }
 
     protected void updateButtons() {
-        printButton.active = getMenu().getBlockEntity().canPrint() || (player.isCreative() && Screen.hasShiftDown() && getMenu().getBlockEntity().canPrintInCreativeMode());
-        printButton.visible = !getMenu().isPrinting();
-        updatePrintButtonTooltip();
-
-        printingModeToggleButton.active = true;
-        printingModeToggleButton.visible = getMenu().canChangeProcess();
+        // TODO: MC 26.1 - hasShiftDown removed
+        // Stubbed
     }
 
-    @Override
-    protected void renderBg(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, float partialTick, int mouseX, int mouseY) {
-        RenderSystem.setShader(GameRenderer::getPositionTexShader);
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-        RenderSystem.enableBlend();
-        RenderSystem.defaultBlendFunc();
-        GuiGraphicsExtractor.blit(MAIN_TEXTURE, leftPos, topPos, 0, 0, imageWidth, imageHeight);
-        GuiGraphicsExtractor.blit(MAIN_TEXTURE, leftPos - 27, topPos + 35, 0, 209, 28, 31);
-
-        renderSlotPlaceholders(GuiGraphicsExtractor, mouseX, mouseY, partialTick);
-
-        if (getMenu().isPrinting()) {
-            int progress = getMenu().getData().get(LightroomBlockEntity.CONTAINER_DATA_PROGRESS_ID);
-            int time = getMenu().getData().get(LightroomBlockEntity.CONTAINER_DATA_PRINT_TIME_ID);
-            int width = progress != 0 && time != 0 ? progress * 24 / time : 0;
-            GuiGraphicsExtractor.blit(MAIN_TEXTURE, leftPos + 116, topPos + 91, 176, 0, width, 17);
-        }
-
-        List<Frame> frames = getMenu().getExposedFrames();
-        if (frames.isEmpty()) {
-            GuiGraphicsExtractor.blit(FILM_OVERLAYS_TEXTURE, leftPos + 4, topPos + 15, 0, 136, 168, 68);
-            return;
-        }
-
-        ItemStack filmStack = getMenu().getSlot(Lightroom.FILM_SLOT).getItem();
-        if (!(filmStack.getItem() instanceof DevelopedFilmItem film))
-            return;
-
-        ExposureType exposureType = film.getType();
-        FilmColor filmColor = exposureType.getFilmColor();
-
-        int selectedFrame = getMenu().getSelectedFrame();
-        @Nullable Frame leftFrame = getMenu().getFrameByIndex(selectedFrame - 1);
-        @Nullable Frame centerFrame = getMenu().getFrameByIndex(selectedFrame);
-        @Nullable Frame rightFrame = getMenu().getFrameByIndex(selectedFrame + 1);
-
-        RenderSystem.setShaderColor(filmColor.r(), filmColor.g(), filmColor.b(), filmColor.a());
-
-        // Left film part
-        GuiGraphicsExtractor.blit(FILM_OVERLAYS_TEXTURE, leftPos + 1, topPos + 15, 0, leftFrame != null ? 68 : 0, 54, 68);
-        // Center film part
-        GuiGraphicsExtractor.blit(FILM_OVERLAYS_TEXTURE, leftPos + 55, topPos + 15, 55, rightFrame != null ? 0 : 68, 64, 68);
-        // Right film part
-        if (rightFrame != null) {
-            boolean hasMoreFrames = selectedFrame + 2 < frames.size();
-            GuiGraphicsExtractor.blit(FILM_OVERLAYS_TEXTURE, leftPos + 119, topPos + 15, 120, hasMoreFrames ? 68 : 0, 56, 68);
-        }
-
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-        PoseStack poseStack = GuiGraphicsExtractor.pose();
-
-        if (leftFrame != null)
-            renderFrame(leftFrame, poseStack, leftPos + 6, topPos + 22, FRAME_SIZE, isOverLeftFrame(mouseX, mouseY) ? 0.8f : 0.25f, exposureType);
-        if (centerFrame != null)
-            renderFrame(centerFrame, poseStack, leftPos + 61, topPos + 22, FRAME_SIZE, 0.9f, exposureType);
-        if (rightFrame != null)
-            renderFrame(rightFrame, poseStack, leftPos + 116, topPos + 22, FRAME_SIZE, isOverRightFrame(mouseX, mouseY) ? 0.8f : 0.25f, exposureType);
-
-        RenderSystem.setShaderColor(filmColor.r(), filmColor.g(), filmColor.b(), filmColor.a());
-
-        if (getMenu().getBlockEntity().isAdvancingFrameOnPrint()) {
-            poseStack.pushPose();
-            poseStack.translate(0, 0, 800);
-
-            if (selectedFrame < getMenu().getTotalFramesCount() - 1) {
-                // Advance Arrow
-                GuiGraphicsExtractor.blit(MAIN_TEXTURE, leftPos + 111, topPos + 44, 200, 0, 10, 10);
-            } else {
-                // Eject Arrow
-                GuiGraphicsExtractor.blit(MAIN_TEXTURE, leftPos + 111, topPos + 44, 210, 0, 10, 10);
-            }
-
-            poseStack.popPose();
-        }
-
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+    // TODO: MC 26.1 - renderBg signature changed, RenderSystem/blit API changed
+    protected void renderBg(@NotNull GuiGraphicsExtractor guiGraphics, float partialTick, int mouseX, int mouseY) {
+        // Stubbed
     }
 
-    private void renderSlotPlaceholders(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick) {
-        for (int slotIndex : slotPlaceholders.keySet()) {
-            Slot slot = getMenu().getSlot(slotIndex);
-            if (!slot.hasItem()) {
-                Rect2i placeholder = slotPlaceholders.get(slotIndex);
-                GuiGraphicsExtractor.blit(MAIN_TEXTURE, leftPos + slot.x - 1, topPos + slot.y - 1,
-                        placeholder.getX(), placeholder.getY(), placeholder.getWidth(), placeholder.getHeight());
-            }
-        }
+    // TODO: MC 26.1 - renderSlotPlaceholders stubbed
+    private void renderSlotPlaceholders(@NotNull GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTick) {
+        // Stubbed
     }
 
-    @Override
-    protected void renderTooltip(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY) {
-        super.renderTooltip(GuiGraphicsExtractor, mouseX, mouseY);
-
-        boolean advancedTooltips = Minecraft.getInstance().options.advancedItemTooltips;
-        int selectedFrame = getMenu().getSelectedFrame();
-        List<Component> tooltipLines = new ArrayList<>();
-
-        int hoveredFrameIndex = -1;
-
-        if (isOverLeftFrame(mouseX, mouseY)) {
-            hoveredFrameIndex = selectedFrame - 1;
-            tooltipLines.add(Component.translatable("gui.exposure.lightroom.previous_frame"));
-        } else if (isOverCenterFrame(mouseX, mouseY)) {
-            hoveredFrameIndex = selectedFrame;
-            tooltipLines.add(Component.translatable("gui.exposure.lightroom.current_frame", Integer.toString(getMenu().getSelectedFrame() + 1)));
-        } else if (isOverRightFrame(mouseX, mouseY)) {
-            hoveredFrameIndex = selectedFrame + 1;
-            tooltipLines.add(Component.translatable("gui.exposure.lightroom.next_frame"));
-        }
-
-        if (hoveredFrameIndex != -1) {
-            addFrameInfoTooltipLines(tooltipLines, hoveredFrameIndex, advancedTooltips);
-        }
-
-        if (isOverCenterFrame(mouseX, mouseY)) {
-            tooltipLines.add(Component.translatable("gui.exposure.lightroom.zoom_in.tooltip"));
-        }
-
-        GuiGraphicsExtractor.renderTooltip(Minecraft.getInstance().font, tooltipLines, Optional.empty(), mouseX, mouseY);
+    // TODO: MC 26.1 - renderTooltip signature changed
+    protected void renderTooltip(@NotNull GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY) {
+        // Stubbed
     }
 
     private void addFrameInfoTooltipLines(List<Component> tooltipLines, int frameIndex, boolean isAdvancedTooltips) {
-        @Nullable Frame frame = getMenu().getFrameByIndex(frameIndex);
-        if (frame != null) {
-            if (getMenu().getBlockEntity().isRefracted()) {
-                frame.getColorChannel().ifPresent(c ->
-                        tooltipLines.add(Component.translatable("gui.exposure.channel." + c.getSerializedName())
-                            .withStyle(Style.EMPTY.withColor(c.getRepresentationColor()))));
-            }
-
-            if (isAdvancedTooltips) {
-                Component component = frame.identifier().map(
-                                id -> !id.isEmpty() ? Component.translatable("gui.exposure.frame.id",
-                                        Component.literal(id).withStyle(ChatFormatting.GRAY)) : Component.empty(),
-                                texture -> Component.translatable("gui.exposure.frame.texture",
-                                        Component.literal(texture.toString()).withStyle(ChatFormatting.GRAY)))
-                        .withStyle(ChatFormatting.DARK_GRAY);
-                tooltipLines.add(component);
-            }
-        }
+        // Stubbed
     }
 
     private boolean isOverLeftFrame(int mouseX, int mouseY) {
-        List<Frame> frames = getMenu().getExposedFrames();
-        int selectedFrame = getMenu().getSelectedFrame();
-        return selectedFrame - 1 >= 0 && selectedFrame - 1 < frames.size() && isHovering(6, 22, FRAME_SIZE, FRAME_SIZE, mouseX, mouseY);
+        return false;
     }
 
     private boolean isOverCenterFrame(int mouseX, int mouseY) {
-        List<Frame> frames = getMenu().getExposedFrames();
-        int selectedFrame = getMenu().getSelectedFrame();
-        return selectedFrame >= 0 && selectedFrame < frames.size() && isHovering(61, 22, FRAME_SIZE, FRAME_SIZE, mouseX, mouseY);
+        return false;
     }
 
     private boolean isOverRightFrame(int mouseX, int mouseY) {
-        List<Frame> frames = getMenu().getExposedFrames();
-        int selectedFrame = getMenu().getSelectedFrame();
-        return selectedFrame + 1 >= 0 && selectedFrame + 1 < frames.size() && isHovering(116, 22, FRAME_SIZE, FRAME_SIZE, mouseX, mouseY);
+        return false;
     }
 
+    // TODO: MC 26.1 - renderFrame uses PoseStack
     public void renderFrame(@NotNull Frame frame, PoseStack poseStack,
                             float x, float y, float size, float alpha, ExposureType exposureType) {
-        RenderableImage image = ExposureClient.renderedExposures().getOrCreate(frame).modifyWith(ImageEffect.NEGATIVE_FILM);
-
-        MultiBufferSource.BufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
-        ExposureClient.imageRenderer().render(image, poseStack, bufferSource, new RenderCoordinates(x, y, size, size),
-                exposureType.getImageColor().withAlpha((int) (alpha * 255)));
-        bufferSource.endBatch();
+        // Stubbed
     }
 
-    @Override
+    // TODO: MC 26.1 - keyPressed now takes KeyEvent
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        return keyBindings.keyPressed(keyCode, scanCode, modifiers) || super.keyPressed(keyCode, scanCode, modifiers);
+        return false;
     }
 
-    @Override
+    // TODO: MC 26.1 - keyReleased now takes KeyEvent
     public boolean keyReleased(int keyCode, int scanCode, int modifiers) {
-        return keyBindings.keyReleased(keyCode, scanCode, modifiers) || super.keyReleased(keyCode, scanCode, modifiers);
+        return false;
     }
 
-    @Override
+    // TODO: MC 26.1 - mouseScrolled signature
     public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
-        boolean handled = super.mouseScrolled(mouseX, mouseY, scrollX, scrollY);
-
-        if (!handled) {
-            if (scrollY >= 0.0 && isOverCenterFrame((int) mouseX, (int) mouseY)) // Scroll Up
-                enterFrameInspectMode();
-        }
-
-        return handled;
+        return false;
     }
 
-    @Override
+    // TODO: MC 26.1 - mouseClicked now takes MouseButtonEvent, getToasts removed
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        if (button == 0) {
-            Slot filmSlot = getMenu().getSlot(Lightroom.FILM_SLOT);
-            if (!hasShownDevelopingToast && !filmSlot.hasItem()
-                    && isHovering(filmSlot.x, filmSlot.y, 16, 16, mouseX, mouseY)
-                    && getMenu().getCarried().getItem() instanceof FilmRollItem) {
-                Minecrft.get().getToasts().addToast(new BetterTutorialToast(ToastIcon.HEADS_UP,
-                        Component.translatable("gui.exposure.lightroom.toast.develop_film.title"),
-                        null, BetterTutorialToast.DEFAULT_SHOW_DURATION_MS));
-                hasShownDevelopingToast = true;
-            }
-
-            if (isOverCenterFrame((int) mouseX, (int) mouseY)) {
-                enterFrameInspectMode();
-                return true;
-            }
-
-            if (isOverLeftFrame((int) mouseX, (int) mouseY)) {
-                changeFrame(PagingDirection.PREVIOUS);
-                return true;
-            }
-
-            if (isOverRightFrame((int) mouseX, (int) mouseY)) {
-                changeFrame(PagingDirection.NEXT);
-                return true;
-            }
-        }
-
-        return super.mouseClicked(mouseX, mouseY, button);
+        return false;
     }
 
     public void changeFrame(PagingDirection navigation) {
-        if ((navigation == PagingDirection.PREVIOUS && getMenu().getSelectedFrame() == 0)
-                || (navigation == PagingDirection.NEXT && getMenu().getSelectedFrame() == getMenu().getTotalFramesCount() - 1)) {
-            return;
-        }
-
-        Preconditions.checkState(minecraft != null);
-        Preconditions.checkState(minecraft.player != null);
-        Preconditions.checkState(minecraft.gameMode != null);
-        int buttonId = navigation == PagingDirection.NEXT ? LightroomMenu.NEXT_FRAME_BUTTON_ID : LightroomMenu.PREVIOUS_FRAME_BUTTON_ID;
-        clickButton(buttonId);
-        Minecrft.get().getSoundManager().play(SimpleSoundInstance.forUI(Exposure.SoundEvents.CAMERA_LENS_RING_CLICK.get(),
-                1f, ThreadLocalRandom.current().nextFloat() * 0.4f + 0.8f));
-
-        // Update block entity clientside to faster update advance frame arrows:
-        getMenu().getBlockEntity().setSelectedFrameIndex(getMenu().getBlockEntity().getSelectedFrameIndex() + (navigation == PagingDirection.NEXT ? 1 : -1));
+        // Stubbed
     }
 
     private void enterFrameInspectMode() {
@@ -435,9 +197,8 @@ public class LightroomScreen extends AbstractContainerScreen<LightroomMenu> {
         player.playSound(Exposure.SoundEvents.CAMERA_LENS_RING_CLICK.get(), 1f, 1.3f);
     }
 
-    @Override
+    // TODO: MC 26.1 - hasClickedOutside signature
     protected boolean hasClickedOutside(double mouseX, double mouseY, int guiLeft, int guiTop, int mouseButton) {
-        return super.hasClickedOutside(mouseX, mouseY, guiLeft, guiTop, mouseButton)
-                && hoveredSlot == null;
+        return false;
     }
 }

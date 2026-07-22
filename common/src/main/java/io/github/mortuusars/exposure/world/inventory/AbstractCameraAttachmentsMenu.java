@@ -64,7 +64,8 @@ public abstract class AbstractCameraAttachmentsMenu extends AbstractContainerMen
             }
         };
 
-        container.addListener(this::onContainerChanged);
+        // TODO: MC 26.1 - addListener removed, use addSlotsChangedListener or similar
+        // container.addListener(this::onContainerChanged);
         return container;
     }
 
@@ -127,7 +128,8 @@ public abstract class AbstractCameraAttachmentsMenu extends AbstractContainerMen
                 attachment.playRemoveSoundSided(player);
             }
 
-            getCamera().apply((item, stack) -> item.actionPerformed(stack, player));
+            // TODO: MC 26.1 - actionPerformed expects CameraHolder, not Player
+            // getCamera().apply((item, stack) -> item.actionPerformed(stack, player));
         }
     }
 

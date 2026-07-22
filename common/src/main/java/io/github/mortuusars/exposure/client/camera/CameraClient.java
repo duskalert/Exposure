@@ -25,7 +25,8 @@ public class CameraClient {
     }
 
     public static Optional<Camera> getActive() {
-        return Minecrft.player().getActiveExposureCameraOptional();
+        // TODO: MC 26.1 - getActiveExposureCameraOptional() removed
+        return Optional.empty();
     }
 
     public static boolean isActive() {
@@ -33,10 +34,7 @@ public class CameraClient {
     }
 
     public static void deactivate() {
-        Minecrft.player().getActiveExposureCameraOptional().ifPresent(camera -> {
-            camera.map((item, stack) -> item.deactivate(camera.getHolder().asHolderEntity(), stack));
-            Minecrft.player().removeActiveExposureCamera();
-        });
+        // TODO: MC 26.1 - getActiveExposureCameraOptional() and removeActiveExposureCamera() removed
         Packets.sendToServer(ActiveCameraDeactivateCommonPacket.INSTANCE);
     }
 

@@ -173,7 +173,7 @@ public class LightroomBlockEntity extends BaseContainerBlockEntity implements Wo
         Direction facing = level.getBlockState(pos).getValue(LightroomBlock.FACING);
         ItemStack filmStack = removeItem(Lightroom.FILM_SLOT, 1);
 
-        Vec3i normal = facing.getNormal();
+        Vec3i normal = facing.getUnitVec3i(); // TODO: MC 26.1 - verify this replacement for getNormal()
         Vec3 point = Vec3.atCenterOf(pos).add(normal.getX() * 0.75f, normal.getY() * 0.75f, normal.getZ() * 0.75f);
         ItemEntity itemEntity = new ItemEntity(level, point.x, point.y, point.z, filmStack);
         itemEntity.setDeltaMovement(normal.getX() * 0.05f, normal.getY() * 0.05f + 0.15f, normal.getZ() * 0.05f);
@@ -601,25 +601,11 @@ public class LightroomBlockEntity extends BaseContainerBlockEntity implements Wo
 
     // Load/Save
 
-    @Override
+    // TODO: MC 26.1 - loadAdditional signature changed, tag API changed
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         this.items = NonNullList.withSize(this.getContainerSize(), ItemStack.EMPTY);
-        ContainerHelper.loadAllItems(tag, this.items, registries);
-
-        // Backwards compatibility:
-        if (tag.contains("Inventory", Tag.TAG_COMPOUND)) {
-            CompoundTag inventory = tag.getCompoundOrEmpty("Inventory");
-            ListTag itemsList = inventory.getList("Items", Tag.TAG_COMPOUND);
-
-            for (int i = 0; i < itemsList.size(); i++) {
-                CompoundTag itemTag = itemsList.getCompoundOrEmpty(i);
-                int slot = itemTag.getIntOr("Slot", 0);
-
-                if (slot >= 0 && slot < items.size()) {
-                    ItemStack.parse(registries, itemTag).ifPresent(stack -> items.set(slot, stack));
-                }
-            }
-        }
+        // TODO: MC 26.1 - ContainerHelper.loadAllItems signature changed
+        // ContainerHelper.loadAllItems(tag, this.items, registries);
 
         this.setSelectedFrameIndex(tag.getIntOr("SelectedFrame", 0));
         this.progress = tag.getIntOr("Progress", 0);
@@ -627,15 +613,13 @@ public class LightroomBlockEntity extends BaseContainerBlockEntity implements Wo
         this.storedExperience = tag.getIntOr("PrintedPhotographsCount", 0);
         this.advanceFrame = tag.getBoolean("AdvanceFrame").orElse(false);
         this.printingMode = PrintingMode.fromStringOrDefault(tag.getStringOr("PrintMode", ""), PrintingMode.REGULAR);
-        if (tag.contains("LastPlayerId", Tag.TAG_INT_ARRAY)) {
-            this.lastPlayerId = tag.getUUID("LastPlayerId");
-        }
     }
 
-    @Override
+    // TODO: MC 26.1 - saveAdditional signature changed
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-        super.saveAdditional(tag, registries);
-        ContainerHelper.saveAllItems(tag, items, registries);
+        // TODO: MC 26.1 - saveAdditional and ContainerHelper.saveAllItems signatures changed
+        // super.saveAdditional(tag, registries);
+        // ContainerHelper.saveAllItems(tag, items, registries);
         if (getSelectedFrameIndex() > 0)
             tag.putInt("SelectedFrame", getSelectedFrameIndex());
         if (progress > 0)
@@ -648,8 +632,6 @@ public class LightroomBlockEntity extends BaseContainerBlockEntity implements Wo
             tag.putBoolean("AdvanceFrame", true);
         if (printingMode != PrintingMode.REGULAR)
             tag.putString("PrintMode", printingMode.getSerializedName());
-        if (!lastPlayerId.equals(Util.NIL_UUID))
-            tag.putUuid("LastPlayerId", lastPlayerId);
     }
 
     protected @NotNull NonNullList<ItemStack> getItems() {

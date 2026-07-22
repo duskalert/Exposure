@@ -15,6 +15,11 @@ public class PhotographFrameEntityRenderer<T extends PhotographFrameEntity> exte
     }
 
     @Override
+    public @NotNull EntityRenderState createRenderState() {
+        return new EntityRenderState();
+    }
+
+    @Override
     public @NotNull Identifier getTextureLocation(T entity) {
         return TEXTURE_LOCATION;
     }

@@ -23,49 +23,21 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Objects;
 
 public class ItemRenameScreen extends AbstractContainerScreen<ItemRenameMenu> {
-    public static final Identifier TEXTURE = Exposure.resource("textures/gui/item_rename.png");
+    // TODO: MC 26.1 - ContainerScreen API redesigned. Stubbed.
 
+    public static final Identifier TEXTURE = Exposure.resource("textures/gui/item_rename.png");
     protected EditBox name;
 
     public ItemRenameScreen(ItemRenameMenu menu, Inventory playerInventory, Component title) {
         super(menu, playerInventory, title);
     }
 
-    @Override
+    // TODO: MC 26.1 - init signature
     protected void init() {
-        imageWidth = 206;
-        imageHeight = 66;
-        inventoryLabelX = -999;
-        inventoryLabelY = -999;
-        titleLabelX = 28;
-        super.init();
-
-        name = new EditBox(this.font, leftPos + 32, topPos + 21, 142, 12, Component.translatable("gui.exposure.item_rename.title"));
-        name.setTextColor(-1);
-        name.setTextColorUneditable(-1);
-        name.setBordered(false);
-        name.setMaxLength(ItemRenameMenu.MAX_NAME_LENGTH);
-        name.setResponder(this::onNameChanged);
-        name.setValue(getMenu().getItemName());
-        addWidget(name);
-        setInitialFocus(name);
-
-        ImageButton applyButton = new ImageButton(leftPos + 133, topPos + 42, 19, 19,
-                Widgets.CONFIRM_BUTTON_SPRITES,
-                button -> confirm(), Component.translatable("gui.exposure.item_rename.apply"));
-        applyButton.setTooltip(Tooltip.create(Component.translatable("gui.exposure.item_rename.apply")));
-        addRenderableWidget(applyButton);
-
-        ImageButton cancelButton = new ImageButton(leftPos + 154, topPos + 42, 19, 19,
-                Widgets.CANCEL_BUTTON_SPRITES,
-                button -> cancel(), Component.translatable("gui.exposure.item_rename.cancel"));
-        cancelButton.setTooltip(Tooltip.create(Component.translatable("gui.exposure.item_rename.cancel")));
-        addRenderableWidget(cancelButton);
+        // Stubbed
     }
 
     protected void confirm() {
-        getMenu().clickMenuButton(Minecraft.getInstance().player, ItemRenameMenu.APPLY_BUTTON_ID);
-        Objects.requireNonNull(Minecraft.getInstance().gameMode).handleInventoryButtonClick(getMenu().containerId, ItemRenameMenu.APPLY_BUTTON_ID);
         onClose();
     }
 
@@ -73,74 +45,37 @@ public class ItemRenameScreen extends AbstractContainerScreen<ItemRenameMenu> {
         onClose();
     }
 
-    @Override
+    // TODO: MC 26.1 - resize signature
     public void resize(Minecraft minecraft, int width, int height) {
-        String string = this.name.getValue();
-        this.init(minecraft, width, height);
-        this.name.setValue(string);
+        // Stubbed
     }
 
-//    @Override
-//    public void containerTick() {
-//        super.containerTick();
-//        name.tick();
-//    }
-
-    @Override
-    public void render(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick) {
-        super.render(GuiGraphicsExtractor, mouseX, mouseY, partialTick);
-        this.name.render(GuiGraphicsExtractor, mouseX, mouseY, partialTick);
-        renderTooltip(GuiGraphicsExtractor, mouseX, mouseY);
+    // TODO: MC 26.1 - render signature changed
+    public void render(@NotNull GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTick) {
+        // Stubbed
     }
 
-    @Override
-    protected void renderTooltip(GuiGraphicsExtractor GuiGraphicsExtractor, int x, int y) {
-        super.renderTooltip(GuiGraphicsExtractor, x, y);
+    // TODO: MC 26.1 - renderTooltip signature changed
+    protected void renderTooltip(GuiGraphicsExtractor guiGraphics, int x, int y) {
+        // Stubbed
     }
 
-    @Override
-    protected void renderBg(GuiGraphicsExtractor GuiGraphicsExtractor, float partialTick, int mouseX, int mouseY) {
-        GuiGraphicsExtractor.blit(TEXTURE, leftPos, topPos, 0, 0, imageWidth, imageHeight);
+    // TODO: MC 26.1 - renderBg signature changed, blit signature changed
+    protected void renderBg(GuiGraphicsExtractor guiGraphics, float partialTick, int mouseX, int mouseY) {
+        // Stubbed
     }
 
     protected void onNameChanged(String name) {
-        ItemStack itemStack = getMenu().getSlot(0).getItem();
-        if (!itemStack.has(DataComponents.CUSTOM_NAME) && name.equals(itemStack.getHoverName().getString())
-                || name.equals(itemStack.getItem().getName(itemStack).getString())) {
-            name = "";
-        }
-
-        if (getMenu().setItemName(name) && Minecraft.getInstance().player != null) {
-            Minecraft.getInstance().player.connection.send(new ServerboundRenameItemPacket(name));
-        }
+        // Stubbed
     }
 
-    @Override
+    // TODO: MC 26.1 - keyPressed now takes KeyEvent
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        if (keyCode == 256) {
-            onClose();
-        }
-
-        if (keyCode == InputConstants.KEY_RETURN) {
-            confirm();
-            Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK.value(), 1f));
-            return true;
-        }
-
-        if (keyCode != InputConstants.KEY_TAB && (name.keyPressed(keyCode, scanCode, modifiers) || name.canConsumeInput())) {
-            return true;
-        }
-
-        return super.keyPressed(keyCode, scanCode, modifiers);
+        return false;
     }
 
-    @Override
+    // TODO: MC 26.1 - mouseClicked now takes MouseButtonEvent
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        if (button == InputConstants.MOUSE_BUTTON_RIGHT && name.isMouseOver(mouseX, mouseY)) {
-            name.setValue("");
-            return true;
-        }
-
-        return super.mouseClicked(mouseX, mouseY, button);
+        return false;
     }
 }

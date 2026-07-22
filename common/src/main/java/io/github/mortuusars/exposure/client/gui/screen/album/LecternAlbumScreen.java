@@ -16,6 +16,8 @@ import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 public class LecternAlbumScreen extends AlbumViewScreen implements MenuAccess<LecternAlbumMenu> {
+    // TODO: MC 26.1 - Screen API redesigned. Stubbed.
+
     private final LecternAlbumMenu menu;
 
     private final ContainerListener listener = new ContainerListener() {
@@ -40,19 +42,9 @@ public class LecternAlbumScreen extends AlbumViewScreen implements MenuAccess<Le
         return this.menu;
     }
 
-    @Override
+    // TODO: MC 26.1 - init signature
     protected void init() {
-        super.init();
-
-        if (Minecrft.player().mayBuild()) {
-            addRenderableWidget(Button.builder(CommonComponents.GUI_DONE, b -> this.onClose())
-                    .bounds(this.width / 2 - 100, topPos + 196, 98, 20).build());
-            addRenderableWidget(Button.builder(Component.translatable("lectern.take_book"),
-                            b -> sendButtonClick(LecternAlbumMenu.BUTTON_TAKE_BOOK))
-                    .bounds(this.width / 2 + 2, topPos + 196, 98, 20).build());
-        }
-
-        this.menu.addSlotListener(listener);
+        // Stubbed
     }
 
     public void removed() {
@@ -60,10 +52,9 @@ public class LecternAlbumScreen extends AlbumViewScreen implements MenuAccess<Le
         this.menu.removeSlotListener(this.listener);
     }
 
-    @Override
+    // TODO: MC 26.1 - onSpreadChanged
     protected void onSpreadChanged(int oldSpread, int newSpread) {
-        super.onSpreadChanged(oldSpread, newSpread);
-        sendButtonClick(LecternAlbumMenu.BUTTON_PAGE_JUMP_RANGE_START + newSpread * 2);
+        // Stubbed
     }
 
     protected void pageChanged() {
@@ -75,55 +66,28 @@ public class LecternAlbumScreen extends AlbumViewScreen implements MenuAccess<Le
         this.setAlbumAccess(AlbumAccess.fromItem(itemStack));
     }
 
-    @Override
+    // TODO: MC 26.1 - forcePage
     protected void forcePage(int pageIndex) {
-        sendButtonClick(LecternAlbumMenu.BUTTON_PAGE_JUMP_RANGE_START + pageIndex);
+        // Stubbed
     }
 
     protected void sendButtonClick(int buttonId) {
         Minecrft.gameMode().handleInventoryButtonClick(this.menu.containerId, buttonId);
     }
 
-    @Override
+    // TODO: MC 26.1 - mouseClicked now takes MouseButtonEvent
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        int page = getMenu().getPage();
-        if (page % 2 == 1 && isHovering(70, 167, 17, 7, mouseX, mouseY)) {
-            sendButtonClick(LecternAlbumMenu.BUTTON_PAGE_JUMP_RANGE_START + page - 1);
-        } else if (page % 2 == 0 && isHovering(210, 167, 17, 7, mouseX, mouseY)) {
-            sendButtonClick(LecternAlbumMenu.BUTTON_PAGE_JUMP_RANGE_START + page + 1);
-        }
-
-        return super.mouseClicked(mouseX, mouseY, button);
+        return false;
     }
 
-    @Override
-    protected void drawPageNumbers(GuiGraphicsExtractor GuiGraphicsExtractor, int currentSpreadIndex, int mouseX, int mouseY) {
-        super.drawPageNumbers(GuiGraphicsExtractor, currentSpreadIndex, mouseX, mouseY);
-
-        int page = getMenu().getPage();
-        String leftPageNumber = Integer.toString(currentSpreadIndex * 2 + 1);
-        String rightPageNumber = Integer.toString(currentSpreadIndex * 2 + 2);
-
-        if (page % 2 == 1 && isHovering(70, 167, 17, 7, mouseX, mouseY)) {
-            GuiGraphicsExtractor.drawString(font, leftPageNumber, leftPos + 71 + (8 - font.width(leftPageNumber) / 2),
-                    topPos + 167, Config.getColor(Config.Client.ALBUM_FONT_MAIN_COLOR), false);
-        } else if (page % 2 == 0 && isHovering(210, 167, 17, 7, mouseX, mouseY)) {
-            GuiGraphicsExtractor.drawString(font, rightPageNumber, leftPos + 212 + (8 - font.width(rightPageNumber) / 2),
-                    topPos + 167, Config.getColor(Config.Client.ALBUM_FONT_MAIN_COLOR), false);
-        }
+    // TODO: MC 26.1 - drawPageNumbers stubbed, drawString changed
+    protected void drawPageNumbers(GuiGraphicsExtractor guiGraphics, int currentSpreadIndex, int mouseX, int mouseY) {
+        // Stubbed
     }
 
-    @Override
-    protected void renderTooltip(GuiGraphicsExtractor GuiGraphicsExtractor, int x, int y) {
-        super.renderTooltip(GuiGraphicsExtractor, x, y);
-
-        int page = getMenu().getPage();
-
-        if (page % 2 == 1 && isHovering(70, 167, 17, 7, x, y)) {
-            GuiGraphicsExtractor.renderTooltip(font, Component.translatable("gui.exposure.album.lectern.set_current_page"), x, y);
-        } else if (page % 2 == 0 && isHovering(210, 167, 17, 7, x, y)) {
-            GuiGraphicsExtractor.renderTooltip(font, Component.translatable("gui.exposure.album.lectern.set_current_page"), x, y);
-        }
+    // TODO: MC 26.1 - renderTooltip stubbed
+    protected void renderTooltip(GuiGraphicsExtractor guiGraphics, int x, int y) {
+        // Stubbed
     }
 
     protected boolean isHovering(int x, int y, int width, int height, double mouseX, double mouseY) {

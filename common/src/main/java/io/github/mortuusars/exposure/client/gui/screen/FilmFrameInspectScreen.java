@@ -35,8 +35,9 @@ import java.util.Collections;
 import java.util.List;
 
 public class FilmFrameInspectScreen extends Screen {
-    public static final Identifier TEXTURE = Exposure.resource("textures/gui/film_frame_inspect.png");
+    // TODO: MC 26.1 - Screen/Rendering API redesigned. Stubbed.
 
+    public static final Identifier TEXTURE = Exposure.resource("textures/gui/film_frame_inspect.png");
     public static final int BG_SIZE = 78;
     public static final int FRAME_SIZE = 54;
 
@@ -82,25 +83,9 @@ public class FilmFrameInspectScreen extends Screen {
         Collections.rotate(frames, -startingFrame);
     }
 
-    @Override
+    // TODO: MC 26.1 - init signature
     protected void init() {
-        super.init();
-
-        zoomFactor = ((float) height / BG_SIZE) / (float)zoom.getZoomPerStep();
-
-        ImageButton previousButton = new ImageButton(0, (int) (height / 2f - 16 / 2f), 16, 16,
-                Widgets.PREVIOUS_BUTTON_SPRITES,
-                button -> pager.changePage(PagingDirection.PREVIOUS), Component.translatable("gui.exposure.previous_page"));
-        addRenderableWidget(previousButton);
-
-        ImageButton nextButton = new ImageButton(width - 16, (int) (height / 2f - 16 / 2f), 16, 16,
-                Widgets.NEXT_BUTTON_SPRITES,
-                button -> pager.changePage(PagingDirection.NEXT), Component.translatable("gui.exposure.next_page"));
-        addRenderableWidget(nextButton);
-
-        pager.setPagesCount(frames.size())
-                .setPreviousPageButton(previousButton)
-                .setNextPageButton(nextButton);
+        // Stubbed
     }
 
     protected Frame getCurrentFrame() {
@@ -112,94 +97,37 @@ public class FilmFrameInspectScreen extends Screen {
         Collections.rotate(frames, -distance);
     }
 
-    @Override
-    public void render(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick) {
-        float scale = (float) (zoom.get() * zoomFactor);
-
-        RenderSystem.enableBlend();
-        RenderSystem.defaultBlendFunc();
-        RenderSystem.disableDepthTest();
-
-        renderTransparentBackground(GuiGraphicsExtractor);
-
-        GuiGraphicsExtractor.pose().pushPose();
-        GuiGraphicsExtractor.pose().translate(x, y, 0);
-        GuiGraphicsExtractor.pose().translate(width / 2f, height / 2f, 50);
-        GuiGraphicsExtractor.pose().scale(scale, scale, scale);
-
-        GuiGraphicsExtractor.pose().translate(BG_SIZE / -2f, BG_SIZE / -2f, 0);
-
-        RenderSystem.setShaderTexture(0, TEXTURE);
-        GuiUtil.blit(GuiGraphicsExtractor.pose(), 0, 0, BG_SIZE, BG_SIZE, 0, 0, 256, 256, 0);
-
-        Frame frame = getCurrentFrame();
-        ExposureType filmType = frame.type();
-        FilmColor filmColor = filmType.getFilmColor();
-
-        RenderSystem.setShaderColor(filmColor.r(), filmColor.g(), filmColor.b(), filmColor.a());
-        GuiUtil.blit(GuiGraphicsExtractor.pose(), 0, 0, BG_SIZE, BG_SIZE, 0, BG_SIZE, 256, 256, 0);
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-
-        GuiGraphicsExtractor.pose().translate(12, 12, 0);
-        RenderableImage image = ExposureClient.renderedExposures().getOrCreate(frame).modifyWith(ImageEffect.NEGATIVE_FILM);
-        MultiBufferSource.BufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
-        ExposureClient.imageRenderer().render(image,  GuiGraphicsExtractor.pose(), bufferSource,
-                new RenderCoordinates(0, 0, FRAME_SIZE, FRAME_SIZE), filmType.getImageColor());
-        bufferSource.endBatch();
-
-        GuiGraphicsExtractor.pose().popPose();
-
-        GuiGraphicsExtractor.pose().pushPose();
-        // Places widgets above, because they will be covered when photo is zoomed in
-//        GuiGraphicsExtractor.pose().translate(0, 0, 100);
-        super.render(GuiGraphicsExtractor, mouseX, mouseY, partialTick);
-        GuiGraphicsExtractor.pose().popPose();
+    // TODO: MC 26.1 - render signature changed, RenderSystem/pushPose/translate/popPose API changed
+    public void render(@NotNull GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTick) {
+        // Stubbed
     }
 
-    @Override
-    public void renderBackground(GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick) {
-        // Background is rendered manually in #render method.
-        // Otherwise, background will be rendered on top
+    // TODO: MC 26.1 - renderBackground signature changed
+    public void renderBackground(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTick) {
+        // Stubbed
     }
 
-    @Override
+    // TODO: MC 26.1 - keyPressed now takes KeyEvent
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        return keyBindings.keyPressed(keyCode, scanCode, modifiers) || super.keyPressed(keyCode, scanCode, modifiers);
-    }
-
-    @Override
-    public boolean keyReleased(int keyCode, int scanCode, int modifiers) {
-        return keyBindings.keyReleased(keyCode, scanCode, modifiers) || super.keyReleased(keyCode, scanCode, modifiers);
-    }
-
-    @Override
-    public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
-        if (super.mouseScrolled(mouseX, mouseY, scrollX, scrollY)) return true;
-
-        if (scrollY >= 0.0) {
-            zoom.zoomIn();
-        } else {
-            zoom.zoomOut();
-        }
-        return true;
-    }
-
-    @Override
-    public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
-        if (super.mouseDragged(mouseX, mouseY, button, dragX, dragY)) return true;
-
-        if (button == InputConstants.MOUSE_BUTTON_LEFT) {
-            float centerX = width / 2f;
-            float centerY = height / 2f;
-            x = (float) Mth.clamp(x + dragX, -centerX, centerX);
-            y = (float) Mth.clamp(y + dragY, -centerY, centerY);
-            return true;
-        }
-
         return false;
     }
 
-    @Override
+    // TODO: MC 26.1 - keyReleased now takes KeyEvent
+    public boolean keyReleased(int keyCode, int scanCode, int modifiers) {
+        return false;
+    }
+
+    // TODO: MC 26.1 - mouseScrolled signature
+    public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
+        return false;
+    }
+
+    // TODO: MC 26.1 - mouseDragged now takes MouseButtonEvent,double,double
+    public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
+        return false;
+    }
+
+    // TODO: MC 26.1
     public boolean isPauseScreen() {
         return false;
     }

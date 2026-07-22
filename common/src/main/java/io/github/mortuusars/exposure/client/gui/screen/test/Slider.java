@@ -11,7 +11,6 @@ import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarratedElementType;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
-//import net.minecraft.client.gui.navigation.CommonInputs;
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
@@ -26,6 +25,8 @@ import java.text.DecimalFormat;
 import java.util.function.Consumer;
 
 public class Slider extends AbstractWidget {
+    // TODO: MC 26.1 - Widget API redesigned. Stubbed.
+
     public static final Identifier SLIDER_SPRITE = Identifier.withDefaultNamespace("widget/slider");
     public static final Identifier HIGHLIGHTED_SPRITE = Identifier.withDefaultNamespace("widget/slider_highlighted");
     public static final Identifier SLIDER_HANDLE_SPRITE = Identifier.withDefaultNamespace("widget/slider_handle");
@@ -67,6 +68,11 @@ public class Slider extends AbstractWidget {
         updateMessage();
     }
 
+    @Override
+    protected void extractWidgetRenderState(GuiGraphicsExtractor gr, int mx, int my, float pt) {
+        // TODO: MC 26.1 - abstract method stub
+    }
+
     public Slider setHorizontalGradient(int leftColor, int rightColor) {
         this.horizontalGradient = Pair.of(leftColor, rightColor);
         return this;
@@ -84,8 +90,6 @@ public class Slider extends AbstractWidget {
         return !this.isHovered && !this.canChangeValue ? SLIDER_HANDLE_SPRITE : SLIDER_HANDLE_HIGHLIGHTED_SPRITE;
     }
 
-    // -- Value
-
     public double getPosition() {
         return this.position;
     }
@@ -96,7 +100,6 @@ public class Slider extends AbstractWidget {
         if (d != this.position) {
             this.applyValue();
         }
-
         this.updateMessage();
     }
 
@@ -121,14 +124,11 @@ public class Slider extends AbstractWidget {
         onChanged.accept(getValue());
     }
 
-    // -- Input
-
-    @Override
+    // TODO: MC 26.1 - onClick signature changed
     public void onClick(double mouseX, double mouseY) {
-        this.setPositionFromMouse(mouseX);
+        // Stubbed
     }
 
-    @Override
     public void setFocused(boolean focused) {
         super.setFocused(focused);
         if (!focused) {
@@ -145,83 +145,30 @@ public class Slider extends AbstractWidget {
         this.setPosition((mouseX - (double)(this.getX() + HANDLE_HALF_WIDTH)) / (double)(this.width - HANDLE_WIDTH));
     }
 
-    @Override
+    // TODO: MC 26.1 - onRelease signature changed
     public void onRelease(double mouseX, double mouseY) {
-        super.playDownSound(Minecraft.getInstance().getSoundManager());
+        // Stubbed
     }
 
-    @Override
+    // TODO: MC 26.1 - mouseClicked now takes MouseButtonEvent
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        if (button == InputConstants.MOUSE_BUTTON_RIGHT && active && visible && clicked(mouseX, mouseY)) {
-            resetToDefault();
-            playDownSound(Minecrft.get().getSoundManager());
-            return true;
-        }
-
-        return super.mouseClicked(mouseX, mouseY, button);
+        return false;
     }
 
-    @Override
+    // TODO: MC 26.1 - onDrag signature changed
     protected void onDrag(double mouseX, double mouseY, double dragX, double dragY) {
-        this.setPositionFromMouse(mouseX);
-        super.onDrag(mouseX, mouseY, dragX, dragY);
+        // Stubbed
     }
 
-//    @Override
-//    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-//        if (CommonInputs.selected(keyCode)) {
-//            this.canChangeValue = !this.canChangeValue;
-//            return true;
-//        } else {
-//            if (this.canChangeValue) {
-//                boolean bl = keyCode == 263;
-//                if (bl || keyCode == 262) {
-//                    float f = bl ? -1.0F : 1.0F;
-//                    this.setPosition(position + (double)(f / (float)(width - HANDLE_WIDTH)));
-//                    return true;
-//                }
-//            }
-//
-//            return false;
-//        }
-//    }
-
-    // -- Render
-
-    @Override
-    public void renderWidget(GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick) {
-        Minecraft minecraft = Minecraft.getInstance();
-        GuiGraphicsExtractor.setColor(1.0F, 1.0F, 1.0F, alpha);
-        RenderSystem.enableBlend();
-        RenderSystem.defaultBlendFunc();
-        RenderSystem.enableDepthTest();
-        GuiGraphicsExtractor.blitSprite(getSprite(), getX(), getY(), getWidth(), getHeight());
-
-        if (active && horizontalGradient != null) {
-            fillHorizontalGradient(GuiGraphicsExtractor, getX() + 1, getY() + 1, getX() + getWidth() - 1,
-                    getY() + getHeight() - 1, horizontalGradient.getFirst(), horizontalGradient.getSecond());
-        }
-
-        GuiGraphicsExtractor.pose().pushPose();
-        GuiGraphicsExtractor.pose().translate(0, 0, 50);
-
-        GuiGraphicsExtractor.blitSprite(getHandleSprite(), getX() + (int)(position * (double)(width - HANDLE_WIDTH)), getY(), HANDLE_WIDTH, getHeight());
-        GuiGraphicsExtractor.setColor(1.0F, 1.0F, 1.0F, 1.0F);
-        int textColor = (active ? 0xFFFFFF : 0xA0A0A0) | Mth.ceil(alpha * 255.0F) << 24;
-        renderScrollingString(GuiGraphicsExtractor, minecraft.font, TEXT_MARGIN, textColor);
-        GuiGraphicsExtractor.pose().popPose();
+    // TODO: MC 26.1 - renderWidget signature changed
+    public void renderWidget(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTick) {
+        // Stubbed
     }
 
-    private void fillHorizontalGradient(GuiGraphicsExtractor GuiGraphicsExtractor, int x1, int y1, int x2, int y2, int colorFrom, int colorTo) {
-        VertexConsumer consumer = GuiGraphicsExtractor.bufferSource().getBuffer(RenderType.gui());
-        Matrix4f matrix4f = GuiGraphicsExtractor.pose().last().pose();
-        consumer.addVertex(matrix4f, (float)x1, (float)y1, 0).setColor(colorFrom);
-        consumer.addVertex(matrix4f, (float)x1, (float)y2, 0).setColor(colorFrom);
-        consumer.addVertex(matrix4f, (float)x2, (float)y2, 0).setColor(colorTo);
-        consumer.addVertex(matrix4f, (float)x2, (float)y1, 0).setColor(colorTo);
+    // TODO: MC 26.1 - fillHorizontalGradient stubbed
+    private void fillHorizontalGradient(GuiGraphicsExtractor guiGraphics, int x1, int y1, int x2, int y2, int colorFrom, int colorTo) {
+        // Stubbed
     }
-
-    // --
 
     @Override
     protected @NotNull MutableComponent createNarrationMessage() {

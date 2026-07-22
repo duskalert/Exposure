@@ -24,11 +24,13 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 public class TextBox extends AbstractWidget {
+    // TODO: MC 26.1 - Widget/Rendering API redesigned. Method bodies stubbed.
+
     public final Font font;
     public Supplier<String> textGetter;
     public Consumer<String> textSetter;
     public Predicate<String> textValidator = text -> text != null
-            && getFont().wordWrapHeight(text, width) + (text.endsWith("\n") ? getFont().lineHeight : 0) <= height;
+            && height >= getFont().lineHeight; // TODO: MC 26.1 - wordWrapHeight now takes FormattedText
 
     public HorizontalAlignment horizontalAlignment = HorizontalAlignment.LEFT;
     public int fontColor = 0xFF000000;
@@ -52,6 +54,11 @@ public class TextBox extends AbstractWidget {
                 TextFieldHelper.createClipboardGetter(Minecraft.getInstance()),
                 TextFieldHelper.createClipboardSetter(Minecraft.getInstance()),
                 this::validateText);
+    }
+
+    @Override
+    protected void extractWidgetRenderState(GuiGraphicsExtractor gr, int mx, int my, float pt) {
+        // TODO: MC 26.1 - abstract method stub
     }
 
     public void tick() {
@@ -134,40 +141,19 @@ public class TextBox extends AbstractWidget {
         return new Pos2i(screenPos.x - getX(), screenPos.y - getY());
     }
 
-    @Override
-    protected void renderWidget(GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick) {
-        DisplayCache displayCache = this.getDisplayCache();
-        for (DisplayCache.LineInfo lineInfo : displayCache.lines) {
-            GuiGraphicsExtractor.drawString(this.font, lineInfo.asComponent, getX() + lineInfo.x, getY() + lineInfo.y, getCurrentFontColor(), false);
-        }
-        this.renderHighlight(GuiGraphicsExtractor, displayCache.selectionAreas);
-        if (isFocused())
-            this.renderCursor(GuiGraphicsExtractor, displayCache.cursorPos, displayCache.cursorAtEnd);
+    // TODO: MC 26.1 - renderWidget signature changed
+    protected void renderWidget(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTick) {
+        // Stubbed - drawString, fill, pose API changed
     }
 
-    protected void renderHighlight(GuiGraphicsExtractor GuiGraphicsExtractor, Rect2i[] highlightAreas) {
-        for (Rect2i selection : highlightAreas) {
-            int x = getX() + selection.getX();
-            int y = getY() + selection.getY();
-            int x1 = x + selection.getWidth();
-            int y1 = y + selection.getHeight();
-            GuiGraphicsExtractor.fill(RenderType.guiTextHighlight(), x, y - 1, x1, y1, isFocused() ? selectionColor : selectionUnfocusedColor);
-        }
+    // TODO: MC 26.1 - renderHighlight stubbed
+    protected void renderHighlight(GuiGraphicsExtractor guiGraphics, Rect2i[] highlightAreas) {
+        // Stubbed
     }
 
-    protected void renderCursor(GuiGraphicsExtractor GuiGraphicsExtractor, Pos2i cursorPos, boolean isEndOfText) {
-        if (this.frameTick / 6 % 2 == 0) {
-            cursorPos = convertLocalToScreen(cursorPos);
-            if (isEndOfText)
-                GuiGraphicsExtractor.drawString(this.font, "_", cursorPos.x, cursorPos.y, getCurrentFontColor(), false);
-            else {
-                GuiGraphicsExtractor.pose().pushPose();
-                GuiGraphicsExtractor.pose().translate(0, 0, 50);
-                RenderSystem.disableBlend();
-                GuiGraphicsExtractor.fill(cursorPos.x, cursorPos.y - 1, cursorPos.x + 1, cursorPos.y + this.font.lineHeight, getCurrentFontColor());
-                GuiGraphicsExtractor.pose().popPose();
-            }
-        }
+    // TODO: MC 26.1 - renderCursor stubbed
+    protected void renderCursor(GuiGraphicsExtractor guiGraphics, Pos2i cursorPos, boolean isEndOfText) {
+        // Stubbed
     }
 
     @Override
@@ -180,123 +166,48 @@ public class TextBox extends AbstractWidget {
         return Component.literal(getText());
     }
 
-    @Override
+    // TODO: MC 26.1 - keyPressed now takes KeyEvent, hasControlDown/hasShiftDown removed from Screen
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        if (!isFocused())
-            return false;
-        boolean handled = handleKeyPressed(keyCode, scanCode, modifiers);
-        if (handled)
-            clearDisplayCache();
-        return handled;
-    }
-
-    protected boolean handleKeyPressed(int keyCode, int scanCode, int modifiers) {
-        TextFieldHelper.CursorStep cursorStep = Screen.hasControlDown() ? TextFieldHelper.CursorStep.WORD : TextFieldHelper.CursorStep.CHARACTER;
-        if (keyCode == InputConstants.KEY_UP) {
-            changeLine(-1);
-            return true;
-        } else if (keyCode == InputConstants.KEY_DOWN) {
-            changeLine(1);
-            return true;
-        } else if (keyCode == InputConstants.KEY_HOME) {
-            keyHome();
-            return true;
-        } else if (keyCode == InputConstants.KEY_END) {
-            keyEnd();
-            return true;
-        } else if (keyCode == InputConstants.KEY_BACKSPACE) {
-            textFieldHelper.removeFromCursor(-1, cursorStep);
-            return true;
-        } else if (keyCode == InputConstants.KEY_DELETE) {
-            textFieldHelper.removeFromCursor(1, cursorStep);
-            return true;
-        } else if (keyCode == InputConstants.KEY_RETURN || keyCode == InputConstants.KEY_NUMPADENTER) {
-            textFieldHelper.insertText(CommonComponents.NEW_LINE.getString());
-            return true;
-        }
-
-        return textFieldHelper.keyPressed(keyCode);
-    }
-
-    public boolean charTyped(char codePoint, int modifiers) {
-        if (!isFocused())
-            return false;
-
-        boolean typed = textFieldHelper.charTyped(codePoint);
-        if (typed)
-            clearDisplayCache();
-        return typed;
-    }
-
-    @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        if (isHovered && visible && isActive() && button == 0) {
-            long currentTime = Util.getMillis();
-            DisplayCache displayCache = getDisplayCache();
-            int index = displayCache.getIndexAtPosition(font, convertScreenToLocal(new Pos2i((int) mouseX, (int) mouseY)));
-
-            if (index >= 0) {
-                if (index == lastIndex && currentTime - lastClickTime < 250L) {
-                    if (!textFieldHelper.isSelecting()) {
-                        selectWord(index);
-                    } else {
-                        textFieldHelper.selectAll();
-                    }
-                } else {
-                    textFieldHelper.setCursorPos(index, Screen.hasShiftDown());
-                }
-                clearDisplayCache();
-            }
-
-            lastIndex = index;
-            lastClickTime = currentTime;
-            return true;
-        }
-
         return false;
     }
 
-    @Override
+    // TODO: MC 26.1 - handleKeyPressed stubbed
+    protected boolean handleKeyPressed(int keyCode, int scanCode, int modifiers) {
+        return false;
+    }
+
+    // TODO: MC 26.1 - charTyped now takes CharacterEvent
+    public boolean charTyped(char codePoint, int modifiers) {
+        return false;
+    }
+
+    // TODO: MC 26.1 - mouseClicked now takes MouseButtonEvent
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        return false;
+    }
+
+    // TODO: MC 26.1 - mouseDragged now takes MouseButtonEvent,double,double
     public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
-        if (button == 0) {
-            DisplayCache displayCache = this.getDisplayCache();
-            int index = displayCache.getIndexAtPosition(this.font, this.convertScreenToLocal(new Pos2i((int) mouseX, (int) mouseY)));
-            this.textFieldHelper.setCursorPos(index, true);
-            this.clearDisplayCache();
-        }
-        return true;
+        return false;
     }
 
+    // TODO: MC 26.1 - selectWord
     protected void selectWord(int index) {
-        String string = this.getText();
-        this.textFieldHelper.setSelectionRange(StringSplitter.getWordPosition(string, -1, index, false),
-                StringSplitter.getWordPosition(string, 1, index, false));
+        // Stubbed
     }
 
+    // TODO: MC 26.1 - changeLine
     protected void changeLine(int yChange) {
-        int cursorPos = this.textFieldHelper.getCursorPos();
-        int line = this.getDisplayCache().changeLine(cursorPos, yChange);
-        this.textFieldHelper.setCursorPos(line, Screen.hasShiftDown());
+        // Stubbed
     }
 
+    // TODO: MC 26.1 - keyHome
     protected void keyHome() {
-        if (Screen.hasControlDown()) {
-            this.textFieldHelper.setCursorToStart(Screen.hasShiftDown());
-        } else {
-            int cursorIndex = this.textFieldHelper.getCursorPos();
-            int lineStartIndex = this.getDisplayCache().findLineStart(cursorIndex);
-            this.textFieldHelper.setCursorPos(lineStartIndex, Screen.hasShiftDown());
-        }
+        // Stubbed
     }
 
+    // TODO: MC 26.1 - keyEnd
     protected void keyEnd() {
-        if (Screen.hasControlDown()) {
-            this.textFieldHelper.setCursorToEnd(Screen.hasShiftDown());
-        } else {
-            DisplayCache displayCache = this.getDisplayCache();
-            int cursorIndex = this.textFieldHelper.getCursorPos();
-            int lineEndIndex = displayCache.findLineEnd(cursorIndex);
-            this.textFieldHelper.setCursorPos(lineEndIndex, Screen.hasShiftDown());
-        }
+        // Stubbed
     }
 }

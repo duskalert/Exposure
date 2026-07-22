@@ -26,6 +26,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ItemListScreen extends Screen {
+    // TODO: MC 26.1 - Screen API redesigned. Stubbed.
+
     public static final Identifier TEXTURE = Exposure.resource("textures/gui/item_list.png");
 
     protected final Screen parent;
@@ -53,146 +55,51 @@ public class ItemListScreen extends Screen {
         List<List<ItemStack>> rows = Lists.partition(items, 9);
         this.rowsCount = rows.size();
         this.openingAnimation = new Animation(200, EasingFunction.EASE_OUT_EXPO);
-
         this.openedAt = Util.getMillis();
-
-        SimpleContainer container = new SimpleContainer(items.toArray(ItemStack[]::new));
-
-        int rowX = 8;
-        int rowY = 18;
-
-        for (int row = 0; row < rows.size(); row++) {
-            List<ItemStack> stacks = rows.get(row);
-
-            // Centers row if it has fewer items than 9
-            int rowXToCenterOffset = ((9 * 18) - (stacks.size() * 18)) / 2;
-
-            for (int column = 0; column < stacks.size(); column++) {
-                int slotIndex = row * 9 + column;
-                slots.add(new Slot(container, slotIndex, rowX + rowXToCenterOffset + (column * 18), rowY) {
-                    @Override
-                    public boolean mayPlace(ItemStack stack) {
-                        return false;
-                    }
-
-                    @Override
-                    public boolean mayPickup(Player player) {
-                        return false;
-                    }
-                });
-            }
-
-            rowY += 18;
-        }
-
-        Minecrft.get().getSoundManager().play(SimpleSoundInstance.forUI(Exposure.SoundEvents.CAMERA_GENERIC_CLICK.get(), 1f));
     }
 
-    @Override
+    // TODO: MC 26.1
     public boolean isPauseScreen() {
         return false;
     }
 
-    @Override
+    // TODO: MC 26.1
     protected void init() {
-        this.imageWidth = 176;
-        this.imageHeight = 24 + (rowsCount * 18);
-        this.leftPos = (this.width - this.imageWidth) / 2;
-        this.topPos = (this.height - this.imageHeight) / 2;
+        // Stubbed
     }
 
-    @Override
-    public void render(GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick) {
-        int left = leftPos;
-        int top = topPos;
-
-        renderTransparentBackground(GuiGraphicsExtractor);
-
-        GuiGraphicsExtractor.pose().pushPose();
-        GuiGraphicsExtractor.pose().translate((width / 2f), (height / 2f), 0.0f);
-        float animProgress = (float)openingAnimation.getValue();
-        GuiGraphicsExtractor.pose().scale(animProgress, animProgress, animProgress);
-        GuiGraphicsExtractor.pose().translate(-(width / 2f), -(height / 2f), 0.0f);
-
-        renderBg(GuiGraphicsExtractor, mouseX, mouseY, partialTick);
-        RenderSystem.disableDepthTest();
-        super.render(GuiGraphicsExtractor, mouseX, mouseY, partialTick);
-        {
-            GuiGraphicsExtractor.pose().pushPose();
-            GuiGraphicsExtractor.pose().translate(left, top, 0.0f);
-            hoveredSlot = null;
-            for (Slot slot : slots) {
-                if (slot.isActive()) {
-                    renderSlot(GuiGraphicsExtractor, slot);
-                }
-                if (!isHovering(slot, mouseX, mouseY) || !slot.isActive()) {
-                    continue;
-                }
-                this.hoveredSlot = slot;
-                if (!hoveredSlot.isHighlightable()) {
-                    continue;
-                }
-                renderSlotHighlight(GuiGraphicsExtractor, slot.x, slot.y, 0);
-            }
-            this.renderLabels(GuiGraphicsExtractor, mouseX, mouseY);
-            GuiGraphicsExtractor.pose().popPose();
-        }
-        RenderSystem.enableDepthTest();
-        GuiGraphicsExtractor.pose().popPose();
-
-        renderTooltip(GuiGraphicsExtractor, mouseX, mouseY);
+    // TODO: MC 26.1 - render signature changed, pushPose/translate/scale changed
+    public void render(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTick) {
+        // Stubbed
     }
 
-    @Override
-    public void renderBackground(GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick) {
-
+    // TODO: MC 26.1 - renderBackground signature changed
+    public void renderBackground(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTick) {
+        // Stubbed
     }
 
-    protected void renderBg(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick) {
-        RenderSystem.setShader(GameRenderer::getPositionTexShader);
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-
-        // Render BG expanding it according to number of rows
-        GuiGraphicsExtractor.blit(TEXTURE, leftPos, topPos, 0, 0, imageWidth, 17);
-        for (int i = 0; i < rowsCount; i++) {
-            GuiGraphicsExtractor.blit(TEXTURE, leftPos, topPos + 17 + (i * 18), 0, 17, imageWidth, 18);
-        }
-        GuiGraphicsExtractor.blit(TEXTURE, leftPos, topPos + 17 + (rowsCount * 18), 0, 35, imageWidth, 7);
-
-        for (Slot slot : slots) {
-            GuiGraphicsExtractor.blit(TEXTURE, leftPos + slot.x - 1, topPos + slot.y - 1, 176, 0, 18, 18);
-        }
+    // TODO: MC 26.1 - renderBg stubbed
+    protected void renderBg(@NotNull GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTick) {
+        // Stubbed
     }
 
-    protected void renderLabels(GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY) {
-        GuiGraphicsExtractor.drawString(this.font, this.title, this.titleLabelX, this.titleLabelY, 0x404040, false);
+    // TODO: MC 26.1 - renderLabels stubbed
+    protected void renderLabels(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY) {
+        // Stubbed
     }
 
-    protected void renderSlot(GuiGraphicsExtractor GuiGraphicsExtractor, Slot slot) {
-        int x = slot.x;
-        int y = slot.y;
-        ItemStack itemStack = slot.getItem();
-        GuiGraphicsExtractor.pose().pushPose();
-        GuiGraphicsExtractor.pose().translate(0.0f, 0.0f, 100.0f);
-        GuiGraphicsExtractor.renderItem(itemStack, x, y, slot.x + slot.y * imageWidth);
-        GuiGraphicsExtractor.renderItemDecorations(font, itemStack, x, y, null);
-        GuiGraphicsExtractor.pose().popPose();
+    // TODO: MC 26.1 - renderSlot stubbed
+    protected void renderSlot(GuiGraphicsExtractor guiGraphics, Slot slot) {
+        // Stubbed
     }
 
-    public static void renderSlotHighlight(GuiGraphicsExtractor GuiGraphicsExtractor, int x, int y, int blitOffset) {
-        GuiGraphicsExtractor.fillGradient(RenderType.guiOverlay(), x, y, x + 16, y + 16, -2130706433, -2130706433, blitOffset);
+    public static void renderSlotHighlight(GuiGraphicsExtractor guiGraphics, int x, int y, int blitOffset) {
+        // Stubbed
     }
 
-    protected void renderTooltip(GuiGraphicsExtractor GuiGraphicsExtractor, int x, int y) {
-        if (hoveredSlot != null && hoveredSlot.hasItem()) {
-            ItemStack itemStack = hoveredSlot.getItem();
-
-            List<Component> tooltipLines = parent instanceof AbstractContainerScreen<?> abstractContainerScreen
-                    ? abstractContainerScreen.getTooltipFromContainerItem(itemStack)
-                    : Screen.getTooltipFromItem(Minecrft.get(), itemStack);
-
-            GuiGraphicsExtractor.renderTooltip(font, tooltipLines, itemStack.getTooltipImage(), x, y);
-        }
+    // TODO: MC 26.1 - renderTooltip stubbed
+    protected void renderTooltip(GuiGraphicsExtractor guiGraphics, int x, int y) {
+        // Stubbed
     }
 
     protected boolean isHovering(Slot slot, double mouseX, double mouseY) {
@@ -205,28 +112,17 @@ public class ItemListScreen extends Screen {
         return (mouseX -= (double) i) >= (double) (x - 1) && mouseX < (double) (x + width + 1) && (mouseY -= (double) j) >= (double) (y - 1) && mouseY < (double) (y + height + 1);
     }
 
-    @Override
+    // TODO: MC 26.1 - keyPressed now takes KeyEvent
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        if (Minecrft.options().keyInventory.matches(keyCode, scanCode)) {
-            onClose();
-            return true;
-        }
-        return super.keyPressed(keyCode, scanCode, modifiers);
-    }
-
-    @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        if (super.mouseClicked(mouseX, mouseY, button)) return true;
-
-        if (!isHovering(0, 0, imageWidth, imageHeight, mouseX, mouseY)) {
-            onClose();
-            return true;
-        }
-
         return false;
     }
 
-    @Override
+    // TODO: MC 26.1 - mouseClicked now takes MouseButtonEvent
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        return false;
+    }
+
+    // TODO: MC 26.1
     public void onClose() {
         Minecrft.get().setScreen(parent);
     }

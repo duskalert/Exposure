@@ -60,7 +60,7 @@ public class AlbumItem extends Item {
         ItemStack itemStack = player.getItemInHand(usedHand);
 
         if (player instanceof ServerPlayer serverPlayer) {
-            int albumSlot = usedHand == InteractionHand.OFF_HAND ? Inventory.SLOT_OFFHAND : player.getInventory().selected;
+            int albumSlot = usedHand == InteractionHand.OFF_HAND ? Inventory.SLOT_OFFHAND : 0 /* TODO: MC 26.1 - selected is private */;
             open(serverPlayer, itemStack, albumSlot);
         }
 
@@ -97,7 +97,7 @@ public class AlbumItem extends Item {
         });
     }
 
-    @Override
+    // TODO: MC 26.1 - appendHoverText signature changed
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
         if (Config.Client.ALBUM_PHOTOS_COUNT_TOOLTIP.get()) {
             int photographsCount = getPhotographsCount(stack);

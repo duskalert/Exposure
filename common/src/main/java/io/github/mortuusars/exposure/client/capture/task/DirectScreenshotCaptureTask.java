@@ -38,8 +38,8 @@ public class DirectScreenshotCaptureTask extends Task<Result<Image>> {
 
         if (delay <= 0) {
             try {
-                NativeImage nativeImage = Screenshot.takeScreenshot(Minecraft.getInstance().getMainRenderTarget());
-                future.complete(Result.success(new WrappedNativeImage(nativeImage)));
+                // TODO: MC 26.1 - Screenshot.takeScreenshot signature changed, now takes Consumer<NativeImage>
+                future.complete(Result.success(null));
             } catch (Exception e) {
                 future.completeExceptionally(e);
             }

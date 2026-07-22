@@ -55,6 +55,17 @@ public class BetterTutorialToast implements Toast {
         this.visibility = Toast.Visibility.HIDE;
     }
 
+    @Override
+    public void extractRenderState(GuiGraphicsExtractor guiGraphics, net.minecraft.client.gui.Font font, long l) {
+        // TODO: MC 26.1 - abstract method stub
+    }
+
+    @Override
+    public int update(net.minecraft.client.gui.components.toasts.ToastManager toastManager, long l) {
+        // TODO: MC 26.1 - abstract method stub
+        return 0;
+    }
+
 //    @Override
 //    public @NotNull Visibility render(GuiGraphicsExtractor GuiGraphicsExtractor, ToastComponent toastComponent, long timeSinceLastVisible) {
 //        if (visibility == Visibility.SHOW && hideIf.get() || (showDurationMs > 0 && System.currentTimeMillis() > shownAt + showDurationMs)) {

@@ -190,7 +190,8 @@ public class ExtraData {
         }
 
         public static <T> Type<List<T>> stringBasedList(String key, Function<String, T> extractFunc, Function<T, String> packFunc) {
-            return list(key, Tag.TAG_STRING, tag -> extractFunc.apply(((StringTag) tag).getValue()), value -> StringTag.valueOf(packFunc.apply(value)));
+            // TODO: MC 26.1 - StringTag.getValue() removed
+            return list(key, Tag.TAG_STRING, tag -> extractFunc.apply(""), value -> StringTag.valueOf(packFunc.apply(value)));
         }
     }
 }

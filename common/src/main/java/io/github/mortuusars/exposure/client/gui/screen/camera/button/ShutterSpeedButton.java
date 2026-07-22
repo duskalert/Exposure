@@ -16,6 +16,8 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Function;
 
 public class ShutterSpeedButton extends CycleButton<ShutterSpeed> {
+    // TODO: MC 26.1 - Widget rendering API redesigned. Stubbed.
+
     protected final int secondaryFontColor;
     protected final int mainFontColor;
 
@@ -33,29 +35,16 @@ public class ShutterSpeedButton extends CycleButton<ShutterSpeed> {
         secondaryFontColor = Config.getColor(Config.Client.VIEWFINDER_FONT_SECONDARY_COLOR);
     }
 
-    @Override
+    // TODO: MC 26.1 - renderWidget signature changed, drawString changed
+    public void renderWidget(@NotNull GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTick) {
+        // Stubbed
+    }
+
+    // TODO: MC 26.1 - playDownSound
     public void playDownSound(SoundManager handler) {
         if (clickSound != null) {
             handler.play(SimpleSoundInstance.forUI(clickSound,
                     ThreadLocalRandom.current().nextFloat() * 0.05f + 0.9f + currentIndex * 0.01f, 0.7f));
         }
-    }
-
-    @Override
-    public void renderWidget(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick) {
-        super.renderWidget(GuiGraphicsExtractor, mouseX, mouseY, partialTick);
-
-        ShutterSpeed shutterSpeed = getCurrentValue();
-        String text = shutterSpeed.getNotation().replace("1/", "");
-
-        if (shutterSpeed.equals(ShutterSpeed.DEFAULT))
-            text = text + "+";
-
-        Font font = Minecraft.getInstance().font;
-        int textWidth = font.width(text);
-        int xPos = width / 2 - (textWidth / 2) + 1;
-
-        GuiGraphicsExtractor.drawString(font, text, getX() + xPos, getY() + 4, secondaryFontColor, false);
-        GuiGraphicsExtractor.drawString(font, text, getX() + xPos, getY() + 3, mainFontColor, false);
     }
 }

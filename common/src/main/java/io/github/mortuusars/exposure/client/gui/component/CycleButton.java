@@ -27,6 +27,8 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class CycleButton<T> extends Button {
+    // TODO: MC 26.1 - Rendering API redesigned. Method bodies stubbed.
+
     protected final List<T> values;
     protected final T startingValue;
     protected final Map<T, WidgetSprites> spritesMap;
@@ -48,7 +50,6 @@ public class CycleButton<T> extends Button {
         Preconditions.checkArgument(!spritesMap.isEmpty(), "Cannot create a CycleButton with 0 sprites.");
         this.spritesMap = spritesMap;
         this.onCycle = onCycle;
-
         setCurrentIndex(Math.max(values.indexOf(startingValue), 0));
     }
 
@@ -65,6 +66,11 @@ public class CycleButton<T> extends Button {
     public CycleButton(int x, int y, int width, int height, List<T> values, @NotNull T startingValue,
                        Function<T, WidgetSprites> spritesFunc) {
         this(x, y, width, height, values, startingValue, Widgets.createMap(values, spritesFunc), (b, v) -> {});
+    }
+
+    @Override
+    protected void extractContents(GuiGraphicsExtractor guiGraphicsExtractor, int i, int i1, float v) {
+        // TODO: MC 26.1 - AbstractButton abstract method stub
     }
 
     public CycleButton<T> setLooping(boolean loop) {
@@ -125,7 +131,6 @@ public class CycleButton<T> extends Button {
             value = loop ? values.size() - 1 : 0;
         else if (value >= values.size())
             value = loop ? 0 : values.size() - 1;
-
         if (currentIndex != value) {
             currentIndex = value;
             onCycle();
@@ -144,43 +149,30 @@ public class CycleButton<T> extends Button {
         }
     }
 
-    @Override
-    public void renderWidget(GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick) {
-        @Nullable WidgetSprites sprites = spritesMap.get(getCurrentValue());
-        Identifier spriteLocation = sprites != null
-                ? sprites.get(isActive(), isHoveredOrFocused())
-                : TextureManager.INTENTIONAL_MISSING_TEXTURE;
-        GuiGraphicsExtractor.blitSprite(spriteLocation, getX(), getY(), getWidth(), getHeight());
+    // TODO: MC 26.1 - renderWidget signature changed
+    public void renderWidget(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTick) {
+        // Stubbed - blitSprite now needs RenderPipeline arg
     }
 
-    @Override
+    // TODO: MC 26.1 - mouseClicked now takes MouseButtonEvent
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        if ((button == 0 || button == 1) && clicked(mouseX, mouseY)) {
-            cycle(button == 1);
-            playDownSound(Minecraft.getInstance().getSoundManager());
-            return true;
-        }
+        // Stubbed - clicked() no longer exists, event API redesigned
         return false;
     }
 
-    @Override
+    // TODO: MC 26.1 - mouseScrolled signature may have changed
     public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
-        cycle(scrollY < 0d);
-        playDownSound(Minecraft.getInstance().getSoundManager());
-        return true;
+        // Stubbed
+        return false;
     }
 
-    @Override
+    // TODO: MC 26.1 - keyPressed now takes KeyEvent, hasShiftDown moved
     public boolean keyPressed(int pKeyCode, int pScanCode, int pModifiers) {
-        boolean pressed = super.keyPressed(pKeyCode, pScanCode, pModifiers);
-
-        if (pressed)
-            cycle(Screen.hasShiftDown());
-
-        return pressed;
+        // Stubbed - keyPressed/keyReleased now take KeyEvent
+        return false;
     }
 
-    @Override
+    // TODO: MC 26.1 - playDownSound signature
     public void playDownSound(SoundManager handler) {
         if (clickSound != null) {
             handler.play(SimpleSoundInstance.forUI(clickSound, 1.0F));

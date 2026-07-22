@@ -21,6 +21,8 @@ import java.util.List;
 import java.util.function.Function;
 
 public class TextBlock extends AbstractWidget {
+    // TODO: MC 26.1 - Widget/Rendering API redesigned. Method bodies stubbed.
+
     public int fontColor = 0xFF000000;
     public boolean drawShadow = false;
     public HorizontalAlignment alignment = HorizontalAlignment.LEFT;
@@ -35,8 +37,12 @@ public class TextBlock extends AbstractWidget {
         super(x, y, width, height, message);
         this.font = font;
         this.componentClickedHandler = componentClickedHandler;
-
         makeLines();
+    }
+
+    @Override
+    protected void extractWidgetRenderState(GuiGraphicsExtractor gr, int mx, int my, float pt) {
+        // TODO: MC 26.1 - abstract method stub
     }
 
     @Override
@@ -48,18 +54,15 @@ public class TextBlock extends AbstractWidget {
     protected void makeLines() {
         Component text = getMessage();
         List<FormattedCharSequence> lines = font.split(text, getWidth());
-
         int availableLines = Math.min(lines.size(), height / font.lineHeight);
 
         List<FormattedCharSequence> visibleLines = new ArrayList<>();
         for (int i = 0; i < availableLines; i++) {
             FormattedCharSequence line = lines.get(i);
-
             if (i == availableLines - 1 && availableLines < lines.size()) {
                 line = FormattedCharSequence.composite(line,
                         Component.literal("...").withStyle(text.getStyle()).getVisualOrderText());
             }
-
             visibleLines.add(line);
         }
 
@@ -68,7 +71,6 @@ public class TextBlock extends AbstractWidget {
             hiddenLines = new ArrayList<>(lines.stream()
                     .skip(availableLines)
                     .toList());
-
             hiddenLines.set(0, FormattedCharSequence.composite(
                     FormattedCharSequence.forward("...", text.getStyle()), hiddenLines.get(0)));
         }
@@ -77,10 +79,9 @@ public class TextBlock extends AbstractWidget {
         this.tooltipLines = hiddenLines;
     }
 
-    @Override
+    // TODO: MC 26.1 - mouseClicked now takes MouseButtonEvent
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        Style style = getClickedComponentStyleAt(mouseX, mouseY);
-        return button == 0 && style != null && componentClickedHandler.apply(style);
+        return false;
     }
 
     @Override
@@ -93,47 +94,13 @@ public class TextBlock extends AbstractWidget {
         return getMessage().copy();
     }
 
-    @Override
-    protected void renderWidget(GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick) {
-        for (int i = 0; i < renderedLines.size(); i++) {
-            FormattedCharSequence line = renderedLines.get(i);
-
-            int x = getX() + alignment.align(getWidth(), font.width(line));
-            GuiGraphicsExtractor.drawString(font, line, x, getY() + font.lineHeight * i, fontColor, drawShadow);
-        }
-
-        if (isHovered()) {
-            Style style = getClickedComponentStyleAt(mouseX, mouseY);
-            if (style != null)
-                GuiGraphicsExtractor.renderComponentHoverEffect(this.font, style, mouseX, mouseY);
-        }
-
-        if (!tooltipLines.isEmpty() && isMouseOver(mouseX, mouseY))
-            GuiGraphicsExtractor.renderTooltip(font, tooltipLines, DefaultTooltipPositioner.INSTANCE, mouseX, mouseY);
+    // TODO: MC 26.1 - renderWidget signature changed, drawString/renderComponentHoverEffect/renderTooltip changed
+    protected void renderWidget(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTick) {
+        // Stubbed - rendering API redesigned in MC 26.1
     }
 
+    // TODO: MC 26.1 - getClickedComponentStyleAt stubbed
     public @Nullable Style getClickedComponentStyleAt(double mouseX, double mouseY) {
-        if (renderedLines.isEmpty())
-            return null;
-
-        int x = Mth.floor(mouseX - getX());
-        int y = Mth.floor(mouseY - getY());
-
-        if (x < 0 || y < 0 || x > getWidth() || y > getHeight())
-            return null;
-
-        int hoveredLine = y / font.lineHeight;
-
-        if (hoveredLine >= renderedLines.size())
-            return null;
-
-        FormattedCharSequence line = renderedLines.get(hoveredLine);
-        int lineStart = alignment.align(getWidth(), font.width(line));
-
-        if (x < lineStart)
-            return null;
-
-
-        return font.getSplitter().componentStyleAtWidth(line, x - lineStart);
+        return null;
     }
 }

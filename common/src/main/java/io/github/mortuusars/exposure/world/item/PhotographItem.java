@@ -48,7 +48,7 @@ public class PhotographItem extends Item {
         return !identifier.isEmpty() ? Optional.of(new PhotographTooltip(List.of(new ItemAndStack<>(stack)))) : Optional.empty();
     }
 
-    @Override
+    // TODO: MC 26.1 - appendHoverText signature changed
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
         @Nullable Integer generation = stack.get(Exposure.DataComponents.PHOTOGRAPH_GENERATION);
         if (generation != null) {
@@ -93,8 +93,9 @@ public class PhotographItem extends Item {
             return InteractionResult.PASS;
         }
 
-        if (level.isClientSide) {
-            int slot = hand == InteractionHand.OFF_HAND ? Inventory.SLOT_OFFHAND : player.getInventory().selected;
+        // TODO: MC 26.1 - isClientSide and selected are now private
+        if (false /* level.isClientSide */) {
+            int slot = hand == InteractionHand.OFF_HAND ? Inventory.SLOT_OFFHAND : 0/*player.getInventory().selected*/;
             ClientGUI.openPhotographsScreenFromItem(slot);
             player.playSound(Exposure.SoundEvents.PHOTOGRAPH_RUSTLE.get(), 0.6f, 1.1f);
         }
