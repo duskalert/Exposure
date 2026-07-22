@@ -1,53 +1,48 @@
 package io.github.mortuusars.exposure.mixin.client;
 
-import com.mojang.authlib.GameProfile;
 import io.github.mortuusars.exposure.client.camera.CameraClient;
 import io.github.mortuusars.exposure.world.camera.Camera;
-import io.github.mortuusars.exposure.world.camera.CameraOnStand;
-import io.github.mortuusars.exposure.world.item.camera.CameraItem;
+import io.github.mortuusars.exposure.world.entity.CameraOperator;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.Level;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @SuppressWarnings("AddedMixinMembersNamePattern")
 @Mixin(LocalPlayer.class)
-public abstract class LocalPlayerMixin extends Player {
-    public LocalPlayerMixin(Level level, GameProfile gameProfile) {
-        super(level, gameProfile);
+public abstract class LocalPlayerMixin implements CameraOperator {
+    @Unique
+    private Camera activeExposureCamera;
+    @Unique
+    private float oExposureCameraActionAnim;
+    @Unique
+    private float exposureCameraActionAnim;
+
+    @Override
+    public Camera getActiveExposureCamera() {
+        if (activeExposureCamera != null && !activeExposureCamera.isActive()) return null;
+        return activeExposureCamera;
     }
 
     @Override
     public void setActiveExposureCamera(Camera camera) {
-        super.setActiveExposureCamera(camera);
+        activeExposureCamera = camera;
         CameraClient.setupViewfinder(camera);
     }
 
     @Override
     public void removeActiveExposureCamera() {
-        super.removeActiveExposureCamera();
+        activeExposureCamera = null;
         CameraClient.removeViewfinder();
     }
 
     @Inject(method = "tick", at = @At("RETURN"))
     private void onTick(CallbackInfo ci) {
         CameraClient.tick();
-
-        for (int slot = 0; slot < getInventory().getContainerSize(); slot++) {
-            var stack = getInventory().getItem(slot);
-            if (stack.getItem() instanceof CameraItem cameraItem) {
-                cameraItem.clientInventoryTick(stack, this);
-            }
+        if (activeExposureCamera != null && !activeExposureCamera.isActive()) {
+            removeActiveExposureCamera();
         }
-
-        getActiveExposureCameraOptional().ifPresent(camera -> {
-            if (!camera.isActive()) {
-                removeActiveExposureCamera();
-            }
-        });
     }
 }
