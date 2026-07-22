@@ -295,7 +295,8 @@ public class PhotographFrameEntity extends HangingEntity {
 
     protected void onItemChanged(ItemStack itemStack) {
         if (!itemStack.isEmpty()) {
-            itemStack.setEntityRepresentation(this);
+            // TODO: MC 26.1 - ItemStack.setEntityRepresentation removed
+            // itemStack.setEntityRepresentation(this);
         }
     }
 

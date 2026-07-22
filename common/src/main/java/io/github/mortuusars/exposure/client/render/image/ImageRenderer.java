@@ -15,7 +15,7 @@ public class ImageRenderer implements AutoCloseable {
     private final Map<RenderableImageIdentifier, RenderedImageInstance> cache = new HashMap<>();
 
     public void render(RenderableImage image, PoseStack poseStack, MultiBufferSource bufferSource, RenderCoordinates coords, Color color) {
-        this.render(image, poseStack, bufferSource, coords, Lightmap.FULL_BRIGHT, color);
+        this.render(image, poseStack, bufferSource, coords, 15728880, color); // TODO: MC 26.1 - Lightmap.FULL_BRIGHT
     }
 
     public void render(RenderableImage image, PoseStack poseStack, MultiBufferSource bufferSource, RenderCoordinates coords,

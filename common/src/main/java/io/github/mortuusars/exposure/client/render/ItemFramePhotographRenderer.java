@@ -15,7 +15,7 @@ public class ItemFramePhotographRenderer {
     public static void render(ItemFrame itemFrame, PoseStack poseStack, MultiBufferSource bufferSource,
                                  int packedLight, PhotographItem item, ItemStack stack) {
         if (itemFrame.getType() == EntityType.GLOW_ITEM_FRAME)
-            packedLight = Lightmap.FULL_BRIGHT;
+            packedLight = 15728880; // TODO: MC 26.1 - Lightmap.FULL_BRIGHT → LightCoordsUtil.pack(15, 15)
 
         poseStack.pushPose();
 
