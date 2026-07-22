@@ -8,25 +8,24 @@ import io.github.mortuusars.exposure.client.RenderedExposures;
 import io.github.mortuusars.exposure.client.camera.viewfinder.*;
 import io.github.mortuusars.exposure.client.image.modifier.ImageEffect;
 import io.github.mortuusars.exposure.client.render.image.ImageRenderer;
+import io.github.mortuusars.exposure.client.render.model.ExposureItemModelProperties;
 import io.github.mortuusars.exposure.client.render.photograph.PhotographStyle;
 import io.github.mortuusars.exposure.client.render.photograph.PhotographRenderer;
 import io.github.mortuusars.exposure.client.render.photograph.PhotographStyles;
 import io.github.mortuusars.exposure.client.util.Minecrft;
 import io.github.mortuusars.exposure.world.camera.capture.CaptureType;
-import io.github.mortuusars.exposure.world.item.camcom.Attachment;
+import io.github.mortuusars.exposure.world.item.camera.Attachment;
 import io.github.mortuusars.exposure.world.photograph.PhotographType;
 import io.github.mortuusars.exposure.util.cycles.Cycles;
 import io.github.mortuusars.exposure.client.ExposureStore;
 import io.github.mortuusars.exposure.world.item.AlbumItem;
-import io.github.mortuusars.exposure.world.item.camcom.CameraItem;
+import io.github.mortuusars.exposure.world.item.camera.CameraItem;
 import io.github.mortuusars.exposure.world.item.ChromaticSheetItem;
 import io.github.mortuusars.exposure.world.item.StackedPhotographsItem;
-//import net.minecraft.client.renderer.item.ItemProperties;
-
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.resources.Identifier;
 
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 public class ExposureClient {
@@ -56,7 +55,7 @@ public class ExposureClient {
 
         cycles().addParallelTask(new ClearStaleRenderedImagesIndefiniteTask());
 
-//        registerItemModelProperties();
+        ExposureItemModelProperties.register();
     }
 
     public static Cycles cycles() {
@@ -94,22 +93,8 @@ public class ExposureClient {
 
     // --
 
-    //private static void registerItemModelProperties() {
-    //    Commented out: ItemProperties was removed in MC 26.1.2.
-    //    Item model overrides are now handled via the ItemModel system.
-    //}
-
     public static class Models {
-        public static final Set<Identifier> MODELS = new HashSet<>();
-
-        public static final Identifier CAMERA_GUI = register("item/camera_gui");
-        public static final Identifier CAMERA_ACTIVE = register("item/camera_active");
-        public static final Identifier CAMERA_SELFIE = register("item/camera_selfie");
-        public static final Identifier CAMERA_VIEWFINDER = register("item/camera_parts/viewfinder");
-        public static final Identifier CAMERA_FLASH = register("item/camera_parts/flash");
-        public static final Identifier CAMERA_LENS = register("item/camera_parts/lens");
-        public static final Identifier CAMERA_SELFIE_STICK = register("item/camera_parts/selfie_stick");
-        public static final Identifier SELFIE_STICK = register("item/selfie_stick");
+        public static final Set<Identifier> MODELS = new LinkedHashSet<>();
 
         public static final Identifier PHOTOGRAPH_FRAME_SMALL = register("block/photograph_frame_small");
         public static final Identifier PHOTOGRAPH_FRAME_MEDIUM = register("block/photograph_frame_medium");
@@ -121,7 +106,7 @@ public class ExposureClient {
         public static final Identifier CAMERA_STAND_MOUNT = register("block/camera_stand_mount");
 
         public static Identifier register(String path) {
-            Identifier location = Identifier.of(Exposure.resource(path), "standalone");
+            Identifier location = Exposure.resource(path);
             MODELS.add(location);
             return location;
         }

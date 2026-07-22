@@ -43,8 +43,8 @@ public record Frame(ExposureIdentifier identifier,
     public static final ExtraData.Type<Float> YAW = ExtraData.Type.floatVal("yaw");
     public static final ExtraData.Type<Integer> LIGHT_LEVEL = ExtraData.Type.intVal("light_level");
     public static final ExtraData.Type<Integer> DAY_TIME = ExtraData.Type.intVal("day_time");
-    public static final ExtraData.Type<Identifier> DIMENSION = ExtraData.Type.Identifier("dimension");
-    public static final ExtraData.Type<Identifier> BIOME = ExtraData.Type.Identifier("biome");
+    public static final ExtraData.Type<Identifier> DIMENSION = ExtraData.Type.resourceLocation("dimension");
+    public static final ExtraData.Type<Identifier> BIOME = ExtraData.Type.resourceLocation("biome");
     public static final ExtraData.Type<String> WEATHER = ExtraData.Type.string("weather");
     public static final ExtraData.Type<Boolean> IN_CAVE = ExtraData.Type.bool("in_cave");
     public static final ExtraData.Type<Boolean> UNDERWATER = ExtraData.Type.bool("underwater");
@@ -118,7 +118,7 @@ public record Frame(ExposureIdentifier identifier,
 
         ExtraData mergedTag = frames.stream()
                 .map(f -> f.extraData.copy())
-                .reduce(new ExtraData(), (e1, e2) -> e1.merge(e2.toTag()));
+                .reduce(new ExtraData(), ExtraData::merge);
         result.setTag(mergedTag);
 
         return result.toImmutable();

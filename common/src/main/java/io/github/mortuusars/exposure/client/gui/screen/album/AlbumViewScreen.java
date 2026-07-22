@@ -1,7 +1,6 @@
 package io.github.mortuusars.exposure.client.gui.screen.album;
 
 import com.mojang.blaze3d.platform.InputConstants;
-import com.mojang.blaze3d.systems.RenderSystem;
 import io.github.mortuusars.exposure.Config;
 import io.github.mortuusars.exposure.Exposure;
 import io.github.mortuusars.exposure.client.gui.screen.element.Pager;
@@ -22,8 +21,9 @@ import io.github.mortuusars.exposure.world.sound.SoundEffect;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.*;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
@@ -39,8 +39,6 @@ import java.util.Optional;
 import java.util.function.Consumer;
 
 public class AlbumViewScreen extends Screen {
-    // TODO: MC 26.1 - Screen/Rendering API redesigned. Method bodies stubbed.
-
     protected final Pager pager = new Pager()
             .setChangeSound(new SoundEffect(() -> SoundEvents.BOOK_PAGE_TURN))
             .onPageChanged(this::onSpreadChanged);
@@ -66,18 +64,64 @@ public class AlbumViewScreen extends Screen {
         this.albumAccess = albumAccess;
     }
 
-    // TODO: MC 26.1
+    @Override
     public boolean isPauseScreen() {
         return false;
     }
 
-    // TODO: MC 26.1
+    @Override
     protected void init() {
-        // Stubbed
+        this.imageWidth = 298;
+        this.imageHeight = 188;
+        this.leftPos = (this.width - this.imageWidth) / 2;
+        this.topPos = (this.height - this.imageHeight) / 2;
+
+        pages.clear();
+
+        // LEFT:
+        Page leftPage = createPage(Side.LEFT, 0);
+        pages.add(leftPage);
+
+        ImageButton previousPageButton = new ImageButton(leftPos + 12, topPos + 164, 13, 15,
+                AlbumGUI.PREVIOUS_PAGE_BUTTON_SPRITES, button -> pager.changePage(PagingDirection.PREVIOUS), Component.translatable("gui.exposure.previous_page"));
+        previousPageButton.setTooltip(Tooltip.create(Component.translatable("gui.exposure.previous_page")));
+        addRenderableWidget(previousPageButton);
+
+        // RIGHT:
+        Page rightPage = createPage(Side.RIGHT, 140);
+        pages.add(rightPage);
+
+        ImageButton nextPageButton = new ImageButton(leftPos + 273, topPos + 164, 13, 15,
+                AlbumGUI.NEXT_PAGE_BUTTON_SPRITES, button -> pager.changePage(PagingDirection.NEXT), Component.translatable("gui.exposure.next_page"));
+        nextPageButton.setTooltip(Tooltip.create(Component.translatable("gui.exposure.next_page")));
+        addRenderableWidget(nextPageButton);
+
+        int spreadsCount = (int) Math.ceil(albumAccess.pages().size() / 2f);
+        pager.setPagesCount(spreadsCount)
+                .setPreviousPageButton(previousPageButton)
+                .setNextPageButton(nextPageButton);
     }
 
     protected Page createPage(Side side, int xOffset) {
-        return null;
+        int x = leftPos + xOffset;
+        int y = topPos;
+
+        PhotographSlotWidget photographWidget = new PhotographSlotWidget(this, x + 25, y + 21, 108, 108,
+                () -> getPage(side).orElse(PageContent.EMPTY).photograph())
+                .editable(false)
+                .primaryAction(widget -> inspectPhotograph(widget.getPhotograph()));
+
+        addRenderableWidget(photographWidget);
+
+        TextBlock noteWidget = new TextBlock(font, x + 22, y + 133, 114, 27,
+                getPage(side).orElse(PageContent.EMPTY).note(), this::handleComponentClicked);
+        noteWidget.fontColor = Config.getColor(Config.Client.ALBUM_FONT_MAIN_COLOR);
+        noteWidget.alignment = HorizontalAlignment.CENTER;
+        noteWidget.drawShadow = false;
+        //  TextBlock is rendered manually to not be a part of TAB navigation.
+        //  addRenderableWidget(noteWidget);
+
+        return new Page(side, photographWidget, noteWidget);
     }
 
     public List<PageContent> getPages() {
@@ -87,6 +131,7 @@ public class AlbumViewScreen extends Screen {
     public Optional<PageContent> getPage(int pageIndex) {
         if (pageIndex <= getPages().size() - 1)
             return Optional.ofNullable(getPages().get(pageIndex));
+
         return Optional.empty();
     }
 
@@ -99,7 +144,10 @@ public class AlbumViewScreen extends Screen {
     }
 
     protected void onSpreadChanged(int oldSpread, int newSpread) {
-        // Stubbed
+        forEachPage(page -> {
+            Component note = getPage(page.side).orElse(PageContent.EMPTY).note();
+            page.noteWidget().setMessage(note);
+        });
     }
 
     public void setAlbumAccess(AlbumAccess albumAccess) {
@@ -107,54 +155,108 @@ public class AlbumViewScreen extends Screen {
         pager.setPagesCount(albumAccess.getPageCount() / 2);
     }
 
-    // TODO: MC 26.1 - render signature changed
-    public void render(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTick) {
-        // Stubbed
+    @Override
+    public void extractRenderState(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTick) {
+        super.extractRenderState(guiGraphics, mouseX, mouseY, partialTick);
+        extractTooltip(guiGraphics, mouseX, mouseY);
+
+        for (Page page : pages) {
+            AbstractWidget noteWidget = page.noteWidget();
+            if (noteWidget instanceof TextBlock textBlock) {
+                textBlock.extractRenderState(guiGraphics, mouseX, mouseY, partialTick);
+            }
+        }
+
+        this.extractTooltip(guiGraphics, mouseX, mouseY);
     }
 
-    // TODO: MC 26.1 - renderTooltip stubbed
-    protected void renderTooltip(GuiGraphicsExtractor guiGraphics, int x, int y) {
-        // Stubbed
+    protected void extractTooltip(GuiGraphicsExtractor guiGraphics, int x, int y) {
+        for (Page page : pages) {
+            if (page.photographWidget().isHoveredOrFocused()) {
+                page.photographWidget().renderTooltip(guiGraphics, x, y);
+                return;
+            }
+        }
     }
 
-    // TODO: MC 26.1 - renderBackground signature changed
-    public void renderBackground(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTick) {
-        // Stubbed
+    @Override
+    public void extractBackground(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTick) {
+        extractTransparentBackground(guiGraphics);
+
+        guiGraphics.blit(net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED, AlbumGUI.TEXTURE, leftPos, topPos, 0, 0,
+                imageWidth, imageHeight, 512, 512);
+
+        int currentSpreadIndex = getCurrentSpreadIndex();
+        drawPageNumbers(guiGraphics, currentSpreadIndex, mouseX, mouseY);
     }
 
-    // TODO: MC 26.1 - drawPageNumbers stubbed
     protected void drawPageNumbers(GuiGraphicsExtractor guiGraphics, int currentSpreadIndex, int mouseX, int mouseY) {
-        // Stubbed
+        Font font = Minecrft.get().font;
+
+        String leftPageNumber = Integer.toString(currentSpreadIndex * 2 + 1);
+        String rightPageNumber = Integer.toString(currentSpreadIndex * 2 + 2);
+
+        guiGraphics.text(font, leftPageNumber, leftPos + 71 + (8 - font.width(leftPageNumber) / 2),
+                topPos + 167, Config.getColor(Config.Client.ALBUM_FONT_SECONDARY_COLOR), false);
+
+        guiGraphics.text(font, rightPageNumber, leftPos + 212 + (8 - font.width(rightPageNumber) / 2),
+                topPos + 167, Config.getColor(Config.Client.ALBUM_FONT_SECONDARY_COLOR), false);
     }
 
-    // TODO: MC 26.1 - mouseClicked now takes MouseButtonEvent
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+    // --
+
+    @Override
+    public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
+        if (super.mouseClicked(event, doubleClick)) return true;
+
+        for (Page page : pages) {
+            if (page.noteWidget().mouseClicked(event, doubleClick)) {
+                return true;
+            }
+        }
+
         return false;
     }
 
-    // TODO: MC 26.1 - handleComponentClicked signature changed
     public boolean handleComponentClicked(@Nullable Style style) {
-        return false;
+        if (style == null)
+            return false;
+
+        ClickEvent clickEvent = style.getClickEvent();
+        if (clickEvent == null)
+            return false;
+        else if (clickEvent instanceof ClickEvent.ChangePage changePage) {
+            forcePage(changePage.page() - 1);
+            return true;
+        }
+
+        Screen.defaultHandleClickEvent(clickEvent, minecraft, this);
+        if (clickEvent instanceof ClickEvent.RunCommand)
+            onClose();
+        return true;
     }
 
     protected void forcePage(int pageIndex) {
         pager.changePage(pageIndex / 2);
     }
 
-    // TODO: MC 26.1 - keyPressed now takes KeyEvent
-    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        return false;
+    @Override
+    public boolean keyPressed(KeyEvent event) {
+        return keyBindings.keyPressed(event) || super.keyPressed(event);
     }
 
-    // TODO: MC 26.1 - keyReleased now takes KeyEvent
-    public boolean keyReleased(int keyCode, int scanCode, int modifiers) {
-        return false;
+    @Override
+    public boolean keyReleased(KeyEvent event) {
+        return keyBindings.keyReleased(event) || super.keyReleased(event);
     }
+
+    // --
 
     protected void inspectPhotograph(ItemStack photograph) {
         if (!(photograph.getItem() instanceof PhotographItem)) {
             return;
         }
+
         Minecrft.get().setScreen(new ChildPhotographScreen(this, List.of(new ItemAndStack<>(photograph))));
         Minecrft.get().getSoundManager()
                 .play(SimpleSoundInstance.forUI(Exposure.SoundEvents.PHOTOGRAPH_RUSTLE.get(),
@@ -180,9 +282,11 @@ public class AlbumViewScreen extends Screen {
             if (stack.get(Exposure.DataComponents.ALBUM_CONTENT) instanceof AlbumContent content) {
                 return new AlbumAccess(content.pages().stream().map(PageContent::new).toList());
             }
+
             if (stack.get(Exposure.DataComponents.SIGNED_ALBUM_CONTENT) instanceof SignedAlbumContent content) {
                 return new AlbumAccess(content.pages().stream().map(PageContent::new).toList());
             }
+
             return EMPTY;
         }
     }

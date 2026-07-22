@@ -34,6 +34,12 @@ public record AlbumSignC2SP(int slot, String title, String author) implements Pa
     @Override
     public boolean handle(PacketFlow flow, Player player) {
         Preconditions.checkState(player != null, "Cannot handle packet: Player was null");
+        if (slot < 0 || slot >= player.getInventory().getContainerSize()) {
+            return false;
+        }
+        if (!author.equals(player.getScoreboardName())) {
+            return false;
+        }
 
         ItemStack albumStack = player.getInventory().getItem(slot());
         if (albumStack.getItem() instanceof AlbumItem albumItem) {

@@ -1,8 +1,18 @@
 package io.github.mortuusars.exposure.client.capture.action;
 
-// TODO: MC 26.1 - GameRenderer.effectActive removed. Needs rewrite.
-@Deprecated
+import net.minecraft.client.Minecraft;
+
 public class DisablePostEffectAction implements CaptureAction {
-    @Override public void beforeCapture() {}
-    @Override public void afterCapture() {}
+    private boolean effectActive;
+
+    @Override
+    public void beforeCapture() {
+        effectActive = Minecraft.getInstance().gameRenderer.effectActive;
+        Minecraft.getInstance().gameRenderer.effectActive = false;
+    }
+
+    @Override
+    public void afterCapture() {
+        Minecraft.getInstance().gameRenderer.effectActive = effectActive;
+    }
 }

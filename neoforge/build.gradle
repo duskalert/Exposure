@@ -63,6 +63,11 @@ sourceSets {
     main {
         java {
             srcDir file("${rootProject.projectDir}/common/src/main/java")
+            exclude '**/integration/jade/**'
+            exclude '**/integration/jei/**'
+            exclude '**/ModAnvil*.java'
+            exclude '**/integration/compat/*Camera*.java'
+            exclude '**/integration/ModCompatibilityClient.java'
         }
         resources {
             srcDir file("${rootProject.projectDir}/common/src/main/resources")

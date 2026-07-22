@@ -13,8 +13,6 @@ import net.minecraft.network.chat.MutableComponent;
 import org.jetbrains.annotations.NotNull;
 
 public class FocalLengthButton extends ImageButton {
-    // TODO: MC 26.1 - Widget rendering API redesigned. Stubbed.
-
     protected final int secondaryFontColor;
     protected final int mainFontColor;
 
@@ -24,13 +22,22 @@ public class FocalLengthButton extends ImageButton {
         secondaryFontColor = Config.getColor(Config.Client.VIEWFINDER_FONT_SECONDARY_COLOR);
     }
 
-    // TODO: MC 26.1 - renderWidget signature changed, drawString changed
-    public void renderWidget(@NotNull GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTick) {
-        // Stubbed
+    @Override
+    public void extractContents(@NotNull GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTick) {
+        super.extractContents(guiGraphics, mouseX, mouseY, partialTick);
+
+        int focalLength = (int)Math.round(Fov.fovToFocalLength(getCurrentFov()));
+
+        Font font = Minecraft.getInstance().font;
+        MutableComponent text = Component.translatable("gui.exposure.camera_controls.focal_length", focalLength);
+        int textWidth = font.width(text);
+        int xPos = 17 + (29 - textWidth) / 2;
+
+        guiGraphics.text(font, text, getX() + xPos, getY() + 8, secondaryFontColor, false);
+        guiGraphics.text(font, text, getX() + xPos, getY() + 7, mainFontColor, false);
     }
 
     protected double getCurrentFov() {
-        // TODO: MC 26.1 - getTimer() removed
-        return 70.0;
+        return Minecrft.get().gameRenderer.getMainCamera().getFov();
     }
 }

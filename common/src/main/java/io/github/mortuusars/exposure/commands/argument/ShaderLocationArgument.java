@@ -24,9 +24,9 @@ public class ShaderLocationArgument extends IdentifierArgument {
                 .stream();
     }
 
-    private static boolean filterLocations(Identifier Identifier) {
-        return Identifier.getPath().endsWith(".json")
-                && !Identifier.getPath().contains("shaders/program")
-                && !Identifier.getPath().contains("shaders/core");
+    private static boolean filterLocations(Identifier resourceLocation) {
+        return resourceLocation.getPath().endsWith(".json")
+                && !resourceLocation.getPath().contains("shaders/program")
+                && !resourceLocation.getPath().contains("shaders/core");
     }
 }

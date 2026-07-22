@@ -9,6 +9,6 @@ import java.util.List;
 
 @Mixin(DebugScreenOverlay.class)
 public interface BuggerScreenRenderLinesInvoker {
-    @Invoker("renderLines")
-    void drawLines(GuiGraphicsExtractor GuiGraphicsExtractor, List<String> lines, boolean leftSide);
+    @Invoker("extractLines")
+    void drawLines(GuiGraphicsExtractor guiGraphics, List<String> lines, boolean leftSide);
 }

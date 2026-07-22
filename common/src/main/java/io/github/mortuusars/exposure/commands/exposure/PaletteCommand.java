@@ -30,25 +30,25 @@ public class PaletteCommand {
                                         .then(argument("file_path", StringArgumentType.string())
                                                 .executes(context -> exportAsJson(context.getSource(),
                                                         ColorPaletteArgument.getId(context, "palette"),
-                                                        StringArgumentType.getStringOr(context, "file_path", "")))))
+                                                        StringArgumentType.getString(context, "file_path")))))
                                 .then(literal("png")
                                         .then(argument("file_path", StringArgumentType.string())
                                                 .executes(context -> exportAsPng(context.getSource(),
                                                         ColorPaletteArgument.getId(context, "palette"),
-                                                        StringArgumentType.getStringOr(context, "file_path", "")))))))
+                                                        StringArgumentType.getString(context, "file_path")))))))
                 .then(literal("convert")
                         .then(literal("json_to_png")
                                 .then(argument("file_path", StringArgumentType.string())
                                         .executes(context -> convertJsonToPng(context.getSource(),
-                                                StringArgumentType.getStringOr(context, "file_path", "")))))
+                                                StringArgumentType.getString(context, "file_path")))))
                         .then(literal("png_to_json")
                                 .then(argument("file_path", StringArgumentType.string())
                                         .executes(context -> convertPngToJson(context.getSource(),
-                                                StringArgumentType.getStringOr(context, "file_path", ""))))));
+                                                StringArgumentType.getString(context, "file_path"))))));
     }
 
     private static int exportAsJson(CommandSourceStack source, Identifier paletteId, String filePath) {
-        @Nullable ColorPalette palette = source.registryAccess().registryOrThrow(Exposure.Registries.COLOR_PALETTE).get(paletteId);
+        @Nullable ColorPalette palette = source.registryAccess().lookupOrThrow(Exposure.Registries.COLOR_PALETTE).getValue(paletteId);
         if (palette == null) {
             source.sendFailure(Component.literal(paletteId + " is not found."));
             return 0;
@@ -70,7 +70,7 @@ public class PaletteCommand {
     }
 
     private static int exportAsPng(CommandSourceStack source, Identifier paletteId, String filePath) {
-        @Nullable ColorPalette palette = source.registryAccess().registryOrThrow(Exposure.Registries.COLOR_PALETTE).get(paletteId);
+        @Nullable ColorPalette palette = source.registryAccess().lookupOrThrow(Exposure.Registries.COLOR_PALETTE).getValue(paletteId);
         if (palette == null) {
             source.sendFailure(Component.literal(paletteId + " is not found."));
             return 0;

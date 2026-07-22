@@ -8,12 +8,13 @@ import io.github.mortuusars.exposure.world.item.PhotographItem;
 import io.github.mortuusars.exposure.world.item.util.ItemAndStack;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.client.input.MouseButtonEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
 public class ChildPhotographScreen extends PhotographScreen {
-    // TODO: MC 26.1 - Screen API redesigned. Stubbed.
     private final Screen parentScreen;
 
     public ChildPhotographScreen(Screen parentScreen, List<ItemAndStack<PhotographItem>> photographs) {
@@ -21,31 +22,42 @@ public class ChildPhotographScreen extends PhotographScreen {
         this.parentScreen = parentScreen;
     }
 
-    // TODO: MC 26.1 - render signature changed
-    public void render(@NotNull GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTick) {
-        // Stubbed
+    @Override
+    public void extractRenderState(@NotNull GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTick) {
+        super.extractRenderState(guiGraphics, mouseX, mouseY, partialTick);
+
+        if (zoom.get() < zoom.getMin() + 0.1f && zoom.getTarget() < zoom.getMin() + 0.1f) {
+            Minecrft.get().setScreen(parentScreen);
+            Minecrft.player().playSound(Exposure.SoundEvents.PHOTOGRAPH_PLACE.get(), 0.7f, 1.1f);
+        }
     }
 
-    // TODO: MC 26.1 - keyPressed now takes KeyEvent, KeyMapping.matches changed
-    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        if (keyCode == InputConstants.KEY_ESCAPE) {
+    @Override
+    public boolean keyPressed(KeyEvent event) {
+        if (event.key() == InputConstants.KEY_ESCAPE || Minecrft.options().keyInventory.matches(event)) {
             onClose();
             return true;
         }
-        return false;
+
+        return super.keyPressed(event);
     }
 
-    // TODO: MC 26.1 - mouseClicked now takes MouseButtonEvent
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        if (button == InputConstants.MOUSE_BUTTON_RIGHT) {
+    @Override
+    public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
+        if (super.mouseClicked(event, doubleClick)) {
+            return true;
+        }
+
+        if (event.button() == InputConstants.MOUSE_BUTTON_RIGHT) {
             zoom.setTarget(0f);
             return true;
         }
+
         return false;
     }
 
-    // TODO: MC 26.1 - onClose
+    @Override
     public void onClose() {
-        zoom.setTarget(0f);
+        zoom.setTarget(0f); // ChildPhotographScreen#render will close screen when zooming out ends.
     }
 }

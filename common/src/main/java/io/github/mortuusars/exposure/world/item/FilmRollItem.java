@@ -15,6 +15,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.ARGB;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -22,7 +23,6 @@ import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.util.ARGB;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
@@ -34,8 +34,8 @@ import java.util.Collections;
 import java.util.List;
 
 public class FilmRollItem extends Item implements SensitiveFilmItem {
-    public static final int BAR_BLACK_AND_WHITE = ARGB.color(128, 128, 145);
-    public static final int BAR_COLOR = ARGB.color(65, 65, 165);
+    public static final int BAR_BLACK_AND_WHITE = ARGB.colorFromFloat(1.0F, 0.8F, 0.8F, 0.9F);
+    public static final int BAR_COLOR = ARGB.colorFromFloat(1.0F, 0.4F, 0.4F, 1.0F);
 
     protected final ExposureType type;
     protected final int barColor;
@@ -69,7 +69,11 @@ public class FilmRollItem extends Item implements SensitiveFilmItem {
 
     // --
 
-    public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> list, TooltipFlag tooltipFlag) {
+    @Override
+    public void appendHoverText(ItemStack stack, TooltipContext context,
+                                net.minecraft.world.item.component.TooltipDisplay tooltipDisplay,
+                                java.util.function.Consumer<Component> tooltipConsumer, TooltipFlag tooltipFlag) {
+        List<Component> list = new java.util.ArrayList<>();
         int exposedFrames = getStoredFramesCount(stack);
         if (exposedFrames > 0) {
             int totalFrames = getMaxFrameCount(stack);
@@ -92,6 +96,8 @@ public class FilmRollItem extends Item implements SensitiveFilmItem {
         if (exposedFrames > 0 && !PlatformHelper.isModLoaded("jei") && Config.Client.RECIPE_TOOLTIPS_WITHOUT_JEI.get()) {
             ClientGUI.addFilmRollDevelopingTooltip(stack, context, list, tooltipFlag);
         }
+
+        list.forEach(tooltipConsumer);
     }
 
     @Override
@@ -113,7 +119,7 @@ public class FilmRollItem extends Item implements SensitiveFilmItem {
             }
         };
         PlatformHelper.openMenu(serverPlayer, menuProvider, buffer -> buffer.writeInt(slot));
-        return InteractionResult.SUCCESS.heldItemTransformedTo(player.getItemInHand(usedHand));
+        return InteractionResult.SUCCESS;
     }
 
     // -- Bar

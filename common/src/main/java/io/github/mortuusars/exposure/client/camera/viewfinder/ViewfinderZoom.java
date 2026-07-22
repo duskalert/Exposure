@@ -5,9 +5,10 @@ import io.github.mortuusars.exposure.client.animation.Animation;
 import io.github.mortuusars.exposure.client.animation.EasingFunction;
 import io.github.mortuusars.exposure.client.util.Minecrft;
 import io.github.mortuusars.exposure.world.camera.Camera;
-import io.github.mortuusars.exposure.world.item.camcom.CameraSettings;
+import io.github.mortuusars.exposure.world.item.camera.CameraSettings;
 import io.github.mortuusars.exposure.world.camera.component.FocalRange;
 import io.github.mortuusars.exposure.client.util.ZoomDirection;
+import net.minecraft.client.input.KeyEvent;
 import net.minecraft.util.Mth;
 
 public class ViewfinderZoom {
@@ -63,15 +64,15 @@ public class ViewfinderZoom {
         }
     }
 
-    public boolean keyPressed(int key, int scanCode, int action, int modifiers) {
+    public boolean keyPressed(KeyEvent event, int action) {
         if (action == InputConstants.PRESS || action == InputConstants.REPEAT) {
-            if (key == InputConstants.KEY_ADD || key == InputConstants.KEY_EQUALS) {
-                zoom(ZoomDirection.IN, Minecrft.options().keyShift.isDown());
+            if (event.key() == InputConstants.KEY_ADD || event.key() == InputConstants.KEY_EQUALS) {
+                zoom(ZoomDirection.IN, event.hasShiftDown());
                 return true;
             }
 
-            if (key == 333 /*KEY_SUBTRACT*/ || key == InputConstants.KEY_MINUS) {
-                zoom(ZoomDirection.OUT, Minecrft.options().keyShift.isDown());
+            if (event.key() == 333 /*KEY_SUBTRACT*/ || event.key() == InputConstants.KEY_MINUS) {
+                zoom(ZoomDirection.OUT, event.hasShiftDown());
                 return true;
             }
         }
@@ -79,7 +80,7 @@ public class ViewfinderZoom {
     }
 
     public boolean mouseScrolled(double amount) {
-        zoom(amount > 0 ? ZoomDirection.IN : ZoomDirection.OUT, Minecrft.options().keyShift.isDown());
+        zoom(amount > 0 ? ZoomDirection.IN : ZoomDirection.OUT, Minecrft.get().hasShiftDown());
         return true;
     }
 }

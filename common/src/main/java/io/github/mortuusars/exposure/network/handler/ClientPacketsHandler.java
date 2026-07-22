@@ -13,6 +13,7 @@ import io.github.mortuusars.exposure.client.task.ExposureRetrieveTask;
 import io.github.mortuusars.exposure.client.capture.template.CaptureTemplate;
 import io.github.mortuusars.exposure.client.image.TrichromeImage;
 import io.github.mortuusars.exposure.client.util.Minecrft;
+import io.github.mortuusars.exposure.client.util.Shader;
 import io.github.mortuusars.exposure.client.capture.template.CaptureTemplates;
 import io.github.mortuusars.exposure.client.capture.palettizer.Palettizer;
 import io.github.mortuusars.exposure.client.capture.saving.ExposureUploader;
@@ -48,8 +49,8 @@ public class ClientPacketsHandler {
 
     public static void applyShader(ShaderApplyS2CP packet) {
         packet.shaderLocation().ifPresentOrElse(
-                shader -> Minecrft.get().gameRenderer.loadEffect(shader),
-                () -> Minecrft.get().gameRenderer.shutdownEffect());
+                Shader::applyToGameRenderer,
+                Shader::clearGameRendererEffect);
     }
 
     public static void showExposure(ShowExposureCommandS2CP packet) {
@@ -105,7 +106,7 @@ public class ClientPacketsHandler {
 
         Holder<ColorPalette> colorPalette = ColorPalettes.getDefault(Minecrft.registryAccess());
         ColorPalette palette = colorPalette.value();
-        Identifier paletteId = colorPalette.unwrapKey().orElseThrow().location();
+        Identifier paletteId = colorPalette.unwrapKey().orElseThrow().identifier();
 
         ExposureClient.cycles().addParallelTask(new ExposureRetrieveTask(packet.layers(), 20_000)
                 .then(Result::unwrap)
@@ -148,7 +149,7 @@ public class ClientPacketsHandler {
     }
 
     public static void stopControllingCameraStand(CameraStandStopControllingS2CP packet) {
-        if (Minecrft.get().cameraEntity != Minecrft.player() && Minecrft.level().getEntity(packet.standId()) instanceof CameraStandEntity stand) {
+        if (Minecrft.get().getCameraEntity() != Minecrft.player() && Minecrft.level().getEntity(packet.standId()) instanceof CameraStandEntity stand) {
             stand.stopControlling();
             CameraClient.setCameraEntity(Minecrft.player());
         }

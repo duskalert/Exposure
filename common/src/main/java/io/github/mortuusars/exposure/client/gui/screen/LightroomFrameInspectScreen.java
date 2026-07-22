@@ -5,13 +5,12 @@ import io.github.mortuusars.exposure.Exposure;
 import io.github.mortuusars.exposure.client.util.Minecrft;
 import io.github.mortuusars.exposure.util.PagingDirection;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.input.MouseButtonEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 
 public class LightroomFrameInspectScreen extends FilmFrameInspectScreen {
-    // TODO: MC 26.1 - Screen API redesigned. Stubbed.
-
     private final LightroomScreen lightroomScreen;
 
     public LightroomFrameInspectScreen(LightroomScreen lightroomScreen) {
@@ -20,23 +19,42 @@ public class LightroomFrameInspectScreen extends FilmFrameInspectScreen {
         this.pager.setChangeSound(null);
     }
 
-    // TODO: MC 26.1
+    @Override
     protected void pageChanged(int oldPage, int newPage) {
-        // Stubbed
+        // Lightroom can only change one at a time.
+        // It should always be one anyway, but limiting it just in case would do no harm.
+        PagingDirection direction = PagingDirection.fromChange(oldPage, newPage);
+        Collections.rotate(frames, -direction.getValue());
+
+        if (newPage != lightroomScreen.getMenu().getSelectedFrame()) {
+            lightroomScreen.changeFrame(direction);
+        }
     }
 
-    // TODO: MC 26.1 - render signature changed
-    public void render(@NotNull GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTick) {
-        // Stubbed
+    @Override
+    public void extractRenderState(@NotNull GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTick) {
+        super.extractRenderState(guiGraphics, mouseX, mouseY, partialTick);
+
+        if (zoom.get() < zoom.getMin() + 0.1f && zoom.getTarget() < zoom.getMin() + 0.1f) {
+            Minecrft.get().setScreen(lightroomScreen);
+            Minecrft.player().playSound(Exposure.SoundEvents.CAMERA_LENS_RING_CLICK.get(), 1f, 0.7f);
+        }
     }
 
-    // TODO: MC 26.1 - mouseClicked now takes MouseButtonEvent
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+    @Override
+    public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
+        if (super.mouseClicked(event, doubleClick)) return true;
+
+        if (event.button() == InputConstants.MOUSE_BUTTON_RIGHT) {
+            zoom.setTarget(0f);
+            return true;
+        }
+
         return false;
     }
 
-    // TODO: MC 26.1
+    @Override
     public void onClose() {
-        zoom.setTarget(0f);
+        zoom.setTarget(0f); // LightroomFrameInspectScreen#render will close screen when zooming out ends.
     }
 }

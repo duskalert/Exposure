@@ -36,6 +36,11 @@ public interface CaptureAction {
     default void afterCapture() {
     }
 
+    /** Failure/cancellation restore hook. Composite actions use it to unwind in reverse order. */
+    default void afterCaptureFailure() {
+        afterCapture();
+    }
+
     // --
 
     CaptureAction EMPTY = new CaptureAction() {};

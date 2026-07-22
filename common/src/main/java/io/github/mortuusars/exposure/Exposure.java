@@ -30,12 +30,12 @@ import io.github.mortuusars.exposure.world.entity.PhotographFrameEntity;
 import io.github.mortuusars.exposure.world.camera.frame.Frame;
 import io.github.mortuusars.exposure.world.inventory.*;
 import io.github.mortuusars.exposure.world.item.*;
-import io.github.mortuusars.exposure.world.item.camcom.CameraItem;
+import io.github.mortuusars.exposure.world.item.camera.CameraItem;
 import io.github.mortuusars.exposure.world.item.component.StackedPhotographs;
 import io.github.mortuusars.exposure.world.item.component.StoredItemStack;
 import io.github.mortuusars.exposure.world.item.component.album.AlbumContent;
 import io.github.mortuusars.exposure.world.item.component.album.SignedAlbumContent;
-import io.github.mortuusars.exposure.world.item.camcom.ShutterState;
+import io.github.mortuusars.exposure.world.item.camera.ShutterState;
 import io.github.mortuusars.exposure.world.item.crafting.recipe.ComponentTransferringRecipe;
 import io.github.mortuusars.exposure.world.item.crafting.recipe.FilmDevelopingRecipe;
 import io.github.mortuusars.exposure.world.item.crafting.recipe.PhotographAgingRecipe;
@@ -47,6 +47,7 @@ import net.minecraft.commands.synchronization.ArgumentTypeInfo;
 import net.minecraft.commands.synchronization.SingletonArgumentInfo;
 import net.minecraft.core.Registry;
 import net.minecraft.core.component.DataComponentType;
+import net.minecraft.core.component.predicates.DataComponentPredicate;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.ByteBufCodecs;
@@ -91,6 +92,7 @@ public class Exposure {
         CreativeTabs.init();
         DataComponents.init();
         CriteriaTriggers.init();
+        ItemSubPredicates.init();
         EntitySubPredicates.init();
         MenuTypes.init();
         RecipeSerializers.init();
@@ -112,20 +114,28 @@ public class Exposure {
         return Identifier.fromNamespaceAndPath(ID, path);
     }
 
+    private static BlockBehaviour.Properties blockProperties(String id, BlockBehaviour.Properties properties) {
+        return properties.setId(ResourceKey.create(BuiltInRegistries.BLOCK.key(), resource(id)));
+    }
+
+    private static Item.Properties itemProperties(String id) {
+        return new Item.Properties().setId(ResourceKey.create(BuiltInRegistries.ITEM.key(), resource(id)));
+    }
+
     public static class Blocks {
         public static final Supplier<LightroomBlock> LIGHTROOM = Register.block("lightroom",
-                () -> new LightroomBlock(BlockBehaviour.Properties.of()
+                () -> new LightroomBlock(blockProperties("lightroom", BlockBehaviour.Properties.of())
                         .mapColor(MapColor.COLOR_BROWN)
                         .strength(2.5f)
                         .sound(SoundType.WOOD)));
 
         public static final Supplier<FlashBlock> FLASH = Register.block("flash",
-                () -> new FlashBlock(BlockBehaviour.Properties.ofFullCopy(net.minecraft.world.level.block.Blocks.AIR)
+                () -> new FlashBlock(blockProperties("flash", BlockBehaviour.Properties.ofFullCopy(net.minecraft.world.level.block.Blocks.AIR))
                         .strength(-1.0F, 3600000.8F)
                         .noLootTable()
                         .mapColor(MapColor.NONE)
                         .noOcclusion()
-                        .noCollission()
+                        .noCollision()
                         .lightLevel(state -> 15)));
 
         static void init() {
@@ -142,33 +152,23 @@ public class Exposure {
 
     public static class Items {
         public static final Supplier<CameraItem> CAMERA = Register.item("camera",
-                () -> new CameraItem(new Item.Properties()
+                () -> new CameraItem(itemProperties("camera")
                         .stacksTo(1)
                         .component(DataComponents.CAMERA_ACTIVE, false)));
 
-        // Camera part items (used for rendering attachments, not obtainable in survival)
-        public static final Supplier<Item> CAMERA_FLASH = Register.item("camera_flash",
-                () -> new Item(new Item.Properties().stacksTo(1)));
-        public static final Supplier<Item> CAMERA_LENS = Register.item("camera_lens",
-                () -> new Item(new Item.Properties().stacksTo(1)));
-        public static final Supplier<Item> CAMERA_VIEWFINDER = Register.item("camera_viewfinder",
-                () -> new Item(new Item.Properties().stacksTo(1)));
-        public static final Supplier<Item> CAMERA_SELFIE_STICK = Register.item("camera_selfie_stick",
-                () -> new Item(new Item.Properties().stacksTo(1)));
-
         public static final Supplier<FilmRollItem> BLACK_AND_WHITE_FILM = Register.item("black_and_white_film",
                 () -> new FilmRollItem(ExposureType.BLACK_AND_WHITE, FilmRollItem.BAR_BLACK_AND_WHITE,
-                        new Item.Properties()
+                        itemProperties("black_and_white_film")
                                 .stacksTo(16)));
 
         public static final Supplier<FilmRollItem> COLOR_FILM = Register.item("color_film",
                 () -> new FilmRollItem(ExposureType.COLOR, FilmRollItem.BAR_COLOR,
-                        new Item.Properties()
+                        itemProperties("color_film")
                                 .stacksTo(16)));
 
         public static final Supplier<FilmRollItem> HIGH_SENSITIVITY_BLACK_AND_WHITE_FILM = Register.item("high_sensitivity_black_and_white_film",
                 () -> new FilmRollItem(ExposureType.BLACK_AND_WHITE, FilmRollItem.BAR_BLACK_AND_WHITE,
-                        new Item.Properties()
+                        itemProperties("high_sensitivity_black_and_white_film")
                                 .component(DataComponents.FILM_STYLE, FilmStyle.create()
                                         .withSensitivity(2f)
                                         .withNoise(0.065f))
@@ -176,58 +176,58 @@ public class Exposure {
 
         public static final Supplier<FilmRollItem> HIGH_SENSITIVITY_COLOR_FILM = Register.item("high_sensitivity_color_film",
                 () -> new FilmRollItem(ExposureType.COLOR, FilmRollItem.BAR_COLOR,
-                        new Item.Properties()
+                        itemProperties("high_sensitivity_color_film")
                                 .component(DataComponents.FILM_STYLE, FilmStyle.create()
                                         .withSensitivity(2f)
                                         .withNoise(0.065f))
                                 .stacksTo(16)));
 
         public static final Supplier<DevelopedFilmItem> DEVELOPED_BLACK_AND_WHITE_FILM = Register.item("developed_black_and_white_film",
-                () -> new DevelopedFilmItem(ExposureType.BLACK_AND_WHITE, new Item.Properties()
+                () -> new DevelopedFilmItem(ExposureType.BLACK_AND_WHITE, itemProperties("developed_black_and_white_film")
                         .stacksTo(1)));
 
         public static final Supplier<DevelopedFilmItem> DEVELOPED_COLOR_FILM = Register.item("developed_color_film",
-                () -> new DevelopedFilmItem(ExposureType.COLOR, new Item.Properties()
+                () -> new DevelopedFilmItem(ExposureType.COLOR, itemProperties("developed_color_film")
                         .stacksTo(1)));
 
         public static final Supplier<PhotographItem> PHOTOGRAPH = Register.item("photograph",
-                () -> new PhotographItem(new Item.Properties()
+                () -> new PhotographItem(itemProperties("photograph")
                         .stacksTo(1)));
 
         public static final Supplier<ChromaticSheetItem> CHROMATIC_SHEET = Register.item("chromatic_sheet",
-                () -> new ChromaticSheetItem(new Item.Properties()
+                () -> new ChromaticSheetItem(itemProperties("chromatic_sheet")
                         .stacksTo(1)));
 
         public static final Supplier<PhotographItem> AGED_PHOTOGRAPH = Register.item("aged_photograph",
-                () -> new AgedPhotographItem(new Item.Properties()
+                () -> new AgedPhotographItem(itemProperties("aged_photograph")
                         .stacksTo(1)));
 
         public static final Supplier<InterplanarProjectorItem> INTERPLANAR_PROJECTOR = Register.item("interplanar_projector",
-                () -> new InterplanarProjectorItem(new Item.Properties()));
+                () -> new InterplanarProjectorItem(itemProperties("interplanar_projector")));
         public static final Supplier<BrokenInterplanarProjectorItem> BROKEN_INTERPLANAR_PROJECTOR = Register.item("broken_interplanar_projector",
-                () -> new BrokenInterplanarProjectorItem(new Item.Properties()));
+                () -> new BrokenInterplanarProjectorItem(itemProperties("broken_interplanar_projector")));
 
         public static final Supplier<StackedPhotographsItem> STACKED_PHOTOGRAPHS = Register.item("stacked_photographs",
-                () -> new StackedPhotographsItem(new Item.Properties()
+                () -> new StackedPhotographsItem(itemProperties("stacked_photographs")
                         .stacksTo(1)));
 
         public static final Supplier<AlbumItem> ALBUM = Register.item("album",
-                () -> new AlbumItem(new Item.Properties()
+                () -> new AlbumItem(itemProperties("album")
                         .stacksTo(1)));
         public static final Supplier<SignedAlbumItem> SIGNED_ALBUM = Register.item("signed_album",
-                () -> new SignedAlbumItem(new Item.Properties()
+                () -> new SignedAlbumItem(itemProperties("signed_album")
                         .stacksTo(1)));
 
         public static final Supplier<PhotographFrameItem> PHOTOGRAPH_FRAME = Register.item("photograph_frame",
-                () -> new PhotographFrameItem(new Item.Properties()));
+                () -> new PhotographFrameItem(itemProperties("photograph_frame")));
         public static final Supplier<GlassPhotographFrameItem> CLEAR_PHOTOGRAPH_FRAME = Register.item("glass_photograph_frame",
-                () -> new GlassPhotographFrameItem(new Item.Properties()));
+                () -> new GlassPhotographFrameItem(itemProperties("glass_photograph_frame")));
 
         public static final Supplier<CameraStandItem> CAMERA_STAND = Register.item("camera_stand",
-                () -> new CameraStandItem(new Item.Properties()));
+                () -> new CameraStandItem(itemProperties("camera_stand")));
 
         public static final Supplier<BlockItem> LIGHTROOM = Register.item("lightroom",
-                () -> new BlockItem(Blocks.LIGHTROOM.get(), new Item.Properties()));
+                () -> new BlockItem(Blocks.LIGHTROOM.get(), itemProperties("lightroom")));
 
         static void init() {
         }
@@ -238,24 +238,6 @@ public class Exposure {
                 CreativeModeTab.builder(CreativeModeTab.Row.TOP, 0)
                         .title(Component.translatable("itemGroup.exposure.exposure"))
                         .icon(() -> new ItemStack(Items.CAMERA.get()))
-                        .displayItems((params, output) -> {
-                            output.accept(Items.CAMERA.get());
-                            output.accept(Items.CAMERA_STAND.get());
-                            output.accept(Items.BLACK_AND_WHITE_FILM.get());
-                            output.accept(Items.COLOR_FILM.get());
-                            output.accept(Items.HIGH_SENSITIVITY_BLACK_AND_WHITE_FILM.get());
-                            output.accept(Items.HIGH_SENSITIVITY_COLOR_FILM.get());
-                            output.accept(Items.DEVELOPED_BLACK_AND_WHITE_FILM.get());
-                            output.accept(Items.DEVELOPED_COLOR_FILM.get());
-                            output.accept(Items.PHOTOGRAPH.get());
-                            output.accept(Items.AGED_PHOTOGRAPH.get());
-                            output.accept(Items.STACKED_PHOTOGRAPHS.get());
-                            output.accept(Items.ALBUM.get());
-                            output.accept(Items.PHOTOGRAPH_FRAME.get());
-                            output.accept(Items.CLEAR_PHOTOGRAPH_FRAME.get());
-                            output.accept(Items.INTERPLANAR_PROJECTOR.get());
-                            output.accept(Items.LIGHTROOM.get());
-                        })
                         .build());
 
         static void init() {
@@ -434,18 +416,19 @@ public class Exposure {
     }
 
     public static class RecipeSerializers {
-        public static final Supplier<RecipeSerializer<?>> FILM_DEVELOPING =
+        public static final Supplier<RecipeSerializer<FilmDevelopingRecipe>> FILM_DEVELOPING =
                 registerTransferring("film_developing", "film", FilmDevelopingRecipe::new);
-        public static final Supplier<RecipeSerializer<?>> PHOTOGRAPH_COPYING =
+        public static final Supplier<RecipeSerializer<PhotographCopyingRecipe>> PHOTOGRAPH_COPYING =
                 registerTransferring("photograph_copying", "photograph", PhotographCopyingRecipe::new);
-        public static final Supplier<RecipeSerializer<?>> PHOTOGRAPH_AGING =
+        public static final Supplier<RecipeSerializer<PhotographAgingRecipe>> PHOTOGRAPH_AGING =
                 registerTransferring("photograph_aging", "photograph", PhotographAgingRecipe::new);
-        public static final Supplier<RecipeSerializer<?>> COMPONENT_TRANSFERRING =
+        public static final Supplier<RecipeSerializer<ComponentTransferringRecipe>> COMPONENT_TRANSFERRING =
                 registerTransferring("component_transferring", "source", ComponentTransferringRecipe::new);
 
-        private static <T extends ComponentTransferringRecipe> Supplier<RecipeSerializer<?>> registerTransferring(
+        private static <T extends ComponentTransferringRecipe> Supplier<RecipeSerializer<T>> registerTransferring(
                 String name, String sourceName, ComponentTransferringRecipeSerializer.RecipeConstructor<T> recipeConstructor) {
-            return Register.recipeSerializer(name, () -> new ComponentTransferringRecipeSerializer<>(name, sourceName, recipeConstructor).build());
+            return Register.recipeSerializer(name,
+                    () -> ComponentTransferringRecipeSerializer.create(name, sourceName, recipeConstructor));
         }
 
         static void init() {
@@ -535,6 +518,14 @@ public class Exposure {
         public static Supplier<FramePrintedTrigger> FRAME_PRINTED = Register.criterionTrigger("frame_printed", FramePrintedTrigger::new);
         public static Supplier<PlayerTrigger> PHOTOGRAPH_ENDERMAN_EYES = Register.criterionTrigger("photograph_enderman_eyes", PlayerTrigger::new);
         public static Supplier<PlayerTrigger> SUCCESSFULLY_PROJECT_IMAGE = Register.criterionTrigger("successfully_project_image", PlayerTrigger::new);
+
+        public static void init() {
+        }
+    }
+
+    public static class ItemSubPredicates {
+        public static Supplier<DataComponentPredicate.Type<FramePredicate>> FRAME = Register.itemSubPredicate("frame",
+                () -> new DataComponentPredicate.ConcreteType<>(FramePredicate.CODEC));
 
         public static void init() {
         }

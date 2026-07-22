@@ -1,7 +1,7 @@
 package io.github.mortuusars.exposure.network.packet.serverbound;
 
 import io.github.mortuusars.exposure.Exposure;
-import io.github.mortuusars.exposure.world.item.camcom.CameraItem;
+import io.github.mortuusars.exposure.world.item.camera.CameraItem;
 import io.github.mortuusars.exposure.network.packet.Packet;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
@@ -31,11 +31,17 @@ public record OpenCameraAttachmentsInCreativePacketC2SP(int cameraSlotIndex) imp
     @Override
     public boolean handle(PacketFlow flow, Player player) {
         if (player instanceof ServerPlayer serverPlayer) {
-            serverPlayer.server.execute(() -> {
-                ItemStack stack = player.getInventory().getItem(cameraSlotIndex);
-                if (stack.getItem() instanceof CameraItem cameraItem)
-                    cameraItem.openCameraAttachments(player, cameraSlotIndex, true);
-            });
+            if (!serverPlayer.isCreative()) {
+                return false;
+            }
+            if (cameraSlotIndex < 0 || cameraSlotIndex >= serverPlayer.getInventory().getContainerSize()) {
+                return false;
+            }
+
+            ItemStack stack = serverPlayer.getInventory().getItem(cameraSlotIndex);
+            if (stack.getItem() instanceof CameraItem cameraItem) {
+                cameraItem.openCameraAttachments(serverPlayer, cameraSlotIndex, true);
+            }
         }
 
         return true;

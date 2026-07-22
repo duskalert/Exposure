@@ -1,9 +1,9 @@
 package io.github.mortuusars.exposure.client.gui.toast;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import io.github.mortuusars.exposure.Exposure;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.toasts.TutorialToast;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.resources.Identifier;
 
 public interface ToastIcon {
@@ -28,7 +28,7 @@ public interface ToastIcon {
         }
 
         public void render(GuiGraphicsExtractor guiGraphics, int x, int y) {
-            // TODO: MC 26.1 - RenderSystem.enableBlend and blitSprite API changed
+            guiGraphics.blitSprite(RenderPipelines.GUI_TEXTURED, this.sprite, x, y, 20, 20);
         }
     }
 
@@ -41,7 +41,7 @@ public interface ToastIcon {
 
         @Override
         public void render(GuiGraphicsExtractor guiGraphics, int x, int y) {
-            icon.render(guiGraphics, x, y);
+            icon.extractRenderState(guiGraphics, x, y);
         }
     }
 }

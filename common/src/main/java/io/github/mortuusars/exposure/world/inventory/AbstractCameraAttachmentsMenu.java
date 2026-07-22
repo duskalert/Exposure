@@ -3,8 +3,8 @@ package io.github.mortuusars.exposure.world.inventory;
 import io.github.mortuusars.exposure.Exposure;
 import io.github.mortuusars.exposure.util.supporter.Supporters;
 import io.github.mortuusars.exposure.world.inventory.slot.FilteredSlot;
-import io.github.mortuusars.exposure.world.item.camcom.Attachment;
-import io.github.mortuusars.exposure.world.item.camcom.CameraItem;
+import io.github.mortuusars.exposure.world.item.camera.Attachment;
+import io.github.mortuusars.exposure.world.item.camera.CameraItem;
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
@@ -62,10 +62,13 @@ public abstract class AbstractCameraAttachmentsMenu extends AbstractContainerMen
             public int getMaxStackSize() {
                 return 1;
             }
-        };
 
-        // TODO: MC 26.1 - addListener removed, use addSlotsChangedListener or similar
-        // container.addListener(this::onContainerChanged);
+            @Override
+            public void setChanged() {
+                super.setChanged();
+                onContainerChanged(this);
+            }
+        };
         return container;
     }
 
@@ -128,8 +131,7 @@ public abstract class AbstractCameraAttachmentsMenu extends AbstractContainerMen
                 attachment.playRemoveSoundSided(player);
             }
 
-            // TODO: MC 26.1 - actionPerformed expects CameraHolder, not Player
-            // getCamera().apply((item, stack) -> item.actionPerformed(stack, player));
+            getCamera().apply((item, stack) -> item.actionPerformed(stack, player));
         }
     }
 

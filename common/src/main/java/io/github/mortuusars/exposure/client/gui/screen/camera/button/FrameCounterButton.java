@@ -2,7 +2,7 @@ package io.github.mortuusars.exposure.client.gui.screen.camera.button;
 
 import io.github.mortuusars.exposure.Config;
 import io.github.mortuusars.exposure.client.util.Minecrft;
-import io.github.mortuusars.exposure.world.item.camcom.Attachment;
+import io.github.mortuusars.exposure.world.item.camera.Attachment;
 import io.github.mortuusars.exposure.world.item.FilmRollItem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -18,8 +18,6 @@ import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 public class FrameCounterButton extends ImageButton {
-    // TODO: MC 26.1 - Widget rendering API redesigned. Stubbed.
-
     protected final int secondaryFontColor;
     protected final int mainFontColor;
 
@@ -29,18 +27,44 @@ public class FrameCounterButton extends ImageButton {
         secondaryFontColor = Config.getColor(Config.Client.VIEWFINDER_FONT_SECONDARY_COLOR);
     }
 
-    // TODO: MC 26.1 - renderWidget signature changed, drawString changed
-    public void renderWidget(@NotNull GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float pPartialTick) {
-        // Stubbed
+    @Override
+    public void extractContents(@NotNull GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float pPartialTick) {
+        MutableComponent tooltipComponent = Component.translatable("gui.exposure.camera_controls.film_frame_counter.tooltip");
+        if (!cameraHasFilmRoll()) {
+            tooltipComponent.append(CommonComponents.NEW_LINE)
+                    .append(Component.translatable("gui.exposure.camera_controls.film_frame_counter.tooltip.no_film")
+                            .withStyle(Style.EMPTY.withColor(0xdd6357)));
+        }
+        setTooltip(Tooltip.create(tooltipComponent));
+
+        super.extractContents(guiGraphics, mouseX, mouseY, pPartialTick);
+
+        String text = createText();
+
+        Font font = Minecraft.getInstance().font;
+        int textWidth = font.width(text);
+        int xPos = 15 + (27 - textWidth) / 2;
+
+        guiGraphics.text(font, text, getX() + xPos, getY() + 8, secondaryFontColor, false);
+        guiGraphics.text(font, text, getX() + xPos, getY() + 7, mainFontColor, false);
     }
 
     protected String createText() {
-        // TODO: MC 26.1 - getActiveExposureCameraOptional() removed
-        return "-";
+        return Minecrft.player().getActiveExposureCameraOptional().map(camera -> {
+            ItemStack filmStack = Attachment.FILM.get(camera.getItemStack()).getForReading();
+            if (filmStack.isEmpty() || !(filmStack.getItem() instanceof FilmRollItem filmItem)) {
+                return "-";
+            }
+
+            int exposedFrames = filmItem.getStoredFrames(filmStack).size();
+            int totalFrames = filmItem.getMaxFrameCount(filmStack);
+            return exposedFrames + "/" + totalFrames;
+        }).orElse("-");
     }
 
     protected boolean cameraHasFilmRoll() {
-        // TODO: MC 26.1 - getActiveExposureCameraOptional() removed
-        return false;
+        return Minecrft.player().getActiveExposureCameraOptional()
+                .map(camera -> Attachment.FILM.isPresent(camera.getItemStack()))
+                .orElse(false);
     }
 }

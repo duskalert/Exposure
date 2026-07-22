@@ -1,6 +1,5 @@
 package io.github.mortuusars.exposure.network;
 
-import io.github.mortuusars.exposure.network.neoforge.PacketsImpl;
 import io.github.mortuusars.exposure.network.packet.Packet;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -11,31 +10,48 @@ import org.jetbrains.annotations.Nullable;
 import java.util.function.Predicate;
 
 public class Packets {
+    private static volatile Service service;
+
+    public static void bind(Service implementation) {
+        if (service != null) {
+            throw new IllegalStateException("Exposure packet service is already bound.");
+        }
+        service = java.util.Objects.requireNonNull(implementation, "implementation");
+    }
+
+    private static Service service() {
+        Service implementation = service;
+        if (implementation == null) {
+            throw new IllegalStateException("Exposure packet service has not been bound by the Fabric entrypoint.");
+        }
+        return implementation;
+    }
+
     public static void sendToServer(Packet packet) {
-        PacketsImpl.sendToServer(packet);
+        service().sendToServer(packet);
     }
 
     public static void sendToClient(Packet packet, ServerPlayer player) {
-        PacketsImpl.sendToClient(packet, player);
+        service().sendToClient(packet, player);
     }
 
     public static void sendToClients(Packet packet, Predicate<ServerPlayer> filter) {
-        PacketsImpl.sendToClients(packet, filter);
+        service().sendToClients(packet, filter);
     }
 
     public static void sendToAllClients(Packet packet) {
-        PacketsImpl.sendToAllClients(packet);
+        service().sendToAllClients(packet);
     }
 
     public static void sendToPlayersNear(Packet packet, ServerLevel level, @Nullable ServerPlayer excluded,
                                          double x, double y, double z, double radius) {
-        PacketsImpl.sendToPlayersNear(packet, level, excluded, x, y, z, radius);
+        service().sendToPlayersNear(packet, level, excluded, x, y, z, radius);
     }
 
     // --
 
     public static void sendToOtherClients(@NotNull ServerPlayer except, Packet packet) {
-        except.server.getPlayerList().getPlayers().forEach(player -> {
+        except.level().getServer().getPlayerList().getPlayers().forEach(player -> {
             if (!player.equals(except)) {
                 sendToClient(packet, player);
             }
@@ -45,5 +61,14 @@ public class Packets {
     public static void sendToPlayersNear(Packet packet, ServerLevel level, @Nullable ServerPlayer excluded,
                                          Entity entity, double radius) {
         sendToPlayersNear(packet, level, excluded, entity.getX(), entity.getY(), entity.getZ(), radius);
+    }
+
+    public interface Service {
+        void sendToServer(Packet packet);
+        void sendToClient(Packet packet, ServerPlayer player);
+        void sendToClients(Packet packet, Predicate<ServerPlayer> filter);
+        void sendToAllClients(Packet packet);
+        void sendToPlayersNear(Packet packet, ServerLevel level, @Nullable ServerPlayer excluded,
+                               double x, double y, double z, double radius);
     }
 }

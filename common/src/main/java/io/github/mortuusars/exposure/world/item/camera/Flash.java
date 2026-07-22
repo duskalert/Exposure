@@ -1,4 +1,4 @@
-package io.github.mortuusars.exposure.world.item.camcom;
+package io.github.mortuusars.exposure.world.item.camera;
 
 import io.github.mortuusars.exposure.Exposure;
 import io.github.mortuusars.exposure.world.block.FlashBlock;
@@ -7,7 +7,9 @@ import io.github.mortuusars.exposure.world.sound.Sound;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.core.particles.ColorParticleOption;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
@@ -83,9 +85,16 @@ public class Flash {
     protected void sendParticles(CameraHolder holder, ServerLevel level) {
         Vec3 pos = getFlashEffectsPosition(holder);
 
-        // TODO: MC 26.1 - FLASH particle registration API changed
-        // level.sendParticles(Exposure.Particles.FLASH.get(), pos.x, pos.y, pos.z, 0, 0, 0, 0, 0);
-        level.sendParticles(ParticleTypes.END_ROD, pos.x, pos.y, pos.z, 4, 0.2, 0.2, 0.2, 0.1);
+        @Nullable ServerPlayer executingPlayer = holder.getServerPlayerExecutingExposure().orElse(null);
+
+        level.players().stream()
+                .filter(player -> !player.equals(executingPlayer) && player.distanceTo(holder.asHolderEntity()) < 128)
+                .forEach(player -> {
+                    level.sendParticles(player, ColorParticleOption.create(ParticleTypes.FLASH, 0xFFFFFFFF), false, false,
+                            pos.x, pos.y, pos.z, 0, 0, 0, 0, 0);
+                    level.sendParticles(player, ParticleTypes.END_ROD, false, false,
+                            pos.x, pos.y, pos.z, 4, 0.2, 0.2, 0.2, 0.1);
+                });
     }
 
     protected Vec3 getFlashEffectsPosition(CameraHolder holder) {

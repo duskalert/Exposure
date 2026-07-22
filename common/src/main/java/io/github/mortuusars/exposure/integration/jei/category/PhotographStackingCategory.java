@@ -15,14 +15,14 @@ import mezz.jei.api.recipe.RecipeIngredientRole;
 import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.category.IRecipeCategory;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
 public class PhotographStackingCategory implements IRecipeCategory<PhotographStackingJeiRecipe> {
-    private static final Identifier TEXTURE = Exposure.resource("textures/gui/jei/photograph_stacking.png");
+    private static final ResourceLocation TEXTURE = Exposure.resource("textures/gui/jei/photograph_stacking.png");
     private final Component title;
     private final IDrawable background;
     private final IDrawable icon;

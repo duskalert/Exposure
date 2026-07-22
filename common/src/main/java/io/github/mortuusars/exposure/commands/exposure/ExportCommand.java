@@ -29,7 +29,8 @@ import static net.minecraft.commands.Commands.literal;
 public class ExportCommand {
     public static LiteralArgumentBuilder<CommandSourceStack> get() {
         return literal("export")
-                .requires((stack) -> stack.hasPermission(3))
+                .requires(stack -> stack.permissions().hasPermission(
+                        net.minecraft.server.permissions.Permissions.COMMANDS_ADMIN))
                 .then(id())
                 .then(all())
                 .then(literal("stop")
@@ -44,17 +45,17 @@ public class ExportCommand {
                 .then(argument("id", StringArgumentType.string())
                         .suggests(new ExposureIdSuggestionProvider())
                         .executes(context -> exportExposures(context.getSource(),
-                                List.of(StringArgumentType.getStringOr(context, "id", "")),
+                                List.of(StringArgumentType.getString(context, "id")),
                                 ExportSize.X1,
                                 ExportLook.REGULAR))
                         .then(argument("size", new SizeMultiplierArgument())
                                 .executes(context -> exportExposures(context.getSource(),
-                                        List.of(StringArgumentType.getStringOr(context, "id", "")),
+                                        List.of(StringArgumentType.getString(context, "id")),
                                         SizeMultiplierArgument.getSize(context, "size"),
                                         ExportLook.REGULAR))
                                 .then(argument("look", new ExposureLookArgument())
                                         .executes(context -> exportExposures(context.getSource(),
-                                                List.of(StringArgumentType.getStringOr(context, "id", "")),
+                                                List.of(StringArgumentType.getString(context, "id")),
                                                 SizeMultiplierArgument.getSize(context, "size"),
                                                 ExposureLookArgument.getLook(context, "look"))))));
     }
@@ -95,8 +96,8 @@ public class ExportCommand {
                     .append(Component.translatable("command.exposure.export.confirm")
                             .withStyle(Style.EMPTY.withColor(0xff7369)
                                     .withUnderlined(true)
-                                    .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.translatable("command.exposure.export.confirm.tooltip")))
-                                    .withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND,
+                                    .withHoverEvent(new HoverEvent.ShowText(Component.translatable("command.exposure.export.confirm.tooltip")))
+                                    .withClickEvent(new ClickEvent.RunCommand(
                                             "/exposure export all " + size.getSerializedName() + " " + look.getSerializedName())))), true);
             return false;
         }

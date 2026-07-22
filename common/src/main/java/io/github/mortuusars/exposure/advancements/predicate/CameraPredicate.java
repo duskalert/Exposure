@@ -2,8 +2,8 @@ package io.github.mortuusars.exposure.advancements.predicate;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import io.github.mortuusars.exposure.world.item.camcom.Attachment;
-import io.github.mortuusars.exposure.world.item.camcom.CameraItem;
+import io.github.mortuusars.exposure.world.item.camera.Attachment;
+import io.github.mortuusars.exposure.world.item.camera.CameraItem;
 import net.minecraft.advancements.criterion.ItemPredicate;
 import net.minecraft.advancements.criterion.LocationPredicate;
 import net.minecraft.server.level.ServerLevel;

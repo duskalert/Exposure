@@ -48,8 +48,11 @@ public class PhotographItem extends Item {
         return !identifier.isEmpty() ? Optional.of(new PhotographTooltip(List.of(new ItemAndStack<>(stack)))) : Optional.empty();
     }
 
-    // TODO: MC 26.1 - appendHoverText signature changed
-    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
+    @Override
+    public void appendHoverText(ItemStack stack, TooltipContext context,
+                                net.minecraft.world.item.component.TooltipDisplay tooltipDisplay,
+                                java.util.function.Consumer<Component> tooltipConsumer, TooltipFlag tooltipFlag) {
+        List<Component> tooltipComponents = new java.util.ArrayList<>();
         @Nullable Integer generation = stack.get(Exposure.DataComponents.PHOTOGRAPH_GENERATION);
         if (generation != null) {
             if (generation > 0)
@@ -59,6 +62,7 @@ public class PhotographItem extends Item {
 
         @Nullable Frame frame = stack.get(Exposure.DataComponents.PHOTOGRAPH_FRAME);
         if (frame == null) {
+            tooltipComponents.forEach(tooltipConsumer);
             return;
         }
 
@@ -82,6 +86,8 @@ public class PhotographItem extends Item {
                     texture -> "Texture: " + texture);
             tooltipComponents.add(Component.literal(identifier).withStyle(ChatFormatting.DARK_GRAY));
         }
+
+        tooltipComponents.forEach(tooltipConsumer);
     }
 
     @Override
@@ -93,14 +99,13 @@ public class PhotographItem extends Item {
             return InteractionResult.PASS;
         }
 
-        // TODO: MC 26.1 - isClientSide and selected are now private
-        if (false /* level.isClientSide */) {
-            int slot = hand == InteractionHand.OFF_HAND ? Inventory.SLOT_OFFHAND : 0/*player.getInventory().selected*/;
+        if (level.isClientSide()) {
+            int slot = hand == InteractionHand.OFF_HAND ? Inventory.SLOT_OFFHAND : player.getInventory().getSelectedSlot();
             ClientGUI.openPhotographsScreenFromItem(slot);
             player.playSound(Exposure.SoundEvents.PHOTOGRAPH_RUSTLE.get(), 0.6f, 1.1f);
         }
 
-        return InteractionResult.SUCCESS.heldItemTransformedTo(itemInHand);
+        return InteractionResult.SUCCESS;
     }
 
     @Override

@@ -2,7 +2,7 @@ package io.github.mortuusars.exposure.client.render.model;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
-import io.github.mortuusars.exposure.world.item.camcom.CameraItem;
+import io.github.mortuusars.exposure.world.item.camera.CameraItem;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.item.properties.select.SelectItemModelProperty;
 import net.minecraft.world.entity.LivingEntity;

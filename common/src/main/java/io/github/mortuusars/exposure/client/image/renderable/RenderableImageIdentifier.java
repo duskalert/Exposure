@@ -16,7 +16,7 @@ public record RenderableImageIdentifier(String base, String variant) {
         else return new RenderableImageIdentifier(base, variant + "_" + appendedVariant);
     }
 
-    public Identifier toIdentifier() {
+    public Identifier toResourceLocation() {
         String path = StringUtil.isBlank(variant) ? base : base + "/" + variant;
         String validPath = Util.sanitizeName(path, Identifier::validPathChar);
         return Exposure.resource(validPath);

@@ -15,10 +15,10 @@ import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeIngredientRole;
 import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.category.IRecipeCategory;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class PhotographPrintingCategory implements IRecipeCategory<PhotographPrintingJeiRecipe> {
-    private static final Identifier TEXTURE = Exposure.resource("textures/gui/jei/photograph_printing.png");
+    private static final ResourceLocation TEXTURE = Exposure.resource("textures/gui/jei/photograph_printing.png");
     private final Component title;
     private final IDrawable background;
     private final IDrawable icon;
@@ -103,11 +103,11 @@ public class PhotographPrintingCategory implements IRecipeCategory<PhotographPri
     }
 
     @Override
-    public void draw(PhotographPrintingJeiRecipe recipe, @NotNull IRecipeSlotsView recipeSlotsView, @NotNull GuiGraphicsExtractor GuiGraphicsExtractor, double mouseX, double mouseY) {
+    public void draw(PhotographPrintingJeiRecipe recipe, @NotNull IRecipeSlotsView recipeSlotsView, @NotNull GuiGraphics guiGraphics, double mouseX, double mouseY) {
         if (recipe.getExposureType() == ExposureType.COLOR) {
             RenderSystem.setShaderColor(1.1F, 0.86F, 0.66F, 1F);
         }
-        filmDrawable.draw(GuiGraphicsExtractor);
+        filmDrawable.draw(guiGraphics);
         RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
     }
 

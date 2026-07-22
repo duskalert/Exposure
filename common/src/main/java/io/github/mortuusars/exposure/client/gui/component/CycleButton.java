@@ -8,7 +8,8 @@ import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.components.WidgetSprites;
-import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.client.sounds.SoundManager;
@@ -27,8 +28,6 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class CycleButton<T> extends Button {
-    // TODO: MC 26.1 - Rendering API redesigned. Method bodies stubbed.
-
     protected final List<T> values;
     protected final T startingValue;
     protected final Map<T, WidgetSprites> spritesMap;
@@ -50,6 +49,7 @@ public class CycleButton<T> extends Button {
         Preconditions.checkArgument(!spritesMap.isEmpty(), "Cannot create a CycleButton with 0 sprites.");
         this.spritesMap = spritesMap;
         this.onCycle = onCycle;
+
         setCurrentIndex(Math.max(values.indexOf(startingValue), 0));
     }
 
@@ -66,11 +66,6 @@ public class CycleButton<T> extends Button {
     public CycleButton(int x, int y, int width, int height, List<T> values, @NotNull T startingValue,
                        Function<T, WidgetSprites> spritesFunc) {
         this(x, y, width, height, values, startingValue, Widgets.createMap(values, spritesFunc), (b, v) -> {});
-    }
-
-    @Override
-    protected void extractContents(GuiGraphicsExtractor guiGraphicsExtractor, int i, int i1, float v) {
-        // TODO: MC 26.1 - AbstractButton abstract method stub
     }
 
     public CycleButton<T> setLooping(boolean loop) {
@@ -131,6 +126,7 @@ public class CycleButton<T> extends Button {
             value = loop ? values.size() - 1 : 0;
         else if (value >= values.size())
             value = loop ? 0 : values.size() - 1;
+
         if (currentIndex != value) {
             currentIndex = value;
             onCycle();
@@ -149,30 +145,43 @@ public class CycleButton<T> extends Button {
         }
     }
 
-    // TODO: MC 26.1 - renderWidget signature changed
-    public void renderWidget(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTick) {
-        // Stubbed - blitSprite now needs RenderPipeline arg
+    @Override
+    protected void extractContents(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTick) {
+        @Nullable WidgetSprites sprites = spritesMap.get(getCurrentValue());
+        Identifier spriteLocation = sprites != null
+                ? sprites.get(isActive(), isHoveredOrFocused())
+                : TextureManager.INTENTIONAL_MISSING_TEXTURE;
+        guiGraphics.blitSprite(net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED, spriteLocation, getX(), getY(), getWidth(), getHeight());
     }
 
-    // TODO: MC 26.1 - mouseClicked now takes MouseButtonEvent
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        // Stubbed - clicked() no longer exists, event API redesigned
+    @Override
+    public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
+        if ((event.button() == 0 || event.button() == 1) && isMouseOver(event.x(), event.y())) {
+            cycle(event.button() == 1);
+            playDownSound(Minecraft.getInstance().getSoundManager());
+            return true;
+        }
         return false;
     }
 
-    // TODO: MC 26.1 - mouseScrolled signature may have changed
+    @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
-        // Stubbed
-        return false;
+        cycle(scrollY < 0d);
+        playDownSound(Minecraft.getInstance().getSoundManager());
+        return true;
     }
 
-    // TODO: MC 26.1 - keyPressed now takes KeyEvent, hasShiftDown moved
-    public boolean keyPressed(int pKeyCode, int pScanCode, int pModifiers) {
-        // Stubbed - keyPressed/keyReleased now take KeyEvent
-        return false;
+    @Override
+    public boolean keyPressed(KeyEvent event) {
+        boolean pressed = super.keyPressed(event);
+
+        if (pressed)
+            cycle(event.hasShiftDown());
+
+        return pressed;
     }
 
-    // TODO: MC 26.1 - playDownSound signature
+    @Override
     public void playDownSound(SoundManager handler) {
         if (clickSound != null) {
             handler.play(SimpleSoundInstance.forUI(clickSound, 1.0F));

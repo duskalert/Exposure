@@ -11,13 +11,12 @@ import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.ImageButton;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.components.WidgetSprites;
+import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 
 public class AlbumSigningScreen extends Screen {
-    // TODO: MC 26.1 - Screen API redesigned. Method bodies stubbed.
-
     public static final WidgetSprites CANCEL_BUTTON_SPRITE = new WidgetSprites(
             Exposure.resource("album/cancel"), Exposure.resource("album/cancel_disabled"), Exposure.resource("album/cancel_highlighted"));
 
@@ -46,13 +45,16 @@ public class AlbumSigningScreen extends Screen {
         this.leftPos = (this.width - this.imageWidth) / 2;
         this.topPos = (this.height - this.imageHeight) / 2;
 
+        // TITLE
         titleTextBox = new TextBox(font, leftPos + 21, topPos + 73, 108, 9,
                 () -> titleText, text -> titleText = text)
                 .setFontColor(Config.getColor(Config.Client.ALBUM_FONT_MAIN_COLOR))
                 .setSelectionColor(SELECTION_COLOR, SELECTION_UNFOCUSED_COLOR);
+        titleTextBox.textValidator = text -> text != null && font.wordWrapHeight(Component.literal(text), 108) <= 9 && !text.contains("\n");
         titleTextBox.horizontalAlignment = HorizontalAlignment.CENTER;
         addRenderableWidget(titleTextBox);
 
+        // SIGN
         signButton = new ImageButton(leftPos + 46, topPos + 110, 22, 22,
                 AlbumScreen.SIGN_BUTTON_SPRITES, b -> signAlbum(), Component.translatable("gui.exposure.album.sign"));
         MutableComponent component = Component.translatable("gui.exposure.album.sign")
@@ -60,6 +62,7 @@ public class AlbumSigningScreen extends Screen {
         signButton.setTooltip(Tooltip.create(component));
         addRenderableWidget(signButton);
 
+        // CANCEL
         cancelSigningButton = new ImageButton(leftPos + 83, topPos + 111, 22, 22,
                 CANCEL_BUTTON_SPRITE, b -> cancelSigning(), Component.translatable("gui.exposure.album.cancel_signing"));
         cancelSigningButton.setTooltip(Tooltip.create(Component.translatable("gui.exposure.album.cancel_signing")));
@@ -73,9 +76,9 @@ public class AlbumSigningScreen extends Screen {
         return false;
     }
 
-    // TODO: MC 26.1 - tick signature
+    @Override
     public void tick() {
-        // Stubbed
+        titleTextBox.tick();
     }
 
     private void updateButtons() {
@@ -86,19 +89,25 @@ public class AlbumSigningScreen extends Screen {
         return !titleText.isEmpty();
     }
 
-    // TODO: MC 26.1 - render signature changed (GuiGraphicsExtractor -> GuiGraphicsExtractor src)
-    public void render(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTick) {
-        // Stubbed
+    @Override
+    public void extractRenderState(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTick) {
+        updateButtons();
+        super.extractRenderState(guiGraphics, mouseX, mouseY, partialTick);
+        renderLabels(guiGraphics);
     }
 
-    // TODO: MC 26.1 - renderBackground signature changed
-    public void renderBackground(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTick) {
-        // Stubbed
+    @Override
+    public void extractBackground(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTick) {
+        extractTransparentBackground(guiGraphics);
+        AlbumGUI.SIGNING_BACKGROUND.blit(guiGraphics, leftPos, topPos);
     }
 
-    // TODO: MC 26.1 - renderLabels stubbed
     private void renderLabels(GuiGraphicsExtractor guiGraphics) {
-        // Stubbed
+        MutableComponent component = Component.translatable("gui.exposure.album.enter_title");
+        guiGraphics.text(font, component,  leftPos + 149 / 2 - font.width(component) / 2, topPos + 50, 0xf5ebd0, false);
+
+        component = Component.translatable("gui.exposure.album.by_author", Minecrft.player().getScoreboardName());
+        guiGraphics.text(font, component, leftPos + 149 / 2 - font.width(component) / 2, topPos + 84, 0xc7b496, false);
     }
 
     protected void signAlbum() {
@@ -113,18 +122,22 @@ public class AlbumSigningScreen extends Screen {
         Minecrft.get().setScreen(parentScreen);
     }
 
-    // TODO: MC 26.1 - keyPressed now takes KeyEvent
-    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+    @Override
+    public boolean keyPressed(KeyEvent event) {
+        int keyCode = event.key();
         if (keyCode == InputConstants.KEY_TAB) {
-            // return super.keyPressed(keyCode, scanCode, modifiers);
+            return super.keyPressed(event);
         }
+
         if (keyCode == InputConstants.KEY_ESCAPE) {
             cancelSigning();
             return true;
         }
+
         if (titleTextBox.isFocused()) {
-            return titleTextBox.keyPressed(keyCode, scanCode, modifiers);
+            return titleTextBox.keyPressed(event);
         }
-        return false;
+
+        return super.keyPressed(event);
     }
 }

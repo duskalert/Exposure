@@ -15,9 +15,9 @@ public class UniqueSoundManager {
     private static final Table<String, Identifier, SoundInstance> SOUNDS = HashBasedTable.create();
 
     public static void play(String id, SoundInstance instance) {
-        stop(id, instance.getLocation());
+        stop(id, instance.getIdentifier());
 
-        SOUNDS.put(id, instance.getLocation(), instance);
+        SOUNDS.put(id, instance.getIdentifier(), instance);
         Minecrft.get().getSoundManager().play(instance);
     }
 
@@ -37,11 +37,11 @@ public class UniqueSoundManager {
     }
 
     public static void stop(String id, SoundEvent sound) {
-        stop(id, sound.getLocation());
+        stop(id, sound.location());
     }
 
     public static void stopAllOf(SoundEvent sound) {
-        Identifier location = sound.getLocation();
+        Identifier location = sound.location();
         SOUNDS.cellSet().removeIf(cell -> {
             if (cell.getColumnKey().equals(location)) {
                 Minecrft.get().getSoundManager().stop(cell.getValue());

@@ -3,33 +3,32 @@ package io.github.mortuusars.exposure.world.level.storage;
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.mojang.serialization.Codec;
-import com.mojang.serialization.DataResult;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import io.github.mortuusars.exposure.Exposure;
 import io.github.mortuusars.exposure.world.camera.ExposureType;
 import io.github.mortuusars.exposure.data.ColorPalettes;
 import io.github.mortuusars.exposure.util.Codecs;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtOps;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.Identifier;
-import net.minecraft.util.datafix.DataFixTypes;
 import net.minecraft.world.level.saveddata.SavedData;
 import net.minecraft.world.level.saveddata.SavedDataType;
+import net.minecraft.util.datafix.DataFixTypes;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.Objects;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class ExposureData extends SavedData {
+    private static final Map<Identifier, SavedDataType<ExposureData>> TYPES = new ConcurrentHashMap<>();
     public static final Codec<ExposureData> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             Codec.INT.fieldOf("width").forGetter(ExposureData::getWidth),
             Codec.INT.fieldOf("height").forGetter(ExposureData::getHeight),
             Codecs.byteArrayCodec(1, 2048 * 2048).fieldOf("pixels").forGetter(ExposureData::getPixels),
-            Identifier.CODEC.optionalFieldOf("palette", Exposure.resource("default")).forGetter(ExposureData::getPaletteId),
+            Identifier.CODEC.optionalFieldOf("palette", ColorPalettes.DEFAULT.identifier()).forGetter(ExposureData::getPaletteId),
             Tag.CODEC.optionalFieldOf("tag", Tag.EMPTY).forGetter(ExposureData::getTag)
     ).apply(instance, ExposureData::new));
 
@@ -43,7 +42,7 @@ public class ExposureData extends SavedData {
     );
 
     public static final ExposureData EMPTY = new ExposureData(
-            1, 1, new byte[]{0}, Exposure.resource("default"), Tag.EMPTY);
+            1, 1, new byte[]{0}, ColorPalettes.DEFAULT.identifier(), Tag.EMPTY);
 
     private final int width;
     private final int height;
@@ -106,33 +105,14 @@ public class ExposureData extends SavedData {
         return Objects.hash(width, height, Arrays.hashCode(pixels), palette, tag);
     }
 
-    // --
-
-    // TODO: MC 26.1 - save signature changed, no longer overrides SavedData.save
-    public @NotNull CompoundTag save(CompoundTag tag, HolderLookup.Provider registries) {
-        DataResult<net.minecraft.nbt.Tag> encodingResult = CODEC.encode(this, NbtOps.INSTANCE, tag);
-        if (encodingResult.isSuccess()) {
-            net.minecraft.nbt.Tag encodedTag = encodingResult.getOrThrow();
-            if (encodedTag instanceof CompoundTag encodedCompoundTag)
-                return encodedCompoundTag;
-            else {
-                Exposure.LOGGER.error("Cannot save PalettedExposure: '{}'. Encoded tag is not CompoundTag but a {}",
-                        this, encodedTag.getType());
-            }
-        }
-        encodingResult.error().ifPresent(error -> Exposure.LOGGER.error("Cannot save PalettedExposure: {}", error.message()));
-
-        return tag;
-    }
-
-    public static SavedDataType<ExposureData> factory() {
-        return new SavedDataType<>(Exposure.resource("exposure_data"), () -> {
-            throw new IllegalStateException("Should never create an empty exposure saved data");
-        }, CODEC, DataFixTypes.LEVEL);
-    }
-
-    public static ExposureData load(CompoundTag tag, HolderLookup.Provider levelRegistry) {
-        return CODEC.decode(NbtOps.INSTANCE, tag).getOrThrow().getFirst();
+    public static SavedDataType<ExposureData> type(Identifier id) {
+        return TYPES.computeIfAbsent(id, key -> new SavedDataType<>(
+                key,
+                () -> {
+                    throw new IllegalStateException("Should never create empty exposure saved data: " + key);
+                },
+                CODEC,
+                DataFixTypes.SAVED_DATA_COMMAND_STORAGE));
     }
 
     public record Tag(ExposureType type,

@@ -7,6 +7,7 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.inventory.MenuAccess;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
@@ -16,8 +17,6 @@ import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 public class LecternAlbumScreen extends AlbumViewScreen implements MenuAccess<LecternAlbumMenu> {
-    // TODO: MC 26.1 - Screen API redesigned. Stubbed.
-
     private final LecternAlbumMenu menu;
 
     private final ContainerListener listener = new ContainerListener() {
@@ -42,9 +41,19 @@ public class LecternAlbumScreen extends AlbumViewScreen implements MenuAccess<Le
         return this.menu;
     }
 
-    // TODO: MC 26.1 - init signature
+    @Override
     protected void init() {
-        // Stubbed
+        super.init();
+
+        if (Minecrft.player().mayBuild()) {
+            addRenderableWidget(Button.builder(CommonComponents.GUI_DONE, b -> this.onClose())
+                    .bounds(this.width / 2 - 100, topPos + 196, 98, 20).build());
+            addRenderableWidget(Button.builder(Component.translatable("lectern.take_book"),
+                            b -> sendButtonClick(LecternAlbumMenu.BUTTON_TAKE_BOOK))
+                    .bounds(this.width / 2 + 2, topPos + 196, 98, 20).build());
+        }
+
+        this.menu.addSlotListener(listener);
     }
 
     public void removed() {
@@ -52,9 +61,10 @@ public class LecternAlbumScreen extends AlbumViewScreen implements MenuAccess<Le
         this.menu.removeSlotListener(this.listener);
     }
 
-    // TODO: MC 26.1 - onSpreadChanged
+    @Override
     protected void onSpreadChanged(int oldSpread, int newSpread) {
-        // Stubbed
+        super.onSpreadChanged(oldSpread, newSpread);
+        sendButtonClick(LecternAlbumMenu.BUTTON_PAGE_JUMP_RANGE_START + newSpread * 2);
     }
 
     protected void pageChanged() {
@@ -66,28 +76,57 @@ public class LecternAlbumScreen extends AlbumViewScreen implements MenuAccess<Le
         this.setAlbumAccess(AlbumAccess.fromItem(itemStack));
     }
 
-    // TODO: MC 26.1 - forcePage
+    @Override
     protected void forcePage(int pageIndex) {
-        // Stubbed
+        sendButtonClick(LecternAlbumMenu.BUTTON_PAGE_JUMP_RANGE_START + pageIndex);
     }
 
     protected void sendButtonClick(int buttonId) {
         Minecrft.gameMode().handleInventoryButtonClick(this.menu.containerId, buttonId);
     }
 
-    // TODO: MC 26.1 - mouseClicked now takes MouseButtonEvent
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        return false;
+    @Override
+    public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
+        double mouseX = event.x();
+        double mouseY = event.y();
+        int page = getMenu().getPage();
+        if (page % 2 == 1 && isHovering(70, 167, 17, 7, mouseX, mouseY)) {
+            sendButtonClick(LecternAlbumMenu.BUTTON_PAGE_JUMP_RANGE_START + page - 1);
+        } else if (page % 2 == 0 && isHovering(210, 167, 17, 7, mouseX, mouseY)) {
+            sendButtonClick(LecternAlbumMenu.BUTTON_PAGE_JUMP_RANGE_START + page + 1);
+        }
+
+        return super.mouseClicked(event, doubleClick);
     }
 
-    // TODO: MC 26.1 - drawPageNumbers stubbed, drawString changed
+    @Override
     protected void drawPageNumbers(GuiGraphicsExtractor guiGraphics, int currentSpreadIndex, int mouseX, int mouseY) {
-        // Stubbed
+        super.drawPageNumbers(guiGraphics, currentSpreadIndex, mouseX, mouseY);
+
+        int page = getMenu().getPage();
+        String leftPageNumber = Integer.toString(currentSpreadIndex * 2 + 1);
+        String rightPageNumber = Integer.toString(currentSpreadIndex * 2 + 2);
+
+        if (page % 2 == 1 && isHovering(70, 167, 17, 7, mouseX, mouseY)) {
+            guiGraphics.text(font, leftPageNumber, leftPos + 71 + (8 - font.width(leftPageNumber) / 2),
+                    topPos + 167, Config.getColor(Config.Client.ALBUM_FONT_MAIN_COLOR), false);
+        } else if (page % 2 == 0 && isHovering(210, 167, 17, 7, mouseX, mouseY)) {
+            guiGraphics.text(font, rightPageNumber, leftPos + 212 + (8 - font.width(rightPageNumber) / 2),
+                    topPos + 167, Config.getColor(Config.Client.ALBUM_FONT_MAIN_COLOR), false);
+        }
     }
 
-    // TODO: MC 26.1 - renderTooltip stubbed
-    protected void renderTooltip(GuiGraphicsExtractor guiGraphics, int x, int y) {
-        // Stubbed
+    @Override
+    protected void extractTooltip(GuiGraphicsExtractor guiGraphics, int x, int y) {
+        super.extractTooltip(guiGraphics, x, y);
+
+        int page = getMenu().getPage();
+
+        if (page % 2 == 1 && isHovering(70, 167, 17, 7, x, y)) {
+            guiGraphics.setTooltipForNextFrame(font, Component.translatable("gui.exposure.album.lectern.set_current_page"), x, y);
+        } else if (page % 2 == 0 && isHovering(210, 167, 17, 7, x, y)) {
+            guiGraphics.setTooltipForNextFrame(font, Component.translatable("gui.exposure.album.lectern.set_current_page"), x, y);
+        }
     }
 
     protected boolean isHovering(int x, int y, int width, int height, double mouseX, double mouseY) {

@@ -16,18 +16,18 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(Gui.class)
 public abstract class GuiMixin {
-    @Inject(method = "render", at = @At(value = "HEAD"), cancellable = true)
-    private void renderGui(GuiGraphicsExtractor GuiGraphicsExtractor, DeltaTracker deltaTracker, CallbackInfo ci) {
+    @Inject(method = "extractRenderState", at = @At(value = "HEAD"), cancellable = true)
+    private void renderGui(GuiGraphicsExtractor guiGraphics, DeltaTracker deltaTracker, CallbackInfo ci) {
         if (CameraClient.viewfinder() != null && CameraClient.viewfinder().isLookingThrough()) {
-            CameraClient.viewfinder().overlay().render(GuiGraphicsExtractor, deltaTracker);
+            CameraClient.viewfinder().overlay().render(guiGraphics, deltaTracker);
             if (Config.Client.HIDE_HUD_WHILE_IN_VIEWFINDER.get()) {
                 ci.cancel();
             }
         }
     }
 
-    @Inject(method = "renderCrosshair", at = @At(value = "HEAD"), cancellable = true)
-    private void renderCrosshair(GuiGraphicsExtractor GuiGraphicsExtractor, DeltaTracker deltaTracker, CallbackInfo ci) {
+    @Inject(method = "extractCrosshair", at = @At(value = "HEAD"), cancellable = true)
+    private void renderCrosshair(GuiGraphicsExtractor guiGraphics, DeltaTracker deltaTracker, CallbackInfo ci) {
         LocalPlayer player = Minecrft.player();
         if (Config.Client.PHOTOGRAPH_IN_HAND_HIDE_CROSSHAIR.get() && player.getXRot() > 25f
                 && (player.getMainHandItem().getItem() instanceof PhotographItem || player.getMainHandItem().getItem() instanceof StackedPhotographsItem)

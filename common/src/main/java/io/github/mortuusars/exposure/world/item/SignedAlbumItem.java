@@ -46,23 +46,25 @@ public class SignedAlbumItem extends Item {
         if (level.isClientSide()) {
             ClientGUI.openAlbumViewScreen(player.getItemInHand(usedHand));
         }
-        return InteractionResult.SUCCESS.heldItemTransformedTo(player.getItemInHand(usedHand));
+        return InteractionResult.SUCCESS;
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
+    public void appendHoverText(ItemStack stack, TooltipContext context,
+                                net.minecraft.world.item.component.TooltipDisplay tooltipDisplay,
+                                java.util.function.Consumer<Component> tooltipConsumer, TooltipFlag tooltipFlag) {
         @Nullable SignedAlbumContent content = stack.get(Exposure.DataComponents.SIGNED_ALBUM_CONTENT);
 
         if (content != null) {
             String author = content.author();
             if (!StringUtil.isBlank(author)) {
-                tooltipComponents.add(Component.translatable("gui.exposure.album.by_author", author).withStyle(ChatFormatting.GRAY));
+                tooltipConsumer.accept(Component.translatable("gui.exposure.album.by_author", author).withStyle(ChatFormatting.GRAY));
             }
 
             if (Config.Client.ALBUM_PHOTOS_COUNT_TOOLTIP.get()) {
                 int photographsCount = (int)content.pages().stream().filter(page -> !page.photograph().isEmpty()).count();
                 if (photographsCount > 0)
-                    tooltipComponents.add(Component.translatable("item.exposure.album.tooltip.photos_count", photographsCount));
+                    tooltipConsumer.accept(Component.translatable("item.exposure.album.tooltip.photos_count", photographsCount));
             }
         }
 

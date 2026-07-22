@@ -1,7 +1,6 @@
 package io.github.mortuusars.exposure.client.gui.screen;
 
 import com.google.common.collect.Lists;
-import com.mojang.blaze3d.systems.RenderSystem;
 import io.github.mortuusars.exposure.Exposure;
 import io.github.mortuusars.exposure.client.animation.Animation;
 import io.github.mortuusars.exposure.client.animation.EasingFunction;
@@ -9,9 +8,10 @@ import io.github.mortuusars.exposure.client.util.Minecrft;
 import net.minecraft.util.Util;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
-import net.minecraft.client.renderer.GameRenderer;
-import net.minecraft.client.renderer.rendertype.RenderType;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
@@ -26,8 +26,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ItemListScreen extends Screen {
-    // TODO: MC 26.1 - Screen API redesigned. Stubbed.
-
     public static final Identifier TEXTURE = Exposure.resource("textures/gui/item_list.png");
 
     protected final Screen parent;
@@ -55,51 +53,136 @@ public class ItemListScreen extends Screen {
         List<List<ItemStack>> rows = Lists.partition(items, 9);
         this.rowsCount = rows.size();
         this.openingAnimation = new Animation(200, EasingFunction.EASE_OUT_EXPO);
+
         this.openedAt = Util.getMillis();
+
+        SimpleContainer container = new SimpleContainer(items.toArray(ItemStack[]::new));
+
+        int rowX = 8;
+        int rowY = 18;
+
+        for (int row = 0; row < rows.size(); row++) {
+            List<ItemStack> stacks = rows.get(row);
+
+            // Centers row if it has fewer items than 9
+            int rowXToCenterOffset = ((9 * 18) - (stacks.size() * 18)) / 2;
+
+            for (int column = 0; column < stacks.size(); column++) {
+                int slotIndex = row * 9 + column;
+                slots.add(new Slot(container, slotIndex, rowX + rowXToCenterOffset + (column * 18), rowY) {
+                    @Override
+                    public boolean mayPlace(ItemStack stack) {
+                        return false;
+                    }
+
+                    @Override
+                    public boolean mayPickup(Player player) {
+                        return false;
+                    }
+                });
+            }
+
+            rowY += 18;
+        }
+
+        Minecrft.get().getSoundManager().play(SimpleSoundInstance.forUI(Exposure.SoundEvents.CAMERA_GENERIC_CLICK.get(), 1f));
     }
 
-    // TODO: MC 26.1
+    @Override
     public boolean isPauseScreen() {
         return false;
     }
 
-    // TODO: MC 26.1
+    @Override
     protected void init() {
-        // Stubbed
+        this.imageWidth = 176;
+        this.imageHeight = 24 + (rowsCount * 18);
+        this.leftPos = (this.width - this.imageWidth) / 2;
+        this.topPos = (this.height - this.imageHeight) / 2;
     }
 
-    // TODO: MC 26.1 - render signature changed, pushPose/translate/scale changed
-    public void render(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTick) {
-        // Stubbed
+    @Override
+    public void extractRenderState(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTick) {
+        int left = leftPos;
+        int top = topPos;
+
+        guiGraphics.pose().pushMatrix();
+        guiGraphics.pose().translate(width / 2f, height / 2f);
+        float animProgress = (float)openingAnimation.getValue();
+        guiGraphics.pose().scale(animProgress, animProgress);
+        guiGraphics.pose().translate(-(width / 2f), -(height / 2f));
+
+        renderBg(guiGraphics, mouseX, mouseY, partialTick);
+        super.extractRenderState(guiGraphics, mouseX, mouseY, partialTick);
+        {
+            guiGraphics.pose().pushMatrix();
+            guiGraphics.pose().translate(left, top);
+            hoveredSlot = null;
+            for (Slot slot : slots) {
+                if (slot.isActive()) {
+                    renderSlot(guiGraphics, slot);
+                }
+                if (!isHovering(slot, mouseX, mouseY) || !slot.isActive()) {
+                    continue;
+                }
+                this.hoveredSlot = slot;
+                if (!hoveredSlot.isHighlightable()) {
+                    continue;
+                }
+                renderSlotHighlight(guiGraphics, slot.x, slot.y, 0);
+            }
+            this.renderLabels(guiGraphics, mouseX, mouseY);
+            guiGraphics.pose().popMatrix();
+        }
+        guiGraphics.pose().popMatrix();
+
+        renderTooltip(guiGraphics, mouseX, mouseY);
     }
 
-    // TODO: MC 26.1 - renderBackground signature changed
-    public void renderBackground(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTick) {
-        // Stubbed
+    @Override
+    public void extractBackground(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTick) {
+        extractTransparentBackground(guiGraphics);
     }
 
-    // TODO: MC 26.1 - renderBg stubbed
     protected void renderBg(@NotNull GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTick) {
-        // Stubbed
+        // Render BG expanding it according to number of rows
+        guiGraphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE, leftPos, topPos, 0, 0, imageWidth, 17, 256, 256);
+        for (int i = 0; i < rowsCount; i++) {
+            guiGraphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE, leftPos, topPos + 17 + (i * 18), 0, 17, imageWidth, 18, 256, 256);
+        }
+        guiGraphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE, leftPos, topPos + 17 + (rowsCount * 18), 0, 35, imageWidth, 7, 256, 256);
+
+        for (Slot slot : slots) {
+            guiGraphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE, leftPos + slot.x - 1, topPos + slot.y - 1, 176, 0, 18, 18, 256, 256);
+        }
     }
 
-    // TODO: MC 26.1 - renderLabels stubbed
     protected void renderLabels(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY) {
-        // Stubbed
+        guiGraphics.text(this.font, this.title, this.titleLabelX, this.titleLabelY, 0x404040, false);
     }
 
-    // TODO: MC 26.1 - renderSlot stubbed
     protected void renderSlot(GuiGraphicsExtractor guiGraphics, Slot slot) {
-        // Stubbed
+        int x = slot.x;
+        int y = slot.y;
+        ItemStack itemStack = slot.getItem();
+        guiGraphics.item(itemStack, x, y, slot.x + slot.y * imageWidth);
+        guiGraphics.itemDecorations(font, itemStack, x, y, null);
     }
 
     public static void renderSlotHighlight(GuiGraphicsExtractor guiGraphics, int x, int y, int blitOffset) {
-        // Stubbed
+        guiGraphics.fillGradient(x, y, x + 16, y + 16, -2130706433, -2130706433);
     }
 
-    // TODO: MC 26.1 - renderTooltip stubbed
     protected void renderTooltip(GuiGraphicsExtractor guiGraphics, int x, int y) {
-        // Stubbed
+        if (hoveredSlot != null && hoveredSlot.hasItem()) {
+            ItemStack itemStack = hoveredSlot.getItem();
+
+            List<Component> tooltipLines = parent instanceof AbstractContainerScreen<?> abstractContainerScreen
+                    ? abstractContainerScreen.getTooltipFromContainerItem(itemStack)
+                    : Screen.getTooltipFromItem(Minecrft.get(), itemStack);
+
+            guiGraphics.setTooltipForNextFrame(font, tooltipLines, itemStack.getTooltipImage(), x, y);
+        }
     }
 
     protected boolean isHovering(Slot slot, double mouseX, double mouseY) {
@@ -112,17 +195,28 @@ public class ItemListScreen extends Screen {
         return (mouseX -= (double) i) >= (double) (x - 1) && mouseX < (double) (x + width + 1) && (mouseY -= (double) j) >= (double) (y - 1) && mouseY < (double) (y + height + 1);
     }
 
-    // TODO: MC 26.1 - keyPressed now takes KeyEvent
-    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+    @Override
+    public boolean keyPressed(KeyEvent event) {
+        if (Minecrft.options().keyInventory.matches(event)) {
+            onClose();
+            return true;
+        }
+        return super.keyPressed(event);
+    }
+
+    @Override
+    public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
+        if (super.mouseClicked(event, doubleClick)) return true;
+
+        if (!isHovering(0, 0, imageWidth, imageHeight, event.x(), event.y())) {
+            onClose();
+            return true;
+        }
+
         return false;
     }
 
-    // TODO: MC 26.1 - mouseClicked now takes MouseButtonEvent
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        return false;
-    }
-
-    // TODO: MC 26.1
+    @Override
     public void onClose() {
         Minecrft.get().setScreen(parent);
     }

@@ -1,8 +1,8 @@
 package io.github.mortuusars.exposure.client.render.model;
 
 import io.github.mortuusars.exposure.Exposure;
-import io.github.mortuusars.exposure.world.item.camcom.Attachment;
-import io.github.mortuusars.exposure.world.item.camcom.CameraItem;
+import io.github.mortuusars.exposure.world.item.camera.Attachment;
+import io.github.mortuusars.exposure.world.item.camera.CameraItem;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.item.ItemModel;
 import net.minecraft.client.renderer.item.ItemModelResolver;

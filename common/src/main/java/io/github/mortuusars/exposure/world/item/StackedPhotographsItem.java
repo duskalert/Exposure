@@ -188,17 +188,17 @@ public class StackedPhotographsItem extends Item {
             player.level().playSound(player, player, Exposure.SoundEvents.PHOTOGRAPH_RUSTLE.get(), SoundSource.PLAYERS, 0.6f,
                     player.level().getRandom().nextFloat() * 0.2f + 1.2f);
             player.gameEvent(GameEvent.ITEM_INTERACT_FINISH);
-            return InteractionResult.SUCCESS.heldItemTransformedTo(itemInHand);
+            return InteractionResult.SUCCESS;
         }
 
         StackedPhotographs photographs = getPhotographs(itemInHand);
         if (!photographs.isEmpty()) {
-            if (level.isClientSide) {
-                int slot = hand == InteractionHand.OFF_HAND ? Inventory.SLOT_OFFHAND : player.getInventory().getSelectedSlot();
+        if (level.isClientSide()) {
+            int slot = hand == InteractionHand.OFF_HAND ? Inventory.SLOT_OFFHAND : player.getInventory().getSelectedSlot();
                 ClientGUI.openPhotographsScreenFromItem(slot);
                 player.playSound(Exposure.SoundEvents.PHOTOGRAPH_RUSTLE.get(), 0.6f, 1.1f);
             }
-            return InteractionResult.SUCCESS.heldItemTransformedTo(itemInHand);
+            return InteractionResult.SUCCESS;
         }
 
         return InteractionResult.FAIL;
@@ -215,13 +215,13 @@ public class StackedPhotographsItem extends Item {
     }
 
     public static void playAddSoundClientside(Player player) {
-        if (player.level().isClientSide)
+        if (player.level().isClientSide())
             player.playSound(Exposure.SoundEvents.PHOTOGRAPH_RUSTLE.get(), 0.6f,
                     player.level().getRandom().nextFloat() * 0.2f + 1.2f);
     }
 
     public static void playRemoveSoundClientside(Player player) {
-        if (player.level().isClientSide)
+        if (player.level().isClientSide())
             player.playSound(Exposure.SoundEvents.PHOTOGRAPH_RUSTLE.get(), 0.75f,
                     player.level().getRandom().nextFloat() * 0.2f + 0.75f);
     }

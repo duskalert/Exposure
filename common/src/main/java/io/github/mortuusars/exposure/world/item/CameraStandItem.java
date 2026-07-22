@@ -50,7 +50,7 @@ public class CameraStandItem extends Item {
         if (level instanceof ServerLevel serverLevel) {
             Consumer<CameraStandEntity> consumer = EntityType.createDefaultStackConfig(serverLevel, itemStack, context.getPlayer());
             CameraStandEntity cameraStand = Exposure.EntityTypes.CAMERA_STAND.get()
-                    .create(serverLevel, consumer, blockPos, EntitySpawnReason.SPAWN_EGG, true, true);
+                    .create(serverLevel, consumer, blockPos, EntitySpawnReason.SPAWN_ITEM_USE, true, true);
             if (cameraStand == null) {
                 return InteractionResult.FAIL;
             }
@@ -58,14 +58,14 @@ public class CameraStandItem extends Item {
             if (context.getPlayer() != null) {
                 cameraStand.setOwnerPlayer(context.getPlayer());
             }
-            cameraStand.moveTo(cameraStand.getX(), cameraStand.getY(), cameraStand.getZ(), 0.0F, 0.0F);
+            cameraStand.snapTo(cameraStand.getX(), cameraStand.getY(), cameraStand.getZ(), 0.0F, 0.0F);
             serverLevel.addFreshEntityWithPassengers(cameraStand);
             cameraStand.playPlaceSound();
             cameraStand.gameEvent(GameEvent.ENTITY_PLACE, context.getPlayer());
         }
 
         itemStack.shrink(1);
-        return level.isClientSide() ? InteractionResult.SUCCESS : InteractionResult.CONSUME;
+        return level.isClientSide() ? InteractionResult.SUCCESS : InteractionResult.SUCCESS_SERVER;
     }
 
     public InteractionResult interactWithBoat(Player player, InteractionHand hand, Boat boat) {
@@ -77,7 +77,7 @@ public class CameraStandItem extends Item {
         if (player.level() instanceof ServerLevel serverLevel) {
             Consumer<CameraStandEntity> consumer = EntityType.createDefaultStackConfig(serverLevel, itemStack, player);
             CameraStandEntity cameraStand = Exposure.EntityTypes.CAMERA_STAND.get()
-                    .create(serverLevel, consumer, boat.blockPosition(), EntitySpawnReason.SPAWN_EGG, true, true);
+                    .create(serverLevel, consumer, boat.blockPosition(), EntitySpawnReason.SPAWN_ITEM_USE, true, true);
             if (cameraStand == null) {
                 return InteractionResult.FAIL;
             }

@@ -8,7 +8,6 @@ import io.github.mortuusars.exposure.world.level.storage.ExposureIdentifier;
 import net.minecraft.advancements.criterion.MinMaxBounds;
 import net.minecraft.advancements.criterion.SingleComponentItemPredicate;
 import net.minecraft.core.component.DataComponentType;
-import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -42,6 +41,7 @@ public record FramePredicate(Optional<ExposureIdentifier> identifier,
         return Exposure.DataComponents.PHOTOGRAPH_FRAME;
     }
 
+    @Override
     public boolean matches(Frame frame) {
         return (identifier.isEmpty() || identifier.get().equals(frame.identifier()))
                 && (type.isEmpty() || type.get().equals(frame.type().getSerializedName()))
@@ -52,6 +52,6 @@ public record FramePredicate(Optional<ExposureIdentifier> identifier,
                 && (dayTime.isEmpty() || frame.extraData().get(Frame.DAY_TIME).map(dayTime.get()::matches).orElse(false))
                 && (entitiesInFrameCount.isEmpty() || entitiesInFrameCount.get().matches(frame.entitiesInFrame().size()))
                 && (entitiesInFrame.isEmpty() || entitiesInFrame.get().stream().allMatch(predicate -> predicate.matches(frame.entitiesInFrame())))
-                && (extraData.isEmpty() || extraData.get().matches(frame.extraData().toTag()));
+                && (extraData.isEmpty() || extraData.get().matches(frame.extraData()));
     }
 }

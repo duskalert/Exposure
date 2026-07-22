@@ -3,7 +3,7 @@ package io.github.mortuusars.exposure.world.camera;
 import io.github.mortuusars.exposure.network.packet.Packet;
 import io.github.mortuusars.exposure.network.packet.clientbound.ActiveCameraInHandSetS2CP;
 import io.github.mortuusars.exposure.world.entity.CameraHolder;
-import io.github.mortuusars.exposure.world.item.camcom.CameraItem;
+import io.github.mortuusars.exposure.world.item.camera.CameraItem;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -42,7 +42,7 @@ public class CameraInHand extends Camera {
         }
 
         if (getHolder() instanceof Player player) {
-            for (ItemStack stack : player.getInventory().items) {
+            for (ItemStack stack : player.getInventory().getNonEquipmentItems()) {
                 if (getId().matches(stack) && stack.getItem() instanceof CameraItem cameraItem && cameraItem.isActive(stack)) {
                     cameraItem.deactivate(getHolder().asHolderEntity(), stack);
                     return true;

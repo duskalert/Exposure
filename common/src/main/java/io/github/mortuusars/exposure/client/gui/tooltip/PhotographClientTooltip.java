@@ -8,15 +8,11 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
-import net.minecraft.client.renderer.Lightmap;
-import net.minecraft.client.renderer.MultiBufferSource;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
 public class PhotographClientTooltip implements ClientTooltipComponent {
-    // TODO: MC 26.1 - ClientTooltipComponent API redesigned. Stubbed.
-
     public static final int SIZE = 72;
 
     protected final PhotographTooltip tooltip;
@@ -27,18 +23,48 @@ public class PhotographClientTooltip implements ClientTooltipComponent {
         this.photographs = tooltip.photographs();
     }
 
-    // TODO: MC 26.1
+    @Override
     public int getWidth(@NotNull Font font) {
         return SIZE;
     }
 
-    // TODO: MC 26.1 - getHeight now takes Font
+    @Override
     public int getHeight(@NotNull Font font) {
-        return SIZE + 2;
+        return SIZE + 2; // 2px bottom margin
     }
 
-    // TODO: MC 26.1 - renderImage signature changed
-    public void renderImage(@NotNull Font font, int mouseX, int mouseY, GuiGraphicsExtractor guiGraphics) {
-        // Stubbed - pushPose/translate/scale/drawString/Lightmap API changed
+    @Override
+    public void extractImage(@NotNull Font font, int mouseX, int mouseY, int tooltipWidth, int tooltipHeight,
+                             GuiGraphicsExtractor guiGraphics) {
+        int photographsCount = photographs.size();
+        int additionalPhotographs = Math.min(2, photographsCount - 1);
+
+        float scale = SIZE;
+        float nextPhotographOffset = ExposureClient.photographRenderer().getStackedPhotographOffset();
+        scale *= 1f - (additionalPhotographs * nextPhotographOffset);
+        for (int i = additionalPhotographs; i >= 0; i--) {
+            ItemAndStack<PhotographItem> photograph = photographs.get(i);
+            float offset = i * ExposureClient.photographRenderer().getStackedPhotographOffset() * scale;
+            float brightness = 1f - ExposureClient.photographRenderer().getStackedBrightnessStep() * i;
+            io.github.mortuusars.exposure.util.color.Color color = new io.github.mortuusars.exposure.util.color.Color(255,
+                    (int) (255 * brightness), (int) (255 * brightness), (int) (255 * brightness));
+            ExposureClient.photographRenderer().renderGui(photograph.getItemStack(), guiGraphics, mouseX + offset, mouseY + offset,
+                    scale, color, i == 0);
+        }
+
+        // Stack count:
+        if (photographsCount > 1) {
+            guiGraphics.nextStratum();
+            guiGraphics.pose().pushMatrix();
+            String count = Integer.toString(photographsCount);
+            int fontWidth = Minecraft.getInstance().font.width(count);
+            float fontScale = 1.6f;
+            guiGraphics.pose().translate(
+                    mouseX + scale - 2 - fontWidth * fontScale,
+                    mouseY + scale - 2 - 8 * fontScale);
+            guiGraphics.pose().scale(fontScale, fontScale);
+            guiGraphics.text(font, count, 0, 0, 0xFFFFFFFF, false);
+            guiGraphics.pose().popMatrix();
+        }
     }
 }

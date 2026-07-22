@@ -15,7 +15,7 @@ public class ColorPaletteArgument extends IdentifierArgument {
     @Override
     public <S> CompletableFuture<Suggestions> listSuggestions(CommandContext<S> context, SuggestionsBuilder builder) {
         SharedSuggestionProvider provider = (SharedSuggestionProvider) context.getSource();
-        Set<Identifier> keys = provider.registryAccess().registryOrThrow(Exposure.Registries.COLOR_PALETTE).keySet();
+        Set<Identifier> keys = provider.registryAccess().lookupOrThrow(Exposure.Registries.COLOR_PALETTE).keySet();
         return SharedSuggestionProvider.suggestResource(keys, builder);
     }
 }

@@ -1,7 +1,6 @@
 package io.github.mortuusars.exposure.client.gui.screen.album;
 
 import com.mojang.blaze3d.platform.InputConstants;
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.datafixers.util.Either;
 import io.github.mortuusars.exposure.Config;
 import io.github.mortuusars.exposure.Exposure;
@@ -24,8 +23,10 @@ import io.github.mortuusars.exposure.world.sound.SoundEffect;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.*;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
-import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.ClickEvent;
@@ -124,8 +125,8 @@ public class AlbumScreen extends AbstractContainerScreen<AlbumMenu> {
         PhotographSlotWidget photographWidget = new PhotographSlotWidget(this, photo.getX(), photo.getY(),
                 photo.getWidth(), photo.getHeight(), () -> getMenu().getPhotograph(side)) {
             @Override
-            public boolean mouseClicked(double mouseX, double mouseY, int button) {
-                return !isInAddingMode() && super.mouseClicked(mouseX, mouseY, button);
+            public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
+                return !isInAddingMode() && super.mouseClicked(event, doubleClick);
             }
 
             @Override
@@ -189,11 +190,54 @@ public class AlbumScreen extends AbstractContainerScreen<AlbumMenu> {
 
     // RENDER
 
-    // TODO: MC 26.1 - @Override removed, signature changed
-    public void render(GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick) {
+    @Override
+    public void extractContents(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTick) {
         updateWidgetVisibility();
+
         inventoryLabelY = isInAddingMode() ? getMenu().getPlayerInventorySlots().getFirst().y - 12 : -999;
-        // TODO: super.render, renderTooltip, TextBlock.render, blit signature changed
+
+        super.extractContents(guiGraphics, mouseX, mouseY, partialTick);
+
+        for (Page page : pages) {
+            AbstractWidget noteWidget = page.getNoteWidget();
+            if (noteWidget instanceof TextBlock textBlock) {
+                textBlock.extractRenderState(guiGraphics, mouseX, mouseY, partialTick);
+            }
+        }
+
+        if (isInAddingMode()) {
+            AlbumPlayerInventorySlot firstSlot = getMenu().getPlayerInventorySlots().getFirst();
+            int panelX = leftPos + firstSlot.x - 8;
+            int panelY = topPos + firstSlot.y - 18;
+
+            // Submit the legacy z=10 panel after page widgets (including already-filled photographs),
+            // then re-submit the active inventory items above it. AbstractContainerScreen extracts
+            // widgets before slots in one pass, so a single stratum around super.extractContents()
+            // cannot preserve the old z=0 page / z=10 panel / slot-item ordering.
+            guiGraphics.nextStratum();
+            AlbumGUI.ADDING_INVENTORY_BACKGROUND.blit(guiGraphics, panelX, panelY);
+
+            guiGraphics.nextStratum();
+            guiGraphics.pose().pushMatrix();
+            guiGraphics.pose().translate(leftPos, topPos);
+            guiGraphics.text(font, playerInventoryTitle, inventoryLabelX, inventoryLabelY, -12566464, false);
+            for (AlbumPlayerInventorySlot slot : getMenu().getPlayerInventorySlots()) {
+                if (slot.isActive()) {
+                    extractSlot(guiGraphics, slot, mouseX, mouseY);
+                }
+            }
+            guiGraphics.pose().popMatrix();
+
+            // The legacy disabled-slot overlay used z=350 and must stay above item submissions.
+            guiGraphics.nextStratum();
+            for (Slot slot : getMenu().slots) {
+                if (!slot.getItem().isEmpty() && !(slot.getItem().getItem() instanceof PhotographItem)) {
+                    AlbumGUI.DISABLED_INVENTORY_SLOT.blit(guiGraphics,
+                            leftPos + slot.x - 1, topPos + slot.y - 1);
+                }
+            }
+        }
+
     }
 
     private void updateWidgetVisibility() {
@@ -210,14 +254,54 @@ public class AlbumScreen extends AbstractContainerScreen<AlbumMenu> {
         }
     }
 
-    // TODO: MC 26.1 - @Override removed, signature changed
-    public void renderBackground(GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick) {}
+    @Override
+    public void extractBackground(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTick) {
+        extractTransparentBackground(guiGraphics);
+        renderBg(guiGraphics, partialTick, mouseX, mouseY);
+    }
 
-    // TODO: MC 26.1 - @Override removed, signature changed
-    protected void renderLabels(GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY) {}
+    @Override
+    protected void extractLabels(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY) {
+        guiGraphics.pose().pushMatrix();
+        super.extractLabels(guiGraphics, mouseX, mouseY);
 
-    // TODO: MC 26.1 - @Override removed, signature changed
-    protected void renderTooltip(GuiGraphicsExtractor GuiGraphicsExtractor, int x, int y) {}
+        guiGraphics.pose().popMatrix();
+    }
+
+    @Override
+    protected void extractTooltip(GuiGraphicsExtractor guiGraphics, int x, int y) {
+        if (isInAddingMode() && hoveredSlot != null && !hoveredSlot.getItem()
+                .isEmpty() && !(hoveredSlot.getItem().getItem() instanceof PhotographItem)) {
+            return; // Do not render tooltips for greyed-out items
+        }
+
+        if (!isInAddingMode()) {
+            for (Page page : pages) {
+                if (page.photographWidget.isHoveredOrFocused()) {
+                    page.photographWidget.renderTooltip(guiGraphics, x, y);
+                    return;
+                }
+
+                if (getMenu().isAlbumEditable() && page.isMouseOver(page.noteArea, x, y)) {
+                    List<Component> tooltip = new ArrayList<>();
+                    tooltip.add(Component.translatable("gui.exposure.album.note"));
+
+                    if (!page.getNoteWidget().isFocused())
+                        tooltip.add(Component.translatable("gui.exposure.album.left_click_to_edit"));
+
+                    boolean hasText = page.noteWidget.left().map(box -> !box.getText().isEmpty()).orElse(false);
+                    if (hasText)
+                        tooltip.add(Component.translatable("gui.exposure.album.right_click_to_clear"));
+
+                    guiGraphics.setTooltipForNextFrame(this.font, tooltip, Optional.empty(), x, y);
+
+                    return;
+                }
+            }
+        }
+
+        super.extractTooltip(guiGraphics, x, y);
+    }
 
     @Override
     public @NotNull List<Component> getTooltipFromContainerItem(ItemStack stack) {
@@ -230,29 +314,127 @@ public class AlbumScreen extends AbstractContainerScreen<AlbumMenu> {
         return tooltipLines;
     }
 
-    // TODO: MC 26.1 - @Override removed, signature changed
-    protected void renderBg(GuiGraphicsExtractor GuiGraphicsExtractor, float partialTick, int mouseX, int mouseY) {
-        // TODO: MC 26.1 - renderBg blit/drawString API changed
+    protected void renderBg(GuiGraphicsExtractor guiGraphics, float partialTick, int mouseX, int mouseY) {
+        guiGraphics.blit(net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED, AlbumGUI.TEXTURE, leftPos, topPos, 0, 0,
+                imageWidth, imageHeight, 512, 512);
+
+        if (enterSignModeButton != null && enterSignModeButton.visible) {
+            guiGraphics.blit(net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED, AlbumGUI.TEXTURE, leftPos - 27, topPos + 14, 447, 0,
+                    27, 28, 512, 512);
+        }
+
+        int currentSpreadIndex = getMenu().getCurrentSpreadIndex();
+        drawPageNumbers(guiGraphics, currentSpreadIndex);
+
+        if (isInAddingMode()) {
+            @Nullable Side pageBeingAddedTo = getMenu().getSideBeingAddedTo();
+            for (Page page : pages) {
+                if (page.side == pageBeingAddedTo) {
+                    guiGraphics.blitSprite(net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED, PhotographSlotWidget.EMPTY_SPRITES.enabledFocused(),
+                            page.photoArea.getX(), page.photoArea.getY(), page.photoArea.getWidth(), page.photoArea.getHeight());
+                }
+            }
+        }
     }
 
-    // TODO: MC 26.1 - @Override removed, signature changed
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        return false;
+    protected void drawPageNumbers(GuiGraphicsExtractor guiGraphics, int currentSpreadIndex) {
+        Font font = Minecrft.get().font;
+
+        String leftPageNumber = Integer.toString(currentSpreadIndex * 2 + 1);
+        String rightPageNumber = Integer.toString(currentSpreadIndex * 2 + 2);
+
+        guiGraphics.text(font, leftPageNumber, leftPos + 71 + (8 - font.width(leftPageNumber) / 2),
+                topPos + 167, Config.getColor(Config.Client.ALBUM_FONT_SECONDARY_COLOR), false);
+
+        guiGraphics.text(font, rightPageNumber, leftPos + 212 + (8 - font.width(rightPageNumber) / 2),
+                topPos + 167, Config.getColor(Config.Client.ALBUM_FONT_SECONDARY_COLOR), false);
     }
 
-    // TODO: MC 26.1 - @Override removed, signature changed
-    public boolean mouseReleased(double mouseX, double mouseY, int button) {
-        return false;
+
+    // CONTROLS:
+
+    @Override
+    public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
+        double mouseX = event.x();
+        double mouseY = event.y();
+        int button = event.button();
+        if (isInAddingMode()) {
+            if (!isHoveringOverInventory(mouseX, mouseY)
+                    && (!hasClickedOutside(mouseX, mouseY, leftPos, topPos) || getMenu().getCarried().isEmpty())) {
+                clickButton(AlbumMenu.CANCEL_ADDING_PHOTO_BUTTON);
+                return true;
+            }
+
+            return super.mouseClicked(event, doubleClick);
+        }
+
+        for (Page page : pages) {
+            if (getMenu().isAlbumEditable() && button == InputConstants.MOUSE_BUTTON_RIGHT && page.isMouseOver(page.noteArea, mouseX, mouseY)) {
+                page.noteWidget.ifLeft(box -> {
+                    box.setText(""); // Clear the note
+                });
+                return true;
+            }
+        }
+
+        boolean handled = super.mouseClicked(event, doubleClick);
+
+        for (Page page : pages) {
+            AbstractWidget noteWidget = page.getNoteWidget();
+            if (noteWidget instanceof TextBlock textBlock && textBlock.mouseClicked(event, doubleClick)) {
+                handled = true;
+                break;
+            }
+        }
+
+        for (Page page : pages) {
+            if (page.getNoteWidget().isFocused() && !page.isMouseOver(page.noteArea, mouseX, mouseY)) {
+                setFocused(null);
+                return true;
+            }
+        }
+
+        if (!(getFocused() instanceof TextBox)) {
+            setFocused(null); // Clear focus on mouse click because it's annoying. But keep on textbox to type.
+        }
+
+        return handled;
     }
 
-    // TODO: MC 26.1 - @Override removed, signature changed
+    @Override
+    public boolean mouseReleased(MouseButtonEvent event) {
+        if (isQuickCrafting && !getMenu().getCarried().isEmpty() && getMenu().getCarried().getCount() == 1) {
+            isQuickCrafting = false; // Fixes weird issue with carried item not placing when dragging slightly
+        }
+
+        return super.mouseReleased(event);
+    }
+
     public boolean handleComponentClicked(@Nullable Style style) {
-        return false;
+        if (style == null)
+            return false;
+
+        ClickEvent clickEvent = style.getClickEvent();
+        if (clickEvent == null)
+            return false;
+        else if (clickEvent instanceof ClickEvent.ChangePage changePage) {
+            forcePage(changePage.page() - 1);
+            return true;
+        }
+
+        Screen.defaultHandleClickEvent(clickEvent, minecraft, this);
+        if (clickEvent instanceof ClickEvent.RunCommand)
+            onClose();
+        return true;
     }
 
-    // TODO: MC 26.1 - @Override removed, signature changed
-    public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
-        return false;
+    @Override
+    public boolean mouseDragged(MouseButtonEvent event, double dragX, double dragY) {
+        if (isInAddingMode())
+            return super.mouseDragged(event, dragX, dragY);
+        else
+            return this.getFocused() != null && this.isDragging() && event.button() == 0
+                    && this.getFocused().mouseDragged(event, dragX, dragY);
     }
 
     protected void clickButton(int buttonId) {
@@ -290,9 +472,11 @@ public class AlbumScreen extends AbstractContainerScreen<AlbumMenu> {
                 && isHovering(leftPos - 27, topPos + 14, 27, 28, mouseX, mouseY);
     }
 
-    // TODO: MC 26.1 - @Override removed, signature changed
-    protected boolean hasClickedOutside(double mouseX, double mouseY, int guiLeft, int guiTop, int mouseButton) {
-        return false;
+    @Override
+    protected boolean hasClickedOutside(double mouseX, double mouseY, int guiLeft, int guiTop) {
+        return super.hasClickedOutside(mouseX, mouseY, guiLeft, guiTop)
+                && !isHoveringOverInventory(mouseX, mouseY)
+                && !isHoveringOverSignElement(mouseX, mouseY);
     }
 
     @SuppressWarnings("UnusedReturnValue")
@@ -324,14 +508,41 @@ public class AlbumScreen extends AbstractContainerScreen<AlbumMenu> {
         return false;
     }
 
-    // TODO: MC 26.1 - @Override removed, signature changed
-    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        return false; // TODO: MC 26.1
+    @Override
+    public boolean keyPressed(KeyEvent event) {
+        int keyCode = event.key();
+        if (keyCode == InputConstants.KEY_TAB)
+            return super.keyPressed(event);
+
+        for (Page page : pages) {
+            AbstractWidget widget = page.noteWidget.map(box -> box, block -> block);
+            if (widget.isFocused()) {
+                if (keyCode == InputConstants.KEY_ESCAPE) {
+                    this.setFocused(null);
+                    return true;
+                }
+
+                return widget.keyPressed(event);
+            }
+        }
+
+        if (isInAddingMode() && (Minecrft.options().keyInventory.matches(event)
+                || keyCode == InputConstants.KEY_ESCAPE)) {
+            clickButton(AlbumMenu.CANCEL_ADDING_PHOTO_BUTTON);
+            return true;
+        }
+
+        return keyBindings.keyPressed(event) || super.keyPressed(event);
     }
 
-    // TODO: MC 26.1 - @Override removed, signature changed
-    public boolean keyReleased(int keyCode, int scanCode, int modifiers) {
-        return false; // TODO: MC 26.1
+    @Override
+    public boolean keyReleased(KeyEvent event) {
+        for (Page page : pages) {
+            if (page.noteWidget.map(box -> box, block -> block).isFocused())
+                return super.keyReleased(event);
+        }
+
+        return keyBindings.keyReleased(event) || super.keyReleased(event);
     }
 
 

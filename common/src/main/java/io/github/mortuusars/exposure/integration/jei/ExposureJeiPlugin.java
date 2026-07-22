@@ -1,7 +1,7 @@
 package io.github.mortuusars.exposure.integration.jei;
 
 import com.google.common.collect.ImmutableList;
-
+import dev.architectury.injectables.annotations.ExpectPlatform;
 import io.github.mortuusars.exposure.Config;
 import io.github.mortuusars.exposure.Exposure;
 import io.github.mortuusars.exposure.PlatformHelper;
@@ -22,7 +22,7 @@ import mezz.jei.api.registration.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
@@ -35,10 +35,10 @@ public class ExposureJeiPlugin implements IModPlugin {
     public static final RecipeType<PhotographStackingJeiRecipe> PHOTOGRAPH_STACKING_RECIPE_TYPE =
             RecipeType.create(Exposure.ID, "photograph_stacking", PhotographStackingJeiRecipe.class);
 
-    private static final Identifier ID = Exposure.resource("jei_plugin");
+    private static final ResourceLocation ID = Exposure.resource("jei_plugin");
 
     @Override
-    public @NotNull Identifier getPluginUid() {
+    public @NotNull ResourceLocation getPluginUid() {
         return ID;
     }
 
@@ -77,7 +77,9 @@ public class ExposureJeiPlugin implements IModPlugin {
         }
     }
 
+    @ExpectPlatform
     public static void addSequencedDevelopingRecipes(@NotNull IRecipeRegistration registration) {
+        throw new AssertionError();
     }
 
     @Override

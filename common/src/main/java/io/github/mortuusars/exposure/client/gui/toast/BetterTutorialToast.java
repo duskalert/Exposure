@@ -1,8 +1,10 @@
 package io.github.mortuusars.exposure.client.gui.toast;
 
 import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.components.toasts.Toast;
-//import net.minecraft.client.gui.components.toasts.ToastComponent;
+import net.minecraft.client.gui.components.toasts.ToastManager;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.NotNull;
@@ -26,6 +28,7 @@ public class BetterTutorialToast implements Toast {
     protected final long shownAt = System.currentTimeMillis();
     protected final int showDurationMs;
     protected final Supplier<Boolean> hideIf;
+    private boolean hideNotified;
 
     public BetterTutorialToast(ToastIcon icon, Component title, @Nullable Component message, int showDurationMs, Supplier<Boolean> hideIf) {
         this.icon = icon;
@@ -56,32 +59,30 @@ public class BetterTutorialToast implements Toast {
     }
 
     @Override
-    public void extractRenderState(GuiGraphicsExtractor guiGraphics, net.minecraft.client.gui.Font font, long l) {
-        // TODO: MC 26.1 - abstract method stub
+    public @NotNull Visibility getWantedVisibility() {
+        return visibility;
     }
 
     @Override
-    public int update(net.minecraft.client.gui.components.toasts.ToastManager toastManager, long l) {
-        // TODO: MC 26.1 - abstract method stub
-        return 0;
+    public void update(ToastManager toastManager, long timeSinceLastVisible) {
+        if (visibility == Visibility.SHOW && (hideIf.get() || (showDurationMs > 0 && System.currentTimeMillis() > shownAt + showDurationMs))) {
+            hide();
+            if (!hideNotified) {
+                hideNotified = true;
+                onHide.run();
+            }
+        }
     }
 
-//    @Override
-//    public @NotNull Visibility render(GuiGraphicsExtractor GuiGraphicsExtractor, ToastComponent toastComponent, long timeSinceLastVisible) {
-//        if (visibility == Visibility.SHOW && hideIf.get() || (showDurationMs > 0 && System.currentTimeMillis() > shownAt + showDurationMs)) {
-//            hide();
-//            onHide.run();
-//        }
-//
-//        GuiGraphicsExtractor.blitSprite(backgroundSprite, 0, 0, this.width(), this.height());
-//        this.icon.render(GuiGraphicsExtractor, 6, 6);
-//        if (this.message == null) {
-//            GuiGraphicsExtractor.drawString(toastComponent.getMinecraft().font, this.title, 30, 12, 0xFF500050, false);
-//        } else {
-//            GuiGraphicsExtractor.drawString(toastComponent.getMinecraft().font, this.title, 30, 7, 0xFF500050, false);
-//            GuiGraphicsExtractor.drawString(toastComponent.getMinecraft().font, this.message, 30, 18, 0xFF000000, false);
-//        }
-//
-//        return this.visibility;
-//    }
+    @Override
+    public void extractRenderState(GuiGraphicsExtractor guiGraphics, Font font, long timeSinceLastVisible) {
+        guiGraphics.blitSprite(RenderPipelines.GUI_TEXTURED, backgroundSprite, 0, 0, this.width(), this.height());
+        this.icon.render(guiGraphics, 6, 6);
+        if (this.message == null) {
+            guiGraphics.text(font, this.title, 30, 12, 0xFF500050, false);
+        } else {
+            guiGraphics.text(font, this.title, 30, 7, 0xFF500050, false);
+            guiGraphics.text(font, this.message, 30, 18, 0xFF000000, false);
+        }
+    }
 }

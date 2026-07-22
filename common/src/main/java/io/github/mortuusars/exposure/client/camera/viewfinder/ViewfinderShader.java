@@ -1,28 +1,24 @@
 package io.github.mortuusars.exposure.client.camera.viewfinder;
 
-import com.google.gson.JsonSyntaxException;
 import com.mojang.blaze3d.systems.RenderSystem;
 import io.github.mortuusars.exposure.Exposure;
 import io.github.mortuusars.exposure.client.util.Minecrft;
-import io.github.mortuusars.exposure.world.camera.Camera;
+import io.github.mortuusars.exposure.client.util.Shader;
 import io.github.mortuusars.exposure.data.Filter;
 import io.github.mortuusars.exposure.data.Filters;
-import io.github.mortuusars.exposure.world.item.camcom.Attachment;
+import io.github.mortuusars.exposure.world.camera.Camera;
+import io.github.mortuusars.exposure.world.item.camera.Attachment;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.PostChain;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
-
-import java.io.IOException;
 
 public class ViewfinderShader implements AutoCloseable {
     private final Minecraft minecraft;
     private final Camera camera;
     private final Viewfinder viewfinder;
 
-    @Nullable
-    private PostChain shader;
+    private @Nullable Identifier shaderLocation;
     private boolean active;
 
     public ViewfinderShader(Camera camera, Viewfinder viewfinder) {
@@ -32,16 +28,28 @@ public class ViewfinderShader implements AutoCloseable {
         this.update();
     }
 
-    public void apply(Identifier shaderLocation) {
+    public void apply(Identifier location) {
+        RenderSystem.assertOnRenderThread();
+        if (location.equals(shaderLocation)) {
+            return;
+        }
+
+        shaderLocation = null;
+        if (Shader.isAvailable(location)) {
+            shaderLocation = location;
+            active = true;
+        } else {
+            Exposure.LOGGER.warn("Failed to select viewfinder post effect '{}'.", location);
+            active = false;
+        }
     }
 
-    public void resize(int width, int height) {
-    }
-
-    /**
-     * Processes current viewfinder shader (if it is present and active).
-     */
+    /** Processes the current viewfinder post effect when it is present and active. */
     public void process() {
+        Identifier location = shaderLocation;
+        if (location != null && active) {
+            Shader.process(location, minecraft.getMainRenderTarget());
+        }
     }
 
     public void update() {
@@ -57,11 +65,8 @@ public class ViewfinderShader implements AutoCloseable {
     }
 
     public void remove() {
-        if (shader != null) {
-            shader.close();
-        }
-
-        shader = null;
+        RenderSystem.assertOnRenderThread();
+        shaderLocation = null;
     }
 
     @Override

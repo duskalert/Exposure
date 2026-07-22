@@ -2,13 +2,14 @@ package io.github.mortuusars.exposure.client.camera;
 
 import io.github.mortuusars.exposure.client.camera.viewfinder.Viewfinder;
 import io.github.mortuusars.exposure.client.camera.viewfinder.ViewfinderRegistry;
+import io.github.mortuusars.exposure.client.render.FovModifier;
 import io.github.mortuusars.exposure.client.util.Minecrft;
 import io.github.mortuusars.exposure.world.camera.Camera;
 import io.github.mortuusars.exposure.network.Packets;
 import io.github.mortuusars.exposure.network.packet.common.ActiveCameraDeactivateCommonPacket;
 import io.github.mortuusars.exposure.world.camera.CameraOnStand;
-import io.github.mortuusars.exposure.world.entity.CameraOperator;
 import net.minecraft.client.CameraType;
+import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.Entity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -20,13 +21,21 @@ public class CameraClient {
 
     public static void tick() {
         if (activeViewfinder != null) {
+            Minecraft minecraft = Minecrft.get();
+            if (minecraft.player == null || minecraft.level == null) {
+                resetClientState();
+                return;
+            }
+            if (!minecraft.player.isAlive() || !activeViewfinder.camera().isActive()) {
+                deactivate();
+                return;
+            }
             activeViewfinder.tick();
         }
     }
 
     public static Optional<Camera> getActive() {
-        // TODO: MC 26.1 - getActiveExposureCameraOptional() removed
-        return Optional.empty();
+        return Minecrft.player().getActiveExposureCameraOptional();
     }
 
     public static boolean isActive() {
@@ -34,13 +43,21 @@ public class CameraClient {
     }
 
     public static void deactivate() {
-        // TODO: MC 26.1 - getActiveExposureCameraOptional() and removeActiveExposureCamera() removed
+        Minecrft.player().getActiveExposureCameraOptional().ifPresent(camera -> {
+            camera.map((item, stack) -> item.deactivate(camera.getHolder().asHolderEntity(), stack));
+            Minecrft.player().removeActiveExposureCamera();
+        });
         Packets.sendToServer(ActiveCameraDeactivateCommonPacket.INSTANCE);
     }
 
     public static void setCameraEntity(Entity entity) {
-        Minecrft.get().setCameraEntity(entity);
-        Minecrft.get().gameRenderer.getMainCamera().reset();
+        // Do not use Minecraft#setCameraEntity: it also changes the entity post effect.
+        // Camera owns the render entity directly in 26.1.2.
+        Minecrft.get().gameRenderer.getMainCamera().setEntity(entity);
+
+        // Set eye height to final value to skip transition animation
+        Minecrft.get().gameRenderer.getMainCamera().eyeHeight = entity.getEyeHeight();
+        Minecrft.get().gameRenderer.getMainCamera().eyeHeightOld = entity.getEyeHeight();
     }
 
     public static void resetCameraEntity() {
@@ -66,6 +83,17 @@ public class CameraClient {
         if (activeViewfinder != null) {
             activeViewfinder.close();
             activeViewfinder = null;
+        }
+    }
+
+    /** Clears client-only camera state without sending packets during a world transition. */
+    public static void resetClientState() {
+        removeViewfinder();
+        FovModifier.reset();
+
+        Minecraft minecraft = Minecrft.get();
+        if (minecraft.player != null) {
+            setCameraEntity(minecraft.player);
         }
     }
 }

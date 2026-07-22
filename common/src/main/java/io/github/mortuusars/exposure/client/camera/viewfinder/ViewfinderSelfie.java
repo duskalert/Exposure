@@ -6,7 +6,7 @@ import io.github.mortuusars.exposure.client.animation.EasingFunction;
 import io.github.mortuusars.exposure.client.util.Minecrft;
 import io.github.mortuusars.exposure.world.camera.Camera;
 import io.github.mortuusars.exposure.world.camera.CameraOnStand;
-import io.github.mortuusars.exposure.world.item.camcom.CameraSettings;
+import io.github.mortuusars.exposure.world.item.camera.CameraSettings;
 import net.minecraft.client.CameraType;
 import net.minecraft.util.Mth;
 
@@ -82,7 +82,7 @@ public class ViewfinderSelfie {
     }
 
     public boolean mouseMove(double xRotDelta, double yRotDelta) {
-        if (!viewfinder.controlsActive() && camera.inSelfieMode() && Minecrft.options().keySprint.isDown()) {
+        if (!viewfinder.controlsActive() && camera.inSelfieMode() && Minecrft.options().keySprint.isDown) {
             rotateCamera(xRotDelta, yRotDelta, false);
             return true;
         }

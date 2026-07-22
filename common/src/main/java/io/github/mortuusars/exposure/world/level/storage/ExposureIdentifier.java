@@ -58,7 +58,7 @@ public class ExposureIdentifier {
         public @NotNull ExposureIdentifier decode(FriendlyByteBuf buffer) {
             boolean isTexture = buffer.readBoolean();
             return isTexture
-                    ? ExposureIdentifier.texture(buffer.readIdentifier())
+                ? ExposureIdentifier.texture(buffer.readIdentifier())
                     : ExposureIdentifier.id(buffer.readUtf());
         }
 
@@ -66,7 +66,7 @@ public class ExposureIdentifier {
         public void encode(FriendlyByteBuf buffer, ExposureIdentifier instance) {
             buffer.writeBoolean(instance.isTexture());
             instance.ifId(buffer::writeUtf)
-                    .ifTexture(buffer::writeIdentifier);
+                .ifTexture(buffer::writeIdentifier);
         }
     };
 

@@ -11,18 +11,16 @@ import io.github.mortuusars.exposure.network.packet.clientbound.CameraStandStopC
 import io.github.mortuusars.exposure.world.camera.CameraId;
 import io.github.mortuusars.exposure.world.inventory.CameraOnStandAttachmentsMenu;
 import io.github.mortuusars.exposure.world.item.InterplanarProjectorItem;
-import io.github.mortuusars.exposure.world.item.camcom.Attachment;
-import io.github.mortuusars.exposure.world.item.camcom.CameraItem;
+import io.github.mortuusars.exposure.world.item.camera.Attachment;
+import io.github.mortuusars.exposure.world.item.camera.CameraItem;
+import io.github.mortuusars.exposure.world.item.util.ItemStackEntityContext;
 import io.github.mortuusars.exposure.world.sound.Sound;
 import net.minecraft.ChatFormatting;
 import net.minecraft.util.Util;
-import net.minecraft.core.HolderLookup;
+import net.minecraft.core.UUIDUtil;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtOps;
-import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -82,7 +80,8 @@ public class CameraStandEntity extends Entity implements CameraHolder {
     protected static final EntityDataAccessor<Boolean> DATA_ID_MALFUNCTIONED =
             SynchedEntityData.defineId(CameraStandEntity.class, EntityDataSerializers.BOOLEAN);
 
-    protected static final Predicate<Entity> RIDABLE_MINECARTS = entity -> entity instanceof AbstractMinecart;
+    protected static final Predicate<Entity> RIDABLE_MINECARTS = entity -> entity instanceof AbstractMinecart minecart
+            && minecart.isRideable();
 
     protected CameraStandRedstoneControl redstoneControl = new CameraStandRedstoneControl(this);
     protected UUID ownerPlayerId = Util.NIL_UUID;
@@ -106,6 +105,10 @@ public class CameraStandEntity extends Entity implements CameraHolder {
     @Override
     public void onSyncedDataUpdated(EntityDataAccessor<?> dataAccessor) {
         if (dataAccessor.equals(DATA_ID_CAMERA)) {
+            ItemStack camera = getCamera();
+            if (!camera.isEmpty()) {
+                ItemStackEntityContext.associate(camera, this);
+            }
         }
     }
 
@@ -115,9 +118,13 @@ public class CameraStandEntity extends Entity implements CameraHolder {
         output.putInt("Cooldown", getCooldown());
         output.putBoolean("Malfunctioned", isMalfunctioned());
         if (!getCamera().isEmpty()) {
-            // TODO: MC 26.1 - ItemStack.save API changed
-            // output.store("Camera", CompoundTag.CODEC, getCamera().save(registryAccess()));
-            output.store("Camera", CompoundTag.CODEC, new CompoundTag());
+            output.store("Camera", ItemStack.CODEC, getCamera());
+        }
+
+        redstoneControl.save(output);
+
+        if (!ownerPlayerId.equals(Util.NIL_UUID)) {
+            output.store("Owner", UUIDUtil.CODEC, ownerPlayerId);
         }
     }
 
@@ -126,13 +133,14 @@ public class CameraStandEntity extends Entity implements CameraHolder {
         setCooldownTime(input.getIntOr("CooldownTime", 0));
         setCooldown(input.getIntOr("Cooldown", 0));
         setMalfunctioned(input.getBooleanOr("Malfunctioned", false));
+        setCamera(input.read("Camera", ItemStack.CODEC).orElse(ItemStack.EMPTY));
+
+        redstoneControl.load(input);
+
+        input.read("Owner", UUIDUtil.CODEC).ifPresent(owner -> ownerPlayerId = owner);
     }
 
-    @Override
-    public boolean hurtServer(ServerLevel level, DamageSource source, float amount) {
-        onHurt(source, amount);
-        return true;
-    }
+    // -- Camera
 
     public ItemStack getCamera() {
         return getEntityData().get(DATA_ID_CAMERA);
@@ -261,9 +269,10 @@ public class CameraStandEntity extends Entity implements CameraHolder {
         return this.getBoundingBox().distanceToSqr(entity.getEyePosition()) < range * range;
     }
 
-    public @NotNull InteractionResult interact(Player player, InteractionHand hand) {
+    @Override
+    public @NotNull InteractionResult interact(Player player, InteractionHand hand, Vec3 location) {
         if (!canUse(player)) {
-            player.sendSystemMessage(Component.translatable("gui.exposure.camera_stand.error.in_use")
+            player.sendOverlayMessage(Component.translatable("gui.exposure.camera_stand.error.in_use")
                     .withStyle(ChatFormatting.RED));
             return InteractionResult.FAIL;
         }
@@ -271,7 +280,7 @@ public class CameraStandEntity extends Entity implements CameraHolder {
         if (isMalfunctioned()) {
             if (!isClientSide()) {
                 setMalfunctioned(false);
-                player.sendSystemMessage(Component.translatable("gui.exposure.camera_stand.malfunction_fixed"));
+                player.sendOverlayMessage(Component.translatable("gui.exposure.camera_stand.malfunction_fixed"));
                 playSound(SoundEvents.SMITHING_TABLE_USE, 0.9f, 1.3f);
                 showRepairingParticles();
             }
@@ -309,7 +318,7 @@ public class CameraStandEntity extends Entity implements CameraHolder {
         if (cameraStack.isEmpty()) return InteractionResult.PASS;
         if (!(cameraStack.getItem() instanceof CameraItem cameraItem)) return InteractionResult.PASS;
 
-        if (false) {  // PlatformHelper.isCreateDeployer disabled for 26.1 migration
+        if (PlatformHelper.isCreateDeployer(player, hand)) {
             if (Config.Server.CREATE_DEPLOYER_STAND_HOTSWAP.get()) {
                 return handleSneakInteraction(player, hand, cameraItem, cameraStack, handStack);
             }
@@ -357,7 +366,7 @@ public class CameraStandEntity extends Entity implements CameraHolder {
 
     public InteractionResult openAttachmentsMenu(Player player, InteractionHand hand) {
         if (!canUse(player)) {
-            player.sendSystemMessage(Component.translatable("gui.exposure.camera_stand.error.in_use")
+            player.sendOverlayMessage(Component.translatable("gui.exposure.camera_stand.error.in_use")
                     .withStyle(ChatFormatting.RED));
             return InteractionResult.FAIL;
         }
@@ -368,7 +377,7 @@ public class CameraStandEntity extends Entity implements CameraHolder {
             return InteractionResult.FAIL;
 
         if (cameraItem.getShutter().isOpen(cameraStack)) {
-            player.sendSystemMessage(Component.translatable("item.exposure.camera.camera_attachments.fail.shutter_open")
+            player.sendOverlayMessage(Component.translatable("item.exposure.camera.camera_attachments.fail.shutter_open")
                     .withStyle(ChatFormatting.RED));
             return InteractionResult.FAIL;
         }
@@ -376,7 +385,7 @@ public class CameraStandEntity extends Entity implements CameraHolder {
         cameraItem.getOrCreateId(cameraStack);
 
         if (player instanceof ServerPlayer serverPlayer) {
-            setOperator((CameraOperator) serverPlayer);
+            setOperator(serverPlayer);
             cameraItem.getTimer().stop(cameraStack);
 
             MenuProvider menuProvider = new MenuProvider() {
@@ -406,7 +415,7 @@ public class CameraStandEntity extends Entity implements CameraHolder {
 
     public void startControlling(Player player, CameraItem cameraItem) {
         cameraItem.activateOnStand(player, getCamera(), this);
-        setOperator((CameraOperator) player);
+        setOperator(player);
 
         if (getOwnerPlayerUuid().equals(Util.NIL_UUID)) {
             setOwnerPlayer(player);
@@ -583,7 +592,7 @@ public class CameraStandEntity extends Entity implements CameraHolder {
     protected void checkForMinecarts() {
         if (!isClientSide() && !isPassenger()) {
             List<Entity> minecarts = level().getEntities(this, getBoundingBox().inflate(0.4F, 0.2F, 0.4F),
-                    e -> e instanceof AbstractMinecart);
+                    e -> e instanceof AbstractMinecart cart && cart.isRideable());
             for (Entity entity : minecarts) {
                 AbstractMinecart minecart = ((AbstractMinecart) entity);
                 if (!minecart.isVehicle()) {
@@ -603,14 +612,16 @@ public class CameraStandEntity extends Entity implements CameraHolder {
 
     // -- Hurt
 
-    public void onHurt(DamageSource source, float amount) {
-        if (isRemoved()) return;
+    @Override
+    public boolean hurtServer(ServerLevel serverLevel, DamageSource source, float amount) {
+        if (isRemoved()) return true;
+        if (isInvulnerableToBase(source)) return false;
 
         markHurt();
 
         if (!getCamera().isEmpty()) {
             if (!isClientSide()) {
-                @Nullable ItemEntity itemEntity = spawnAtLocation((ServerLevel) level(), getCamera());
+                @Nullable ItemEntity itemEntity = spawnAtLocation(serverLevel, getCamera(), getEyeHeight());
                 if (itemEntity != null) {
                     itemEntity.setPickUpDelay(5);
                 }
@@ -619,7 +630,7 @@ public class CameraStandEntity extends Entity implements CameraHolder {
             setCamera(ItemStack.EMPTY);
 
             if (source.isCreativePlayer()) {
-                return; // Prevent discard at the same hit as removing the camera.
+                return true; // Prevent discard at the same hit as removing the camera.
             }
 
             amount = 1.0f; // Prevent one-hit harvesting.
@@ -638,12 +649,14 @@ public class CameraStandEntity extends Entity implements CameraHolder {
                 showBreakingParticles();
                 playBreakSound();
             } else if (getDamage() > 10.0F) {
-                destroy(source);
+                destroy(serverLevel, source);
                 showBreakingParticles();
                 playBreakSound();
             }
 
         }
+
+        return true;
     }
 
     public void setHurtTime(int hurtTime) {
@@ -670,18 +683,16 @@ public class CameraStandEntity extends Entity implements CameraHolder {
         return this.entityData.get(DATA_ID_HURTDIR);
     }
 
-    protected void destroy(DamageSource source) {
-        this.destroy(this.getDropItem());
+    protected void destroy(ServerLevel serverLevel, DamageSource source) {
+        this.destroy(serverLevel, this.getDropItem());
     }
 
-    public void destroy(Item dropItem) {
-        this.kill((ServerLevel) this.level());
-        // TODO: MC 26.1 - GameRules API removed
-        // if (this.level().getGameRules().getBoolean(GameRules.RULE_DO_ENTITY_DROPS)) {
-        if (true) {
+    public void destroy(ServerLevel serverLevel, Item dropItem) {
+        this.kill(serverLevel);
+        if (serverLevel.getGameRules().get(GameRules.ENTITY_DROPS)) {
             ItemStack itemStack = new ItemStack(dropItem);
             itemStack.set(DataComponents.CUSTOM_NAME, this.getCustomName());
-            this.spawnAtLocation((ServerLevel) level(), itemStack);
+            this.spawnAtLocation(serverLevel, itemStack, 0.5f);
         }
     }
 
@@ -782,13 +793,15 @@ public class CameraStandEntity extends Entity implements CameraHolder {
         return level().isClientSide();
     }
 
-    public boolean isControlledByLocalPlayer() {
-        return operator() instanceof Player player && player.isLocalPlayer();
+    @Override
+    protected boolean isLocalClientAuthoritative() {
+        return operator() instanceof Player player && player.isLocalPlayer() || super.isLocalClientAuthoritative();
     }
 
     // --
 
-    public void lerpTo(double x, double y, double z, float yRot, float xRot, int steps) {
+    @Override
+    protected void lerpPositionAndRotationStep(int steps, double x, double y, double z, double yRot, double xRot) {
         this.setPos(x, y, z);
         // this method is called when client receives packet from server,
         // and it makes camera rotation jump around and be janky.

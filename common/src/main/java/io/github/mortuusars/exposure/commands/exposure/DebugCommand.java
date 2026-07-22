@@ -13,8 +13,8 @@ import io.github.mortuusars.exposure.world.camera.capture.CaptureType;
 import io.github.mortuusars.exposure.world.camera.component.ShutterSpeed;
 import io.github.mortuusars.exposure.world.camera.frame.EntitiesInFrame;
 import io.github.mortuusars.exposure.world.entity.CameraHolder;
-import io.github.mortuusars.exposure.world.item.camcom.CameraItem;
-import io.github.mortuusars.exposure.world.item.camcom.CameraSettings;
+import io.github.mortuusars.exposure.world.item.camera.CameraItem;
+import io.github.mortuusars.exposure.world.item.camera.CameraSettings;
 import io.github.mortuusars.exposure.world.level.storage.ExposureIdentifier;
 import io.github.mortuusars.exposure.world.camera.frame.Frame;
 import io.github.mortuusars.exposure.world.item.*;
@@ -108,9 +108,9 @@ public class DebugCommand {
                 return Component.translatable("command.exposure.debug.expose_rgb.success.captured", channel.getSerializedName())
                         .append(Component.literal(exposureId)
                                 .withStyle(Style.EMPTY
-                                        .withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND,
-                                                "/exposure show id " + exposureId))
-                                        .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_ITEM, new HoverEvent.ItemStackInfo(photograph)))
+                                                .withClickEvent(new ClickEvent.RunCommand(
+                                                        "/exposure show id " + exposureId))
+                                                .withHoverEvent(new HoverEvent.ShowItem(net.minecraft.world.item.ItemStackTemplate.fromNonEmptyStack(photograph)))
                                         .withUnderlined(true)));
             };
 
@@ -159,9 +159,9 @@ public class DebugCommand {
                 return Component.translatable("command.exposure.debug.chromatic_from_last_three.success.created")
                         .append(Component.literal(exposureId)
                                 .withStyle(Style.EMPTY
-                                        .withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND,
-                                                "/exposure show latest"))
-                                        .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_ITEM, new HoverEvent.ItemStackInfo(photographStack)))
+                                                .withClickEvent(new ClickEvent.RunCommand(
+                                                        "/exposure show latest"))
+                                                .withHoverEvent(new HoverEvent.ShowItem(net.minecraft.world.item.ItemStackTemplate.fromNonEmptyStack(photographStack)))
                                         .withUnderlined(true)));
             };
 

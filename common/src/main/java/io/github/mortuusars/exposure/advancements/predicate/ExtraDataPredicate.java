@@ -15,36 +15,35 @@ import org.jetbrains.annotations.Nullable;
 public record ExtraDataPredicate(ExtraData data) {
     public static final Codec<ExtraDataPredicate> CODEC = TagParser.LENIENT_CODEC.xmap(
             tag -> new ExtraDataPredicate(new ExtraData(tag)),
-            predicate -> predicate.data.toTag());
+            predicate -> predicate.data.copyTag());
     public static final StreamCodec<ByteBuf, ExtraDataPredicate> STREAM_CODEC = ByteBufCodecs.COMPOUND_TAG.map(
             tag -> new ExtraDataPredicate(new ExtraData(tag)),
-            predicate -> predicate.data.toTag());
+            predicate -> predicate.data.copyTag());
 
-    public boolean matches(@Nullable Tag tag) {
-        return tag != null && compareNbt(tag);
+    public boolean matches(@Nullable ExtraData extraData) {
+        return extraData != null && compareNbt(extraData.copyTag());
     }
 
     private boolean compareNbt(@Nullable Tag other) {
-        if (data == null) {
-            return other == null;
-        }
         if (other == null) {
             return false;
-        }
-
-        CompoundTag thisTag = data.toTag();
-        if (other instanceof CompoundTag otherTag) {
-            if (otherTag.size() < thisTag.size()) {
+        } else {
+            CompoundTag compoundTag = data.copyTag();
+            if (!(other instanceof CompoundTag compoundTag2)) {
                 return false;
             }
-            for (String key : thisTag.keySet()) {
-                Tag tag2 = thisTag.get(key);
-                if (!NbtUtils.compareNbt(tag2, otherTag.get(key), true)) {
-                    return false;
+            if (compoundTag2.size() < compoundTag.size()) {
+                return false;
+            } else {
+                for (String string : compoundTag.keySet()) {
+                    Tag tag2 = compoundTag.get(string);
+                    if (!NbtUtils.compareNbt(tag2, compoundTag2.get(string), true)) {
+                        return false;
+                    }
                 }
+
+                return true;
             }
-            return true;
         }
-        return false;
     }
 }

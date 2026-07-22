@@ -4,6 +4,7 @@ import com.google.common.base.Preconditions;
 import io.github.mortuusars.exposure.Exposure;
 import io.github.mortuusars.exposure.world.inventory.AlbumMenu;
 import io.github.mortuusars.exposure.network.packet.Packet;
+import io.github.mortuusars.exposure.world.item.component.album.AlbumContent;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
@@ -35,6 +36,9 @@ public record AlbumSyncNoteC2SP(int pageIndex, String text) implements Packet {
         if (!(player.containerMenu instanceof AlbumMenu albumMenu)) {
             throw new IllegalStateException("Player receiving this packet should have AlbumMenu open. " +
                     "Current menu: " + player.containerMenu);
+        }
+        if (pageIndex < 0 || pageIndex >= AlbumContent.MAX_PAGES) {
+            return false;
         }
 
         albumMenu.updatePage(pageIndex, page -> page.setNote(text));

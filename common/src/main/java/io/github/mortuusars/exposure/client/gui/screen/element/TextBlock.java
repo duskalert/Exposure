@@ -4,6 +4,7 @@ import io.github.mortuusars.exposure.client.gui.screen.element.textbox.Horizonta
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.gui.narration.NarratedElementType;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.screens.inventory.tooltip.DefaultTooltipPositioner;
@@ -21,8 +22,6 @@ import java.util.List;
 import java.util.function.Function;
 
 public class TextBlock extends AbstractWidget {
-    // TODO: MC 26.1 - Widget/Rendering API redesigned. Method bodies stubbed.
-
     public int fontColor = 0xFF000000;
     public boolean drawShadow = false;
     public HorizontalAlignment alignment = HorizontalAlignment.LEFT;
@@ -37,12 +36,8 @@ public class TextBlock extends AbstractWidget {
         super(x, y, width, height, message);
         this.font = font;
         this.componentClickedHandler = componentClickedHandler;
-        makeLines();
-    }
 
-    @Override
-    protected void extractWidgetRenderState(GuiGraphicsExtractor gr, int mx, int my, float pt) {
-        // TODO: MC 26.1 - abstract method stub
+        makeLines();
     }
 
     @Override
@@ -54,15 +49,18 @@ public class TextBlock extends AbstractWidget {
     protected void makeLines() {
         Component text = getMessage();
         List<FormattedCharSequence> lines = font.split(text, getWidth());
+
         int availableLines = Math.min(lines.size(), height / font.lineHeight);
 
         List<FormattedCharSequence> visibleLines = new ArrayList<>();
         for (int i = 0; i < availableLines; i++) {
             FormattedCharSequence line = lines.get(i);
+
             if (i == availableLines - 1 && availableLines < lines.size()) {
                 line = FormattedCharSequence.composite(line,
                         Component.literal("...").withStyle(text.getStyle()).getVisualOrderText());
             }
+
             visibleLines.add(line);
         }
 
@@ -71,6 +69,7 @@ public class TextBlock extends AbstractWidget {
             hiddenLines = new ArrayList<>(lines.stream()
                     .skip(availableLines)
                     .toList());
+
             hiddenLines.set(0, FormattedCharSequence.composite(
                     FormattedCharSequence.forward("...", text.getStyle()), hiddenLines.get(0)));
         }
@@ -79,9 +78,10 @@ public class TextBlock extends AbstractWidget {
         this.tooltipLines = hiddenLines;
     }
 
-    // TODO: MC 26.1 - mouseClicked now takes MouseButtonEvent
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        return false;
+    @Override
+    public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
+        Style style = getClickedComponentStyleAt(event.x(), event.y());
+        return event.button() == 0 && style != null && componentClickedHandler.apply(style);
     }
 
     @Override
@@ -94,13 +94,54 @@ public class TextBlock extends AbstractWidget {
         return getMessage().copy();
     }
 
-    // TODO: MC 26.1 - renderWidget signature changed, drawString/renderComponentHoverEffect/renderTooltip changed
-    protected void renderWidget(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTick) {
-        // Stubbed - rendering API redesigned in MC 26.1
+    @Override
+    protected void extractWidgetRenderState(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTick) {
+        var textRenderer = guiGraphics.textRendererForWidget(this,
+                GuiGraphicsExtractor.HoveredTextEffects.TOOLTIP_AND_CURSOR);
+        for (int i = 0; i < renderedLines.size(); i++) {
+            FormattedCharSequence line = renderedLines.get(i);
+
+            int x = getX() + alignment.align(getWidth(), font.width(line));
+            textRenderer.accept(x, getY() + font.lineHeight * i, line);
+        }
+
+        if (!tooltipLines.isEmpty() && isMouseOver(mouseX, mouseY))
+            guiGraphics.setTooltipForNextFrame(font, tooltipLines, DefaultTooltipPositioner.INSTANCE, mouseX, mouseY, false);
     }
 
-    // TODO: MC 26.1 - getClickedComponentStyleAt stubbed
     public @Nullable Style getClickedComponentStyleAt(double mouseX, double mouseY) {
-        return null;
+        if (renderedLines.isEmpty())
+            return null;
+
+        int x = Mth.floor(mouseX - getX());
+        int y = Mth.floor(mouseY - getY());
+
+        if (x < 0 || y < 0 || x > getWidth() || y > getHeight())
+            return null;
+
+        int hoveredLine = y / font.lineHeight;
+
+        if (hoveredLine >= renderedLines.size())
+            return null;
+
+        FormattedCharSequence line = renderedLines.get(hoveredLine);
+        int lineStart = alignment.align(getWidth(), font.width(line));
+
+        if (x < lineStart)
+            return null;
+
+
+        int[] consumedWidth = {0};
+        Style[] result = {null};
+        line.accept((index, characterStyle, codePoint) -> {
+            int glyphWidth = font.width(FormattedCharSequence.codepoint(codePoint, characterStyle));
+            if (x - lineStart < consumedWidth[0] + glyphWidth) {
+                result[0] = characterStyle;
+                return false;
+            }
+            consumedWidth[0] += glyphWidth;
+            return true;
+        });
+        return result[0];
     }
 }

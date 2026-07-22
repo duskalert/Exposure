@@ -37,10 +37,10 @@ public class ShowCommand {
                         .then(Commands.argument("id", StringArgumentType.string())
                                 .suggests(new ExposureIdSuggestionProvider())
                                 .executes(context -> exposureId(context.getSource(),
-                                        StringArgumentType.getStringOr(context, "id", ""), false))
+                                        StringArgumentType.getString(context, "id"), false))
                                 .then(Commands.literal("negative")
                                         .executes(context -> exposureId(context.getSource(),
-                                                StringArgumentType.getStringOr(context, "id", ""), true)))))
+                                                StringArgumentType.getString(context, "id"), true)))))
                 .then(Commands.literal("texture")
                         .then(Commands.argument("path", new TextureLocationArgument())
                                 .executes(context -> texture(context.getSource(),
