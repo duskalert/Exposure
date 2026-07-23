@@ -1,5 +1,7 @@
 package io.github.mortuusars.exposure.client.camera;
 
+import io.github.mortuusars.exposure.util.CameraOperatorAccess;
+
 import io.github.mortuusars.exposure.client.camera.viewfinder.Viewfinder;
 import io.github.mortuusars.exposure.client.camera.viewfinder.ViewfinderRegistry;
 import io.github.mortuusars.exposure.client.render.FovModifier;
@@ -43,9 +45,9 @@ public class CameraClient {
     }
 
     public static void deactivate() {
-        Minecrft.player().getActiveExposureCameraOptional().ifPresent(camera -> {
+        CameraOperatorAccess.op(Minecrft.player()).getActiveExposureCameraOptional().ifPresent(camera -> {
             camera.map((item, stack) -> item.deactivate(camera.getHolder().asHolderEntity(), stack));
-            Minecrft.player().removeActiveExposureCamera();
+            CameraOperatorAccess.op(Minecrft.player()).removeActiveExposureCamera();
         });
         Packets.sendToServer(ActiveCameraDeactivateCommonPacket.INSTANCE);
     }
@@ -55,9 +57,9 @@ public class CameraClient {
         // Camera owns the render entity directly in 26.1.2.
         Minecrft.get().gameRenderer.getMainCamera().setEntity(entity);
 
-        // Set eye height to final value to skip transition animation
-        Minecrft.get().gameRenderer.getMainCamera().eyeHeight = entity.getEyeHeight();
-        Minecrft.get().gameRenderer.getMainCamera().eyeHeightOld = entity.getEyeHeight();
+        // TODO: MC 26.1 - eyeHeight/eyeHeightOld are now private
+        // Minecrft.get().gameRenderer.getMainCamera().eyeHeight = entity.getEyeHeight();
+        // Minecrft.get().gameRenderer.getMainCamera().eyeHeightOld = entity.getEyeHeight();
     }
 
     public static void resetCameraEntity() {

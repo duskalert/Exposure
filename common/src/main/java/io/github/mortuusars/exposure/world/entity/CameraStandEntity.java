@@ -1,6 +1,7 @@
 package io.github.mortuusars.exposure.world.entity;
 
 import io.github.mortuusars.exposure.world.entity.CameraOperator;
+import io.github.mortuusars.exposure.util.CameraOperatorAccess;
 import io.github.mortuusars.exposure.world.entity.CameraHolder;
 
 import io.github.mortuusars.exposure.Config;
@@ -388,7 +389,7 @@ public class CameraStandEntity extends Entity implements CameraHolder {
         cameraItem.getOrCreateId(cameraStack);
 
         if (player instanceof ServerPlayer serverPlayer) {
-            setOperator(serverPlayer);
+            // TODO setOperator(serverPlayer);
             cameraItem.getTimer().stop(cameraStack);
 
             MenuProvider menuProvider = new MenuProvider() {
@@ -418,7 +419,7 @@ public class CameraStandEntity extends Entity implements CameraHolder {
 
     public void startControlling(Player player, CameraItem cameraItem) {
         cameraItem.activateOnStand(player, getCamera(), this);
-        setOperator(player);
+        // TODO setOperator(player);
 
         if (getOwnerPlayerUuid().equals(Util.NIL_UUID)) {
             setOwnerPlayer(player);

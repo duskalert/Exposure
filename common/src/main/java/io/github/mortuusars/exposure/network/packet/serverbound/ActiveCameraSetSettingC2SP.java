@@ -1,5 +1,7 @@
 package io.github.mortuusars.exposure.network.packet.serverbound;
 
+import io.github.mortuusars.exposure.util.CameraOperatorAccess;
+
 import io.github.mortuusars.exposure.Exposure;
 import io.github.mortuusars.exposure.world.camera.Camera;
 import io.github.mortuusars.exposure.world.camera.CameraOnStand;
@@ -32,7 +34,7 @@ public record ActiveCameraSetSettingC2SP(CameraSetting<?> setting, byte[] encode
 
     @Override
     public boolean handle(PacketFlow direction, Player player) {
-        @Nullable Camera camera = player.getActiveExposureCamera();
+        @Nullable Camera camera = CameraOperatorAccess.op(player).getActiveExposureCamera();
         if (camera == null || camera.isEmpty()) return false;
 
         setting.decodeAndSet(camera.getHolder(), camera.getItemStack(), player.registryAccess(), encodedValue);

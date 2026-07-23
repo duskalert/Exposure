@@ -1,5 +1,7 @@
 package io.github.mortuusars.exposure.mixin.client;
 
+import io.github.mortuusars.exposure.util.CameraOperatorAccess;
+
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.mojang.blaze3d.pipeline.RenderTarget;
 import io.github.mortuusars.exposure.Exposure;
@@ -33,7 +35,7 @@ public abstract class MinecraftMixin {
         if (player == null || player.isHandsBusy()) return;
         if (screen instanceof ViewfinderCameraControlsScreen) return; // Screen handles right click.
 
-        if (player.getActiveExposureCamera() instanceof CameraOnStand cameraOnStand && cameraOnStand.isActive()) {
+        if (CameraOperatorAccess.op(player).getActiveExposureCamera() instanceof CameraOnStand cameraOnStand && cameraOnStand.isActive()) {
             cameraOnStand.release();
             Packets.sendToServer(ActiveCameraReleaseC2SP.INSTANCE);
             ci.cancel();
@@ -42,7 +44,7 @@ public abstract class MinecraftMixin {
 
     @Inject(method = "startAttack", at = @At(value = "HEAD"), cancellable = true)
     void onStartAttack(CallbackInfoReturnable<Boolean> cir) {
-        if (player != null && player.getActiveExposureCamera() instanceof CameraOnStand) {
+        if (player != null && CameraOperatorAccess.op(player).getActiveExposureCamera() instanceof CameraOnStand) {
             cir.setReturnValue(false);
         }
     }

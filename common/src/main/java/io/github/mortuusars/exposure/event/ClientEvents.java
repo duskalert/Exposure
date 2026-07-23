@@ -1,5 +1,7 @@
 package io.github.mortuusars.exposure.event;
 
+import io.github.mortuusars.exposure.util.CameraOperatorAccess;
+
 import io.github.mortuusars.exposure.Config;
 import io.github.mortuusars.exposure.Exposure;
 import io.github.mortuusars.exposure.ExposureClient;
@@ -35,7 +37,7 @@ public class ClientEvents {
 
     private static void preloadStuffToFixLagSpikes() {
         ClientPacketsHandler.clearRenderingCache();
-        boolean active = Minecrft.player().getActiveExposureCameraOptional().isEmpty();
+        boolean active = CameraOperatorAccess.op(Minecrft.player()).getActiveExposureCameraOptional().isEmpty();
 
         EasingFunction.EASE_OUT_EXPO.ease(0.5);
         ViewfinderRegistry.getConstructor(Exposure.Items.CAMERA.get()).apply(new Camera(Minecrft.player(), CameraId.create()) {

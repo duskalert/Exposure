@@ -307,7 +307,7 @@ public class CameraItem extends Item {
     }
 
     public @NotNull InteractionResult activateInHand(Player player, ItemStack stack, @NotNull InteractionHand hand) {
-        player.setActiveExposureCamera(new CameraInHand(player, getOrCreateId(stack), hand));
+        CameraOperatorAccess.op(player).setActiveExposureCamera(new CameraInHand(CameraOperatorAccess.holder(player), getOrCreateId(stack), hand));
         if (player.level().isClientSide()) {
             Minecrft.releaseUseButton(); // Releasing use key to not take a shot immediately, if right click is still held.
         }
@@ -315,7 +315,7 @@ public class CameraItem extends Item {
     }
 
     public @NotNull InteractionResult activateOnStand(Player player, ItemStack stack, CameraStandEntity cameraStand) {
-        player.setActiveExposureCamera(new CameraOnStand(player, cameraStand, getOrCreateId(stack)));
+        CameraOperatorAccess.op(player).setActiveExposureCamera(new CameraOnStand(CameraOperatorAccess.op(player), cameraStand, getOrCreateId(stack)));
         if (player.level().isClientSide()) {
             Minecrft.releaseUseButton(); // Releasing use key to not take a shot immediately, if right click is still held.
         }
@@ -426,7 +426,7 @@ public class CameraItem extends Item {
         }
 
         if (Config.Server.CAMERA_GUI_RIGHT_CLICK_HOTSWAP.get()) {
-            if (hotswap(player, stack, otherStack, access) != InteractionResult.PASS) {
+            if (hotswap(CameraOperatorAccess.holder(player), stack, otherStack, access) != InteractionResult.PASS) {
                 return true;
             }
         }
@@ -557,7 +557,7 @@ public class CameraItem extends Item {
     }
 
     public void clientInventoryTick(ItemStack stack, Player player) {
-        boolean matchesActive = player.getActiveExposureCameraOptional()
+        boolean matchesActive = CameraOperatorAccess.op(player).getActiveExposureCameraOptional()
                 .map(camera -> camera.idMatches(getOrCreateId(stack)))
                 .orElse(false);
         if (isActive(stack) && !matchesActive) {
@@ -643,7 +643,7 @@ public class CameraItem extends Item {
                     : activateInHand(player, stack, hand);
         }
 
-        return release(player, stack);
+        return release(CameraOperatorAccess.holder(player), stack);
     }
 
     public boolean canTakePhoto(CameraHolder holder, ItemStack stack) {
@@ -948,7 +948,9 @@ public class CameraItem extends Item {
 
     protected void entityCaptured(CameraHolder cameraHolder, ItemStack stack, LivingEntity entity) {
         if (cameraHolder.asHolderEntity() instanceof ServerPlayer player && entity instanceof EnderMan enderMan) {
-            boolean lookingAtAngryEnderMan = player.equals(enderMan.getTarget()) && enderMan.isBeingStaredBy(player);
+            // TODO: MC 26.1 - isBeingStaredBy is now private
+            // boolean lookingAtAngryEnderMan = player.equals(enderMan.getTarget()) && enderMan.isBeingStaredBy(player);
+            boolean lookingAtAngryEnderMan = player.equals(enderMan.getTarget());
 
             if (lookingAtAngryEnderMan) {
                 // I wanted to implement this in a predicate,
@@ -1017,7 +1019,7 @@ public class CameraItem extends Item {
 
     protected void testPositionsInFrame(ItemStack stack, Level level, Player player) {
         if (level.isClientSide() && level.getGameTime() % 2 == 0) {
-            List<BlockPos> positionsInFrame = getPositionsInFrame(player, getPointOfView(player, stack), getViewfinderFov(level, stack));
+            List<BlockPos> positionsInFrame = getPositionsInFrame(CameraOperatorAccess.holder(player), getPointOfView(CameraOperatorAccess.holder(player), stack), getViewfinderFov(level, stack));
             for (BlockPos pos : positionsInFrame) {
                 level.addAlwaysVisibleParticle(ParticleTypes.EXPLOSION, true, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 0, 0, 0);
             }

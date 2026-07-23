@@ -54,7 +54,7 @@ public class ExposureNeoForge {
 
         io.github.mortuusars.exposure.neoforge.event.NeoForgeCommonEvents.GameBus.register();
         if (true) {
-            ExposureNeoForgeClient.init(container);
+            // TODO: MC 26.1 - ExposureNeoForgeClient.init(container);
             io.github.mortuusars.exposure.neoforge.event.NeoForgeClientEvents.GameBus.register();
         }
     }

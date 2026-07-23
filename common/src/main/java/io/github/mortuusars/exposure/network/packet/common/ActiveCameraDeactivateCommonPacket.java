@@ -1,5 +1,7 @@
 package io.github.mortuusars.exposure.network.packet.common;
 
+import io.github.mortuusars.exposure.util.CameraOperatorAccess;
+
 import io.github.mortuusars.exposure.Exposure;
 import io.github.mortuusars.exposure.network.packet.Packet;
 import net.minecraft.network.FriendlyByteBuf;
@@ -28,9 +30,9 @@ public class ActiveCameraDeactivateCommonPacket implements Packet {
 
     @Override
     public boolean handle(PacketFlow flow, Player player) {
-        player.getActiveExposureCameraOptional().ifPresent(camera -> {
+        CameraOperatorAccess.op(player).getActiveExposureCameraOptional().ifPresent(camera -> {
             camera.map((item, stack) -> item.deactivate(camera.getHolder().asHolderEntity(), stack));
-            player.removeActiveExposureCamera();
+            CameraOperatorAccess.op(player).removeActiveExposureCamera();
         });
         return true;
     }
