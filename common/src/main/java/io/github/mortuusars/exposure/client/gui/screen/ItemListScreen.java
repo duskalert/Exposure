@@ -178,7 +178,8 @@ public class ItemListScreen extends Screen {
             ItemStack itemStack = hoveredSlot.getItem();
 
             List<Component> tooltipLines = parent instanceof AbstractContainerScreen<?> abstractContainerScreen
-                    ? abstractContainerScreen.getTooltipFromContainerItem(itemStack)
+                    // TODO: MC 26.1 - getTooltipFromContainerItem is now protected
+                    ? List.of()
                     : Screen.getTooltipFromItem(Minecrft.get(), itemStack);
 
             guiGraphics.setTooltipForNextFrame(font, tooltipLines, itemStack.getTooltipImage(), x, y);

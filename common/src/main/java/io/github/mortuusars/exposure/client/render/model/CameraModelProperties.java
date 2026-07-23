@@ -1,10 +1,7 @@
 package io.github.mortuusars.exposure.client.render.model;
 
-import io.github.mortuusars.exposure.Exposure;
-import net.minecraft.client.renderer.item.properties.select.SelectItemModelProperties;
+import io.github.mortuusars.exposure.client.render.item.properties.select.CameraModeProperty;
 
 public class CameraModelProperties {
-    public static void bootstrap() {
-        SelectItemModelProperties.ID_MAPPER.put(Exposure.resource("camera_mode"), CameraModeProperty.TYPE);
-    }
+    public static final CameraModeProperty HAS_FLASH = null;
 }

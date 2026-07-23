@@ -98,7 +98,8 @@ public class ViewfinderCameraControlsScreen extends Screen {
             return;
         }
         refreshMovementKeys();
-        Minecraft.getInstance().handleKeybinds();
+        // TODO: MC 26.1 - handleKeybinds is now private
+        // Minecraft.getInstance().handleKeybinds();
     }
 
     @Override
@@ -223,11 +224,11 @@ public class ViewfinderCameraControlsScreen extends Screen {
      */
     protected void refreshMovementKeys() {
         Consumer<KeyMapping> update = keyMapping -> {
-            if (keyMapping.key.getType() == InputConstants.Type.MOUSE) {
-                keyMapping.setDown(MouseHandler.isMouseButtonHeld(keyMapping.key.getValue()));
+            if (keyMapping.getKey().getType() == InputConstants.Type.MOUSE) {
+                keyMapping.setDown(MouseHandler.isMouseButtonHeld(keyMapping.getKey().getValue()));
             } else {
                 keyMapping.setDown(InputConstants.isKeyDown(
-                        Minecraft.getInstance().getWindow(), keyMapping.key.getValue()));
+                        Minecraft.getInstance().getWindow(), keyMapping.getKey().getValue()));
             }
         };
 
@@ -304,7 +305,7 @@ public class ViewfinderCameraControlsScreen extends Screen {
 
         if (event.button() != InputConstants.MOUSE_BUTTON_LEFT) return false;
 
-        if (camera.inSelfieMode() && Minecrft.options().keySprint.isDown) {
+        if (camera.inSelfieMode() && Minecrft.options().keySprint.isDown()) {
             // Parameters are correct. Stop nagging me, Intellij
             //noinspection SuspiciousNameCombination
             viewfinder.selfie.rotateCamera(dragY, dragX, true);

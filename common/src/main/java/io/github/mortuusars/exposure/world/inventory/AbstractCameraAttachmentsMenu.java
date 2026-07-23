@@ -1,6 +1,7 @@
 package io.github.mortuusars.exposure.world.inventory;
 
 import io.github.mortuusars.exposure.Exposure;
+import io.github.mortuusars.exposure.util.CameraOperatorAccess;
 import io.github.mortuusars.exposure.util.supporter.Supporters;
 import io.github.mortuusars.exposure.world.inventory.slot.FilteredSlot;
 import io.github.mortuusars.exposure.world.item.camera.Attachment;
@@ -131,7 +132,7 @@ public abstract class AbstractCameraAttachmentsMenu extends AbstractContainerMen
                 attachment.playRemoveSoundSided(player);
             }
 
-            getCamera().apply((item, stack) -> item.actionPerformed(stack, player));
+            getCamera().apply((item, stack) -> item.actionPerformed(stack, CameraOperatorAccess.holder(player)));
         }
     }
 

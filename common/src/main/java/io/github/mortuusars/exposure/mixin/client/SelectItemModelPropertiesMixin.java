@@ -19,6 +19,7 @@ public class SelectItemModelPropertiesMixin {
 
     @Inject(method = "bootstrap", at = @At("TAIL"))
     private static void exposure$registerProperties(CallbackInfo ci) {
-        ID_MAPPER.put(Exposure.resource("camera_mode"), CameraModeProperty.TYPE);
+        // TODO: MC 26.1 - CameraModeProperty needs port
+        // ID_MAPPER.put(Exposure.resource("camera_mode"), CameraModeProperty.TYPE);
     }
 }

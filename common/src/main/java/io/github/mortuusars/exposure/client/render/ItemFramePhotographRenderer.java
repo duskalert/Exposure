@@ -34,8 +34,9 @@ public class ItemFramePhotographRenderer {
         poseStack.scale(scale, scale, scale);
         poseStack.translate(-0.5, -0.5, 0.045);
 
-        ExposureClient.photographRenderer().renderPhotograph(poseStack, bufferSource, item, stack,
-                false, false, packedLight, 255, 255, 255, 255);
+        // TODO: MC 26.1 - renderPhotograph API changed
+        // ExposureClient.photographRenderer().renderPhotograph(poseStack, bufferSource, item, stack,
+        //         false, false, packedLight, 255, 255, 255, 255);
 
         poseStack.popPose();
     }

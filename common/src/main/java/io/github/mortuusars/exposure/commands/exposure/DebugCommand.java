@@ -6,6 +6,7 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import io.github.mortuusars.exposure.Exposure;
 import io.github.mortuusars.exposure.ExposureServer;
+import io.github.mortuusars.exposure.util.CameraOperatorAccess;
 import io.github.mortuusars.exposure.util.PointOfView;
 import io.github.mortuusars.exposure.world.camera.*;
 import io.github.mortuusars.exposure.world.camera.capture.CaptureParameters;
@@ -70,7 +71,7 @@ public class DebugCommand {
     private static int exposeRGB(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         ServerPlayer player = context.getSource().getPlayerOrException();
 
-        @Nullable Camera cameraInHand = CameraInHand.find(player);
+        @Nullable Camera cameraInHand = CameraInHand.find(CameraOperatorAccess.holder(player));
         if (cameraInHand == null || cameraInHand.isEmpty() || !(cameraInHand.getItemStack().getItem() instanceof CameraItem cameraItem)) {
             context.getSource().sendFailure(Component.translatable("command.exposure.debug.expose_rgb.fail.wrong_item"));
             return 0;
@@ -86,7 +87,7 @@ public class DebugCommand {
 
             CaptureParameters params = new CaptureParameters.Builder(exposureId)
                     .setCameraID(cameraInHand.getId())
-                    .setCameraHolder(player)
+                    .setCameraHolder(CameraOperatorAccess.holder(player))
                     .setFov(cameraItem.getFov(player.level(), cameraStack))
                     .setCropFactor(cameraItem.getCropFactor())
                     .setFilmProperties(cameraItem.getFilmProperties(cameraStack).withType(ExposureType.BLACK_AND_WHITE))
@@ -96,11 +97,11 @@ public class DebugCommand {
 
             properties.add(params);
 
-            PointOfView pov = cameraItem.getPointOfView(player, cameraStack);
+            PointOfView pov = cameraItem.getPointOfView(CameraOperatorAccess.holder(player), cameraStack);
             double fov = cameraItem.getViewfinderFov(player.level(), cameraStack);
-            List<BlockPos> positions = cameraItem.getPositionsInFrame(player, pov, fov);
+            List<BlockPos> positions = cameraItem.getPositionsInFrame(CameraOperatorAccess.holder(player), pov, fov);
             List<LivingEntity> entities = EntitiesInFrame.get((CameraHolder) player, pov, fov);
-            Frame frame = cameraItem.createFrame(player, player.level(), cameraStack, params, positions, entities);
+            Frame frame = cameraItem.createFrame(CameraOperatorAccess.holder(player), player.level(), cameraStack, params, positions, entities);
 
             Supplier<Component> msg = () -> {
                 ItemStack photograph = new ItemStack(Exposure.Items.PHOTOGRAPH.get());

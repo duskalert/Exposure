@@ -25,7 +25,9 @@ public class ResourceImage extends SimpleTexture implements RenderableImage {
     public static @NotNull RenderableImage getOrCreate(Identifier location) {
         TextureManager textureManager = Minecraft.getInstance().getTextureManager();
 
-        @Nullable AbstractTexture existingTexture = textureManager.byPath.get(location);
+        // TODO: MC 26.1 - TextureManager.byPath is now private
+        // @Nullable AbstractTexture existingTexture = textureManager.byPath.get(location);
+        @Nullable AbstractTexture existingTexture = textureManager.getTexture(location);
         if (existingTexture instanceof ResourceImage resourceImage) {
             return resourceImage;
         }
