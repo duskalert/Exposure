@@ -82,7 +82,7 @@ public class ViewfinderSelfie {
     }
 
     public boolean mouseMove(double xRotDelta, double yRotDelta) {
-        if (!viewfinder.controlsActive() && camera.inSelfieMode() && Minecrft.options().keySprint.isDown) {
+        if (!viewfinder.controlsActive() && camera.inSelfieMode() && Minecrft.options().keySprint.isDown()) {
             rotateCamera(xRotDelta, yRotDelta, false);
             return true;
         }

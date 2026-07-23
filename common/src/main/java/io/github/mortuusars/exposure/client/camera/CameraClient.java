@@ -37,7 +37,7 @@ public class CameraClient {
     }
 
     public static Optional<Camera> getActive() {
-        return ((CameraOperator) Minecrft.player()).getActiveExposureCameraOptional();
+        return CameraOperatorAccess.op(Minecrft.player()).getActiveExposureCameraOptional();
     }
 
     public static boolean isActive() {
