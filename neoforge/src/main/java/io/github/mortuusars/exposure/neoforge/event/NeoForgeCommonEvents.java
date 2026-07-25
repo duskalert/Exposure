@@ -1,5 +1,7 @@
 package io.github.mortuusars.exposure.neoforge.event;
 
+import java.util.function.BiConsumer;
+
 import io.github.mortuusars.exposure.Exposure;
 import io.github.mortuusars.exposure.data.ColorPalette;
 import io.github.mortuusars.exposure.data.Filter;
@@ -20,6 +22,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
+import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.event.OnDatapackSyncEvent;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.neoforge.event.server.ServerStartedEvent;
@@ -50,25 +53,45 @@ public class NeoForgeCommonEvents {
             event.dataPackRegistry(Exposure.Registries.FILTER, Filter.CODEC, Filter.CODEC);
         }
 
-        @SuppressWarnings("unchecked")
+        @SuppressWarnings({"unchecked", "rawtypes"})
         @SubscribeEvent
         public static void registerPackets(RegisterPayloadHandlersEvent event) {
-            // TODO: MC 26.1 - PacketDefinition vs TypeAndCodec API change
-            /*
-            PayloadRegistrar registrar = event.registrar("1");
-            for (CustomPacketPayload.TypeAndCodec<? extends FriendlyByteBuf, ? extends CustomPacketPayload> definition : S2CPackets.getDefinitions()) {
-                registrar.playToClient((CustomPacketPayload.Type<Packet>) definition.type(),
-                        (StreamCodec<FriendlyByteBuf, Packet>) definition.codec(), PacketsImpl::handle);
+            PayloadRegistrar r = event.registrar("1");
+            for (var def : S2CPackets.getDefinitions()) {
+                CustomPacketPayload.Type type = def.type();
+                StreamCodec codec = def.codec();
+                r.playToClient(type, codec, (BiConsumer) (payload, ctx) -> PacketsImpl.handle((Packet) payload, ctx));
             }
-            for (CustomPacketPayload.TypeAndCodec<? extends FriendlyByteBuf, ? extends CustomPacketPayload> definition : C2SPackets.getDefinitions()) {
-                registrar.playToServer((CustomPacketPayload.Type<Packet>) definition.type(),
-                        (StreamCodec<FriendlyByteBuf, Packet>) definition.codec(), PacketsImpl::handle);
+            for (var def : C2SPackets.getDefinitions()) {
+                CustomPacketPayload.Type type = def.type();
+                StreamCodec codec = def.codec();
+                r.playToServer(type, codec, (BiConsumer) (payload, ctx) -> PacketsImpl.handle((Packet) payload, ctx));
             }
-            for (CustomPacketPayload.TypeAndCodec<? extends FriendlyByteBuf, ? extends CustomPacketPayload> definition : CommonPackets.getDefinitions()) {
-                registrar.playBidirectional((CustomPacketPayload.Type<Packet>) definition.type(),
-                        (StreamCodec<FriendlyByteBuf, Packet>) definition.codec(), PacketsImpl::handle);
+            for (var def : CommonPackets.getDefinitions()) {
+                CustomPacketPayload.Type type = def.type();
+                StreamCodec codec = def.codec();
+                r.playBidirectional(type, codec, (BiConsumer) (payload, ctx) -> PacketsImpl.handle((Packet) payload, ctx));
             }
-            */
+        }
+
+        @SubscribeEvent
+        public static void onBuildCreativeTab(BuildCreativeModeTabContentsEvent event) {
+            if (event.getTab() == Exposure.CreativeTabs.EXPOSURE.get()) {
+                event.accept(Exposure.Items.CAMERA.get());
+                event.accept(Exposure.Items.CAMERA_STAND.get());
+                event.accept(Exposure.Items.BLACK_AND_WHITE_FILM.get());
+                event.accept(Exposure.Items.COLOR_FILM.get());
+                event.accept(Exposure.Items.DEVELOPED_BLACK_AND_WHITE_FILM.get());
+                event.accept(Exposure.Items.DEVELOPED_COLOR_FILM.get());
+                event.accept(Exposure.Items.PHOTOGRAPH.get());
+                event.accept(Exposure.Items.STACKED_PHOTOGRAPHS.get());
+                event.accept(Exposure.Items.ALBUM.get());
+                event.accept(Exposure.Items.SIGNED_ALBUM.get());
+                event.accept(Exposure.Items.PHOTOGRAPH_FRAME.get());
+                event.accept(Exposure.Items.LIGHTROOM.get());
+                event.accept(Exposure.Items.INTERPLANAR_PROJECTOR.get());
+                event.accept(Exposure.Items.CHROMATIC_SHEET.get());
+            }
         }
 
         @SubscribeEvent
