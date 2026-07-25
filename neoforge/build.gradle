@@ -76,6 +76,22 @@ sourceSets {
     }
 }
 
+tasks.named('processResources', ProcessResources) {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    doLast {
+        def tomlFile = file("${layout.buildDirectory.get()}/resources/main/META-INF/neoforge.mods.toml")
+        if (tomlFile.exists()) {
+            def content = tomlFile.text
+            project.properties.each { k, v ->
+                if (v instanceof String) {
+                    content = content.replace("\${${k}}", v)
+                }
+            }
+            tomlFile.text = content
+        }
+    }
+}
+
 neoForge {
     version = "$neoforge_version"
 

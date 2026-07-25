@@ -1,6 +1,7 @@
 package io.github.mortuusars.exposure.network.neoforge;
 
 
+import io.github.mortuusars.exposure.network.Packets;
 import io.github.mortuusars.exposure.network.packet.Packet;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
@@ -16,6 +17,16 @@ import java.util.Objects;
 import java.util.function.Predicate;
 
 public class PacketsImpl {
+    public static void bind() {
+        Packets.bind(new Packets.Service() {
+            @Override public void sendToServer(Packet p) { PacketsImpl.sendToServer(p); }
+            @Override public void sendToClient(Packet p, ServerPlayer pl) { PacketsImpl.sendToClient(p, pl); }
+            @Override public void sendToClients(Packet p, Predicate<ServerPlayer> f) { PacketsImpl.sendToClients(p, f); }
+            @Override public void sendToAllClients(Packet p) { PacketsImpl.sendToAllClients(p); }
+            @Override public void sendToPlayersNear(Packet p, ServerLevel l, @Nullable ServerPlayer e, double x, double y, double z, double r) { PacketsImpl.sendToPlayersNear(p, l, e, x, y, z, r); }
+        });
+    }
+
     public static void handle(Packet packet, IPayloadContext context) {
         packet.handle(context.flow(), context.player());
     }

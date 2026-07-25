@@ -1,5 +1,6 @@
 package io.github.mortuusars.exposure.neoforge;
 
+import io.github.mortuusars.exposure.PlatformHelper;
 import io.github.mortuusars.exposure.integration.Mods;
 import io.github.mortuusars.exposure.neoforge.api.event.ModifyEntityInFrameDataEvent;
 import io.github.mortuusars.exposure.neoforge.api.event.FrameAddedEvent;
@@ -30,6 +31,23 @@ import java.util.List;
 import java.util.function.Consumer;
 
 public class PlatformHelperImpl {
+    public static void bind() {
+        PlatformHelper.bind(new PlatformHelper.Service() {
+            @Override public @Nullable MinecraftServer getServer() { return PlatformHelperImpl.getServer(); }
+            @Override public boolean canShear(ItemStack s) { return PlatformHelperImpl.canShear(s); }
+            @Override public boolean canStrip(ItemStack s) { return PlatformHelperImpl.canStrip(s); }
+            @Override public void openMenu(ServerPlayer p, MenuProvider m, Consumer<RegistryFriendlyByteBuf> w) { PlatformHelperImpl.openMenu(p, m, w); }
+            @Override public List<String> getDefaultSpoutDevelopmentColorSequence() { return PlatformHelperImpl.getDefaultSpoutDevelopmentColorSequence(); }
+            @Override public List<String> getDefaultSpoutDevelopmentBWSequence() { return PlatformHelperImpl.getDefaultSpoutDevelopmentBWSequence(); }
+            @Override public boolean isModLoaded(String m) { return PlatformHelperImpl.isModLoaded(m); }
+            @Override public boolean isModLoading(String m) { return PlatformHelperImpl.isModLoading(m); }
+            @Override public boolean isInDevEnv() { return PlatformHelperImpl.isInDevEnv(); }
+            @Override public void postModifyEntityInFrameExtraDataEvent(CameraHolder h, ItemStack c, LivingEntity e, ExtraData d) { PlatformHelperImpl.postModifyEntityInFrameExtraDataEvent(h, c, e, d); }
+            @Override public void postModifyFrameExtraDataEvent(CameraHolder h, ItemStack c, CaptureParameters p, java.util.List<BlockPos> pos, java.util.List<LivingEntity> ents, ExtraData d) { PlatformHelperImpl.postModifyFrameExtraDataEvent(h, c, p, pos, ents, d); }
+            @Override public void postFrameAddedEvent(CameraHolder h, ItemStack c, Frame f, java.util.List<BlockPos> pos, java.util.List<LivingEntity> ents) { PlatformHelperImpl.postFrameAddedEvent(h, c, f, pos, ents); }
+            @Override public boolean isCreateDeployer(Player p, InteractionHand h) { return PlatformHelperImpl.isCreateDeployer(p, h); }
+        });
+    }
     public static @Nullable MinecraftServer getServer() {
         return ServerLifecycleHooks.getCurrentServer();
     }

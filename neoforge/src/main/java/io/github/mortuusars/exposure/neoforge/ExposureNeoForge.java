@@ -5,6 +5,7 @@ import com.mojang.serialization.MapCodec;
 import io.github.mortuusars.exposure.Config;
 import io.github.mortuusars.exposure.Exposure;
 import io.github.mortuusars.exposure.neoforge.loot.ConfigurableAddTableLootModifier;
+import io.github.mortuusars.exposure.network.neoforge.PacketsImpl;
 import net.minecraft.world.item.CreativeModeTab;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
@@ -21,6 +22,9 @@ import org.jetbrains.annotations.Nullable;
 @Mod(Exposure.ID)
 public class ExposureNeoForge {
     public ExposureNeoForge(ModContainer container) {
+        RegisterImpl.bind();
+        PlatformHelperImpl.bind();
+        PacketsImpl.bind();
         Exposure.init();
 
         Exposure.Stats.STATS.forEach((location, formatter) -> {
