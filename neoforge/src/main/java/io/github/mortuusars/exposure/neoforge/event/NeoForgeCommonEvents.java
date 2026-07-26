@@ -55,12 +55,12 @@ public class NeoForgeCommonEvents {
             event.dataPackRegistry(Exposure.Registries.FILTER, Filter.CODEC, Filter.CODEC);
         }
 
-        @SuppressWarnings({"unchecked", "rawtypes"})
+        @SuppressWarnings("unchecked")
         @SubscribeEvent
         public static void registerPackets(RegisterPayloadHandlersEvent event) {
             PayloadRegistrar r = event.registrar("1");
             for (var def : S2CPackets.getDefinitions()) {
-                r.playToClient((CustomPacketPayload.Type)def.type(), (StreamCodec)def.codec(), (IPayloadHandler)(payload, ctx) -> PacketsImpl.handle((Packet)payload, ctx));
+                r.playToClient((CustomPacketPayload.Type)def.type(), (StreamCodec)def.codec());
             }
             for (var def : C2SPackets.getDefinitions()) {
                 r.playToServer((CustomPacketPayload.Type)def.type(), (StreamCodec)def.codec(), (IPayloadHandler)(payload, ctx) -> PacketsImpl.handle((Packet)payload, ctx));
