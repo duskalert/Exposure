@@ -60,12 +60,13 @@ public class NeoForgeCommonEvents {
         public static void registerPackets(RegisterPayloadHandlersEvent event) {
             PayloadRegistrar r = event.registrar("1");
             for (var def : S2CPackets.getDefinitions()) {
-                r.playBidirectional((CustomPacketPayload.Type)def.type(), (StreamCodec)def.codec(), (IPayloadHandler)(payload, ctx) -> PacketsImpl.handle((Packet)payload, ctx));
+                r.playToClient((CustomPacketPayload.Type)def.type(), (StreamCodec)def.codec(), (IPayloadHandler)(payload, ctx) -> PacketsImpl.handle((Packet)payload, ctx));
             }
             for (var def : C2SPackets.getDefinitions()) {
-                r.playBidirectional((CustomPacketPayload.Type)def.type(), (StreamCodec)def.codec(), (IPayloadHandler)(payload, ctx) -> PacketsImpl.handle((Packet)payload, ctx));
+                r.playToServer((CustomPacketPayload.Type)def.type(), (StreamCodec)def.codec(), (IPayloadHandler)(payload, ctx) -> PacketsImpl.handle((Packet)payload, ctx));
             }
             for (var def : CommonPackets.getDefinitions()) {
+                r.playToClient((CustomPacketPayload.Type)def.type(), (StreamCodec)def.codec(), (IPayloadHandler)(payload, ctx) -> PacketsImpl.handle((Packet)payload, ctx));
                 r.playBidirectional((CustomPacketPayload.Type)def.type(), (StreamCodec)def.codec(), (IPayloadHandler)(payload, ctx) -> PacketsImpl.handle((Packet)payload, ctx));
             }
         }
