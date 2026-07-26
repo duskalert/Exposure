@@ -23,10 +23,12 @@ import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
+import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.event.OnDatapackSyncEvent;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.neoforge.event.server.ServerStartedEvent;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
+import net.neoforged.neoforge.network.handling.IPayloadHandler;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 import net.neoforged.neoforge.registries.DataPackRegistryEvent;
 import net.neoforged.neoforge.transfer.item.VanillaContainerWrapper;
@@ -53,10 +55,19 @@ public class NeoForgeCommonEvents {
             event.dataPackRegistry(Exposure.Registries.FILTER, Filter.CODEC, Filter.CODEC);
         }
 
+        @SuppressWarnings({"unchecked", "rawtypes"})
         @SubscribeEvent
         public static void registerPackets(RegisterPayloadHandlersEvent event) {
-            // TODO: PayloadRegistrar.playToClient/ToServer/Bidirectional API mismatch
-            // Needs in-IDE inspection of PayloadRegistrar method signatures in NeoForge 26.1.2.81
+            PayloadRegistrar r = event.registrar("1");
+            for (var def : S2CPackets.getDefinitions()) {
+                r.playToClient((CustomPacketPayload.Type)def.type(), (StreamCodec)def.codec(), (IPayloadHandler)(payload, ctx) -> PacketsImpl.handle((Packet)payload, ctx));
+            }
+            for (var def : C2SPackets.getDefinitions()) {
+                r.playToServer((CustomPacketPayload.Type)def.type(), (StreamCodec)def.codec(), (IPayloadHandler)(payload, ctx) -> PacketsImpl.handle((Packet)payload, ctx));
+            }
+            for (var def : CommonPackets.getDefinitions()) {
+                r.playBidirectional((CustomPacketPayload.Type)def.type(), (StreamCodec)def.codec(), (IPayloadHandler)(payload, ctx) -> PacketsImpl.handle((Packet)payload, ctx));
+            }
         }
 
         @SubscribeEvent
