@@ -67,7 +67,7 @@ public class NeoForgeCommonEvents {
             }
             for (var def : CommonPackets.getDefinitions()) {
                 r.playToClient((CustomPacketPayload.Type)def.type(), (StreamCodec)def.codec(), (IPayloadHandler)(payload, ctx) -> PacketsImpl.handle((Packet)payload, ctx));
-                r.playBidirectional((CustomPacketPayload.Type)def.type(), (StreamCodec)def.codec(), (IPayloadHandler)(payload, ctx) -> PacketsImpl.handle((Packet)payload, ctx));
+                r.playToServer((CustomPacketPayload.Type)def.type(), (StreamCodec)def.codec(), (IPayloadHandler)(payload, ctx) -> PacketsImpl.handle((Packet)payload, ctx));
             }
         }
 
