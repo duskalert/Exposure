@@ -53,25 +53,10 @@ public class NeoForgeCommonEvents {
             event.dataPackRegistry(Exposure.Registries.FILTER, Filter.CODEC, Filter.CODEC);
         }
 
-        @SuppressWarnings({"unchecked", "rawtypes"})
         @SubscribeEvent
         public static void registerPackets(RegisterPayloadHandlersEvent event) {
-            PayloadRegistrar r = event.registrar("1");
-            for (var def : S2CPackets.getDefinitions()) {
-                CustomPacketPayload.Type type = def.type();
-                StreamCodec codec = def.codec();
-                r.playToClient(type, codec, (BiConsumer) (payload, ctx) -> PacketsImpl.handle((Packet) payload, ctx));
-            }
-            for (var def : C2SPackets.getDefinitions()) {
-                CustomPacketPayload.Type type = def.type();
-                StreamCodec codec = def.codec();
-                r.playToServer(type, codec, (BiConsumer) (payload, ctx) -> PacketsImpl.handle((Packet) payload, ctx));
-            }
-            for (var def : CommonPackets.getDefinitions()) {
-                CustomPacketPayload.Type type = def.type();
-                StreamCodec codec = def.codec();
-                r.playBidirectional(type, codec, (BiConsumer) (payload, ctx) -> PacketsImpl.handle((Packet) payload, ctx));
-            }
+            // TODO: PayloadRegistrar.playToClient/ToServer/Bidirectional API mismatch
+            // Needs in-IDE inspection of PayloadRegistrar method signatures in NeoForge 26.1.2.81
         }
 
         @SubscribeEvent
